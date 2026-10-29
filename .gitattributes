@@ -1,0 +1,9 @@
+# توحيد نهايات الأسطر (LF) على كل الأنظمة، حتى يتوافق فحص Prettier على Windows
+* text=auto eol=lf
+
+# ملفات ثنائية
+*.woff2 binary
+*.ico binary
+*.png binary
+*.jpg binary
+*.webp binary

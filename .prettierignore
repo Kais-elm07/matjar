@@ -1,0 +1,5 @@
+# ملفات مولّدة أو مُدارة بأدوات أخرى (Prettier يتجاهل أيضاً كل ما في .gitignore)
+pnpm-lock.yaml
+prisma/migrations
+AGENTS.md
+خطة-المتجر-الإلكتروني.md
