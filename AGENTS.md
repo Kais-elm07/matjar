@@ -7,3 +7,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## التصميم
+
+قبل أي عمل على الواجهة اقرأ `DESIGN.md` في جذر المشروع واتبعه، فهو المرجع الوحيد لألوان المتجر وخطوطه ومسافاته ومكوناته. ربط قيمه بأصناف Tailwind موجود في مهارة المشروع `.claude/skills/design-system/SKILL.md`. بعد أي تعديل على `DESIGN.md` شغّل `pnpm design:lint`.

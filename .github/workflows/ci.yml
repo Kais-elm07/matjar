@@ -39,6 +39,9 @@ jobs:
       - name: فحص الأنواع (TypeScript)
         run: pnpm typecheck
 
+      - name: فحص ملف التصميم (DESIGN.md)
+        run: pnpm design:lint
+
       - name: بناء الموقع الثابت
         run: pnpm build
 

@@ -1,0 +1,286 @@
+---
+version: alpha
+name: متجري
+description: >-
+  الهوية البصرية لمتجر إلكتروني عربي للعرض: واجهة من اليمين لليسار، مصممة
+  للجوال أولاً، هادئة وواضحة وتبعث على الثقة. الهوية الحالية مؤقتة حتى اعتماد
+  الاسم والشعار والألوان النهائية.
+colors:
+  primary: "#007956"
+  on-primary: "#fafafa"
+  primary-soft: "color-mix(in srgb, #007956 10%, #ffffff)"
+  ring: "#00bb7f"
+  background: "#ffffff"
+  foreground: "#0a0a0a"
+  surface: "#ffffff"
+  surface-muted: "#f5f5f5"
+  muted-foreground: "#636363"
+  border: "#e5e5e5"
+  sale: "#e40014"
+  on-sale: "#ffffff"
+  warning: "#b75000"
+typography:
+  headline-display:
+    fontFamily: Cairo
+    fontSize: 48px
+    fontWeight: 800
+    lineHeight: 1.25
+  headline-display-mobile:
+    fontFamily: Cairo
+    fontSize: 30px
+    fontWeight: 800
+    lineHeight: 1.375
+  headline-lg:
+    fontFamily: Cairo
+    fontSize: 30px
+    fontWeight: 700
+    lineHeight: 1.3
+  headline-lg-mobile:
+    fontFamily: Cairo
+    fontSize: 24px
+    fontWeight: 700
+    lineHeight: 1.375
+  headline-md:
+    fontFamily: Cairo
+    fontSize: 24px
+    fontWeight: 700
+    lineHeight: 1.35
+  headline-md-mobile:
+    fontFamily: Cairo
+    fontSize: 20px
+    fontWeight: 700
+    lineHeight: 1.4
+  body-lg:
+    fontFamily: Cairo
+    fontSize: 18px
+    fontWeight: 400
+    lineHeight: 1.75
+  body-md:
+    fontFamily: Cairo
+    fontSize: 16px
+    fontWeight: 400
+    lineHeight: 1.75
+  body-sm:
+    fontFamily: Cairo
+    fontSize: 14px
+    fontWeight: 400
+    lineHeight: 1.6
+  label-lg:
+    fontFamily: Cairo
+    fontSize: 16px
+    fontWeight: 500
+    lineHeight: 1.5
+  label-md:
+    fontFamily: Cairo
+    fontSize: 14px
+    fontWeight: 500
+    lineHeight: 1.5
+  label-sm:
+    fontFamily: Cairo
+    fontSize: 12px
+    fontWeight: 700
+    lineHeight: 1.4
+  price-lg:
+    fontFamily: Cairo
+    fontSize: 30px
+    fontWeight: 700
+    lineHeight: 1.2
+  price-md:
+    fontFamily: Cairo
+    fontSize: 16px
+    fontWeight: 700
+    lineHeight: 1.5
+rounded:
+  sm: 4.8px
+  md: 6.4px
+  lg: 8px
+  xl: 11.2px
+  2xl: 14.4px
+  full: 9999px
+spacing:
+  xs: 4px
+  sm: 8px
+  md: 12px
+  lg: 16px
+  xl: 24px
+  2xl: 32px
+  3xl: 48px
+  gutter-mobile: 16px
+  gutter-desktop: 24px
+  container-max: 1280px
+  touch-target: 44px
+  header-height: 64px
+components:
+  button-primary:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.on-primary}"
+    typography: "{typography.label-lg}"
+    rounded: "{rounded.lg}"
+    height: 44px
+    padding: 20px
+  button-primary-hover:
+    backgroundColor: "color-mix(in srgb, #007956 80%, #ffffff)"
+  button-outline:
+    backgroundColor: "{colors.background}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.label-lg}"
+    rounded: "{rounded.lg}"
+    height: 44px
+    padding: 20px
+  hero-banner:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.on-primary}"
+    typography: "{typography.headline-display}"
+    rounded: "{rounded.2xl}"
+    padding: 40px
+  search-input:
+    backgroundColor: "{colors.surface-muted}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.full}"
+    height: 44px
+  filter-chip:
+    backgroundColor: "{colors.background}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.label-md}"
+    rounded: "{rounded.full}"
+    height: 36px
+    padding: 12px
+  filter-chip-selected:
+    backgroundColor: "{colors.primary-soft}"
+    textColor: "{colors.primary}"
+  product-card:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.label-md}"
+    rounded: "{rounded.xl}"
+  product-card-image:
+    backgroundColor: "{colors.surface-muted}"
+    rounded: "{rounded.xl}"
+  price-current:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.price-md}"
+  price-old:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.muted-foreground}"
+    typography: "{typography.body-sm}"
+  badge-discount:
+    backgroundColor: "{colors.sale}"
+    textColor: "{colors.on-sale}"
+    typography: "{typography.label-sm}"
+    rounded: "{rounded.md}"
+    padding: 6px
+  stock-low:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.warning}"
+    typography: "{typography.label-md}"
+  focus-ring:
+    backgroundColor: "{colors.ring}"
+    size: 3px
+  divider:
+    backgroundColor: "{colors.border}"
+    height: 1px
+  site-header:
+    backgroundColor: "{colors.background}"
+    textColor: "{colors.foreground}"
+    height: 64px
+---
+
+# الهوية البصرية لمتجري
+
+هذا الملف هو المرجع الوحيد لشكل المتجر. أي صفحة أو مكوّن جديد يتبع القيم والقواعد هنا.
+القيم نفسها مطبّقة في الكود داخل `src/app/globals.css` (بصيغة oklch) وفي مكونات `src/components/ui`.
+عند تغيير الهوية: عدّل هذا الملف أولاً، ثم افحصه بالأمر `pnpm design:lint`، ثم انقل القيم إلى `globals.css`.
+
+## Overview
+
+متجر عربي **بسيط وواضح ويبعث على الثقة**. الزائر يجب أن يجد المنتج ويفهم سعره ويضيفه للسلة دون تفكير.
+
+- **الشخصية:** ودودة وهادئة ومرتبة، أقرب إلى متجر محلي موثوق منها إلى منصة صاخبة.
+- **الجمهور:** متسوقون عرب يتصفحون غالباً من الجوال، بعضهم قليل الخبرة بالتسوق الإلكتروني.
+- **الإحساس المطلوب:** مساحات بيضاء واسعة، ولون أساسي واحد يقود كل فعل مهم، ونصوص كبيرة سهلة القراءة.
+- **الاتجاه:** الواجهة كلها من اليمين لليسار. المحاذاة والأسهم والقوائم المنزلقة تبدأ من اليمين.
+- **الجوال أولاً:** كل تصميم يبدأ من عرض 375 بكسل ثم يتوسع للحاسوب.
+
+## Colors
+
+لوحة الألوان محايدة في أغلبها، مع لون أساسي واحد للفعل، وأحمر للخصومات فقط.
+
+- **الأخضر الزمردي (primary, #007956):** لون الأفعال الأساسية والروابط والعناصر المختارة والقسم الترحيبي. يرمز للثقة والانتعاش. لا يُستخدم للنصوص الطويلة.
+- **النص على الأخضر (on-primary, #fafafa):** أبيض دافئ للنص فوق اللون الأساسي، بتباين 5.2:1.
+- **الأخضر الفاتح (primary-soft):** خلفية الخيار المختار في الفلاتر والأزرار الشبيهة بالشرائح.
+- **حلقة التركيز (ring, #00bb7f):** حلقة واضحة حول العنصر عند التنقل بلوحة المفاتيح.
+- **الخلفية والسطوح (background و surface, #ffffff):** أبيض نقي لكل الصفحات والبطاقات.
+- **السطح الرمادي (surface-muted, #f5f5f5):** خلفية الصور والحقول وأقسام المعلومات الثانوية.
+- **النص الأساسي (foreground, #0a0a0a):** للعناوين والأسعار والنصوص.
+- **النص الثانوي (muted-foreground, #636363):** للأوصاف القصيرة والأعداد والسعر قبل الخصم، بتباين 6:1.
+- **الحدود (border, #e5e5e5):** فواصل وحدود البطاقات والحقول.
+- **أحمر الخصم (sale, #e40014):** شارة نسبة الخصم ورابط "العروض" ورسائل الخطأ فقط.
+- **البرتقالي المحروق (warning, #b75000):** تنبيه "بقي عدد قليل" في صفحة المنتج.
+
+## Typography
+
+خط واحد فقط في كل الموقع: **Cairo** متغير الوزن، مستضاف داخل المشروع، بملف للحروف العربية وملف للأرقام والحروف اللاتينية.
+
+- **العناوين (headline):** عريضة (700 إلى 800) مع تباعد أسطر مريح للحروف العربية. لكل عنوان قيمة للجوال وأخرى للحاسوب.
+- **النصوص (body):** 16 بكسل كحد أدنى للنص الأساسي، بتباعد أسطر 1.75 لأن الحروف العربية تحتاج مساحة رأسية أكبر من اللاتينية.
+- **الأسماء والأزرار (label):** وزن متوسط 500، والشارات الصغيرة 12 بكسل بوزن 700.
+- **الأسعار (price):** عريضة دائماً، وبأرقام 0-9 لتجنب الالتباس، والعملة بعد الرقم: "129 ر.س".
+- **الحقول:** 16 بكسل على الجوال حتى لا يكبّر المتصفح الصفحة تلقائياً عند الكتابة.
+
+## Layout
+
+- **الشبكة:** حاوية بعرض أقصى 1280 بكسل في المنتصف، وهامش جانبي 16 بكسل على الجوال و24 على الحاسوب (`page-container`).
+- **مقياس المسافات:** مضاعفات 4 بكسل. المسافة بين أقسام الصفحة 48 إلى 64 بكسل، وداخل البطاقات 16 بكسل.
+- **شبكة المنتجات:** عمودان على الجوال، 3 على اللوحي، 4 على الحاسوب (3 عند وجود شريط الفلاتر الجانبي).
+- **صفوف الرئيسية:** تُسحب أفقياً على الجوال، وتصبح شبكة على الشاشات الأكبر.
+- **الرأس:** ثابت أعلى الصفحة بارتفاع 64 بكسل، والبحث في سطر مستقل تحته على الجوال.
+- **الفلاتر:** شريط جانبي على الحاسوب، ونافذة منزلقة من الأسفل على الجوال.
+- **اللمس:** كل عنصر قابل للنقر بارتفاع 44 بكسل على الأقل، والشرائح الصغيرة 36 بكسل مع مسافات بينها.
+- **الاتجاه:** استخدم الخصائص المنطقية دائماً (`ms` و`me` و`ps` و`pe` و`start` و`end`) بدل اليسار واليمين.
+
+## Elevation & Depth
+
+التصميم **مسطح بطبقات لونية** وليس بظلال ثقيلة.
+
+- البطاقات بيضاء على خلفية بيضاء، وتنفصل بحدود رمادية خفيفة أو بخلفية الصورة الرمادية.
+- الظل الخفيف مسموح فقط للعناصر العائمة: قائمة اقتراحات البحث، والإشعارات، والنوافذ المنبثقة.
+- الرأس شبه شفاف مع تمويه خفيف للخلفية عند التمرير.
+- التفاعل يظهر بتكبير خفيف للصورة (5%) عند المرور فوق البطاقة، لا برفعها.
+
+## Shapes
+
+زوايا **ناعمة ومتوسطة** تعطي إحساساً ودوداً دون أن تفقد الترتيب.
+
+- الأزرار والحقول: 8 بكسل (`lg`).
+- البطاقات وصور المنتجات: 11.2 بكسل (`xl`).
+- القسم الترحيبي ومعرض المنتج: 14.4 بكسل (`2xl`).
+- الشرائح وحقل البحث والشارات الدائرية: دائرية بالكامل (`full`).
+- دوائر الألوان في الفلاتر والمتغيرات دائرية تماماً بحد رفيع، ولون الأبيض يظهر بحد واضح.
+
+## Components
+
+- **الزر الأساسي:** أخضر بنص أبيض، بارتفاع 44 بكسل. زر واحد أساسي فقط في كل منطقة من الصفحة.
+- **الزر الثانوي:** أبيض بحد رمادي ونص داكن، للأفعال البديلة مثل "العروض" و"مسح الفلاتر".
+- **حقل البحث:** دائري بخلفية رمادية فاتحة وأيقونة البحث في بدايته، وتظهر الاقتراحات في قائمة عائمة تحته.
+- **بطاقة المنتج:** صورة مربعة، ثم الاسم في سطرين كحد أقصى، ثم السعر. شارة الخصم في الزاوية العليا من جهة البداية، و"نفد من المخزون" شريط أسفل الصورة. البطاقة كلها قابلة للنقر.
+- **السعر:** السعر الحالي عريض، والسعر قبل الخصم مشطوب ورمادي بعده، و"من" قبل السعر إن اختلفت أسعار المتغيرات.
+- **شرائح الفلاتر:** دائرية بحد رمادي، والمختارة بخلفية خضراء فاتحة ونص أخضر.
+- **اختيار المتغيرات:** أزرار مربعة بارتفاع 44 بكسل، والمختار بحد أخضر. القيمة النافدة مشطوبة لكنها قابلة للاختيار لتوضيح النفاد، والتركيبة غير الموجودة معطلة.
+- **الحالات الفارغة:** إطار متقطع وأيقونة في دائرة رمادية وجملة توضح ما حدث وزر لما يمكن فعله.
+- **التحميل:** هياكل رمادية نابضة بنفس شكل المحتوى، بدل مؤشرات الدوران.
+- **الأيقونات:** مكتبة Lucide بخط رفيع، والأسهم تنعكس تلقائياً في الاتجاه العربي.
+
+## Do's and Don'ts
+
+- افعل: ابدأ أي تصميم من شاشة الجوال ثم وسّعه.
+- افعل: استخدم اللون الأساسي لفعل واحد بارز في كل منطقة، مثل "أضف للسلة" أو "تسوّق الآن".
+- افعل: حافظ على تباين 4.5:1 على الأقل لكل نص، وافحصه بالأمر `pnpm design:lint`.
+- افعل: اكتب الأعداد بصيغ الجمع العربية الصحيحة: "منتج واحد"، "منتجان"، "5 منتجات"، "20 منتجاً".
+- افعل: أظهر الشحن والإجمالي قبل أي تأكيد، ولا تفاجئ الزائر بأي مبلغ.
+- لا تفعل: لا تستخدم أكثر من خط واحد، ولا أكثر من 3 أوزان في الشاشة الواحدة.
+- لا تفعل: لا تستخدم الأحمر إلا للخصومات والأخطاء.
+- لا تفعل: لا تستخدم left وright في التنسيق، بل start وend.
+- لا تفعل: لا تضع نصاً مهماً فوق صورة دون طبقة داكنة تضمن قراءته.
+- لا تفعل: لا تخفِ معلومة مهمة خلف تمرير الفأرة، لأن الجوال لا يملك ذلك.

@@ -19,7 +19,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "next typegen && tsc --noEmit",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck",
+    "design:lint": "designmd lint DESIGN.md",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm design:lint",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -44,6 +45,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@google/design.md": "0.4.0",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
