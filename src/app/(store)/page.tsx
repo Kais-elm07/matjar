@@ -150,10 +150,10 @@ function Hero() {
   return (
     <section className="relative overflow-hidden rounded-2xl bg-primary px-6 py-10 text-primary-foreground sm:px-10 md:py-16">
       <div className="relative z-10 max-w-xl space-y-4">
-        <p className="inline-flex rounded-full bg-white/15 px-3 py-1 text-sm font-medium">
+        <p className="inline-flex rounded-md bg-highlight px-3 py-1 text-sm font-medium text-highlight-foreground">
           الدفع عند الاستلام متاح
         </p>
-        <h1 className="text-3xl leading-snug font-extrabold md:text-5xl md:leading-tight">
+        <h1 className="text-3xl leading-snug font-bold md:text-5xl md:leading-tight">
           تسوّق بسهولة، واستلم طلبك حتى باب بيتك
         </h1>
         <p className="text-base leading-8 text-primary-foreground/85 md:text-lg">
@@ -164,7 +164,7 @@ function Hero() {
             href="/products"
             className={cn(
               buttonVariants({ size: "xl" }),
-              "bg-white text-primary hover:bg-white/90"
+              "bg-background text-primary hover:bg-background/90"
             )}
           >
             تسوّق الآن

@@ -225,18 +225,16 @@ function imageIndexForOptions(
 
 function StockStatus({ stock }: { stock: number }) {
   if (stock === 0) {
-    return (
-      <p className="text-sm font-semibold text-destructive">نفد من المخزون</p>
-    )
+    return <p className="text-sm font-bold text-destructive">نفد من المخزون</p>
   }
   if (stock <= siteConfig.lowStockThreshold) {
     return (
-      <p className="text-sm font-semibold text-amber-700">
+      <p className="text-sm font-bold text-warning">
         {pluralize(stock, LOW_STOCK_FORMS)}
       </p>
     )
   }
-  return <p className="text-sm font-semibold text-primary">متوفر</p>
+  return <p className="text-sm font-bold text-primary">متوفر</p>
 }
 
 function QuantityInput({
@@ -268,7 +266,7 @@ function QuantityInput({
       </Button>
       <output
         aria-live="polite"
-        className="w-8 text-center text-base font-semibold tabular-nums"
+        className="w-8 text-center text-base font-bold tabular-nums"
       >
         {value}
       </output>

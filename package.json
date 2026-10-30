@@ -8,6 +8,7 @@
   "scripts": {
     "images": "node scripts/images.mjs",
     "images:demo": "node scripts/images.mjs --demo",
+    "fonts": "node scripts/fonts.mjs",
     "predev": "pnpm images",
     "dev": "next dev",
     "prebuild": "pnpm images",
@@ -59,6 +60,7 @@
     "prettier-plugin-tailwindcss": "^0.8.1",
     "serve": "^14.2.6",
     "sharp": "^0.35.5",
+    "subset-font": "2.9.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   },

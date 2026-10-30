@@ -215,7 +215,7 @@ export function ListingView({
               onChange={(event) =>
                 navigate({ sort: event.target.value as SortValue })
               }
-              className="[&_select]:h-10 [&_select]:min-w-40 [&_select]:text-sm"
+              className="[&_select]:h-10 [&_select]:min-w-32 [&_select]:text-sm"
             >
               {sortOptionsFor(params.q).map((option) => (
                 <NativeSelectOption key={option.value} value={option.value}>
@@ -330,7 +330,7 @@ function ActiveFilters({
           key={chip.key}
           type="button"
           onClick={() => onChange(chip.remove)}
-          className="inline-flex h-8 items-center gap-1.5 rounded-full bg-muted ps-3 pe-2 text-sm transition-colors hover:bg-muted/70"
+          className="inline-flex h-8 items-center gap-1.5 rounded-md bg-muted ps-3 pe-2 text-sm transition-colors hover:bg-muted/70"
         >
           {chip.label}
           <XIcon className="size-3.5" aria-hidden />

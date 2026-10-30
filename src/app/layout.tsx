@@ -7,24 +7,50 @@ import { siteConfig } from "@/config/site"
 
 import "./globals.css"
 
-// خط Cairo مستضاف داخل المشروع (ترخيص OFL في src/fonts/cairo)،
+// خط IBM Plex Sans Arabic مستضاف داخل المشروع (ترخيص OFL في src/fonts/ibm-plex-sans-arabic)،
 // حتى لا يتوقف بناء الموقع إذا تعذّر الاتصال بـ Google Fonts.
-// ملفان متغيرا الوزن: الأول للحروف العربية، والثاني للأرقام والحروف اللاتينية.
-// ترتيبهما في الخطوط يُضبط عبر --font-sans في src/app/globals.css
-const cairoArabic = localFont({
-  src: "../fonts/cairo/cairo-arabic-wght-normal.woff2",
-  weight: "200 1000",
+// الملفات نسخ مصغّرة تحوي الحروف التي يحتاجها المتجر فقط، يولّدها الأمر pnpm fonts من assets/fonts.
+// الخط ثابت الأوزان، والمستخدم منه ثلاثة: 400 و500 و700.
+// المجموعة الأولى للحروف العربية، والثانية للأرقام والحروف اللاتينية،
+// وترتيبهما في الخطوط يُضبط عبر --font-sans في src/app/globals.css
+const plexArabic = localFont({
+  src: [
+    {
+      path: "../fonts/ibm-plex-sans-arabic/ibm-plex-sans-arabic-arabic-400-normal.woff2",
+      weight: "400",
+    },
+    {
+      path: "../fonts/ibm-plex-sans-arabic/ibm-plex-sans-arabic-arabic-500-normal.woff2",
+      weight: "500",
+    },
+    {
+      path: "../fonts/ibm-plex-sans-arabic/ibm-plex-sans-arabic-arabic-700-normal.woff2",
+      weight: "700",
+    },
+  ],
   display: "swap",
-  variable: "--font-cairo-arabic",
-  // الخط البديل التلقائي يغطي الحروف اللاتينية أيضاً، فيمنع استخدام ملف الأرقام
+  variable: "--font-arabic",
+  // الخط البديل التلقائي يغطي الحروف اللاتينية أيضاً، فيمنع استخدام ملفات الأرقام
   adjustFontFallback: false,
 })
 
-const cairoLatin = localFont({
-  src: "../fonts/cairo/cairo-latin-wght-normal.woff2",
-  weight: "200 1000",
+const plexLatin = localFont({
+  src: [
+    {
+      path: "../fonts/ibm-plex-sans-arabic/ibm-plex-sans-arabic-latin-400-normal.woff2",
+      weight: "400",
+    },
+    {
+      path: "../fonts/ibm-plex-sans-arabic/ibm-plex-sans-arabic-latin-500-normal.woff2",
+      weight: "500",
+    },
+    {
+      path: "../fonts/ibm-plex-sans-arabic/ibm-plex-sans-arabic-latin-700-normal.woff2",
+      weight: "700",
+    },
+  ],
   display: "swap",
-  variable: "--font-cairo-latin",
+  variable: "--font-latin",
 })
 
 export const metadata: Metadata = {
@@ -45,7 +71,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   // لون شريط المتصفح على الجوال، وهو نفس اللون الأساسي
-  themeColor: "#047857",
+  themeColor: "#a4471f",
 }
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -53,7 +79,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="ar"
       dir="rtl"
-      className={`${cairoArabic.variable} ${cairoLatin.variable} h-full antialiased`}
+      className={`${plexArabic.variable} ${plexLatin.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <DirectionProvider direction="rtl">

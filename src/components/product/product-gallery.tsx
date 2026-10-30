@@ -108,7 +108,7 @@ export function ProductGallery({
           <ZoomInIcon className="size-4" aria-hidden />
         </span>
         {images.length > 1 && (
-          <span className="pointer-events-none absolute start-3 bottom-3 rounded-full bg-background/85 px-2.5 py-1 text-xs font-medium tabular-nums shadow-sm md:hidden">
+          <span className="pointer-events-none absolute start-3 bottom-3 rounded-md bg-background/85 px-2.5 py-1 text-xs font-medium tabular-nums shadow-sm md:hidden">
             {activeIndex + 1} / {images.length}
           </span>
         )}

@@ -18,7 +18,7 @@ export default function NotFound() {
         <div className="page-container flex flex-col items-center py-16 text-center md:py-24">
           <p
             aria-hidden
-            className="text-7xl font-black text-primary/20 md:text-8xl"
+            className="text-7xl font-bold text-primary/20 md:text-8xl"
           >
             404
           </p>

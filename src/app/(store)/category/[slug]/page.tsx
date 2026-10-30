@@ -85,10 +85,10 @@ export default async function CategoryPage({
               <li key={child.slug} className="shrink-0">
                 <Link
                   href={`/category/${child.slug}`}
-                  className="flex items-center gap-3 rounded-full border bg-card py-1.5 ps-1.5 pe-4 text-sm font-medium transition-colors hover:border-primary hover:text-primary"
+                  className="flex items-center gap-3 rounded-lg border bg-card py-1.5 ps-1.5 pe-4 text-sm font-medium transition-colors hover:border-primary hover:text-primary"
                 >
                   {child.image && (
-                    <span className="relative size-9 overflow-hidden rounded-full bg-muted">
+                    <span className="relative size-9 overflow-hidden rounded-md bg-muted">
                       <Image
                         src={child.image}
                         alt=""

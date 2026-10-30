@@ -40,7 +40,7 @@ export function ProductTabs({ product }: { product: Product }) {
                 key={spec.label}
                 className="grid grid-cols-[minmax(7rem,35%)_1fr] gap-4 px-4 py-3 text-sm"
               >
-                <dt className="font-semibold">{spec.label}</dt>
+                <dt className="font-bold">{spec.label}</dt>
                 <dd className="text-foreground/80">{spec.value}</dd>
               </div>
             ))}

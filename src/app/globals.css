@@ -7,11 +7,13 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  /* خط Cairo: العربي أولاً ثم اللاتيني للأرقام والحروف الإنجليزية (يُحمّلان في src/app/layout.tsx) */
+  /* خط IBM Plex Sans Arabic: العربي أولاً ثم اللاتيني للأرقام والحروف الإنجليزية (يُحمّلان في src/app/layout.tsx) */
   --font-sans:
-    var(--font-cairo-arabic), var(--font-cairo-latin), ui-sans-serif, system-ui,
-    sans-serif;
+    var(--font-arabic), var(--font-latin), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-sans);
+  --color-highlight: var(--highlight);
+  --color-highlight-foreground: var(--highlight-foreground);
+  --color-warning: var(--warning);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -51,46 +53,52 @@
 }
 
 /*
- * ألوان الهوية المؤقتة.
- * لتغيير لون المتجر بالكامل عدّل --primary و --ring و --sidebar-primary.
- * الصيغة oklch(الإضاءة التشبع درجة-اللون). أداة مفيدة للاختيار: https://oklch.com
+ * ألوان هوية "أناقة دافئة"، بنفس قيم hex في DESIGN.md.
+ * لتغيير الهوية: عدّل DESIGN.md أولاً وافحصه بالأمر pnpm design:lint، ثم انسخ القيم هنا.
  */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  /* اللون الأساسي (أخضر زمردي) للأزرار والروابط والعناصر النشطة */
-  --primary: oklch(0.508 0.118 165.612);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.5 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  /* الأحمر للأخطاء والخصومات */
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.696 0.17 162.48);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  /* زوايا الأزرار والبطاقات: 8 بكسل */
-  --radius: 0.5rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.508 0.118 165.612);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.696 0.17 162.48);
+  /* الخلفية الكريمية والنص البني الداكن */
+  --background: #fbf8f3;
+  --foreground: #2a211c;
+  /* السطوح البيضاء البارزة: بطاقات المزايا والقوائم العائمة والنوافذ */
+  --card: #ffffff;
+  --card-foreground: #2a211c;
+  --popover: #ffffff;
+  --popover-foreground: #2a211c;
+  /* اللون الأساسي (طيني) للأزرار والروابط والعناصر النشطة */
+  --primary: #a4471f;
+  --primary-foreground: #ffffff;
+  /* السطح الرملي: خلفية الصور والحقول، ولون المرور فوق الأزرار الشفافة */
+  --secondary: #f3ede4;
+  --secondary-foreground: #2a211c;
+  --muted: #f3ede4;
+  --muted-foreground: #6e6259;
+  --accent: #f3ede4;
+  --accent-foreground: #2a211c;
+  /* اللمسة الذهبية: خلفية لنص بني داكن فقط، ولا تُكتب نصاً على خلفية فاتحة */
+  --highlight: #c99a3d;
+  --highlight-foreground: #2a211c;
+  /* الأحمر للأخطاء والخصومات، والكهرماني لتنبيه "بقي عدد قليل" */
+  --destructive: #b91c1c;
+  --warning: #a16207;
+  --border: #e8dfd3;
+  --input: #e8dfd3;
+  --ring: #da7b55;
+  --chart-1: #e8dfd3;
+  --chart-2: #c99a3d;
+  --chart-3: #a4471f;
+  --chart-4: #6e6259;
+  --chart-5: #2a211c;
+  /* زوايا الأزرار والحقول 6 بكسل، والبطاقات 8.4، والقسم الترحيبي 10.8 */
+  --radius: 0.375rem;
+  --sidebar: #fbf8f3;
+  --sidebar-foreground: #2a211c;
+  --sidebar-primary: #a4471f;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f3ede4;
+  --sidebar-accent-foreground: #2a211c;
+  --sidebar-border: #e8dfd3;
+  --sidebar-ring: #da7b55;
 }
 
 /* الوضع الداكن مُجهّز لكنه غير مفعّل في النسخة الأولى */
@@ -101,8 +109,8 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.696 0.17 162.48);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: #e38a67;
+  --primary-foreground: #2a211c;
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -110,6 +118,7 @@
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
+  --warning: #e0a33a;
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
@@ -120,8 +129,8 @@
   --chart-5: oklch(0.269 0 0);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.696 0.17 162.48);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-primary: #e38a67;
+  --sidebar-primary-foreground: #2a211c;
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);

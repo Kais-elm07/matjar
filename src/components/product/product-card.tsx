@@ -46,7 +46,7 @@ export function ProductCard({
           className="absolute start-2 top-2"
         />
         {!product.inStock && (
-          <span className="absolute inset-x-2 bottom-2 rounded-md bg-background/90 py-1 text-center text-xs font-semibold">
+          <span className="absolute inset-x-2 bottom-2 rounded-md bg-background/90 py-1 text-center text-xs font-bold">
             نفد من المخزون
           </span>
         )}

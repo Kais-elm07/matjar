@@ -89,7 +89,7 @@ export function SearchBox({
       onSubmit={submit}
       className={cn("relative w-full", className)}
     >
-      <InputGroup className="h-11 rounded-full bg-muted/60 has-[[data-slot=input-group-control]:focus-visible]:bg-background">
+      <InputGroup className="h-11 rounded-lg bg-muted/60 has-[[data-slot=input-group-control]:focus-visible]:bg-background">
         <InputGroupAddon className="ps-4">
           <SearchIcon aria-hidden />
         </InputGroupAddon>
