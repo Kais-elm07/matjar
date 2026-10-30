@@ -8,14 +8,7 @@ const eslintConfig = defineConfig([
   ...nextTs,
   // يعطّل قواعد التنسيق في ESLint لأن Prettier يتولاها
   prettier,
-  globalIgnores([
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-    // كود Prisma المولّد تلقائياً
-    "src/generated/**",
-  ]),
+  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
 ])
 
 export default eslintConfig

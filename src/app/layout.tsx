@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next"
 import localFont from "next/font/local"
 
 import { DirectionProvider } from "@/components/ui/direction"
+import { Toaster } from "@/components/ui/sonner"
 import { siteConfig } from "@/config/site"
 
 import "./globals.css"
@@ -55,7 +56,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${cairoArabic.variable} ${cairoLatin.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <DirectionProvider direction="rtl">{children}</DirectionProvider>
+        <DirectionProvider direction="rtl">
+          {children}
+          <Toaster />
+        </DirectionProvider>
       </body>
     </html>
   )

@@ -16,8 +16,6 @@ jobs:
     name: فحص الكود والبناء
     runs-on: ubuntu-latest
     env:
-      # قيم وهمية تكفي للفحص والبناء، فلا يتصل CI بأي قاعدة بيانات
-      DATABASE_URL: postgresql://postgres@localhost:5432/ci
       NEXT_PUBLIC_SITE_URL: http://localhost:3000
     steps:
       - uses: actions/checkout@v7
@@ -41,5 +39,12 @@ jobs:
       - name: فحص الأنواع (TypeScript)
         run: pnpm typecheck
 
-      - name: بناء الموقع
+      - name: بناء الموقع الثابت
         run: pnpm build
+
+      - name: حفظ نسخة الموقع الجاهزة
+        uses: actions/upload-artifact@v7
+        with:
+          name: site
+          path: out
+          retention-days: 7

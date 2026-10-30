@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f9fafc"/>
+      <stop offset="1" stop-color="#f3f6f9"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <circle cx="600" cy="560" r="390" fill="#ffffff" opacity="0.9"/>
+       <circle cx="990" cy="190" r="90" fill="#ffffff" opacity="0.55"/>
+       <circle cx="190" cy="1010" r="60" fill="#e2e8f0" opacity="0.15"/>
+  <ellipse cx="600" cy="1000" rx="290" ry="30" fill="#0f172a" opacity="0.07"/>
+  <svg x="300" y="260" width="600" height="600" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"><path d="M10.293 2.293a1 1 0 0 1 1.414 0l2.5 2.5 5.994 1.227a1 1 0 0 1 .506 1.687l-7 7a1 1 0 0 1-1.687-.506l-1.227-5.994-2.5-2.5a1 1 0 0 1 0-1.414z"/><path d="m14.207 4.793-3.414 3.414"/><path d="M3 20a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="m9.086 6.5-4.793 4.793a1 1 0 0 0-.18 1.17L7 18"/></svg>
+</svg>

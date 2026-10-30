@@ -41,7 +41,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-/src/generated/prisma
 
 # إعدادات Claude Code الشخصية
 .claude/settings.local.json
+
+# صور WebP المعالجة: تُولَّد تلقائياً بالأمر pnpm images
+/public/images/

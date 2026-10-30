@@ -1,6 +1,5 @@
 import Link from "next/link"
 
-import { CopyrightYear } from "@/components/layout/copyright-year"
 import { Logo } from "@/components/layout/logo"
 import { Separator } from "@/components/ui/separator"
 import { siteConfig } from "@/config/site"
@@ -24,6 +23,7 @@ export function SiteFooter() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
+                    prefetch={false}
                     className="inline-block py-1 text-muted-foreground transition-colors hover:text-primary"
                   >
                     {link.title}
@@ -39,7 +39,7 @@ export function SiteFooter() {
 
       <div className="page-container flex flex-col gap-1 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <p>
-          © <CopyrightYear /> {siteConfig.name}. جميع الحقوق محفوظة.
+          © {new Date().getFullYear()} {siteConfig.name}. جميع الحقوق محفوظة.
         </p>
         <p>الدفع عند الاستلام متاح</p>
       </div>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 
-import { SearchForm } from "@/components/layout/search-form"
+import { SearchBox } from "@/components/layout/search-box"
 import { SiteFooter } from "@/components/layout/site-footer"
 import { SiteHeader } from "@/components/layout/site-header"
 import { buttonVariants } from "@/components/ui/button"
@@ -29,7 +29,7 @@ export default function NotFound() {
             ربما تغيّر الرابط أو لم تعد الصفحة متوفرة. ابحث عن المنتج الذي
             تريده، أو عُد إلى الصفحة الرئيسية.
           </p>
-          <SearchForm className="mt-8 max-w-md" />
+          <SearchBox className="mt-8 max-w-md text-start" />
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link href="/" className={buttonVariants({ size: "xl" })}>
               العودة إلى الرئيسية

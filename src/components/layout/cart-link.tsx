@@ -12,6 +12,8 @@ export function CartLink({ count = 0 }: { count?: number }) {
   return (
     <Link
       href="/cart"
+      // صفحة السلة تُبنى في المرحلة 3، فلا داعي لتحميلها مسبقاً الآن
+      prefetch={false}
       aria-label={count > 0 ? `السلة (${count})` : "السلة"}
       className={cn(
         buttonVariants({ variant: "ghost", size: "icon-xl" }),

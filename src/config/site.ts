@@ -15,21 +15,40 @@ export type FooterNavGroup = {
 export const siteConfig = {
   name: "متجري",
   description:
-    "تسوّق منتجاتك المفضلة بسهولة، وادفع عند الاستلام، وتابع طلبك خطوة بخطوة حتى يصل إلى باب بيتك.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+    "تسوّق منتجاتك المفضلة بسهولة: تصفّح سريع، وبحث ذكي، وخيارات واضحة لكل منتج، والدفع عند الاستلام.",
+  /** رابط الموقع المنشور، يُستخدم في روابط المشاركة وخريطة الموقع */
+  url: (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(
+    /\/+$/,
+    ""
+  ),
 
-  /** روابط التنقل الرئيسية: في الشريط العلوي على الحاسوب وفي القائمة الجانبية على الجوال */
-  mainNav: [
-    { title: "الرئيسية", href: "/" },
+  /**
+   * العملة: مؤقتاً الريال السعودي حتى تحديد الدولة (القرار 1 في الخطة).
+   * الأسعار تُكتب في ملفات البيانات بالريال، وتُحسب داخلياً بأصغر وحدة (هللة).
+   */
+  currency: {
+    code: "SAR",
+    symbol: "ر.س",
+    fractionDigits: 2,
+  },
+
+  /** عدد المنتجات في كل صفحة من صفحات القوائم */
+  productsPerPage: 24,
+
+  /** يظهر تنبيه "بقي عدد قليل" عندما يصل المخزون إلى هذا الرقم أو أقل */
+  lowStockThreshold: 5,
+
+  /** روابط التسوق: بجانب الفئات في الرأس، وفي قائمة الجوال */
+  shopNav: [
     { title: "كل المنتجات", href: "/products" },
     { title: "وصل حديثاً", href: "/products?sort=newest" },
     { title: "العروض", href: "/products?sale=1" },
   ] satisfies NavLink[],
 
-  /** روابط الحساب والمساعدة في القائمة الجانبية على الجوال */
+  /** روابط المساعدة في قائمة الجوال */
   helpNav: [
-    { title: "حسابي", href: "/account" },
-    { title: "تتبع الطلب", href: "/track" },
+    { title: "الشحن والتوصيل", href: "/pages/shipping" },
+    { title: "الأسئلة الشائعة", href: "/pages/faq" },
     { title: "تواصل معنا", href: "/pages/contact" },
   ] satisfies NavLink[],
 
@@ -45,9 +64,9 @@ export const siteConfig = {
     {
       title: "خدمة العملاء",
       links: [
-        { title: "تتبع الطلب", href: "/track" },
         { title: "الشحن والتوصيل", href: "/pages/shipping" },
         { title: "الإرجاع والاستبدال", href: "/pages/returns" },
+        { title: "الأسئلة الشائعة", href: "/pages/faq" },
         { title: "تواصل معنا", href: "/pages/contact" },
       ],
     },
