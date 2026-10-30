@@ -6,23 +6,14 @@ import { ShoppingCartIcon } from "lucide-react"
 import { CartLineItem } from "@/components/cart/cart-line-item"
 import { CartNotices } from "@/components/cart/cart-notices"
 import { EmptyState } from "@/components/store/empty-state"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { pluralize, type PluralForms } from "@/lib/arabic-plural"
+import { PIECE_FORMS, pluralize } from "@/lib/arabic-plural"
 import { formatPrice } from "@/lib/catalog/money"
 import { cartSubtotal, useCartCount, useCartStore } from "@/lib/store/cart"
 import { useCartSync } from "@/lib/store/cart-sync"
 import { useCartRestored } from "@/lib/store/hydration"
 import { cn } from "@/lib/utils"
-
-const PIECE_FORMS: PluralForms = {
-  zero: "لا قطع",
-  one: "قطعة واحدة",
-  two: "قطعتان",
-  few: "{n} قطع",
-  many: "{n} قطعة",
-  other: "{n} قطعة",
-}
 
 /** صفحة السلة: المنتجات مع الكمية والحذف، وملخص المبالغ، وحالة فارغة. */
 export function CartView() {
@@ -97,13 +88,15 @@ export function CartView() {
           <span>الإجمالي قبل الشحن</span>
           <span className="text-primary">{formatPrice(subtotal)}</span>
         </div>
-        <Button variant="cta" size="xl" className="w-full" disabled>
+        <Link
+          href="/checkout"
+          className={cn(
+            buttonVariants({ variant: "cta", size: "xl" }),
+            "w-full text-base"
+          )}
+        >
           إتمام الطلب
-        </Button>
-        <p className="text-xs leading-5 text-muted-foreground">
-          صفحة إتمام الطلب قيد التجهيز وتُفعَّل في المرحلة القادمة. سلتك محفوظة
-          في هذا المتصفح حتى ذلك الحين.
-        </p>
+        </Link>
         <Link
           href="/products"
           className={cn(

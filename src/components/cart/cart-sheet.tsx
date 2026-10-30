@@ -5,7 +5,7 @@ import { ShoppingCartIcon } from "lucide-react"
 
 import { CartLineItem } from "@/components/cart/cart-line-item"
 import { CartNotices } from "@/components/cart/cart-notices"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import {
   Sheet,
   SheetContent,
@@ -89,15 +89,19 @@ export function CartSheet() {
               </p>
               <div className="grid grid-cols-2 gap-2">
                 <Link
-                  href="/cart"
+                  href="/checkout"
                   onClick={close}
                   className={buttonVariants({ variant: "cta", size: "xl" })}
                 >
+                  إتمام الطلب
+                </Link>
+                <Link
+                  href="/cart"
+                  onClick={close}
+                  className={buttonVariants({ variant: "outline", size: "xl" })}
+                >
                   عرض السلة
                 </Link>
-                <Button variant="outline" size="xl" onClick={close}>
-                  متابعة التسوق
-                </Button>
               </div>
             </SheetFooter>
           </>

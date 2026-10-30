@@ -32,3 +32,13 @@ export const PRODUCT_FORMS: PluralForms = {
   many: "{n} منتجاً",
   other: "{n} منتج",
 }
+
+/** عدد القطع في السلة والطلب. */
+export const PIECE_FORMS: PluralForms = {
+  zero: "لا قطع",
+  one: "قطعة واحدة",
+  two: "قطعتان",
+  few: "{n} قطع",
+  many: "{n} قطعة",
+  other: "{n} قطعة",
+}
