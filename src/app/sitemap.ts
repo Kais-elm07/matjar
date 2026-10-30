@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next"
 
 import { getCategories, getProducts } from "@/lib/catalog/catalog"
+import { getContentPages } from "@/lib/content/pages"
 import { absoluteImageUrl, absoluteUrl } from "@/lib/seo"
 
 // يُولَّد كملف ثابت وقت البناء: out/sitemap.xml
@@ -25,6 +26,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.6,
       images: product.images.map((image) => absoluteImageUrl(image.src)),
+    })),
+    ...getContentPages().map((page) => ({
+      url: absoluteUrl(`/pages/${page.slug}`),
+      changeFrequency: "yearly" as const,
+      priority: 0.3,
     })),
   ]
 }

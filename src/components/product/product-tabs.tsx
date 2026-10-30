@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-import { RichText } from "@/components/product/rich-text"
+import { RichText } from "@/components/store/rich-text"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { Product } from "@/lib/catalog/types"
 
