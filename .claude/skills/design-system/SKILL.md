@@ -20,18 +20,20 @@ description: الهوية البصرية للمتجر وفق ملف DESIGN.md (�
 
 | قيمة DESIGN.md                              | الصنف في الكود                                                              |
 | ------------------------------------------- | --------------------------------------------------------------------------- |
-| `colors.primary`                            | `bg-primary` / `text-primary` / `border-primary`                            |
+| `colors.primary` (الكحلي)                   | `bg-primary` / `text-primary` / `border-primary`                            |
 | `colors.on-primary`                         | `text-primary-foreground`                                                   |
+| `colors.on-primary-muted`                   | `text-primary-foreground-muted` (نص ثانوي فوق الكحلي)                       |
 | `colors.primary-soft`                       | `bg-primary/10`                                                             |
+| `colors.highlight` (الكهرماني)              | `bg-highlight text-highlight-foreground`                                    |
 | `colors.ring`                               | `ring-ring/50` (يأتي تلقائياً في مكونات ui)                                 |
 | `colors.background` و `colors.surface`      | `bg-background` / `bg-card`                                                 |
 | `colors.foreground`                         | `text-foreground`                                                           |
 | `colors.surface-muted`                      | `bg-muted`                                                                  |
 | `colors.muted-foreground`                   | `text-muted-foreground`                                                     |
 | `colors.border`                             | `border` / `border-border`                                                  |
-| `colors.highlight` و `colors.on-highlight`  | `bg-highlight text-highlight-foreground`                                    |
-| `colors.sale`                               | `bg-destructive` / `text-destructive`                                       |
-| `colors.warning`                            | `text-warning`                                                              |
+| `colors.error` / `warning` / `success`      | `text-destructive` / `text-warning` / `text-success`                        |
+| `colors.tile-yellow` … `tile-orange`        | `bg-tile-yellow` / `bg-tile-green` / … (مربعات الفئات)                      |
+| `button-cta` / `button-primary` / `outline` | `<Button variant="cta">` / `<Button>` / `<Button variant="outline">`        |
 | `rounded.md` / `lg` / `xl` / `2xl` / `full` | `rounded-md` / `rounded-lg` / `rounded-xl` / `rounded-2xl` / `rounded-full` |
 | `typography.headline-display`               | `text-3xl md:text-5xl font-bold`                                            |
 | `typography.headline-lg`                    | `text-2xl md:text-3xl font-bold`                                            |
@@ -52,9 +54,20 @@ description: الهوية البصرية للمتجر وفق ملف DESIGN.md (�
 - خط واحد فقط (IBM Plex Sans Arabic) بثلاثة أوزان: `font-normal` و`font-medium` و`font-bold`. لا تستخدم `font-semibold` أو `font-extrabold` لأن الخط لا يملكها.
 - الأسعار بأرقام 0-9 عبر `formatPrice`.
 - الأعداد بصيغ الجمع العربية الصحيحة عبر `pluralize` في `src/lib/arabic-plural.ts`.
-- الأحمر للخصومات والأخطاء فقط.
-- الذهبي (`bg-highlight`) خلفية لنص بني داكن فقط، ولا يُكتب نصاً على خلفية فاتحة.
-- الشرائح وحقل البحث بزوايا `rounded-lg`، و`rounded-full` للدوائر الحقيقية فقط: الأيقونات المستديرة والعدادات ودوائر الألوان.
+- الكهرماني (`variant="cta"`) للفعل الأهم في المنطقة، والكحلي (الزر الافتراضي) للفعل الثاني.
+- الكهرماني خلفية لنص داكن فقط، ولا يُكتب نصاً على خلفية بيضاء (تباينه 1.7:1).
+- الأحمر للأخطاء والنفاد فقط، وشارة الخصم كهرمانية.
+- الأزرار والشرائح وحقل البحث والتبويبات حبوب (`rounded-full`)، والبطاقات والحقول العادية `rounded-lg`.
+- زر الإضافة للسلة ظاهر دائماً في البطاقة، ولا شيء مهم يظهر بمرور الفأرة فقط.
+- لا أرقام وهمية ("يشاهده الآن")، ولا عدّاد تنازلي دون تاريخ حقيقي في البيانات، ولا آراء عملاء مختلقة.
+- الشبكة (`grid`) التي تحوي صفاً يُسحب أفقياً تحتاج `grid-cols-1` على الجوال، وإلا اتسعت الصفحة بعرض الصف.
+
+## مكونات جاهزة قبل إنشاء جديد
+
+- `ProductCard` و`ProductGrid` و`ProductRail` في `src/components/product`: بطاقة المنتج وشبكتها وصفها الأفقي.
+- `Carousel` و`SectionHeading` في `src/components/store`: صف يُسحب بأزرار تمرير، وعنوان قسم مع "عرض الكل".
+- `PromoCard` و`SpotlightCard` و`WideBanner` و`BANNER_THEME` في `src/components/home`: بطاقات العروض بسماتها الثلاث.
+- `useAddToCart` و`QuantityStepper` في `src/components/cart`: الإضافة للسلة مع فتح نافذتها، ومحدد الكمية.
 
 ## بعد التعديل
 

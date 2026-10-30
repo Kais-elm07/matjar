@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 import { ChevronRightIcon, MenuIcon } from "lucide-react"
 
@@ -15,6 +14,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { siteConfig, type NavLink } from "@/config/site"
+import { useUiStore } from "@/lib/store/ui"
 import { cn } from "@/lib/utils"
 
 export type NavCategory = {
@@ -23,9 +23,13 @@ export type NavCategory = {
   children: { slug: string; name: string }[]
 }
 
-/** قائمة الجوال: تنزلق من اليمين وتُغلق تلقائياً عند اختيار أي رابط. */
+/**
+ * قائمة الجوال: تنزلق من اليمين وتُغلق تلقائياً عند اختيار أي رابط.
+ * تفتح من زر القائمة في الرأس، أو من زر "الفئات" في الشريط السفلي.
+ */
 export function MobileNav({ categories }: { categories: NavCategory[] }) {
-  const [open, setOpen] = useState(false)
+  const open = useUiStore((state) => state.menuOpen)
+  const setOpen = useUiStore((state) => state.setMenuOpen)
   const close = () => setOpen(false)
   const [allProducts, ...shopLinks] = siteConfig.shopNav
 
@@ -36,17 +40,21 @@ export function MobileNav({ categories }: { categories: NavCategory[] }) {
           <Button
             variant="ghost"
             size="icon-xl"
-            className="md:hidden"
+            className="-ms-2 text-primary-foreground hover:bg-white/10 hover:text-primary-foreground md:hidden"
             aria-label="فتح القائمة"
           />
         }
       >
         <MenuIcon aria-hidden />
       </SheetTrigger>
-      <SheetContent side="right" className="w-[85%] gap-0 p-0">
-        <SheetHeader className="border-b pe-14">
+      <SheetContent
+        side="right"
+        // زر الإغلاق فوق رأس القائمة الكحلي، فيصبح أبيض
+        className="w-[85%] gap-0 p-0 [&>[data-slot=sheet-close]]:text-primary-foreground [&>[data-slot=sheet-close]]:hover:bg-white/10 [&>[data-slot=sheet-close]]:hover:text-primary-foreground"
+      >
+        <SheetHeader className="border-b bg-primary pe-14 text-primary-foreground">
           <SheetTitle className="sr-only">القائمة الرئيسية</SheetTitle>
-          <Logo onNavigate={close} />
+          <Logo tone="light" onNavigate={close} />
         </SheetHeader>
         <nav
           aria-label="القائمة الرئيسية"

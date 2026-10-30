@@ -89,10 +89,8 @@ export function SearchBox({
       onSubmit={submit}
       className={cn("relative w-full", className)}
     >
-      <InputGroup className="h-11 rounded-lg bg-muted/60 has-[[data-slot=input-group-control]:focus-visible]:bg-background">
-        <InputGroupAddon className="ps-4">
-          <SearchIcon aria-hidden />
-        </InputGroupAddon>
+      {/* حبة بيضاء بزر بحث كهرماني في نهايتها، كما في الرأس الكحلي */}
+      <InputGroup className="h-11 rounded-full bg-background ps-2 text-foreground">
         <InputGroupInput
           ref={inputRef}
           type="search"
@@ -123,13 +121,22 @@ export function SearchBox({
           onBlur={close}
           onKeyDown={onKeyDown}
         />
+        <InputGroupAddon align="inline-end" className="pe-1">
+          <button
+            type="submit"
+            aria-label="بحث"
+            className="flex size-9 items-center justify-center rounded-full bg-highlight text-highlight-foreground transition-colors outline-none hover:bg-highlight/85 focus-visible:ring-3 focus-visible:ring-ring [&_svg]:size-[18px]"
+          >
+            <SearchIcon aria-hidden />
+          </button>
+        </InputGroupAddon>
       </InputGroup>
 
       {showPanel && (
         <div
           // منع فقدان التركيز عند النقر على اقتراح
           onMouseDown={(event) => event.preventDefault()}
-          className="absolute inset-x-0 top-full z-50 mt-2 overflow-hidden rounded-xl border bg-popover text-popover-foreground shadow-lg"
+          className="absolute inset-x-0 top-full z-50 mt-2 overflow-hidden rounded-lg border bg-popover text-popover-foreground shadow-lg"
         >
           {error ? (
             <p className="p-4 text-sm text-muted-foreground">
@@ -177,7 +184,7 @@ export function SearchBox({
                       <span className="line-clamp-1 text-sm font-medium">
                         {product.name}
                       </span>
-                      <span className="text-sm text-muted-foreground">
+                      <span className="text-sm font-bold text-primary">
                         {product.priceVaries && "من "}
                         {formatPrice(product.price)}
                       </span>

@@ -26,7 +26,7 @@ export function Price({
     >
       <span
         className={cn(
-          "font-bold",
+          "font-bold text-primary",
           size === "lg" ? "text-2xl md:text-3xl" : "text-base"
         )}
       >
@@ -67,7 +67,7 @@ export function DiscountBadge({
   return (
     <span
       className={cn(
-        "inline-flex rounded-md bg-destructive px-1.5 py-0.5 text-xs font-bold text-white",
+        "inline-flex rounded-sm bg-highlight px-1.5 py-0.5 text-xs font-bold text-highlight-foreground",
         className
       )}
     >

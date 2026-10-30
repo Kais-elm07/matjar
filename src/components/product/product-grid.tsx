@@ -1,10 +1,11 @@
 import { ProductCard } from "@/components/product/product-card"
+import { Carousel } from "@/components/store/carousel"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { ProductCard as ProductCardData } from "@/lib/catalog/types"
 import { cn } from "@/lib/utils"
 
 const GRID =
-  "grid grid-cols-2 gap-x-3 gap-y-7 sm:grid-cols-3 sm:gap-x-4 lg:grid-cols-4 lg:gap-x-5"
+  "grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5"
 
 export function ProductGrid({
   products,
@@ -37,31 +38,39 @@ export function ProductGridSkeleton({
   return (
     <ul className={cn(GRID, className)} aria-hidden>
       {Array.from({ length: count }, (_, index) => (
-        <li key={index} className="space-y-3">
-          <Skeleton className="aspect-square w-full rounded-xl" />
+        <li key={index} className="space-y-3 rounded-lg border p-3">
+          <Skeleton className="aspect-square w-full rounded-md" />
+          <Skeleton className="h-3 w-1/3" />
           <Skeleton className="h-4 w-4/5" />
           <Skeleton className="h-4 w-1/3" />
+          <Skeleton className="h-11 w-full rounded-full" />
         </li>
       ))}
     </ul>
   )
 }
 
-/**
- * صف منتجات: يُسحب أفقياً على الجوال، وشبكة على الشاشات الأكبر.
- * على الحاسوب يظهر أول 4 منتجات فقط، وعلى اللوحي أول 6.
- */
-export function ProductRail({ products }: { products: ProductCardData[] }) {
+/** عرض البطاقة في الصفوف: بطاقتان وجزء على الجوال، و3 على اللوحي، و4 على الحاسوب، و5 على الشاشات العريضة. */
+export const RAIL_ITEM =
+  "w-[46%] shrink-0 snap-start sm:w-[31%] lg:w-[23.5%] xl:w-[18.8%]"
+
+/** صف منتجات يُسحب أفقياً، مع زرّي تمرير في رأسه على الحاسوب. */
+export function ProductRail({
+  products,
+  label,
+  header,
+}: {
+  products: ProductCardData[]
+  label: string
+  header?: React.ReactNode
+}) {
   return (
-    <ul className="-mx-4 flex snap-x snap-mandatory scroll-px-4 [scrollbar-width:none] gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-x-4 sm:gap-y-7 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4 lg:gap-x-5 [&::-webkit-scrollbar]:hidden lg:[&>li:nth-child(n+5)]:hidden sm:[&>li:nth-child(n+7)]:hidden">
+    <Carousel label={label} header={header}>
       {products.map((product) => (
-        <li
-          key={product.slug}
-          className="w-[44%] shrink-0 snap-start sm:w-auto"
-        >
+        <li key={product.slug} className={RAIL_ITEM}>
           <ProductCard product={product} />
         </li>
       ))}
-    </ul>
+    </Carousel>
   )
 }

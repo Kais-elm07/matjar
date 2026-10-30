@@ -3,16 +3,23 @@ import "server-only"
 import { z } from "zod"
 
 import { categories as categoryData } from "@/data/categories"
+import { homeContent } from "@/data/home"
 import { products as productData } from "@/data/products"
+import { testimonials } from "@/data/testimonials"
 
 import { normalizeForSearch } from "./arabic"
 import { discountPercent, toMinorUnits } from "./money"
 import { getOptionGroups, isColorOption } from "./options"
 import type {
+  CartCatalog,
   Category,
+  CategoryBanner,
+  CategoryBannerInput,
   CategoryLink,
   CategoryOption,
   Product,
+  ProductBanner,
+  ProductBannerInput,
   ProductCard,
   Variant,
 } from "./types"
@@ -93,6 +100,12 @@ const productSchema = z.object({
   createdAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
     error: "التاريخ يجب أن يكون بصيغة 2026-10-30",
   }),
+  saleEndsAt: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, {
+      error: "تاريخ نهاية العرض يجب أن يكون بصيغة 2026-12-31",
+    })
+    .optional(),
   hidden: z.boolean().default(false),
 })
 
@@ -211,6 +224,15 @@ function parseData() {
         )
       }
     }
+
+    if (
+      product.saleEndsAt &&
+      !product.variants.some((variant) => variant.compareAtPrice !== undefined)
+    ) {
+      problems.push(
+        `${where}: تاريخ نهاية العرض يحتاج سعراً قبل الخصم في متغير واحد على الأقل.`
+      )
+    }
   }
 
   if (problems.length > 0) {
@@ -280,6 +302,7 @@ function buildCatalog() {
         inStock: variants.some((v) => v.stock > 0),
         popularity: input.popularity,
         createdAt: input.createdAt,
+        saleEndsAt: input.saleEndsAt ?? null,
       }
     })
 
@@ -348,6 +371,7 @@ export function getProduct(slug: string) {
 }
 
 export function toProductCard(product: Product): ProductCard {
+  const [onlyVariant] = product.variants
   return {
     slug: product.slug,
     name: product.name,
@@ -356,6 +380,12 @@ export function toProductCard(product: Product): ProductCard {
     priceVaries: product.maxPrice !== product.price,
     inStock: product.inStock,
     image: product.images[0] ?? null,
+    categoryName: product.categoryPath.at(-1)?.name ?? null,
+    quickAdd:
+      product.variants.length === 1
+        ? { sku: onlyVariant.sku, stock: onlyVariant.stock }
+        : null,
+    saleEndsAt: product.saleEndsAt,
     categorySlugs: product.categoryPath.map((link) => link.slug),
     variants: product.variants.map((variant) => ({
       options: variant.options,
@@ -404,9 +434,11 @@ export function getRelatedProducts(product: Product, limit = 8) {
     .map(toProductCard)
 }
 
-/** أقسام الصفحة الرئيسية. */
+/** أقسام المنتجات في الصفحة الرئيسية. */
 export function getHomeSections(limit = 8) {
   const products = catalog.products
+  // تاريخ البناء: العروض المنتهية قبله لا تُنشر أصلاً، والمتصفح يخفي ما ينتهي بعده
+  const today = new Date().toISOString().slice(0, 10)
   return {
     newArrivals: [...products]
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
@@ -425,7 +457,94 @@ export function getHomeSections(limit = 8) {
       )
       .slice(0, limit)
       .map(toProductCard),
+    deals: products
+      .filter(
+        (product) =>
+          product.saleEndsAt !== null &&
+          product.saleEndsAt >= today &&
+          product.compareAtPrice !== null
+      )
+      .sort((a, b) => (a.saleEndsAt ?? "").localeCompare(b.saleEndsAt ?? ""))
+      .slice(0, limit)
+      .map(toProductCard),
+    /** الأكثر مبيعاً في كل فئة رئيسية، لتبويبات "الرائج الآن" */
+    trending: getRootCategories()
+      .map((category) => ({
+        category: { slug: category.slug, name: category.name },
+        products: products
+          .filter((product) => product.categoryPath[0]?.slug === category.slug)
+          .sort(byPopularity)
+          .slice(0, 6)
+          .map(toProductCard),
+      }))
+      .filter((group) => group.products.length > 0),
   }
+}
+
+function toProductBanner(input: ProductBannerInput): ProductBanner {
+  const product = catalog.productBySlug.get(input.product)
+  if (!product) {
+    throw new Error(
+      `ملف الصفحة الرئيسية (src/data/home.ts): المنتج "${input.product}" غير موجود في ملف المنتجات.`
+    )
+  }
+  const discount = discountPercent(product.price, product.compareAtPrice)
+  return {
+    href: `/product/${product.slug}`,
+    title: input.title,
+    text: input.text ?? null,
+    tag: input.tag ?? (discount ? `خصم ${discount}%` : null),
+    theme: input.theme,
+    image: product.images[0] ?? null,
+    price: product.price,
+    compareAtPrice: product.compareAtPrice,
+    priceVaries: product.maxPrice !== product.price,
+  }
+}
+
+function toCategoryBanner(input: CategoryBannerInput): CategoryBanner {
+  const category = catalog.categoryBySlug.get(input.category)
+  if (!category) {
+    throw new Error(
+      `ملف الصفحة الرئيسية (src/data/home.ts): الفئة "${input.category}" غير موجودة في ملف الفئات.`
+    )
+  }
+  return {
+    href: `/category/${category.slug}`,
+    title: input.title,
+    text: input.text ?? null,
+    theme: input.theme,
+    image: category.image,
+  }
+}
+
+/** الشرائح وبطاقات العروض في الصفحة الرئيسية، مربوطة ببيانات المنتجات والفئات. */
+export function getHomeContent() {
+  return {
+    heroSlides: homeContent.heroSlides.map(toProductBanner),
+    promos: homeContent.promos.map(toProductBanner),
+    spotlights: homeContent.spotlights.map(toCategoryBanner),
+    wideBanner: homeContent.wideBanner
+      ? toProductBanner(homeContent.wideBanner)
+      : null,
+    testimonials,
+  }
+}
+
+/** أسعار ومخزون كل متغير حسب رمزه، لمطابقة السلة المحفوظة في المتصفح مع بيانات الموقع. */
+export function getCartCatalog(): CartCatalog {
+  return Object.fromEntries(
+    catalog.products.flatMap((product) =>
+      product.variants.map((variant) => [
+        variant.sku,
+        {
+          price: variant.price,
+          compareAtPrice: variant.compareAtPrice,
+          stock: variant.stock,
+        },
+      ])
+    )
+  )
 }
 
 /** فهرس البحث: بطاقات كل المنتجات، يُنشر كملف JSON يُحمَّل عند أول بحث. */

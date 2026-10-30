@@ -283,7 +283,7 @@ function OptionFilter({
               aria-pressed={isSelected}
               onClick={() => onToggle(value)}
               className={cn(
-                "inline-flex h-9 items-center gap-2 rounded-lg border px-3 text-sm transition-colors hover:border-foreground/40",
+                "inline-flex h-9 items-center gap-2 rounded-full border px-3 text-sm transition-colors hover:border-foreground/40",
                 isSelected &&
                   "border-primary bg-primary/10 font-bold text-primary hover:border-primary"
               )}

@@ -13,7 +13,15 @@
   --font-heading: var(--font-sans);
   --color-highlight: var(--highlight);
   --color-highlight-foreground: var(--highlight-foreground);
+  --color-primary-foreground-muted: var(--primary-foreground-muted);
   --color-warning: var(--warning);
+  --color-success: var(--success);
+  --color-tile-yellow: var(--tile-yellow);
+  --color-tile-green: var(--tile-green);
+  --color-tile-pink: var(--tile-pink);
+  --color-tile-blue: var(--tile-blue);
+  --color-tile-purple: var(--tile-purple);
+  --color-tile-orange: var(--tile-orange);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -53,52 +61,61 @@
 }
 
 /*
- * ألوان هوية "أناقة دافئة"، بنفس قيم hex في DESIGN.md.
+ * ألوان هوية "متجر عصري" (كحلي وكهرماني)، بنفس قيم hex في DESIGN.md.
  * لتغيير الهوية: عدّل DESIGN.md أولاً وافحصه بالأمر pnpm design:lint، ثم انسخ القيم هنا.
  */
 :root {
-  /* الخلفية الكريمية والنص البني الداكن */
-  --background: #fbf8f3;
-  --foreground: #2a211c;
-  /* السطوح البيضاء البارزة: بطاقات المزايا والقوائم العائمة والنوافذ */
+  /* الخلفية البيضاء والنص الداكن */
+  --background: #ffffff;
+  --foreground: #111111;
   --card: #ffffff;
-  --card-foreground: #2a211c;
+  --card-foreground: #111111;
   --popover: #ffffff;
-  --popover-foreground: #2a211c;
-  /* اللون الأساسي (طيني) للأزرار والروابط والعناصر النشطة */
-  --primary: #a4471f;
+  --popover-foreground: #111111;
+  /* الكحلي: الرأس والتذييل والأسعار والروابط والعناصر المختارة */
+  --primary: #1d2733;
   --primary-foreground: #ffffff;
-  /* السطح الرملي: خلفية الصور والحقول، ولون المرور فوق الأزرار الشفافة */
-  --secondary: #f3ede4;
-  --secondary-foreground: #2a211c;
-  --muted: #f3ede4;
-  --muted-foreground: #6e6259;
-  --accent: #f3ede4;
-  --accent-foreground: #2a211c;
-  /* اللمسة الذهبية: خلفية لنص بني داكن فقط، ولا تُكتب نصاً على خلفية فاتحة */
-  --highlight: #c99a3d;
-  --highlight-foreground: #2a211c;
-  /* الأحمر للأخطاء والخصومات، والكهرماني لتنبيه "بقي عدد قليل" */
-  --destructive: #b91c1c;
-  --warning: #a16207;
-  --border: #e8dfd3;
-  --input: #e8dfd3;
-  --ring: #da7b55;
-  --chart-1: #e8dfd3;
-  --chart-2: #c99a3d;
-  --chart-3: #a4471f;
-  --chart-4: #6e6259;
-  --chart-5: #2a211c;
-  /* زوايا الأزرار والحقول 6 بكسل، والبطاقات 8.4، والقسم الترحيبي 10.8 */
-  --radius: 0.375rem;
-  --sidebar: #fbf8f3;
-  --sidebar-foreground: #2a211c;
-  --sidebar-primary: #a4471f;
+  /* الرمادي الفاتح للنصوص الثانوية فوق الكحلي */
+  --primary-foreground-muted: #bbbec2;
+  /* السطح الرمادي: أزرار التمرير، بطاقات الآراء، ولون المرور فوق الأزرار الشفافة */
+  --secondary: #f5f5f5;
+  --secondary-foreground: #111111;
+  --muted: #f5f5f5;
+  --muted-foreground: #666666;
+  --accent: #f5f5f5;
+  --accent-foreground: #111111;
+  /* الكهرماني: الأزرار الرئيسية والشارات والعدّادات. خلفية لنص داكن فقط */
+  --highlight: #febd69;
+  --highlight-foreground: #111111;
+  /* الأحمر للأخطاء والنفاد، والكهرماني الداكن لتنبيه "بقي عدد قليل"، والأخضر لـ "متوفر" */
+  --destructive: #dc2626;
+  --warning: #b45309;
+  --success: #15803d;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #d97706;
+  /* ألوان باستيل تتناوب على مربعات الفئات */
+  --tile-yellow: #fff3c4;
+  --tile-green: #e2f5d3;
+  --tile-pink: #ffe0e0;
+  --tile-blue: #dcefff;
+  --tile-purple: #ece3ff;
+  --tile-orange: #ffe6cc;
+  --chart-1: #febd69;
+  --chart-2: #1d2733;
+  --chart-3: #666666;
+  --chart-4: #d97706;
+  --chart-5: #e5e5e5;
+  /* زوايا البطاقات والحقول 5 بكسل، والشارات 3. الأزرار حبوب دائرية (rounded-full) */
+  --radius: 0.3125rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #111111;
+  --sidebar-primary: #1d2733;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f3ede4;
-  --sidebar-accent-foreground: #2a211c;
-  --sidebar-border: #e8dfd3;
-  --sidebar-ring: #da7b55;
+  --sidebar-accent: #f5f5f5;
+  --sidebar-accent-foreground: #111111;
+  --sidebar-border: #e5e5e5;
+  --sidebar-ring: #d97706;
 }
 
 /* الوضع الداكن مُجهّز لكنه غير مفعّل في النسخة الأولى */
@@ -109,8 +126,8 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: #e38a67;
-  --primary-foreground: #2a211c;
+  --primary: #febd69;
+  --primary-foreground: #111111;
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -119,9 +136,10 @@
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --warning: #e0a33a;
+  --success: #4ade80;
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --ring: #d97706;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -129,8 +147,8 @@
   --chart-5: oklch(0.269 0 0);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: #e38a67;
-  --sidebar-primary-foreground: #2a211c;
+  --sidebar-primary: #febd69;
+  --sidebar-primary-foreground: #111111;
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);

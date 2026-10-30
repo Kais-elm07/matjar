@@ -4,26 +4,27 @@ import { RichText } from "@/components/product/rich-text"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { Product } from "@/lib/catalog/types"
 
+/** التبويب النشط حبة كهرمانية، كما في DESIGN.md (section-tab-active). */
+const TAB =
+  "h-10 flex-none rounded-full px-5 text-base text-foreground data-active:bg-highlight data-active:text-highlight-foreground data-active:shadow-none"
+
 /** تبويبات المعلومات أسفل صفحة المنتج: الوصف، والمواصفات، والشحن والإرجاع. */
 export function ProductTabs({ product }: { product: Product }) {
   return (
-    <Tabs defaultValue="description" className="gap-5">
-      <TabsList
-        variant="line"
-        className="h-auto w-full justify-start gap-6 border-b p-0"
-      >
-        <TabsTrigger
-          value="description"
-          className="flex-none px-0 pb-3 text-base"
-        >
+    <Tabs
+      defaultValue="description"
+      className="gap-5 rounded-lg border p-4 md:p-6"
+    >
+      <TabsList className="h-auto w-full [scrollbar-width:none] justify-start gap-2 overflow-x-auto bg-transparent p-0">
+        <TabsTrigger value="description" className={TAB}>
           الوصف
         </TabsTrigger>
         {product.specs.length > 0 && (
-          <TabsTrigger value="specs" className="flex-none px-0 pb-3 text-base">
+          <TabsTrigger value="specs" className={TAB}>
             المواصفات
           </TabsTrigger>
         )}
-        <TabsTrigger value="shipping" className="flex-none px-0 pb-3 text-base">
+        <TabsTrigger value="shipping" className={TAB}>
           الشحن والإرجاع
         </TabsTrigger>
       </TabsList>

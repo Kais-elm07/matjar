@@ -48,8 +48,57 @@ export type ProductInput = {
   popularity?: number
   /** تاريخ الإضافة بصيغة 2026-10-30، للترتيب حسب "الأحدث" */
   createdAt: string
+  /**
+   * آخر يوم في العرض بصيغة 2026-12-31. يُظهر المنتج في قسم "عروض لفترة محدودة"
+   * مع عدّاد تنازلي حقيقي، ويختفي من القسم بعد هذا التاريخ. يحتاج سعراً قبل الخصم.
+   */
+  saleEndsAt?: string
   /** إخفاء المنتج من الموقع دون حذفه من الملف */
   hidden?: boolean
+}
+
+/** لون بطاقة في الصفحة الرئيسية: كحلي بنص أبيض، أو كهرماني أو رمادي فاتح بنص داكن. */
+export type BannerTheme = "primary" | "highlight" | "light"
+
+/** بطاقة عرض لمنتج: تؤخذ صورته وسعره من ملف المنتجات تلقائياً. */
+export type ProductBannerInput = {
+  /** رابط المنتج */
+  product: string
+  title: string
+  text?: string
+  /** نص الشارة الصغيرة. الافتراضي: نسبة الخصم إن كان على المنتج خصم */
+  tag?: string
+  theme: BannerTheme
+}
+
+/** بطاقة عرض لفئة: تؤخذ صورتها من ملف الفئات. */
+export type CategoryBannerInput = {
+  /** رابط الفئة */
+  category: string
+  title: string
+  text?: string
+  theme: BannerTheme
+}
+
+export type HomeContentInput = {
+  /** شرائح العرض الرئيسي أعلى الصفحة */
+  heroSlides: ProductBannerInput[]
+  /** ثلاث بطاقات عروض تحت شريط الثقة */
+  promos: ProductBannerInput[]
+  /** بطاقتان للفئات بعد "الأكثر مبيعاً" */
+  spotlights: CategoryBannerInput[]
+  /** بطاقة عريضة قبل آراء العملاء، أو null لإخفائها */
+  wideBanner: ProductBannerInput | null
+}
+
+/** رأي عميل حقيقي. لا تضف آراء مختلقة. */
+export type TestimonialInput = {
+  name: string
+  /** صفة العميل أو مدينته، مثل "الرياض" */
+  role?: string
+  rating: 1 | 2 | 3 | 4 | 5
+  title: string
+  text: string
 }
 
 // ---------------------------------------------------------------------------
@@ -105,6 +154,7 @@ export type Product = {
   inStock: boolean
   popularity: number
   createdAt: string
+  saleEndsAt: string | null
 }
 
 /** بيانات البطاقة: كل ما تحتاجه القوائم والبحث والفلاتر في المتصفح. */
@@ -116,6 +166,11 @@ export type ProductCard = {
   priceVaries: boolean
   inStock: boolean
   image: ProductImage | null
+  /** اسم الفئة الأدق، يظهر فوق اسم المنتج في البطاقة */
+  categoryName: string | null
+  /** للمنتجات ذات المتغير الواحد: إضافة مباشرة للسلة من البطاقة */
+  quickAdd: { sku: string; stock: number } | null
+  saleEndsAt: string | null
   /** مسار الفئة بالروابط، للفلترة حسب الفئة */
   categorySlugs: string[]
   /** خيارات المتغيرات وتوفرها، للفلترة حسب المقاس واللون */
@@ -125,3 +180,31 @@ export type ProductCard = {
   /** نص مطبّع للبحث العربي */
   searchText: string
 }
+
+/** بطاقة عرض لمنتج بعد ربطها ببياناته. */
+export type ProductBanner = {
+  href: string
+  title: string
+  text: string | null
+  tag: string | null
+  theme: BannerTheme
+  image: ProductImage | null
+  price: number
+  compareAtPrice: number | null
+  priceVaries: boolean
+}
+
+/** بطاقة عرض لفئة بعد ربطها ببياناتها. */
+export type CategoryBanner = {
+  href: string
+  title: string
+  text: string | null
+  theme: BannerTheme
+  image: string | null
+}
+
+/** أسعار ومخزون كل متغير حسب رمزه، تقارن به السلة المحفوظة في المتصفح. */
+export type CartCatalog = Record<
+  string,
+  { price: number; compareAtPrice: number | null; stock: number }
+>

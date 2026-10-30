@@ -67,11 +67,12 @@ export function ProductGallery({
   const active = images[activeIndex] ?? images[0]
 
   return (
-    <div className="space-y-3">
-      <div className="relative">
+    // على الحاسوب: الصور المصغرة عمودياً بجانب الصورة الكبيرة من جهة البداية
+    <div className="space-y-3 lg:flex lg:items-start lg:gap-3 lg:space-y-0">
+      <div className="relative lg:min-w-0 lg:flex-1">
         <div
           ref={trackRef}
-          className="flex snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto overscroll-x-contain rounded-2xl bg-muted [&::-webkit-scrollbar]:hidden"
+          className="flex snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto overscroll-x-contain rounded-lg border bg-background [&::-webkit-scrollbar]:hidden"
         >
           {images.map((image, index) => (
             <div
@@ -108,14 +109,14 @@ export function ProductGallery({
           <ZoomInIcon className="size-4" aria-hidden />
         </span>
         {images.length > 1 && (
-          <span className="pointer-events-none absolute start-3 bottom-3 rounded-md bg-background/85 px-2.5 py-1 text-xs font-medium tabular-nums shadow-sm md:hidden">
+          <span className="pointer-events-none absolute start-3 bottom-3 rounded-full bg-background/85 px-2.5 py-1 text-xs font-medium tabular-nums shadow-sm md:hidden">
             {activeIndex + 1} / {images.length}
           </span>
         )}
       </div>
 
       {images.length > 1 && (
-        <ul className="flex [scrollbar-width:none] gap-2 overflow-x-auto pb-1">
+        <ul className="flex [scrollbar-width:none] gap-2 overflow-x-auto pb-1 lg:order-first lg:max-h-[34rem] lg:flex-col lg:overflow-x-visible lg:overflow-y-auto lg:pb-0">
           {images.map((image, index) => (
             <li key={image.src} className="shrink-0">
               <button
@@ -124,7 +125,7 @@ export function ProductGallery({
                 aria-label={`عرض الصورة ${index + 1}`}
                 aria-current={index === activeIndex}
                 className={cn(
-                  "relative block size-16 overflow-hidden rounded-lg border-2 border-transparent bg-muted transition-colors md:size-20",
+                  "relative block size-16 overflow-hidden rounded-md border-2 border-border bg-background transition-colors md:size-20",
                   index === activeIndex
                     ? "border-primary"
                     : "opacity-70 hover:opacity-100"

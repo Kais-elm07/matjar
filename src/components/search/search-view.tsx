@@ -33,7 +33,7 @@ export function SearchView({ categories }: { categories: CategoryOption[] }) {
               <li key={category.slug}>
                 <Link
                   href={`/category/${category.slug}`}
-                  className="inline-flex h-9 items-center rounded-lg border px-4 text-sm transition-colors hover:border-primary hover:text-primary"
+                  className="inline-flex h-9 items-center rounded-full border px-4 text-sm transition-colors hover:border-primary hover:text-primary"
                 >
                   {category.name}
                 </Link>

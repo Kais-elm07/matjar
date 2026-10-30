@@ -56,6 +56,7 @@ export const products: ProductInput[] = [
     ),
     popularity: 150,
     createdAt: "2026-10-18",
+    saleEndsAt: "2026-12-31",
   },
   {
     slug: "floral-summer-dress",
@@ -116,6 +117,7 @@ export const products: ProductInput[] = [
     ),
     popularity: 260,
     createdAt: "2026-09-05",
+    saleEndsAt: "2026-12-15",
   },
   {
     slug: "gaming-headset",
@@ -232,6 +234,7 @@ export const products: ProductInput[] = [
     }),
     popularity: 85,
     createdAt: "2026-05-20",
+    saleEndsAt: "2026-11-30",
   },
   {
     slug: "wooden-table-lamp",
@@ -346,6 +349,7 @@ export const products: ProductInput[] = [
     ),
     popularity: 75,
     createdAt: "2026-09-01",
+    saleEndsAt: "2026-11-20",
   },
   {
     slug: "beard-care-kit",

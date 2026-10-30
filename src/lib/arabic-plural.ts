@@ -1,4 +1,4 @@
-type PluralForms = {
+export type PluralForms = {
   /** 0 */
   zero: string
   /** 1 */

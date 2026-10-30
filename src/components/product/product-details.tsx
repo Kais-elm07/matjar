@@ -1,26 +1,28 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import {
   BanknoteIcon,
-  MinusIcon,
-  PlusIcon,
   RotateCcwIcon,
   ShoppingCartIcon,
   TruckIcon,
+  ZapIcon,
 } from "lucide-react"
-import { toast } from "sonner"
 
+import { QuantityStepper } from "@/components/cart/quantity-stepper"
+import { useAddToCart } from "@/components/cart/use-add-to-cart"
 import { DiscountBadge, Price } from "@/components/product/price"
 import { ProductGallery } from "@/components/product/product-gallery"
+import { ShareButton } from "@/components/product/share-button"
+import { WishlistButton } from "@/components/product/wishlist-button"
 import { Button } from "@/components/ui/button"
 import { siteConfig } from "@/config/site"
 import { pluralize } from "@/lib/arabic-plural"
 import { getColorHex, type VariantOptions } from "@/lib/catalog/options"
 import type { Product, Variant } from "@/lib/catalog/types"
+import { lineLimit } from "@/lib/store/cart"
 import { cn } from "@/lib/utils"
-
-const MAX_QUANTITY = 10
 
 const LOW_STOCK_FORMS = {
   zero: "نفد من المخزون",
@@ -46,6 +48,8 @@ export function ProductDetails({ product }: { product: Product }) {
     imageIndexForOptions(product, firstAvailable.options, 0)
   )
   const [quantity, setQuantity] = useState(1)
+  const router = useRouter()
+  const addToCart = useAddToCart()
 
   const variant: Variant | undefined = product.variants.find((candidate) =>
     groups.every(
@@ -53,8 +57,9 @@ export function ProductDetails({ product }: { product: Product }) {
     )
   )
   const stock = variant?.stock ?? 0
-  const maxQuantity = Math.max(1, Math.min(stock, MAX_QUANTITY))
+  const maxQuantity = Math.max(1, lineLimit(stock))
   const currentQuantity = Math.min(quantity, maxQuantity)
+  const canBuy = Boolean(variant) && stock > 0
 
   function valueState(groupName: string, value: string): ValueState {
     const candidates = product.variants.filter(
@@ -92,10 +97,29 @@ export function ProductDetails({ product }: { product: Product }) {
     setImageIndex((current) => imageIndexForOptions(product, next, current))
   }
 
-  function addToCart() {
-    toast("السلة قيد التجهيز", {
-      description: "ستتمكن قريباً من إضافة المنتجات إلى السلة وإتمام الطلب.",
-    })
+  /** يضيف المتغير المختار بالكمية المختارة، ويعيد عدد القطع المضافة. */
+  function add(openCart: boolean) {
+    if (!variant || stock === 0) return 0
+    const image = product.images[imageIndex] ?? product.images[0]
+    return addToCart(
+      {
+        sku: variant.sku,
+        slug: product.slug,
+        name: product.name,
+        image: image ? { src: image.src, alt: image.alt } : null,
+        options: variant.options,
+        price: variant.price,
+        compareAtPrice: variant.compareAtPrice,
+        stock: variant.stock,
+      },
+      currentQuantity,
+      { openCart }
+    )
+  }
+
+  /** "اشترِ الآن": يضيف للسلة وينتقل إليها مباشرة. */
+  function buyNow() {
+    if (add(false) > 0) router.push("/cart")
   }
 
   return (
@@ -150,7 +174,7 @@ export function ProductDetails({ product }: { product: Product }) {
                     disabled={state === "unavailable"}
                     onClick={() => selectValue(group.name, value)}
                     className={cn(
-                      "relative inline-flex h-11 min-w-11 items-center justify-center gap-2 rounded-lg border px-3 text-sm font-medium transition-colors hover:border-foreground/50 disabled:cursor-not-allowed disabled:opacity-40",
+                      "relative inline-flex h-11 min-w-11 items-center justify-center gap-2 rounded-full border px-4 text-sm font-medium transition-colors hover:border-foreground/50 disabled:cursor-not-allowed disabled:opacity-40",
                       isSelected &&
                         "border-primary bg-primary/10 text-primary ring-1 ring-primary hover:border-primary",
                       state === "sold-out" &&
@@ -175,22 +199,42 @@ export function ProductDetails({ product }: { product: Product }) {
           </fieldset>
         ))}
 
-        <div className="flex items-stretch gap-3">
-          <QuantityInput
-            value={currentQuantity}
-            max={maxQuantity}
-            disabled={stock === 0}
-            onChange={setQuantity}
-          />
+        <div className="space-y-3">
+          <div className="flex items-stretch gap-3">
+            <QuantityStepper
+              value={currentQuantity}
+              max={maxQuantity}
+              disabled={!canBuy}
+              onChange={setQuantity}
+            />
+            <Button
+              variant="cta"
+              size="xl"
+              className="flex-1"
+              disabled={!canBuy}
+              onClick={() => add(true)}
+            >
+              <ShoppingCartIcon data-icon="inline-start" aria-hidden />
+              {canBuy ? "أضف للسلة" : "غير متوفر حالياً"}
+            </Button>
+          </div>
           <Button
             size="xl"
-            className="flex-1"
-            disabled={!variant || stock === 0}
-            onClick={addToCart}
+            className="w-full"
+            disabled={!canBuy}
+            onClick={buyNow}
           >
-            <ShoppingCartIcon data-icon="inline-start" aria-hidden />
-            {stock === 0 ? "غير متوفر حالياً" : "أضف للسلة"}
+            <ZapIcon data-icon="inline-start" aria-hidden />
+            اشترِ الآن
           </Button>
+          <div className="grid grid-cols-2 gap-3">
+            <WishlistButton
+              slug={product.slug}
+              name={product.name}
+              variant="labeled"
+            />
+            <ShareButton title={product.name} />
+          </div>
         </div>
 
         <ul className="grid gap-3 rounded-xl bg-muted/60 p-4 text-sm sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-3">
@@ -223,64 +267,19 @@ function imageIndexForOptions(
   return index >= 0 ? index : current
 }
 
+/** حالة التوفر بنقطة ملونة: أخضر للمتوفر، وكهرماني داكن للكمية القليلة، وأحمر للنفاد. */
 function StockStatus({ stock }: { stock: number }) {
-  if (stock === 0) {
-    return <p className="text-sm font-bold text-destructive">نفد من المخزون</p>
-  }
-  if (stock <= siteConfig.lowStockThreshold) {
-    return (
-      <p className="text-sm font-bold text-warning">
-        {pluralize(stock, LOW_STOCK_FORMS)}
-      </p>
-    )
-  }
-  return <p className="text-sm font-bold text-primary">متوفر</p>
-}
-
-function QuantityInput({
-  value,
-  max,
-  disabled,
-  onChange,
-}: {
-  value: number
-  max: number
-  disabled: boolean
-  onChange: (value: number) => void
-}) {
+  const [tone, text] =
+    stock === 0
+      ? ["text-destructive", "نفد من المخزون"]
+      : stock <= siteConfig.lowStockThreshold
+        ? ["text-warning", pluralize(stock, LOW_STOCK_FORMS)]
+        : ["text-success", "متوفر"]
   return (
-    <div
-      role="group"
-      aria-label="الكمية"
-      className="flex h-11 items-center rounded-lg border"
-    >
-      <Button
-        variant="ghost"
-        size="icon-xl"
-        className="h-full rounded-e-none"
-        disabled={disabled || value >= max}
-        onClick={() => onChange(value + 1)}
-        aria-label="زيادة الكمية"
-      >
-        <PlusIcon aria-hidden />
-      </Button>
-      <output
-        aria-live="polite"
-        className="w-8 text-center text-base font-bold tabular-nums"
-      >
-        {value}
-      </output>
-      <Button
-        variant="ghost"
-        size="icon-xl"
-        className="h-full rounded-s-none"
-        disabled={disabled || value <= 1}
-        onClick={() => onChange(value - 1)}
-        aria-label="إنقاص الكمية"
-      >
-        <MinusIcon aria-hidden />
-      </Button>
-    </div>
+    <p className={cn("flex items-center gap-2 text-sm font-bold", tone)}>
+      <span aria-hidden className="size-2 rounded-full bg-current" />
+      {text}
+    </p>
   )
 }
 

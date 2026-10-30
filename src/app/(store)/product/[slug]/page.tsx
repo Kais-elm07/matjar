@@ -6,6 +6,7 @@ import { ProductRail } from "@/components/product/product-grid"
 import { ProductTabs } from "@/components/product/product-tabs"
 import { Breadcrumbs } from "@/components/store/breadcrumbs"
 import { JsonLd } from "@/components/store/json-ld"
+import { SectionHeading } from "@/components/store/section-heading"
 import {
   getProduct,
   getProducts,
@@ -80,11 +81,14 @@ export default async function ProductPage({
       <ProductTabs product={product} />
 
       {related.length > 0 && (
-        <section aria-labelledby="related-heading" className="space-y-4">
-          <h2 id="related-heading" className="text-xl font-bold md:text-2xl">
-            منتجات قد تعجبك
-          </h2>
-          <ProductRail products={related} />
+        <section aria-labelledby="related-heading">
+          <ProductRail
+            label="منتجات قد تعجبك"
+            header={
+              <SectionHeading id="related-heading" title="منتجات قد تعجبك" />
+            }
+            products={related}
+          />
         </section>
       )}
 

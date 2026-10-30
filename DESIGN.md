@@ -2,25 +2,33 @@
 version: alpha
 name: متجري
 description: >-
-  الهوية البصرية لمتجر إلكتروني عربي للعرض بطابع "أناقة دافئة": واجهة من
-  اليمين لليسار، مصممة للجوال أولاً، بلون طيني على خلفية كريمية ولمسة ذهبية
-  توحي بالجودة والدفء. اسم المتجر مؤقت حتى اعتماد الاسم النهائي.
+  الهوية البصرية لمتجر إلكتروني عربي للعرض بطابع "متجر عصري": رأس وتذييل
+  بالكحلي، وأزرار وشارات بالكهرماني، وخلفية بيضاء وبطاقات بحدود رمادية خفيفة.
+  التخطيط مستوحى من قالب Webishop لمتاجر Shopify، وأُعيد بناؤه بالعربية من
+  اليمين لليسار دون نسخ كوده أو صوره. اسم المتجر مؤقت حتى اعتماد الاسم النهائي.
 colors:
-  primary: "#a4471f"
+  primary: "#1d2733"
   on-primary: "#ffffff"
-  primary-soft: "color-mix(in srgb, #a4471f 10%, #fbf8f3)"
-  ring: "#da7b55"
-  background: "#fbf8f3"
-  foreground: "#2a211c"
+  on-primary-muted: "#bbbec2"
+  primary-soft: "color-mix(in srgb, #1d2733 10%, #ffffff)"
+  highlight: "#febd69"
+  on-highlight: "#111111"
+  ring: "#d97706"
+  background: "#ffffff"
+  foreground: "#111111"
   surface: "#ffffff"
-  surface-muted: "#f3ede4"
-  muted-foreground: "#6e6259"
-  border: "#e8dfd3"
-  highlight: "#c99a3d"
-  on-highlight: "#2a211c"
-  sale: "#b91c1c"
-  on-sale: "#ffffff"
-  warning: "#a16207"
+  surface-muted: "#f5f5f5"
+  muted-foreground: "#666666"
+  border: "#e5e5e5"
+  error: "#dc2626"
+  warning: "#b45309"
+  success: "#15803d"
+  tile-yellow: "#fff3c4"
+  tile-green: "#e2f5d3"
+  tile-pink: "#ffe0e0"
+  tile-blue: "#dcefff"
+  tile-purple: "#ece3ff"
+  tile-orange: "#ffe6cc"
 typography:
   headline-display:
     fontFamily: IBM Plex Sans Arabic
@@ -93,11 +101,11 @@ typography:
     fontWeight: 700
     lineHeight: 1.5
 rounded:
-  sm: 3.6px
-  md: 4.8px
-  lg: 6px
-  xl: 8.4px
-  2xl: 10.8px
+  sm: 3px
+  md: 4px
+  lg: 5px
+  xl: 7px
+  2xl: 9px
   full: 9999px
 spacing:
   xs: 4px
@@ -112,93 +120,184 @@ spacing:
   container-max: 1280px
   touch-target: 44px
   header-height: 64px
+  tab-bar-height: 64px
 components:
+  button-cta:
+    backgroundColor: "{colors.highlight}"
+    textColor: "{colors.on-highlight}"
+    typography: "{typography.label-lg}"
+    rounded: "{rounded.full}"
+    height: 44px
+    padding: 24px
+  button-cta-hover:
+    backgroundColor: "color-mix(in srgb, #febd69 85%, #ffffff)"
+    textColor: "{colors.on-highlight}"
   button-primary:
     backgroundColor: "{colors.primary}"
     textColor: "{colors.on-primary}"
     typography: "{typography.label-lg}"
-    rounded: "{rounded.lg}"
+    rounded: "{rounded.full}"
     height: 44px
-    padding: 20px
+    padding: 24px
   button-primary-hover:
-    backgroundColor: "color-mix(in srgb, #a4471f 90%, #fbf8f3)"
+    backgroundColor: "color-mix(in srgb, #1d2733 90%, #ffffff)"
     textColor: "{colors.on-primary}"
   button-outline:
     backgroundColor: "{colors.background}"
     textColor: "{colors.foreground}"
     typography: "{typography.label-lg}"
-    rounded: "{rounded.lg}"
+    rounded: "{rounded.full}"
     height: 44px
-    padding: 20px
+    padding: 24px
+  site-header:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.on-primary}"
+    height: 64px
+  header-nav:
+    backgroundColor: "{colors.background}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.label-md}"
+    height: 48px
+  search-input:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.full}"
+    height: 44px
+  search-button:
+    backgroundColor: "{colors.highlight}"
+    textColor: "{colors.on-highlight}"
+    rounded: "{rounded.full}"
+    size: 36px
+  counter-badge:
+    backgroundColor: "{colors.highlight}"
+    textColor: "{colors.on-highlight}"
+    typography: "{typography.label-sm}"
+    rounded: "{rounded.full}"
+    size: 18px
   hero-banner:
     backgroundColor: "{colors.primary}"
     textColor: "{colors.on-primary}"
     typography: "{typography.headline-display}"
-    rounded: "{rounded.2xl}"
+    rounded: "{rounded.lg}"
     padding: 40px
-  hero-badge:
+  hero-banner-highlight:
     backgroundColor: "{colors.highlight}"
     textColor: "{colors.on-highlight}"
+    typography: "{typography.headline-display}"
+    rounded: "{rounded.lg}"
+    padding: 40px
+  promo-tag:
+    backgroundColor: "{colors.foreground}"
+    textColor: "{colors.on-primary}"
+    typography: "{typography.label-sm}"
+    rounded: "{rounded.sm}"
+    padding: 6px
+  category-tile:
+    backgroundColor: "{colors.tile-yellow}"
+    textColor: "{colors.foreground}"
     typography: "{typography.label-md}"
-    rounded: "{rounded.md}"
-    padding: 12px
-  search-input:
+    rounded: "{rounded.lg}"
+  category-tile-green:
+    backgroundColor: "{colors.tile-green}"
+    textColor: "{colors.foreground}"
+  category-tile-pink:
+    backgroundColor: "{colors.tile-pink}"
+    textColor: "{colors.foreground}"
+  category-tile-blue:
+    backgroundColor: "{colors.tile-blue}"
+    textColor: "{colors.foreground}"
+  category-tile-purple:
+    backgroundColor: "{colors.tile-purple}"
+    textColor: "{colors.foreground}"
+  category-tile-orange:
+    backgroundColor: "{colors.tile-orange}"
+    textColor: "{colors.foreground}"
+  section-tab-active:
+    backgroundColor: "{colors.highlight}"
+    textColor: "{colors.on-highlight}"
+    typography: "{typography.label-lg}"
+    rounded: "{rounded.full}"
+    height: 36px
+    padding: 20px
+  carousel-arrow:
     backgroundColor: "{colors.surface-muted}"
     textColor: "{colors.foreground}"
-    typography: "{typography.body-md}"
-    rounded: "{rounded.lg}"
-    height: 44px
+    rounded: "{rounded.full}"
+    size: 36px
   filter-chip:
     backgroundColor: "{colors.background}"
     textColor: "{colors.foreground}"
     typography: "{typography.label-md}"
-    rounded: "{rounded.lg}"
+    rounded: "{rounded.full}"
     height: 36px
-    padding: 12px
+    padding: 14px
   filter-chip-selected:
     backgroundColor: "{colors.primary-soft}"
     textColor: "{colors.primary}"
   product-card:
-    backgroundColor: "{colors.background}"
-    textColor: "{colors.foreground}"
-    typography: "{typography.label-md}"
-    rounded: "{rounded.xl}"
-  product-card-image:
-    backgroundColor: "{colors.surface-muted}"
-    rounded: "{rounded.xl}"
-  category-card:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.foreground}"
     typography: "{typography.label-md}"
-    rounded: "{rounded.xl}"
+    rounded: "{rounded.lg}"
+    padding: 12px
+  product-card-meta:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.muted-foreground}"
+    typography: "{typography.body-sm}"
   price-current:
-    backgroundColor: "{colors.background}"
-    textColor: "{colors.foreground}"
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.primary}"
     typography: "{typography.price-md}"
   price-old:
-    backgroundColor: "{colors.background}"
+    backgroundColor: "{colors.surface}"
     textColor: "{colors.muted-foreground}"
     typography: "{typography.body-sm}"
   badge-discount:
-    backgroundColor: "{colors.sale}"
-    textColor: "{colors.on-sale}"
+    backgroundColor: "{colors.highlight}"
+    textColor: "{colors.on-highlight}"
     typography: "{typography.label-sm}"
-    rounded: "{rounded.md}"
+    rounded: "{rounded.sm}"
     padding: 6px
+  stock-in:
+    backgroundColor: "{colors.background}"
+    textColor: "{colors.success}"
+    typography: "{typography.label-md}"
   stock-low:
     backgroundColor: "{colors.background}"
     textColor: "{colors.warning}"
     typography: "{typography.label-md}"
+  stock-out:
+    backgroundColor: "{colors.background}"
+    textColor: "{colors.error}"
+    typography: "{typography.label-md}"
+  help-strip:
+    backgroundColor: "{colors.highlight}"
+    textColor: "{colors.on-highlight}"
+    typography: "{typography.headline-md}"
+    padding: 20px
+  site-footer:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.on-primary}"
+    typography: "{typography.body-sm}"
+  footer-link:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.on-primary-muted}"
+    typography: "{typography.body-sm}"
+  tab-bar:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.muted-foreground}"
+    typography: "{typography.label-sm}"
+    height: 64px
+  tab-bar-active:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.primary}"
   focus-ring:
     backgroundColor: "{colors.ring}"
     size: 3px
   divider:
     backgroundColor: "{colors.border}"
     height: 1px
-  site-header:
-    backgroundColor: "{colors.background}"
-    textColor: "{colors.foreground}"
-    height: 64px
 ---
 
 # الهوية البصرية لمتجري
@@ -209,101 +308,109 @@ components:
 
 ## Overview
 
-متجر عربي بطابع **أناقة دافئة**: راقٍ وهادئ دون تكلّف، وواضح لدرجة أن الزائر يجد المنتج ويفهم سعره ويضيفه للسلة دون تفكير.
+متجر عربي بطابع **متجر عصري**: واجهة تسوّق مزدحمة بالعروض لكنها مرتبة، يجد فيها الزائر المنتج ويفهم سعره ويضيفه للسلة بسرعة.
 
-- **الشخصية:** دافئة وواثقة وحِرَفية، أقرب إلى متجر مختار بعناية منها إلى منصة تخفيضات صاخبة.
+- **مصدر الإلهام:** تخطيط قالب Webishop لمتاجر Shopify وألوانه، أُعيد بناؤهما بالعربية ومن اليمين لليسار. لم يُنسخ كود القالب ولا صوره.
+- **الشخصية:** عملية وحيوية وواثقة، تشبه المتاجر الكبيرة متعددة الأقسام.
 - **الجمهور:** متسوقون عرب يتصفحون غالباً من الجوال، بعضهم قليل الخبرة بالتسوق الإلكتروني.
-- **الإحساس المطلوب:** خلفية كريمية هادئة، ولون طيني واحد يقود كل فعل مهم، ولمسة ذهبية نادرة، ونصوص كبيرة سهلة القراءة.
+- **الإحساس المطلوب:** رأس كحلي ثابت يحمل البحث والسلة، وخلفية بيضاء، وأقسام عروض متتالية، والكهرماني يشير دائماً إلى الفعل التالي.
 - **الاتجاه:** الواجهة كلها من اليمين لليسار. المحاذاة والأسهم والقوائم المنزلقة تبدأ من اليمين.
-- **الجوال أولاً:** كل تصميم يبدأ من عرض 375 بكسل ثم يتوسع للحاسوب.
+- **الجوال أولاً:** كل تصميم يبدأ من عرض 375 بكسل، مع شريط تنقل ثابت أسفل الشاشة.
 
 ## Colors
 
-لوحة دافئة مستوحاة من الطين والرمل: درجات كريمية وبنية للمساحات والنصوص، ولون طيني للفعل، وذهبي للمسات قليلة، وأحمر للخصومات فقط.
+لونان للهوية فقط: الكحلي للهيكل والنصوص المهمة، والكهرماني للأفعال والشارات. البقية رماديات محايدة.
 
-- **الطيني (primary, #a4471f):** لون الأفعال الأساسية والروابط والعناصر المختارة والقسم الترحيبي. لا يُستخدم للنصوص الطويلة.
-- **النص على الطيني (on-primary, #ffffff):** أبيض للنص فوق اللون الأساسي، بتباين 6:1.
-- **الطيني الفاتح (primary-soft):** خلفية الخيار المختار في الفلاتر والأزرار الشبيهة بالشرائح، بتباين 4.9:1 مع النص الطيني.
-- **حلقة التركيز (ring, #da7b55):** طيني فاتح حول العنصر عند التنقل بلوحة المفاتيح.
-- **الخلفية الكريمية (background, #fbf8f3):** خلفية كل الصفحات والرأس وبطاقات المنتجات.
-- **السطح الأبيض (surface, #ffffff):** للعناصر التي تحتاج أن تبرز فوق الكريمي: القوائم العائمة والنوافذ وبطاقات الفئات.
-- **السطح الرملي (surface-muted, #f3ede4):** خلفية الصور والحقول وأقسام المعلومات الثانوية.
-- **النص البني الداكن (foreground, #2a211c):** للعناوين والأسعار والنصوص، بتباين 14.9:1 على الكريمي.
-- **النص الثانوي (muted-foreground, #6e6259):** للأوصاف القصيرة والأعداد والسعر قبل الخصم، بتباين 5.6:1 على الكريمي.
-- **الحدود (border, #e8dfd3):** فواصل وحدود البطاقات والحقول.
-- **الذهبي (highlight, #c99a3d):** لمسة مميزة نادرة، مثل شارة القسم الترحيبي، والنص فوقه بني داكن (on-highlight) بتباين 6.1:1.
-- **أحمر الخصم (sale, #b91c1c):** شارة نسبة الخصم ورابط "العروض" ورسائل الخطأ فقط.
-- **الكهرماني (warning, #a16207):** تنبيه "بقي عدد قليل" في صفحة المنتج.
+- **الكحلي (primary, #1d2733):** خلفية الرأس والتذييل، والأسعار، والروابط، والعناصر المختارة، وزر "اشترِ الآن". النص فوقه أبيض بتباين 15:1.
+- **الرمادي الفاتح على الكحلي (on-primary-muted, #bbbec2):** روابط التذييل والنصوص الثانوية فوق الكحلي، بتباين 8:1.
+- **الكحلي الفاتح (primary-soft):** خلفية الخيار المختار في الفلاتر.
+- **الكهرماني (highlight, #febd69):** الأزرار الرئيسية مثل "أضف للسلة" و"تسوّق الآن"، وزر البحث، وشارات الخصم، وعدّادات الرأس، والتبويب النشط، وشريط المساعدة. النص فوقه داكن (on-highlight, #111111) بتباين 11.4:1.
+- **حلقة التركيز (ring, #d97706):** كهرماني داكن يظهر بوضوح على الأبيض (3.2:1) وعلى الكحلي (4.7:1).
+- **الخلفية والسطوح (background و surface, #ffffff):** أبيض لكل الصفحات والبطاقات.
+- **السطح الرمادي (surface-muted, #f5f5f5):** أزرار التمرير الدائرية، وبطاقات الآراء، والأقسام الثانوية.
+- **النص الأساسي (foreground, #111111):** العناوين وأسماء المنتجات.
+- **النص الثانوي (muted-foreground, #666666):** الأوصاف وأسماء الفئات في البطاقات والسعر قبل الخصم، بتباين 5.7:1.
+- **الحدود (border, #e5e5e5):** حدود البطاقات والحقول والفواصل.
+- **الأحمر (error, #dc2626):** رسائل الخطأ و"نفد من المخزون" فقط.
+- **الكهرماني الداكن (warning, #b45309):** تنبيه "بقي عدد قليل".
+- **الأخضر (success, #15803d):** حالة "متوفر".
+- **ألوان مربعات الفئات (tile-yellow إلى tile-orange):** ستة ألوان باستيل تتناوب على مربعات الفئات في الصفحة الرئيسية، والنص فوقها داكن.
 
 ## Typography
 
 خط واحد فقط في كل الموقع: **IBM Plex Sans Arabic**، مستضاف داخل المشروع في `src/fonts`، بملفات للحروف العربية وملفات للأرقام والحروف اللاتينية.
 الملفات نسخ مصغّرة تحوي حروف المتجر فقط، يولّدها الأمر `pnpm fonts` من الأصول في `assets/fonts`، فيبقى حجم الخط كله 66 كيلوبايت.
+خط القالب الأصلي (Jost) لا يحوي حروفاً عربية، لذلك بقي IBM Plex Sans Arabic.
 الخط ثابت الأوزان، والمتوفر منه ثلاثة فقط: 400 للنصوص، و500 للأسماء والأزرار، و700 للعناوين والأسعار.
 
 - **العناوين (headline):** عريضة (700) مع تباعد أسطر مريح للحروف العربية. لكل عنوان قيمة للجوال وأخرى للحاسوب.
 - **النصوص (body):** 16 بكسل كحد أدنى للنص الأساسي، بتباعد أسطر 1.75 لأن الحروف العربية تحتاج مساحة رأسية أكبر من اللاتينية.
 - **الأسماء والأزرار (label):** وزن متوسط 500، والشارات الصغيرة 12 بكسل بوزن 700.
-- **الأسعار (price):** عريضة دائماً، وبأرقام 0-9 لتجنب الالتباس، والعملة بعد الرقم: "129 ر.س".
+- **الأسعار (price):** عريضة بالكحلي دائماً، وبأرقام 0-9 لتجنب الالتباس، والعملة بعد الرقم: "129 ر.س".
 - **الحقول:** 16 بكسل على الجوال حتى لا يكبّر المتصفح الصفحة تلقائياً عند الكتابة.
 
 ## Layout
 
 - **الشبكة:** حاوية بعرض أقصى 1280 بكسل في المنتصف، وهامش جانبي 16 بكسل على الجوال و24 على الحاسوب (`page-container`).
-- **مقياس المسافات:** مضاعفات 4 بكسل. المسافة بين أقسام الصفحة 48 إلى 64 بكسل، وداخل البطاقات 16 بكسل.
-- **شبكة المنتجات:** عمودان على الجوال، 3 على اللوحي، 4 على الحاسوب (3 عند وجود شريط الفلاتر الجانبي).
-- **صفوف الرئيسية:** تُسحب أفقياً على الجوال، وتصبح شبكة على الشاشات الأكبر.
-- **الرأس:** ثابت أعلى الصفحة بارتفاع 64 بكسل، والبحث في سطر مستقل تحته على الجوال.
-- **الفلاتر:** شريط جانبي على الحاسوب، ونافذة منزلقة من الأسفل على الجوال.
+- **الرأس على الحاسوب:** صف كحلي فيه الشعار والبحث العريض وأيقونتا المفضلة والسلة بعدّاداتهما، وتحته صف أبيض فيه زر "كل الفئات" بقائمة كبيرة وروابط التسوق.
+- **الرأس على الجوال:** صف كحلي فيه زر القائمة والشعار والأيقونات، وتحته البحث بعرض كامل داخل الكحلي.
+- **شريط التنقل السفلي على الجوال:** ثابت بارتفاع 64 بكسل: الرئيسية، الفئات، البحث، المفضلة، السلة. وتُترك له مساحة أسفل كل صفحة.
+- **ترتيب الصفحة الرئيسية:** شرائح العرض الرئيسي، شريط الثقة، ثلاث بطاقات عروض، الفئات، الأكثر مبيعاً، بطاقتا عرض، الرائج بتبويبات الفئات، وصل حديثاً مع بطاقة عرض، عروض بعدّاد تنازلي، آراء العملاء، ثم التذييل.
+- **صفوف المنتجات:** تُسحب أفقياً على كل الشاشات، مع زرّي تمرير دائريين في رأس القسم على الحاسوب.
+- **شبكة المنتجات في القوائم:** عمودان على الجوال، 3 على اللوحي، 4 على الحاسوب (3 عند وجود شريط الفلاتر الجانبي).
+- **مقياس المسافات:** مضاعفات 4 بكسل. المسافة بين أقسام الصفحة 48 إلى 64 بكسل، وداخل البطاقات 12 إلى 16 بكسل.
 - **اللمس:** كل عنصر قابل للنقر بارتفاع 44 بكسل على الأقل، والشرائح الصغيرة 36 بكسل مع مسافات بينها.
 - **الاتجاه:** استخدم الخصائص المنطقية دائماً (`ms` و`me` و`ps` و`pe` و`start` و`end`) بدل اليسار واليمين.
 
 ## Elevation & Depth
 
-التصميم **مسطح بطبقات لونية** وليس بظلال ثقيلة.
+التصميم **مسطح بحدود خفيفة** وليس بظلال ثقيلة.
 
-- الصفحة كريمية، والسطوح البيضاء تبرز فوقها بلونها وبحد رملي خفيف، دون ظل.
-- بطاقة المنتج بلا خلفية، وتتميز بصورتها على السطح الرملي.
-- الظل الخفيف مسموح فقط للعناصر العائمة: قائمة اقتراحات البحث، والإشعارات، والنوافذ المنبثقة.
-- الرأس شبه شفاف مع تمويه خفيف للخلفية عند التمرير.
-- التفاعل يظهر بتكبير خفيف للصورة (5%) عند المرور فوق البطاقة، لا برفعها.
+- البطاقات بيضاء بحد رمادي خفيف (#e5e5e5)، وعند المرور يظهر ظل خفيف ويكبر الحد قليلاً.
+- الظل مسموح فقط للعناصر العائمة: قائمة الفئات الكبيرة، واقتراحات البحث، ونافذة السلة، والإشعارات.
+- الرأس الكحلي ثابت أعلى الصفحة، وشريط الجوال السفلي ثابت أسفلها بحد علوي خفيف.
 
 ## Shapes
 
-زوايا **صغيرة ومرتبة** تعطي إحساساً بالدقة والأناقة، مع دائرية خفيفة تمنع الحدة.
-
-- الأزرار والحقول وحقل البحث والشرائح: 6 بكسل (`lg`).
-- البطاقات وصور المنتجات: 8.4 بكسل (`xl`).
-- القسم الترحيبي ومعرض المنتج: 10.8 بكسل (`2xl`).
-- الشارات الصغيرة، مثل الخصم وشارة القسم الترحيبي: 4.8 بكسل (`md`).
-- الدوائر تبقى دوائر: الأيقونات داخل دائرة، وعدّاد السلة، ودوائر الألوان في الفلاتر والمتغيرات بحد رفيع يُظهر اللون الأبيض.
+- **الأزرار:** حبوب بزوايا دائرية بالكامل (`full`)، وكذلك حقل البحث والتبويبات والشرائح.
+- **البطاقات وبطاقات العروض والصور:** 5 بكسل (`lg`).
+- **الحقول العادية (الكمية والفلاتر):** 5 بكسل (`lg`).
+- **الشارات الصغيرة، مثل الخصم:** 3 بكسل (`sm`).
+- **الدوائر تبقى دوائر:** أزرار التمرير، وعدّادات الرأس، ودوائر الألوان في الفلاتر والمتغيرات.
 
 ## Components
 
-- **الزر الأساسي:** طيني بنص أبيض، بارتفاع 44 بكسل. عند المرور يفتح لونه 10% فقط ليبقى التباين فوق 4.5:1. زر واحد أساسي فقط في كل منطقة من الصفحة.
-- **الزر الثانوي:** بلون الخلفية بحد رملي ونص داكن، للأفعال البديلة مثل "العروض" و"مسح الفلاتر".
-- **القسم الترحيبي:** طيني بنص أبيض، وفوق العنوان شارة ذهبية صغيرة، وزر بلون الخلفية الكريمية ونص طيني.
-- **حقل البحث:** مستطيل بزوايا 6 بكسل وخلفية رملية وأيقونة البحث في بدايته، وتظهر الاقتراحات في قائمة بيضاء عائمة تحته.
-- **بطاقة المنتج:** صورة مربعة على سطح رملي، ثم الاسم في سطرين كحد أقصى، ثم السعر. شارة الخصم في الزاوية العليا من جهة البداية، و"نفد من المخزون" شريط أسفل الصورة. البطاقة كلها قابلة للنقر.
-- **بطاقات الفئات والمزايا:** سطح أبيض بحد رملي على الخلفية الكريمية.
-- **السعر:** السعر الحالي عريض، والسعر قبل الخصم مشطوب ورمادي بعده، و"من" قبل السعر إن اختلفت أسعار المتغيرات.
-- **شرائح الفلاتر:** بزوايا 6 بكسل وحد رملي، والمختارة بخلفية طينية فاتحة ونص طيني.
-- **اختيار المتغيرات:** أزرار مربعة بارتفاع 44 بكسل، والمختار بحد طيني. القيمة النافدة مشطوبة لكنها قابلة للاختيار لتوضيح النفاد، والتركيبة غير الموجودة معطلة.
-- **الحالات الفارغة:** إطار متقطع وأيقونة في دائرة رملية وجملة توضح ما حدث وزر لما يمكن فعله.
-- **التحميل:** هياكل رملية نابضة بنفس شكل المحتوى، بدل مؤشرات الدوران.
+- **الزر الرئيسي (button-cta):** كهرماني بنص داكن، حبة بارتفاع 44 بكسل، للفعل الأهم في المنطقة: "أضف للسلة"، "تسوّق الآن"، "إتمام الطلب".
+- **الزر الكحلي (button-primary):** للفعل الثاني القوي: "اشترِ الآن"، "عرض السلة".
+- **الزر الثانوي (button-outline):** أبيض بحد رمادي، للأفعال البديلة مثل "مسح الفلاتر" و"متابعة التسوق".
+- **حقل البحث:** حبة بيضاء داخل الرأس الكحلي، وزر بحث كهرماني دائري في نهايتها. الاقتراحات تعرض صورة المنتج وسعره.
+- **عدّادات الرأس:** دائرة كهرمانية صغيرة فوق أيقونتي المفضلة والسلة، ولا تظهر عند الصفر.
+- **القائمة الكبيرة:** زر "كل الفئات" يفتح لوحة بيضاء بأعمدة، لكل فئة رئيسية عمود بفئاتها الفرعية.
+- **شرائح العرض الرئيسي:** تُسحب باللمس، مع نقاط وأسهم، دون تشغيل تلقائي. كل شريحة: شارة خصم، عنوان، "يبدأ من" والسعر، وزر.
+- **بطاقات العروض:** خلفية ملونة وشارة داكنة صغيرة ("خصم حتى 20%")، والعنوان والسعر ورابط "تسوّق الآن"، وصورة المنتج.
+- **مربعات الفئات:** صورة الفئة على لون باستيل، والاسم تحتها.
+- **بطاقة المنتج:** بطاقة بيضاء بحد خفيف: الصورة، ثم اسم الفئة بالرمادي، ثم الاسم في سطرين كحد أقصى، ثم السعر بالكحلي. شارة الخصم كهرمانية في الزاوية العليا من جهة البداية، وزر القلب في الزاوية الأخرى. زر "أضف للسلة" (أو "اختر الخيارات" للمنتجات متعددة الخيارات) ظاهر دائماً أسفل البطاقة.
+- **التبويبات:** حبة كهرمانية للتبويب النشط، ونص داكن للبقية.
+- **العدّاد التنازلي:** يظهر فقط لمنتج له تاريخ انتهاء عرض حقيقي في البيانات، ويختفي المنتج من القسم عند انتهائه.
+- **نافذة السلة:** تنزلق من جهة النهاية، فيها المنتجات بصورها وخياراتها، ومحدد الكمية، والحذف، والمجموع، وزرّا "عرض السلة" و"متابعة التسوق".
+- **شريط المساعدة:** شريط كهرماني فوق التذييل يدعو للتواصل.
+- **التذييل:** كحلي بأعمدة روابط بالرمادي الفاتح، وسطر الحقوق في الأسفل.
+- **الحالات الفارغة:** إطار متقطع وأيقونة في دائرة رمادية وجملة توضح ما حدث وزر لما يمكن فعله.
+- **التحميل:** هياكل رمادية نابضة بنفس شكل المحتوى، بدل مؤشرات الدوران.
 - **الأيقونات:** مكتبة Lucide بخط رفيع، والأسهم تنعكس تلقائياً في الاتجاه العربي.
 
 ## Do's and Don'ts
 
 - افعل: ابدأ أي تصميم من شاشة الجوال ثم وسّعه.
-- افعل: استخدم اللون الطيني لفعل واحد بارز في كل منطقة، مثل "أضف للسلة" أو "تسوّق الآن".
+- افعل: استخدم الكهرماني لفعل واحد بارز في كل منطقة، والكحلي للفعل الثاني.
 - افعل: حافظ على تباين 4.5:1 على الأقل لكل نص، وافحصه بالأمر `pnpm design:lint`.
 - افعل: اكتب الأعداد بصيغ الجمع العربية الصحيحة: "منتج واحد"، "منتجان"، "5 منتجات"، "20 منتجاً".
 - افعل: أظهر الشحن والإجمالي قبل أي تأكيد، ولا تفاجئ الزائر بأي مبلغ.
+- لا تفعل: لا تكتب نصاً كهرمانياً على خلفية بيضاء، فتباينه 1.7:1 فقط. الكهرماني خلفية لنص داكن.
+- لا تفعل: لا تعرض أرقاماً وهمية مثل "25 شخصاً يشاهدون الآن" أو "شخص اشترى للتو"، ولا عدّاداً تنازلياً دون تاريخ حقيقي.
+- لا تفعل: لا تخفِ زر الإضافة للسلة أو أي معلومة مهمة خلف تمرير الفأرة، لأن الجوال لا يملك ذلك.
+- لا تفعل: لا تشغّل الشرائح المتحركة تلقائياً، فالزائر يقرر متى ينتقل.
 - لا تفعل: لا تستخدم أكثر من خط واحد، ولا أوزاناً غير 400 و500 و700.
-- لا تفعل: لا تكتب نصاً ذهبياً على خلفية فاتحة، فتباينه ضعيف. الذهبي خلفية لنص بني داكن فقط، وفي موضع أو اثنين في الصفحة.
-- لا تفعل: لا تستخدم الأحمر إلا للخصومات والأخطاء.
-- لا تفعل: لا تستخدم الأبيض النقي خلفية للصفحة، فالخلفية كريمية والأبيض للسطوح البارزة فقط.
+- لا تفعل: لا تستخدم الأحمر إلا للأخطاء والنفاد.
 - لا تفعل: لا تستخدم left وright في التنسيق، بل start وend.
-- لا تفعل: لا تضع نصاً مهماً فوق صورة دون طبقة داكنة تضمن قراءته.
-- لا تفعل: لا تخفِ معلومة مهمة خلف تمرير الفأرة، لأن الجوال لا يملك ذلك.
+- لا تفعل: لا تضع نصاً مهماً فوق صورة دون طبقة تضمن قراءته.
