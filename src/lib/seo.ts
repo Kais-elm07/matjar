@@ -1,7 +1,53 @@
+import type { Metadata } from "next"
+
 import { siteConfig } from "@/config/site"
 import { toSchemaPrice } from "@/lib/catalog/money"
 import type { Product } from "@/lib/catalog/types"
 import { IMAGE_WIDTHS } from "@/lib/image-loader"
+
+/** صور المشاركة بمقاس 1200×630، تولّدها مسارات src/app/og وقت البناء. */
+export const shareImages = {
+  site: "/og/site.jpg",
+  product: (slug: string) => `/og/product/${slug}.jpg`,
+  category: (slug: string) => `/og/category/${slug}.jpg`,
+}
+
+/**
+ * بيانات المشاركة على مواقع التواصل (Open Graph).
+ * Next.js يستبدل openGraph كاملاً في كل صفحة تعرّفه، فيكرر هذا المساعد الحقول المشتركة.
+ * دون path ترث الصفحة الصورة العامة دون رابط خاص، كما في السلة والبحث.
+ */
+export function openGraph({
+  title,
+  description,
+  path,
+  image = shareImages.site,
+  imageAlt = title,
+}: {
+  title: string
+  description: string
+  path?: string
+  image?: string
+  imageAlt?: string
+}): NonNullable<Metadata["openGraph"]> {
+  return {
+    type: "website",
+    locale: "ar_AR",
+    siteName: siteConfig.name,
+    title,
+    description,
+    url: path,
+    images: [
+      {
+        url: image,
+        width: 1200,
+        height: 630,
+        alt: imageAlt,
+        type: "image/jpeg",
+      },
+    ],
+  }
+}
 
 /**
  * رابط كامل لصفحة داخل الموقع، مع الشرطة المائلة في النهاية كما في الموقع المنشور.

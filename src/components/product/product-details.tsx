@@ -28,9 +28,9 @@ const LOW_STOCK_FORMS = {
   zero: "نفد من المخزون",
   one: "بقيت قطعة واحدة فقط",
   two: "بقيت قطعتان فقط",
-  few: "بقي {n} قطع فقط",
-  many: "بقي {n} قطعة فقط",
-  other: "بقي {n} قطعة فقط",
+  few: "بقيت {n} قطع فقط",
+  many: "بقيت {n} قطعة فقط",
+  other: "بقيت {n} قطعة فقط",
 }
 
 type ValueState = "available" | "sold-out" | "unavailable"

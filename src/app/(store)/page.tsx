@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import {
@@ -26,8 +27,17 @@ import {
   getHomeContent,
   getHomeSections,
 } from "@/lib/catalog/catalog"
-import { websiteJsonLd } from "@/lib/seo"
+import { openGraph, websiteJsonLd } from "@/lib/seo"
 import { cn } from "@/lib/utils"
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: openGraph({
+    title: `${siteConfig.name} | ${siteConfig.tagline}`,
+    description: siteConfig.description,
+    path: "/",
+  }),
+}
 
 const trustItems: { icon: LucideIcon; title: string; description: string }[] = [
   {

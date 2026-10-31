@@ -9,6 +9,7 @@ import { BANNER_THEME } from "@/components/home/banner-theme"
 import { buttonVariants } from "@/components/ui/button"
 import { formatPrice } from "@/lib/catalog/money"
 import type { ProductBanner } from "@/lib/catalog/types"
+import { scrollBehavior } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
 /**
@@ -30,7 +31,7 @@ export function HeroSlider({ slides }: { slides: ProductBanner[] }) {
   function show(index: number) {
     const count = slides.length
     slideRefs.current[(index + count) % count]?.scrollIntoView({
-      behavior: "smooth",
+      behavior: scrollBehavior(),
       block: "nearest",
       inline: "center",
     })

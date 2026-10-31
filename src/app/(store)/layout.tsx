@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 
-import { CartSheet } from "@/components/cart/cart-sheet"
+import { LazyCartSheet } from "@/components/cart/lazy-cart-sheet"
 import { AnnouncementBar } from "@/components/layout/announcement-bar"
 import { MobileTabBar } from "@/components/layout/mobile-tab-bar"
 import { SiteFooter } from "@/components/layout/site-footer"
@@ -20,6 +20,13 @@ export default function StoreLayout({
 }) {
   return (
     <>
+      {/* أول ما يصله زر Tab: يتخطى الإعلان والرأس إلى المحتوى */}
+      <a
+        href="#main-content"
+        className="sr-only rounded-full bg-highlight px-4 py-2 text-highlight-foreground focus:not-sr-only focus:fixed focus:start-4 focus:top-3 focus:z-50"
+      >
+        انتقل إلى المحتوى
+      </a>
       {/* خارج الرأس الثابت، فيختفي عند التمرير */}
       <AnnouncementBar />
       <SiteHeader />
@@ -32,7 +39,7 @@ export default function StoreLayout({
       </div>
       <MobileTabBar />
       <WhatsAppButton />
-      <CartSheet />
+      <LazyCartSheet />
       <StoreRestorer />
       {/* يبلغ صفحات القوائم بتغيّر الرابط (الفلاتر والترتيب) */}
       <Suspense fallback={null}>

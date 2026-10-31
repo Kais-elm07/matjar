@@ -30,13 +30,22 @@ export type ContentPage = z.infer<typeof frontMatterSchema> & {
   body: string
 }
 
-/** يستبدل {store} و{email} و{phone} و{freeShipping} بقيمها الحالية من الإعدادات. */
+/** جملة الإحصاءات في صفحة الخصوصية، بحسب ما فُعّل في src/config/site.ts. */
+function analyticsSentence() {
+  const { analytics } = siteConfig
+  if (!analytics) return "لا نستخدم أدوات تحليل ترصد تصفحك."
+  const name = { plausible: "Plausible", umami: "Umami" }[analytics.provider]
+  return `لا نستخدم أدوات تحليل ترصد تصفحك: نكتفي بعدّ الزيارات بأداة ${name}، دون ملفات تعريف ارتباط ودون حفظ ما يحدد هويتك.`
+}
+
+/** يستبدل {store} و{email} و{phone} و{freeShipping} و{analytics} بقيمها الحالية من الإعدادات. */
 function fillPlaceholders(text: string) {
   const values: Record<string, string> = {
     store: siteConfig.name,
     email: siteConfig.contact.email,
     phone: siteConfig.contact.phone,
     freeShipping: formatPrice(getCheckoutConfig().freeShippingFrom),
+    analytics: analyticsSentence(),
   }
   return text.replace(
     /\{(\w+)\}/g,

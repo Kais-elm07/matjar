@@ -1,24 +1,16 @@
 "use client"
 
-import { useCallback, useId, useMemo, useState } from "react"
+import { useCallback, useEffect, useId, useMemo, useState } from "react"
+import dynamic from "next/dynamic"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { SearchXIcon, SlidersHorizontalIcon, XIcon } from "lucide-react"
 
-import { FilterPanel } from "@/components/listing/filter-panel"
 import { ListingPagination } from "@/components/listing/listing-pagination"
 import { ProductGrid } from "@/components/product/product-grid"
 import { EmptyState } from "@/components/store/empty-state"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
-import {
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
 import { siteConfig } from "@/config/site"
 import { PRODUCT_FORMS, pluralize } from "@/lib/arabic-plural"
 import {
@@ -44,6 +36,22 @@ import {
   updateListingUrl,
   useListingSearch,
 } from "@/lib/catalog/use-listing-search"
+import { scrollBehavior } from "@/lib/motion"
+import { useIdle } from "@/lib/use-idle"
+import { useMediaQuery } from "@/lib/use-media-query"
+
+// لوحة الفلاتر تُرسم في الشريط الجانبي على الحاسوب فقط، وعلى الجوال داخل نافذة "تصفية"،
+// فلا يُحمَّل كودها على الجوال إلا بعد ظهور الصفحة
+const loadFilterPanel = () =>
+  import("@/components/listing/filter-panel").then((mod) => mod.FilterPanel)
+const FilterPanel = dynamic(loadFilterPanel, { ssr: false })
+
+// نافذة التصفية على الجوال يُحمَّل كودها بعد ظهور الصفحة، أو عند أول ضغطة على "تصفية"
+const FilterSheet = dynamic(
+  () =>
+    import("@/components/listing/filter-sheet").then((mod) => mod.FilterSheet),
+  { ssr: false }
+)
 
 type ListingViewProps = {
   products: ProductCard[]
@@ -68,6 +76,13 @@ export function ListingView({
   const pathname = rawPathname.endsWith("/") ? rawPathname : `${rawPathname}/`
   const sortId = useId()
   const [filtersOpen, setFiltersOpen] = useState(false)
+  const idle = useIdle()
+  const isDesktop = useMediaQuery("(min-width: 64rem)")
+
+  // تجهيز لوحة الفلاتر مسبقاً حتى تظهر فوراً عند فتح نافذة التصفية
+  useEffect(() => {
+    if (idle) void loadFilterPanel()
+  }, [idle])
 
   const params = useMemo(
     () =>
@@ -120,7 +135,7 @@ export function ListingView({
     navigate({ page }, true)
     document
       .getElementById("listing")
-      ?.scrollIntoView({ behavior: "smooth", block: "start" })
+      ?.scrollIntoView({ behavior: scrollBehavior(), block: "start" })
   }
 
   // لا شيء لفلترته (بحث بلا نتائج أو فئة فارغة): رسالة واضحة فقط دون أدوات التصفية
@@ -152,7 +167,7 @@ export function ListingView({
       className="scroll-mt-40 lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8"
     >
       <aside aria-label="تصفية النتائج" className="hidden lg:block">
-        <div className="sticky top-32">{filterPanel(true)}</div>
+        <div className="sticky top-32">{isDesktop && filterPanel(true)}</div>
       </aside>
 
       <div className="min-w-0">
@@ -161,50 +176,33 @@ export function ListingView({
             {pluralize(result.total, PRODUCT_FORMS)}
           </p>
           <div className="flex items-center gap-2">
-            <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
-              <SheetTrigger
-                render={<Button variant="outline" className="h-10 lg:hidden" />}
+            <Button
+              variant="outline"
+              className="h-10 lg:hidden"
+              aria-haspopup="dialog"
+              aria-expanded={filtersOpen}
+              onClick={() => setFiltersOpen(true)}
+            >
+              <SlidersHorizontalIcon aria-hidden />
+              تصفية
+              {activeCount > 0 && (
+                <span className="flex size-5 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground tabular-nums">
+                  {activeCount}
+                </span>
+              )}
+            </Button>
+            {(filtersOpen || idle) && (
+              <FilterSheet
+                open={filtersOpen}
+                onOpenChange={setFiltersOpen}
+                total={result.total}
+                onClear={
+                  activeCount > 0 ? () => navigate(CLEARED_FILTERS) : undefined
+                }
               >
-                <SlidersHorizontalIcon aria-hidden />
-                تصفية
-                {activeCount > 0 && (
-                  <span className="flex size-5 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground tabular-nums">
-                    {activeCount}
-                  </span>
-                )}
-              </SheetTrigger>
-              <SheetContent
-                side="bottom"
-                className="max-h-[88svh] gap-0 rounded-t-2xl p-0"
-              >
-                <SheetHeader className="border-b pe-14">
-                  <SheetTitle className="text-lg font-bold">
-                    تصفية النتائج
-                  </SheetTitle>
-                </SheetHeader>
-                <div className="overflow-y-auto px-4 pb-4 [&>div>section:first-child]:border-t-0 [&>div>section:first-child]:pt-4">
-                  {filterPanel(false)}
-                </div>
-                <SheetFooter className="flex-row border-t">
-                  {activeCount > 0 && (
-                    <Button
-                      variant="outline"
-                      size="xl"
-                      onClick={() => navigate(CLEARED_FILTERS)}
-                    >
-                      مسح الكل
-                    </Button>
-                  )}
-                  <Button
-                    size="xl"
-                    className="flex-1"
-                    onClick={() => setFiltersOpen(false)}
-                  >
-                    عرض النتائج ({result.total})
-                  </Button>
-                </SheetFooter>
-              </SheetContent>
-            </Sheet>
+                {filterPanel(false)}
+              </FilterSheet>
+            )}
 
             <label htmlFor={sortId} className="sr-only">
               ترتيب حسب

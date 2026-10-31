@@ -34,13 +34,6 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40">
-      <a
-        href="#main-content"
-        className="sr-only rounded-full bg-highlight px-4 py-2 text-highlight-foreground focus:not-sr-only focus:absolute focus:start-4 focus:top-3 focus:z-50"
-      >
-        انتقل إلى المحتوى
-      </a>
-
       <div className="bg-primary text-primary-foreground">
         <div className="page-container flex h-16 items-center gap-2 md:h-[72px] md:gap-6">
           <MobileNav categories={navCategories} />

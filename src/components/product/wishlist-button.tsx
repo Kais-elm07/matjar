@@ -1,10 +1,11 @@
 "use client"
 
+import { useState } from "react"
 import { HeartIcon } from "lucide-react"
-import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { useIsWishlisted, useWishlistStore } from "@/lib/store/wishlist"
+import { toast } from "@/lib/toast"
 import { cn } from "@/lib/utils"
 
 /**
@@ -24,9 +25,12 @@ export function WishlistButton({
 }) {
   const saved = useIsWishlisted(slug)
   const toggle = useWishlistStore((state) => state.toggle)
+  // عدد مرات الإضافة بضغطة: يعيد رسم القلب فينبض، ولا ينبض عند استعادة المفضلة المحفوظة
+  const [pops, setPops] = useState(0)
 
   function onClick() {
     const added = toggle(slug)
+    if (added) setPops((count) => count + 1)
     toast(added ? "أُضيف إلى المفضلة" : "أُزيل من المفضلة", {
       description: name,
     })
@@ -34,8 +38,13 @@ export function WishlistButton({
 
   const icon = (
     <HeartIcon
+      key={pops}
       aria-hidden
-      className={cn("transition-colors", saved && "fill-primary text-primary")}
+      className={cn(
+        "transition-colors",
+        saved && "fill-primary text-primary",
+        saved && pops > 0 && "animate-in duration-300 zoom-in-50"
+      )}
     />
   )
 

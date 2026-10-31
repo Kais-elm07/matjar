@@ -9,7 +9,7 @@ import { Breadcrumbs } from "@/components/store/breadcrumbs"
 import { JsonLd } from "@/components/store/json-ld"
 import { RichText } from "@/components/store/rich-text"
 import { getContentPage, getContentPages } from "@/lib/content/pages"
-import { breadcrumbJsonLd } from "@/lib/seo"
+import { breadcrumbJsonLd, openGraph } from "@/lib/seo"
 import { cn } from "@/lib/utils"
 
 // كل الصفحات تُجهَّز وقت البناء من ملفات src/content/pages، وأي رابط آخر يعرض صفحة 404
@@ -29,6 +29,11 @@ export async function generateMetadata({
     title: page.title,
     description: page.description,
     alternates: { canonical: `/pages/${page.slug}/` },
+    openGraph: openGraph({
+      title: page.title,
+      description: page.description,
+      path: `/pages/${page.slug}/`,
+    }),
   }
 }
 

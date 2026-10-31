@@ -1,13 +1,21 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import dynamic from "next/dynamic"
 import Image from "next/image"
-import { ChevronLeftIcon, ChevronRightIcon, ZoomInIcon } from "lucide-react"
+import { ZoomInIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import type { ProductImage } from "@/lib/catalog/types"
+import { scrollBehavior } from "@/lib/motion"
+import { useIdle } from "@/lib/use-idle"
 import { cn } from "@/lib/utils"
+
+// نافذة التكبير يُحمَّل كودها بعد ظهور الصفحة، أو عند أول ضغطة على الصورة
+const ProductZoom = dynamic(
+  () =>
+    import("@/components/product/product-zoom").then((mod) => mod.ProductZoom),
+  { ssr: false }
+)
 
 /**
  * معرض صور المنتج: يُسحب باللمس، مع صور مصغرة ونافذة تكبير.
@@ -25,6 +33,7 @@ export function ProductGallery({
   const trackRef = useRef<HTMLDivElement>(null)
   const slideRefs = useRef<(HTMLDivElement | null)[]>([])
   const [zoomOpen, setZoomOpen] = useState(false)
+  const idle = useIdle()
 
   // معرفة الصورة الظاهرة عند السحب
   useEffect(() => {
@@ -56,15 +65,10 @@ export function ProductGallery({
     if (Math.abs(slideBox.left - trackBox.left) > 2) {
       track.scrollBy({
         left: slideBox.left - trackBox.left,
-        behavior: "smooth",
+        behavior: scrollBehavior(),
       })
     }
   }, [activeIndex])
-
-  const showPrevious = () =>
-    onActiveIndexChange((activeIndex - 1 + images.length) % images.length)
-  const showNext = () => onActiveIndexChange((activeIndex + 1) % images.length)
-  const active = images[activeIndex] ?? images[0]
 
   return (
     // على الحاسوب: الصور المصغرة عمودياً بجانب الصورة الكبيرة من جهة البداية
@@ -144,43 +148,15 @@ export function ProductGallery({
         </ul>
       )}
 
-      <Dialog open={zoomOpen} onOpenChange={setZoomOpen}>
-        <DialogContent className="max-w-[min(92vw,44rem)] gap-3 p-3 sm:max-w-[min(92vw,44rem)]">
-          <DialogTitle className="sr-only">{active.alt}</DialogTitle>
-          <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-muted">
-            <Image
-              src={active.src}
-              alt={active.alt}
-              fill
-              sizes="(min-width: 768px) 704px, 92vw"
-              className="object-contain"
-            />
-          </div>
-          {images.length > 1 && (
-            <div className="flex items-center justify-between">
-              <Button
-                variant="outline"
-                size="icon-xl"
-                onClick={showPrevious}
-                aria-label="الصورة السابقة"
-              >
-                <ChevronRightIcon className="ltr:rotate-180" aria-hidden />
-              </Button>
-              <span className="text-sm text-muted-foreground tabular-nums">
-                {activeIndex + 1} / {images.length}
-              </span>
-              <Button
-                variant="outline"
-                size="icon-xl"
-                onClick={showNext}
-                aria-label="الصورة التالية"
-              >
-                <ChevronLeftIcon className="ltr:rotate-180" aria-hidden />
-              </Button>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      {(zoomOpen || idle) && (
+        <ProductZoom
+          images={images}
+          activeIndex={activeIndex}
+          onActiveIndexChange={onActiveIndexChange}
+          open={zoomOpen}
+          onOpenChange={setZoomOpen}
+        />
+      )}
     </div>
   )
 }

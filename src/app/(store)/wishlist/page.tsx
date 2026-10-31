@@ -8,10 +8,13 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 }
 
-/** صفحة المفضلة: المنتجات المحفوظة في متصفح الزائر. */
+/**
+ * صفحة المفضلة: المنتجات المحفوظة في متصفح الزائر.
+ * الارتفاع الأدنى يثبّت التذييل مكانه حين يحل المحتوى محل هيكل التحميل.
+ */
 export default function WishlistPage() {
   return (
-    <div className="page-container py-5 md:py-8">
+    <div className="page-container min-h-[70svh] py-5 md:py-8">
       <Breadcrumbs items={[{ name: "المفضلة" }]} />
       <h1 className="mb-2 text-2xl font-bold md:text-3xl">المفضلة</h1>
       <WishlistView />

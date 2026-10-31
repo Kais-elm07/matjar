@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from "next"
 import localFont from "next/font/local"
 
+import { Analytics } from "@/components/store/analytics"
+import { LazyToaster } from "@/components/store/lazy-toaster"
 import { DirectionProvider } from "@/components/ui/direction"
-import { Toaster } from "@/components/ui/sonner"
 import { siteConfig } from "@/config/site"
+import { openGraph } from "@/lib/seo"
 
 import "./globals.css"
 
@@ -51,22 +53,24 @@ const plexLatin = localFont({
   ],
   display: "swap",
   variable: "--font-latin",
+  // لا يُحمَّل مسبقاً حتى لا يزاحم الحروف العربية والصور على الاتصال في أول الصفحة؛
+  // يطلبه المتصفح عند أول رقم أو حرف إنجليزي، والأرقام تظهر بالخط البديل حتى وصوله
+  preload: false,
 })
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.name} | تسوّق أونلاين بسهولة`,
+    default: `${siteConfig.name} | ${siteConfig.tagline}`,
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
-  openGraph: {
-    type: "website",
-    locale: "ar_AR",
-    siteName: siteConfig.name,
+  openGraph: openGraph({
     title: siteConfig.name,
     description: siteConfig.description,
-  },
+  }),
+  // X (تويتر) يأخذ العنوان والصورة من openGraph، ويعرض الصورة بعرضها الكامل
+  twitter: { card: "summary_large_image" },
 }
 
 export const viewport: Viewport = {
@@ -84,7 +88,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col">
         <DirectionProvider direction="rtl">
           {children}
-          <Toaster />
+          <LazyToaster />
+          <Analytics />
         </DirectionProvider>
       </body>
     </html>

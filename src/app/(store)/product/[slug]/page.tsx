@@ -13,10 +13,11 @@ import {
   getRelatedProducts,
 } from "@/lib/catalog/catalog"
 import {
-  absoluteImageUrl,
   breadcrumbJsonLd,
+  openGraph,
   plainDescription,
   productJsonLd,
+  shareImages,
 } from "@/lib/seo"
 
 // كل صفحات المنتجات تُجهَّز وقت البناء، وأي رابط آخر يعرض صفحة 404
@@ -34,27 +35,16 @@ export async function generateMetadata({
   if (!product) return {}
 
   const description = plainDescription(product.description)
-  const image = product.images[0]
   return {
     title: product.name,
     description,
     alternates: { canonical: `/product/${product.slug}/` },
-    openGraph: {
-      type: "website",
+    openGraph: openGraph({
       title: product.name,
       description,
-      url: `/product/${product.slug}/`,
-      images: image
-        ? [
-            {
-              url: absoluteImageUrl(image.src),
-              width: 1200,
-              height: 1200,
-              alt: image.alt,
-            },
-          ]
-        : undefined,
-    },
+      path: `/product/${product.slug}/`,
+      image: shareImages.product(product.slug),
+    }),
   }
 }
 

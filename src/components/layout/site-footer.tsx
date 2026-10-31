@@ -19,9 +19,11 @@ export function SiteFooter() {
             />
             <div>
               <p className="text-lg font-bold md:text-xl">
-                عندك سؤال عن منتج أو طلب؟
+                لديك سؤال عن منتج أو طلب؟
               </p>
-              <p className="text-sm">فريقنا يرد عليك بسرعة ويساعدك تختار.</p>
+              <p className="text-sm">
+                فريقنا يرد عليك بسرعة ويساعدك على الاختيار.
+              </p>
             </div>
           </div>
           <Link

@@ -1,66 +1,93 @@
 "use client"
 
-import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
-import { cva, type VariantProps } from "class-variance-authority"
+import {
+  createContext,
+  use,
+  useId,
+  useState,
+  type ComponentProps,
+  type KeyboardEvent,
+} from "react"
 import { cn } from "cn"
 
+/**
+ * تبويبات خفيفة بنفس واجهة تبويبات shadcn، دون مكتبة Base UI، لتقليل JavaScript الصفحة.
+ * كل اللوحات موجودة في HTML (غير النشطة مخفية بالخاصية hidden)، فتقرؤها محركات البحث.
+ * الأسهم تنتقل بين التبويبات بحسب اتجاه الصفحة، وHome وEnd إلى الأول والأخير.
+ */
+
+type TabsContextValue = {
+  baseId: string
+  value: string
+  select: (value: string) => void
+}
+
+const TabsContext = createContext<TabsContextValue | null>(null)
+
+function useTabs() {
+  const context = use(TabsContext)
+  if (!context) throw new Error("مكوّنات التبويبات يجب أن تكون داخل <Tabs>")
+  return context
+}
+
+const tabId = (baseId: string, value: string) => `${baseId}-tab-${value}`
+const panelId = (baseId: string, value: string) => `${baseId}-panel-${value}`
+
 function Tabs({
+  defaultValue,
   className,
-  orientation = "horizontal",
   ...props
-}: TabsPrimitive.Root.Props) {
+}: ComponentProps<"div"> & { defaultValue: string }) {
+  const baseId = useId()
+  const [value, select] = useState(defaultValue)
+
   return (
-    <TabsPrimitive.Root
-      data-slot="tabs"
-      data-orientation={orientation}
-      className={cn(
-        "group/tabs flex gap-2 data-horizontal:flex-col",
-        className
-      )}
-      {...props}
-    />
+    <TabsContext value={{ baseId, value, select }}>
+      <div
+        data-slot="tabs"
+        className={cn("flex flex-col gap-2", className)}
+        {...props}
+      />
+    </TabsContext>
   )
 }
 
-const tabsListVariants = cva(
-  "group/tabs-list inline-flex w-fit items-center justify-center rounded-lg p-[3px] text-muted-foreground group-data-horizontal/tabs:h-8 group-data-vertical/tabs:h-fit group-data-vertical/tabs:flex-col data-[variant=line]:rounded-none",
-  {
-    variants: {
-      variant: {
-        default: "bg-muted",
-        line: "gap-1 bg-transparent",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-)
+/** الأسهم تنقل التركيز إلى التبويب المجاور وتختاره. */
+function moveBetweenTabs(event: KeyboardEvent<HTMLDivElement>) {
+  const tabs = [
+    ...event.currentTarget.querySelectorAll<HTMLButtonElement>(
+      '[role="tab"]:not(:disabled)'
+    ),
+  ]
+  const current = tabs.findIndex((tab) => tab === document.activeElement)
+  if (current === -1) return
 
-function TabsList({
-  className,
-  variant = "default",
-  ...props
-}: TabsPrimitive.List.Props & VariantProps<typeof tabsListVariants>) {
+  // في الاتجاه العربي السهم الأيسر يعني التالي
+  const rtl = getComputedStyle(event.currentTarget).direction === "rtl"
+  const step = { ArrowLeft: rtl ? 1 : -1, ArrowRight: rtl ? -1 : 1 }[event.key]
+  const target =
+    event.key === "Home"
+      ? 0
+      : event.key === "End"
+        ? tabs.length - 1
+        : step
+          ? (current + step + tabs.length) % tabs.length
+          : undefined
+  if (target === undefined) return
+
+  event.preventDefault()
+  tabs[target].focus()
+  tabs[target].click()
+}
+
+function TabsList({ className, ...props }: ComponentProps<"div">) {
   return (
-    <TabsPrimitive.List
+    <div
+      role="tablist"
       data-slot="tabs-list"
-      data-variant={variant}
-      className={cn(tabsListVariants({ variant }), className)}
-      {...props}
-    />
-  )
-}
-
-function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
-  return (
-    <TabsPrimitive.Tab
-      data-slot="tabs-trigger"
+      onKeyDown={moveBetweenTabs}
       className={cn(
-        "relative inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-1.5 py-0.5 text-sm font-medium whitespace-nowrap text-foreground/60 transition-all group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50 has-data-[icon=inline-end]:pe-1 has-data-[icon=inline-start]:ps-1 aria-disabled:pointer-events-none aria-disabled:opacity-50 dark:text-muted-foreground dark:hover:text-foreground group-data-[variant=default]/tabs-list:data-active:shadow-sm group-data-[variant=line]/tabs-list:data-active:shadow-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        "group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-active:bg-transparent dark:group-data-[variant=line]/tabs-list:data-active:border-transparent dark:group-data-[variant=line]/tabs-list:data-active:bg-transparent",
-        "data-active:bg-background data-active:text-foreground dark:data-active:border-input dark:data-active:bg-input/30 dark:data-active:text-foreground",
-        "after:absolute after:bg-foreground after:opacity-0 after:transition-opacity group-data-horizontal/tabs:after:inset-x-0 group-data-horizontal/tabs:after:bottom-[-5px] group-data-horizontal/tabs:after:h-0.5 group-data-vertical/tabs:after:inset-y-0 group-data-vertical/tabs:after:-end-1 group-data-vertical/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-active:after:opacity-100",
+        "inline-flex w-fit items-center rounded-lg bg-muted p-[3px] text-muted-foreground",
         className
       )}
       {...props}
@@ -68,9 +95,49 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
   )
 }
 
-function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
+function TabsTrigger({
+  value,
+  className,
+  ...props
+}: ComponentProps<"button"> & { value: string }) {
+  const { baseId, value: active, select } = useTabs()
+  const selected = value === active
+
   return (
-    <TabsPrimitive.Panel
+    <button
+      type="button"
+      role="tab"
+      id={tabId(baseId, value)}
+      aria-controls={panelId(baseId, value)}
+      aria-selected={selected}
+      // التبويب النشط وحده في ترتيب Tab، والبقية بالأسهم
+      tabIndex={selected ? 0 : -1}
+      data-slot="tabs-trigger"
+      data-active={selected ? "" : undefined}
+      onClick={() => select(value)}
+      className={cn(
+        "inline-flex items-center justify-center gap-1.5 rounded-md px-1.5 py-0.5 text-sm font-medium whitespace-nowrap text-foreground/60 transition-colors outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 data-active:bg-background data-active:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function TabsContent({
+  value,
+  className,
+  ...props
+}: ComponentProps<"div"> & { value: string }) {
+  const { baseId, value: active } = useTabs()
+
+  return (
+    <div
+      role="tabpanel"
+      id={panelId(baseId, value)}
+      aria-labelledby={tabId(baseId, value)}
+      tabIndex={0}
+      hidden={value !== active}
       data-slot="tabs-content"
       className={cn("flex-1 text-sm outline-none", className)}
       {...props}
@@ -78,4 +145,4 @@ function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
   )
 }
 
-export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants }
+export { Tabs, TabsList, TabsTrigger, TabsContent }

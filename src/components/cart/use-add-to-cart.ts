@@ -1,10 +1,10 @@
 "use client"
 
 import { useCallback } from "react"
-import { toast } from "sonner"
 
 import { useCartStore, type CartLine } from "@/lib/store/cart"
 import { useUiStore } from "@/lib/store/ui"
+import { toast } from "@/lib/toast"
 
 /**
  * إضافة للسلة مع تأكيد فوري: تفتح نافذة السلة عند النجاح،

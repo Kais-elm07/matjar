@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { scrollBehavior } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
 /**
@@ -56,7 +57,7 @@ export function Carousel({
     const rtl = getComputedStyle(list).direction === "rtl"
     list.scrollBy({
       left: direction * list.clientWidth * 0.9 * (rtl ? -1 : 1),
-      behavior: "smooth",
+      behavior: scrollBehavior(),
     })
   }
 

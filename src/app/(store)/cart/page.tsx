@@ -8,10 +8,13 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 }
 
-/** صفحة السلة: محتواها من متصفح الزائر، فتُبنى فارغة وتُملأ بعد التحميل. */
+/**
+ * صفحة السلة: محتواها من متصفح الزائر، فتُبنى فارغة وتُملأ بعد التحميل.
+ * الارتفاع الأدنى يثبّت التذييل مكانه حين يحل المحتوى محل هيكل التحميل.
+ */
 export default function CartPage() {
   return (
-    <div className="page-container py-5 md:py-8">
+    <div className="page-container min-h-[70svh] py-5 md:py-8">
       <Breadcrumbs items={[{ name: "سلة التسوق" }]} />
       <h1 className="mb-6 text-2xl font-bold md:text-3xl">سلة التسوق</h1>
       <CartView />

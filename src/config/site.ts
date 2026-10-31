@@ -8,12 +8,19 @@ export type FooterNavGroup = {
   links: NavLink[]
 }
 
+/** أدوات إحصاء لا تستخدم cookies ولا تتبع الزائر بين المواقع. src اختياري لمن يستضيف الأداة بنفسه. */
+export type AnalyticsConfig =
+  | { provider: "plausible"; domain: string; src?: string }
+  | { provider: "umami"; websiteId: string; src?: string }
+
 /**
  * إعدادات المتجر العامة.
  * الاسم والوصف مؤقتان حتى اعتماد الهوية: غيّرهما هنا فيتغيران في كل الموقع.
  */
 export const siteConfig = {
   name: "متجري",
+  /** عبارة قصيرة بعد الاسم في عنوان الصفحة الرئيسية، وفي صورة المشاركة العامة */
+  tagline: "تسوّق أونلاين بسهولة",
   description:
     "تسوّق منتجاتك المفضلة بسهولة: تصفّح سريع، وبحث ذكي، وخيارات واضحة لكل منتج، والدفع عند الاستلام.",
   /** رابط الموقع المنشور، يُستخدم في روابط المشاركة وخريطة الموقع */
@@ -56,6 +63,14 @@ export const siteConfig = {
     text: "شحن مجاني للطلبات من {freeShipping}، والدفع عند الاستلام",
     href: "/pages/shipping",
   } as { text: string; href?: string } | null,
+
+  /**
+   * إحصاءات الزيارات (اختيارية)، أو null دون إحصاءات.
+   * عند تفعيلها تتغير فقرة الإحصاءات في صفحة الخصوصية تلقائياً. أمثلة:
+   *   { provider: "plausible", domain: "example.com" }
+   *   { provider: "umami", websiteId: "رقم الموقع من لوحة Umami" }
+   */
+  analytics: null as AnalyticsConfig | null,
 
   /**
    * فرق توقيت المتجر عن UTC: تنتهي العروض في آخر ثانية من يومها بهذا التوقيت.

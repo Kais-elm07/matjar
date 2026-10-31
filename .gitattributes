@@ -3,6 +3,7 @@
 
 # ملفات ثنائية
 *.woff2 binary
+*.ttf binary
 *.ico binary
 *.png binary
 *.jpg binary

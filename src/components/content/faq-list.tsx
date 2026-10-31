@@ -43,7 +43,7 @@ export function FaqList({ groups }: { groups: FaqGroup[] }) {
           {group.title && <h2 className="text-xl font-bold">{group.title}</h2>}
           <div className="divide-y rounded-lg border">
             {group.items.map((item) => (
-              <details key={item.question} className="group/faq">
+              <details key={item.question} className="group/faq faq-item">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-4 font-bold outline-none focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">
                   {item.question}
                   <ChevronDownIcon

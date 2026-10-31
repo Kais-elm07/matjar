@@ -1,9 +1,9 @@
 "use client"
 
 import { Share2Icon } from "lucide-react"
-import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
+import { toast } from "@/lib/toast"
 
 /** مشاركة رابط المنتج: قائمة المشاركة في الجوال، أو نسخ الرابط في الحاسوب. */
 export function ShareButton({

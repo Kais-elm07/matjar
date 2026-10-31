@@ -14,7 +14,7 @@ import {
   getChildCategories,
   getProductCards,
 } from "@/lib/catalog/catalog"
-import { absoluteImageUrl, breadcrumbJsonLd } from "@/lib/seo"
+import { breadcrumbJsonLd, openGraph, shareImages } from "@/lib/seo"
 
 // كل صفحات الفئات تُجهَّز وقت البناء، وأي رابط آخر يعرض صفحة 404
 export const dynamicParams = false
@@ -37,14 +37,12 @@ export async function generateMetadata({
     title: category.name,
     description,
     alternates: { canonical: `/category/${category.slug}/` },
-    openGraph: {
+    openGraph: openGraph({
       title: category.name,
       description,
-      url: `/category/${category.slug}/`,
-      images: category.image
-        ? [{ url: absoluteImageUrl(category.image), width: 1200, height: 1200 }]
-        : undefined,
-    },
+      path: `/category/${category.slug}/`,
+      image: shareImages.category(category.slug),
+    }),
   }
 }
 
