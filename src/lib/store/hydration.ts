@@ -13,7 +13,13 @@ const stores = [useCartStore, useWishlistStore]
  */
 export function useRestoreStores() {
   useEffect(() => {
-    for (const store of stores) void store.persist.rehydrate()
+    void Promise.all(stores.map((store) => store.persist.rehydrate())).then(
+      () => {
+        // علامة أن الصفحة صارت تفاعلية واستُعيدت السلة والمفضلة،
+        // تنتظرها اختبارات Playwright قبل الضغط على أي زر
+        document.documentElement.dataset.storesReady = ""
+      }
+    )
 
     function onStorage(event: StorageEvent) {
       for (const store of stores) {

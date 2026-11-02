@@ -1,5 +1,6 @@
 # فحص آلي عند كل Pull Request وكل دفع إلى الفرع الرئيسي:
-# التنسيق، ESLint، الأنواع، ثم بناء الموقع كاملاً.
+# التنسيق، ESLint، الأنواع، واختبارات الوحدات، ثم بناء الموقع كاملاً،
+# ثم اختبارات المتصفح على النسخة المبنية بـ Chrome وFirefox وSafari (WebKit).
 name: CI
 
 on:
@@ -42,8 +43,27 @@ jobs:
       - name: فحص ملف التصميم (DESIGN.md)
         run: pnpm design:lint
 
+      - name: اختبارات الوحدات (Vitest)
+        run: pnpm test
+
       - name: بناء الموقع الثابت
         run: pnpm build
+
+      - name: تثبيت متصفحات الاختبار
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
+
+      - name: اختبارات المتصفح (Playwright)
+        run: pnpm test:e2e
+
+      - name: حفظ تقرير اختبارات المتصفح عند الفشل
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+          retention-days: 7
 
       - name: حفظ نسخة الموقع الجاهزة
         uses: actions/upload-artifact@v7
