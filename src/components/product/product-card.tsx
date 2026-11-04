@@ -5,7 +5,7 @@ import { ImageOffIcon } from "lucide-react"
 import { DiscountBadge, Price } from "@/components/product/price"
 import { QuickAddButton } from "@/components/product/quick-add-button"
 import { WishlistButton } from "@/components/product/wishlist-button"
-import type { ProductCard as ProductCardData } from "@/lib/catalog/types"
+import type { ProductCardData } from "@/lib/catalog/types"
 import { cn } from "@/lib/utils"
 
 /** عرض الصورة حسب الشاشة: عمودان على الجوال، و3 على الأجهزة اللوحية، و4 على الحاسوب. */
@@ -88,7 +88,18 @@ export function ProductCard({
         />
       </div>
 
-      <QuickAddButton product={product} />
+      {/* بيانات الزر وحدها، فلا تتكرر بيانات البطاقة كاملة في الصفحة لكل زر */}
+      <QuickAddButton
+        product={{
+          slug: product.slug,
+          name: product.name,
+          image: product.image,
+          price: product.price,
+          compareAtPrice: product.compareAtPrice,
+          inStock: product.inStock,
+          quickAdd: product.quickAdd,
+        }}
+      />
     </article>
   )
 }

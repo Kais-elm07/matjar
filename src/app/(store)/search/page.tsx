@@ -1,7 +1,8 @@
 import { Suspense } from "react"
 import type { Metadata } from "next"
 
-import { SearchSkeleton, SearchView } from "@/components/search/search-view"
+import { ListingSkeleton } from "@/components/listing/listing-skeleton"
+import { SearchView } from "@/components/search/search-view"
 import { Skeleton } from "@/components/ui/skeleton"
 import { getCategoryOptions } from "@/lib/catalog/catalog"
 
@@ -18,7 +19,7 @@ export default function SearchPage() {
         fallback={
           <>
             <Skeleton className="mb-6 h-9 w-64" />
-            <SearchSkeleton />
+            <ListingSkeleton />
           </>
         }
       >

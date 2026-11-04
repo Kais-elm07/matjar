@@ -1,7 +1,9 @@
 "use client"
 
 import { create } from "zustand"
-import { createJSONStorage, persist } from "zustand/middleware"
+import { persist } from "zustand/middleware"
+
+import { safeStorage } from "./storage"
 
 type WishlistState = {
   /** روابط المنتجات المحفوظة، الأحدث أولاً */
@@ -10,6 +12,8 @@ type WishlistState = {
   toggle: (slug: string) => boolean
   remove: (slug: string) => void
 }
+
+type PersistedWishlist = Pick<WishlistState, "slugs">
 
 export const useWishlistStore = create<WishlistState>()(
   persist(
@@ -35,8 +39,27 @@ export const useWishlistStore = create<WishlistState>()(
     {
       name: "matjar-wishlist",
       version: 1,
-      storage: createJSONStorage(() => localStorage),
+      storage: safeStorage<PersistedWishlist>(),
       partialize: (state) => ({ slugs: state.slugs }),
+      // المحفوظ يُقبل بعد التحقق من شكله: روابط نصية دون تكرار
+      merge: (persisted, current) => {
+        const slugs =
+          typeof persisted === "object" && persisted !== null
+            ? (persisted as { slugs?: unknown }).slugs
+            : undefined
+        return {
+          ...current,
+          slugs: Array.isArray(slugs)
+            ? [
+                ...new Set(
+                  slugs.filter(
+                    (slug): slug is string => typeof slug === "string"
+                  )
+                ),
+              ]
+            : [],
+        }
+      },
       skipHydration: true,
     }
   )

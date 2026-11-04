@@ -68,16 +68,22 @@ description: الهوية البصرية للمتجر وفق ملف DESIGN.md (�
 - الشبكة (`grid`) التي تحوي صفاً يُسحب أفقياً تحتاج `grid-cols-1` على الجوال، وإلا اتسعت الصفحة بعرض الصف.
 - الحركة قصيرة (300 ملّي ثانية أو أقل) ولغرض واضح، والتمرير الناعم عبر `scrollBehavior()` في `src/lib/motion.ts` حتى يحترم إعداد "تقليل الحركة". لا حركة لإظهار المحتوى عند التمرير.
 - أي نافذة أو لوحة لا تظهر إلا بضغطة تُحمَّل بـ `next/dynamic` عند فتحها أو بعد فراغ المتصفح (`useIdle` في `src/lib/use-idle.ts`)، كما في `LazyCartSheet` و`MobileNav`، حتى لا تؤخر ظهور الصفحة على الجوال.
+- المكوّن خادم ما لم يحتج حالة أو أحداثاً. ضع `"use client"` على أصغر جزء تفاعلي فقط (زر أو تبويب)، ومرّر له الأجزاء الثابتة كـ children، كما في `TrendingTabs` و`Carousel`.
+- لا تمرر بيانات كاملة إلى مكوّن عميل: كل خاصية تُكتب مرة ثانية في HTML الصفحة لتفعيلها في المتصفح. مرّر الحقول التي يستخدمها فقط، كما في `QuickAddButton` (`QuickAddProduct`) و`ProductDetails` (`PurchasableProduct`).
+- الأزرار عنصر `<button>` أصلي عبر `Button` دون مكتبة، ونوعه الافتراضي `button`، فاكتب `type="submit"` صراحة لزر إرسال النموذج.
+- صفحة خارج مجموعة `(store)` (مثل 404) تُلف بـ `StoreShell` حتى تعمل فيها السلة والمفضلة والقوائم.
 
 ## مكونات جاهزة قبل إنشاء جديد
 
-- `ProductCard` و`ProductGrid` و`ProductRail` في `src/components/product`: بطاقة المنتج الداكنة بزر السلة الدائري، وشبكتها وصفها الأفقي.
+- `ProductCard` و`ProductGrid` و`ProductRail` في `src/components/product`: بطاقة المنتج الداكنة بزر السلة الدائري، وشبكتها وصفها الأفقي. بياناتها من النوع `ProductCardData`، وفهرس البحث `SearchCardData` (البطاقة مع نص البحث).
+- أقسام الصفحة الرئيسية في `src/components/home`، كل قسم مكوّن مستقل: `TrustStrip` و`WhyUs` و`PromoGrid` و`NewArrivals` و`TrendingTabs` و`DealsRail` و`CategoryRail` و`Testimonials` و`ContactSection`. والصفحة نفسها ترتبها فقط.
 - `Carousel` و`SectionHeading` في `src/components/store`: صف يُسحب بأزرار تمرير دائرية، وعنوان قسم مع رابط برتقالي "عرض الكل" ووصف اختياري.
 - `PromoTile` و`DiscountCard` و`SpotlightCard` و`WideBanner` في `src/components/home/banners.tsx`: مربعات العروض المصوّرة وبطاقة الخصم وبطاقات الفئات واللافتة العريضة.
 - `HeroSlider` في `src/components/home`: الواجهة بعرض الشاشة بنص في المنتصف فوق تعتيم وتدرج.
 - `ContactCards` في `src/components/content`: بطاقات التواصل بدوائر برتقالية، للصفحة الرئيسية وصفحة "تواصل معنا".
 - `useAddToCart` و`QuantityStepper` في `src/components/cart`: الإضافة للسلة مع فتح نافذتها، ومحدد الكمية.
-- `Tabs` في `src/components/ui/tabs.tsx`: تبويبات خفيفة بواجهة shadcn دون Base UI، وكل لوحاتها في HTML. التبويب حبة بحد رمادي والنشط برتقالي (انظر `ProductTabs`).
+- `Tabs` في `src/components/ui/tabs.tsx`: تبويبات خفيفة بواجهة shadcn دون Base UI، وكل لوحاتها في HTML. شكلها الافتراضي حبة بحد رمادي والنشط برتقالي، فلا تكرر أصنافه.
+- `StoreShell` في `src/components/layout`: هيكل المتجر كاملاً (الرأس والتذييل والسلة والشريط السفلي).
 - `SearchBox variant="header"` في `src/components/layout`: حقل البحث العريض في منتصف الرأس.
 - `toast` في `src/lib/toast.ts`: رسائل التنبيه القصيرة، تُحمّل مكتبتها عند أول رسالة. لا تستورد من `sonner` مباشرة.
 - `openGraph` و`shareImages` في `src/lib/seo.ts`: بيانات المشاركة لأي صفحة جديدة مع صورتها.
@@ -85,6 +91,7 @@ description: الهوية البصرية للمتجر وفق ملف DESIGN.md (�
 ## بعد التعديل
 
 - إن عدّلت `DESIGN.md` شغّل `pnpm design:lint`، ويجب أن ينتهي بلا أخطاء ولا تحذيرات. الفحص يتحقق أيضاً من تباين الألوان (WCAG AA).
+- شغّل `pnpm verify` (التنسيق وESLint بلا أي تحذير والأنواع وملف التصميم واختبارات الوحدات).
 - راجع الصفحة على مقاس الجوال (375 بكسل) والحاسوب.
 
 ## تغيير هوية المتجر (الاسم والألوان والخط)

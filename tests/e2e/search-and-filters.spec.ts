@@ -67,12 +67,12 @@ test("فلتر العروض والترتيب بالسعر يحدّثان الر�
   await expect(page).toHaveURL(/sort=price-asc/)
   await expect
     .poll(async () => {
-      const prices = await cards.evaluateAll((items) =>
-        items.map(
-          (item) => item.querySelector("p span.font-bold")?.textContent ?? ""
-        )
-      )
+      const prices = await cards.locator("[data-slot=price]").allTextContents()
       const numbers = prices.map(priceOf)
+      // كل بطاقة لها سعر مقروء، وإلا لنجح فحص الترتيب دون أن يقارن شيئاً
+      if (numbers.length === 0 || numbers.some((price) => !(price > 0))) {
+        return "أسعار غير مقروءة"
+      }
       return numbers.every(
         (price, index) => index === 0 || numbers[index - 1] <= price
       )

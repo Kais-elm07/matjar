@@ -1,1 +1,3 @@
-pnpm exec lint-staged
+# --max-arg-length: يقسم الملفات على دفعات، لأن مسار المشروع العربي الطويل
+# يجعل سطر الأوامر في Windows أطول من حده عند حفظ ملفات كثيرة دفعة واحدة
+pnpm exec lint-staged --max-arg-length 3000

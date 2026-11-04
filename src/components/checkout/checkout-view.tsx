@@ -7,26 +7,29 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import {
   BanknoteIcon,
   InfoIcon,
-  LoaderIcon,
   ShoppingCartIcon,
   TruckIcon,
   ZapIcon,
-  type LucideIcon,
 } from "lucide-react"
 import { useForm, useWatch, type FieldPath } from "react-hook-form"
 
 import { CartNotices } from "@/components/cart/cart-notices"
+import {
+  CHECKOUT_INPUT,
+  CheckoutField,
+  CheckoutSection,
+  ShippingOption,
+} from "@/components/checkout/checkout-fields"
+import { CheckoutSkeleton } from "@/components/checkout/checkout-skeleton"
 import { OrderSummary } from "@/components/checkout/order-summary"
 import { EmptyState } from "@/components/store/empty-state"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
-import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
 import { formatPrice } from "@/lib/catalog/money"
 import { deliveryTime } from "@/lib/checkout/delivery"
-import { createOrderNumber, saveLastOrder } from "@/lib/checkout/order"
+import { buildOrder, saveLastOrder } from "@/lib/checkout/order"
 import {
   checkoutSchema,
   type CheckoutInput,
@@ -42,9 +45,6 @@ import { cartSubtotal, useCartStore } from "@/lib/store/cart"
 import { useCartSync } from "@/lib/store/cart-sync"
 import { useCartRestored } from "@/lib/store/hydration"
 import { cn } from "@/lib/utils"
-
-/** الحقول 44 بكسل و16 بكسل للنص، حتى لا يكبّر الجوال الصفحة عند الكتابة. */
-const INPUT = "h-11 bg-background px-3 text-base md:text-base"
 
 /**
  * صفحة إتمام الطلب التجريبي: صفحة واحدة بأربع خطوات، وتحقق فوري برسائل عربية،
@@ -96,13 +96,9 @@ export function CheckoutView({ config }: { config: CheckoutConfig }) {
 
   if (placing) {
     return (
-      <div role="status" className="py-20 text-center">
-        <LoaderIcon
-          className="mx-auto size-8 animate-spin text-primary"
-          aria-hidden
-        />
-        <p className="mt-3 font-bold">جارٍ تأكيد طلبك...</p>
-      </div>
+      <p role="status" className="py-20 text-center font-bold">
+        جارٍ تأكيد طلبك...
+      </p>
     )
   }
 
@@ -153,39 +149,10 @@ export function CheckoutView({ config }: { config: CheckoutConfig }) {
   }
 
   function placeOrder(values: CheckoutValues) {
-    const chosenCity = config.cities.find((item) => item.name === values.city)
-    if (!chosenCity) return
+    const order = buildOrder({ values, lines, coupon, config })
+    if (!order) return
     setPlacing(true)
-    saveLastOrder({
-      number: createOrderNumber(),
-      placedAt: new Date().toISOString(),
-      customer: {
-        name: values.fullName,
-        phone: values.phone,
-        city: values.city,
-        address: `${values.district}، ${values.street}`,
-      },
-      shipping:
-        values.shippingMethod === "express"
-          ? { label: "توصيل سريع", days: config.express.label }
-          : { label: "توصيل عادي", days: deliveryTime(chosenCity.days) },
-      couponCode: coupon?.code ?? null,
-      lines: lines.map(({ sku, name, options, quantity, price, image }) => ({
-        sku,
-        name,
-        options,
-        quantity,
-        price,
-        image,
-      })),
-      totals: calculateTotals({
-        subtotal,
-        city: chosenCity,
-        method: values.shippingMethod,
-        coupon,
-        config,
-      }),
-    })
+    saveLastOrder(order)
     clearCart()
     router.push("/checkout/success")
   }
@@ -208,9 +175,9 @@ export function CheckoutView({ config }: { config: CheckoutConfig }) {
       >
         <CartNotices notices={notices} onDismiss={dismiss} />
 
-        <Section step={1} title="بيانات التواصل">
+        <CheckoutSection step={1} title="بيانات التواصل">
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field
+            <CheckoutField
               id="fullName"
               label="الاسم الكامل"
               error={errors.fullName?.message}
@@ -218,11 +185,11 @@ export function CheckoutView({ config }: { config: CheckoutConfig }) {
             >
               <Input
                 autoComplete="name"
-                className={INPUT}
+                className={CHECKOUT_INPUT}
                 {...field("fullName")}
               />
-            </Field>
-            <Field
+            </CheckoutField>
+            <CheckoutField
               id="phone"
               label="رقم الجوال"
               hint="نتصل بك عليه لتأكيد موعد التوصيل"
@@ -234,11 +201,11 @@ export function CheckoutView({ config }: { config: CheckoutConfig }) {
                 autoComplete="tel"
                 dir="ltr"
                 placeholder="05xxxxxxxx"
-                className={cn(INPUT, "text-end")}
+                className={cn(CHECKOUT_INPUT, "text-end")}
                 {...field("phone", { hint: true })}
               />
-            </Field>
-            <Field
+            </CheckoutField>
+            <CheckoutField
               id="email"
               label="البريد الإلكتروني"
               optional
@@ -249,16 +216,20 @@ export function CheckoutView({ config }: { config: CheckoutConfig }) {
                 inputMode="email"
                 autoComplete="email"
                 dir="ltr"
-                className={cn(INPUT, "text-end")}
+                className={cn(CHECKOUT_INPUT, "text-end")}
                 {...field("email")}
               />
-            </Field>
+            </CheckoutField>
           </div>
-        </Section>
+        </CheckoutSection>
 
-        <Section step={2} title="عنوان التوصيل">
+        <CheckoutSection step={2} title="عنوان التوصيل">
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field id="city" label="المدينة" error={errors.city?.message}>
+            <CheckoutField
+              id="city"
+              label="المدينة"
+              error={errors.city?.message}
+            >
               <NativeSelect
                 autoComplete="address-level2"
                 className="w-full [&_select]:h-11 [&_select]:bg-background [&_select]:text-base"
@@ -279,15 +250,19 @@ export function CheckoutView({ config }: { config: CheckoutConfig }) {
                   </NativeSelectOption>
                 ))}
               </NativeSelect>
-            </Field>
-            <Field id="district" label="الحي" error={errors.district?.message}>
+            </CheckoutField>
+            <CheckoutField
+              id="district"
+              label="الحي"
+              error={errors.district?.message}
+            >
               <Input
                 autoComplete="address-level3"
-                className={INPUT}
+                className={CHECKOUT_INPUT}
                 {...field("district")}
               />
-            </Field>
-            <Field
+            </CheckoutField>
+            <CheckoutField
               id="street"
               label="الشارع ورقم المبنى"
               error={errors.street?.message}
@@ -295,11 +270,11 @@ export function CheckoutView({ config }: { config: CheckoutConfig }) {
             >
               <Input
                 autoComplete="street-address"
-                className={INPUT}
+                className={CHECKOUT_INPUT}
                 {...field("street")}
               />
-            </Field>
-            <Field
+            </CheckoutField>
+            <CheckoutField
               id="notes"
               label="ملاحظات للمندوب"
               optional
@@ -312,11 +287,11 @@ export function CheckoutView({ config }: { config: CheckoutConfig }) {
                 className="bg-background px-3 text-base md:text-base"
                 {...field("notes")}
               />
-            </Field>
+            </CheckoutField>
           </div>
-        </Section>
+        </CheckoutSection>
 
-        <Section step={3} title="طريقة الشحن">
+        <CheckoutSection step={3} title="طريقة الشحن">
           <fieldset
             aria-describedby={
               errors.shippingMethod ? "shippingMethod-error" : undefined
@@ -359,10 +334,10 @@ export function CheckoutView({ config }: { config: CheckoutConfig }) {
               </p>
             )}
           </fieldset>
-        </Section>
+        </CheckoutSection>
 
-        <Section step={4} title="طريقة الدفع">
-          <div className="flex items-center gap-3 rounded-lg border border-primary bg-primary/5 p-4">
+        <CheckoutSection step={4} title="طريقة الدفع">
+          <div className="flex items-center gap-3 rounded-xl border border-primary bg-primary/5 p-4">
             <BanknoteIcon
               className="size-6 shrink-0 text-primary"
               aria-hidden
@@ -374,10 +349,10 @@ export function CheckoutView({ config }: { config: CheckoutConfig }) {
               </p>
             </div>
           </div>
-        </Section>
+        </CheckoutSection>
 
         <div className="space-y-3">
-          <p className="flex gap-2 rounded-lg bg-muted p-3 text-sm leading-6">
+          <p className="flex gap-2 rounded-xl bg-muted p-3 text-sm leading-6">
             <InfoIcon
               className="mt-1 size-4 shrink-0 text-primary"
               aria-hidden
@@ -395,132 +370,6 @@ export function CheckoutView({ config }: { config: CheckoutConfig }) {
           </Button>
         </div>
       </form>
-    </div>
-  )
-}
-
-function Section({
-  step,
-  title,
-  children,
-}: {
-  step: number
-  title: string
-  children: React.ReactNode
-}) {
-  return (
-    <section
-      aria-labelledby={`checkout-step-${step}`}
-      className="rounded-lg border p-4 md:p-6"
-    >
-      <h2
-        id={`checkout-step-${step}`}
-        className="mb-4 flex items-center gap-3 text-lg font-bold"
-      >
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm text-primary-foreground">
-          {step}
-        </span>
-        {title}
-      </h2>
-      {children}
-    </section>
-  )
-}
-
-/** حقل بتسمية فوقه، ورسالة الخطأ أو التلميح تحته. */
-function Field({
-  id,
-  label,
-  optional = false,
-  hint,
-  error,
-  className,
-  children,
-}: {
-  id: string
-  label: string
-  optional?: boolean
-  hint?: string
-  error?: string
-  className?: string
-  children: React.ReactNode
-}) {
-  return (
-    <div className={cn("space-y-1.5", className)}>
-      <Label htmlFor={id}>
-        {label}
-        {optional && (
-          <span className="font-normal text-muted-foreground">(اختياري)</span>
-        )}
-      </Label>
-      {children}
-      {error ? (
-        <p id={`${id}-error`} className="text-xs font-medium text-destructive">
-          {error}
-        </p>
-      ) : hint ? (
-        <p id={`${id}-hint`} className="text-xs text-muted-foreground">
-          {hint}
-        </p>
-      ) : null}
-    </div>
-  )
-}
-
-/** خيار شحن كبطاقة قابلة للنقر، والمختار بحد كحلي. */
-function ShippingOption({
-  icon: Icon,
-  title,
-  description,
-  price,
-  disabled = false,
-  ...input
-}: {
-  icon: LucideIcon
-  title: string
-  description: string
-  price: number | null
-  disabled?: boolean
-} & React.ComponentProps<"input">) {
-  return (
-    <label
-      className={cn(
-        "flex cursor-pointer items-center gap-3 rounded-lg border p-4 transition-colors has-checked:border-primary has-checked:bg-primary/5 has-focus-visible:ring-3 has-focus-visible:ring-ring/50",
-        disabled && "cursor-not-allowed opacity-50"
-      )}
-    >
-      <input
-        type="radio"
-        disabled={disabled}
-        className="size-4 shrink-0 accent-primary"
-        {...input}
-      />
-      <Icon className="size-5 shrink-0 text-primary" aria-hidden />
-      <span className="min-w-0 flex-1">
-        <span className="block font-bold">{title}</span>
-        <span className="block text-sm text-muted-foreground">
-          {description}
-        </span>
-      </span>
-      <span className="shrink-0 text-sm font-bold text-primary">
-        {price === null ? "" : price === 0 ? "مجاناً" : formatPrice(price)}
-      </span>
-    </label>
-  )
-}
-
-function CheckoutSkeleton() {
-  return (
-    <div
-      className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]"
-      aria-hidden
-    >
-      <div className="space-y-6">
-        {Array.from({ length: 3 }, (_, index) => (
-          <Skeleton key={index} className="h-48 rounded-lg" />
-        ))}
-      </div>
-      <Skeleton className="h-72 rounded-lg" />
     </div>
   )
 }

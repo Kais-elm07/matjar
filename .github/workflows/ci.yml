@@ -1,5 +1,5 @@
 # فحص آلي عند كل Pull Request وكل دفع إلى الفرع الرئيسي:
-# التنسيق، ESLint، الأنواع، واختبارات الوحدات، ثم بناء الموقع كاملاً،
+# التنسيق، ESLint، الأنواع، وملف التصميم، واختبارات الوحدات، ثم بناء الموقع كاملاً،
 # ثم اختبارات المتصفح على النسخة المبنية بـ Chrome وFirefox وSafari (WebKit).
 name: CI
 
@@ -12,21 +12,27 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# قراءة المستودع فقط، فلا يستطيع أي خطوة تعديله
+permissions:
+  contents: read
+
 jobs:
   check:
     name: فحص الكود والبناء
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       NEXT_PUBLIC_SITE_URL: http://localhost:3000
     steps:
       - uses: actions/checkout@v7
 
+      # يقرأ إصدار pnpm من packageManager في package.json
+      - uses: pnpm/action-setup@v6
+
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-
-      - name: تثبيت pnpm
-        run: npm install -g pnpm@12.16.1
+          cache: pnpm
 
       - name: تثبيت الحزم
         run: pnpm install --frozen-lockfile
@@ -49,8 +55,24 @@ jobs:
       - name: بناء الموقع الثابت
         run: pnpm build
 
+      # متصفحات الاختبار تُحفظ بين التشغيلات حسب إصدار Playwright، فلا تُنزَّل كل مرة
+      - name: إصدار Playwright
+        id: playwright
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v6
+        id: browsers
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+
       - name: تثبيت متصفحات الاختبار
+        if: steps.browsers.outputs.cache-hit != 'true'
         run: pnpm exec playwright install --with-deps chromium firefox webkit
+
+      - name: تثبيت مكتبات النظام للمتصفحات المحفوظة
+        if: steps.browsers.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps chromium firefox webkit
 
       - name: اختبارات المتصفح (Playwright)
         run: pnpm test:e2e

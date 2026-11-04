@@ -10,7 +10,7 @@ import {
 import { EmptyState } from "@/components/store/empty-state"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { PRODUCT_FORMS, pluralize } from "@/lib/arabic-plural"
-import type { ProductCard } from "@/lib/catalog/types"
+import type { SearchCardData } from "@/lib/catalog/types"
 import { useSearchIndex } from "@/lib/catalog/use-search-index"
 import { useWishlistRestored } from "@/lib/store/hydration"
 import { useWishlistStore } from "@/lib/store/wishlist"
@@ -63,7 +63,7 @@ export function WishlistView() {
   // منتج حُذف من المتجر بعد حفظه لا يُعرض
   const products = slugs
     .map((slug) => bySlug.get(slug))
-    .filter((product): product is ProductCard => Boolean(product))
+    .filter((product): product is SearchCardData => Boolean(product))
 
   return (
     <>

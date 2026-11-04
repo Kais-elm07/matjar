@@ -2,16 +2,16 @@
 
 import { useCallback, useEffect, useState } from "react"
 
-import type { ProductCard } from "./types"
+import type { SearchCardData } from "./types"
 
-let request: Promise<ProductCard[]> | null = null
+let request: Promise<SearchCardData[]> | null = null
 
 /** تحميل فهرس البحث مرة واحدة فقط ومشاركته بين كل صناديق البحث في الصفحة. */
 function loadSearchIndex() {
   request ??= fetch("/search-index.json")
     .then((response) => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
-      return response.json() as Promise<ProductCard[]>
+      return response.json() as Promise<SearchCardData[]>
     })
     .catch((error: unknown) => {
       request = null // السماح بإعادة المحاولة
@@ -20,7 +20,7 @@ function loadSearchIndex() {
   return request
 }
 
-type IndexState = { data: ProductCard[] | null; error: boolean }
+type IndexState = { data: SearchCardData[] | null; error: boolean }
 
 /** فهرس البحث. يبدأ التحميل فقط عند enabled، مثلاً عند التركيز على حقل البحث. */
 export function useSearchIndex(enabled = true) {

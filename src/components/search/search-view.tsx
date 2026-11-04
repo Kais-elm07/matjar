@@ -5,8 +5,8 @@ import { useSearchParams } from "next/navigation"
 import { WifiOffIcon } from "lucide-react"
 
 import { SearchBox } from "@/components/layout/search-box"
+import { ListingSkeleton } from "@/components/listing/listing-skeleton"
 import { ListingView } from "@/components/listing/listing-view"
-import { ProductGridSkeleton } from "@/components/product/product-grid"
 import { EmptyState } from "@/components/store/empty-state"
 import { Button } from "@/components/ui/button"
 import type { CategoryOption } from "@/lib/catalog/types"
@@ -33,7 +33,7 @@ export function SearchView({ categories }: { categories: CategoryOption[] }) {
               <li key={category.slug}>
                 <Link
                   href={`/category/${category.slug}`}
-                  className="inline-flex h-9 items-center rounded-full border px-4 text-sm transition-colors hover:border-primary hover:text-primary"
+                  className="inline-flex h-11 items-center rounded-full border px-4 text-sm transition-colors hover:border-primary hover:text-primary"
                 >
                   {category.name}
                 </Link>
@@ -55,23 +55,15 @@ export function SearchView({ categories }: { categories: CategoryOption[] }) {
           title="تعذّر تحميل نتائج البحث"
           description="تحقق من اتصالك بالإنترنت ثم حاول مرة أخرى."
         >
-          <Button variant="outline" size="lg" onClick={retry}>
+          <Button variant="outline" size="xl" onClick={retry}>
             إعادة المحاولة
           </Button>
         </EmptyState>
       ) : data ? (
         <ListingView products={data} categories={categories} search />
       ) : (
-        <SearchSkeleton />
+        <ListingSkeleton />
       )}
     </>
-  )
-}
-
-export function SearchSkeleton() {
-  return (
-    <div className="lg:ms-[17rem]">
-      <ProductGridSkeleton className="lg:grid-cols-3 xl:grid-cols-4" />
-    </div>
   )
 }

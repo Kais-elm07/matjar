@@ -25,6 +25,7 @@ export function Price({
       )}
     >
       <span
+        data-slot="price"
         className={cn(
           "font-bold text-primary",
           size === "lg" ? "text-2xl md:text-3xl" : "text-base"

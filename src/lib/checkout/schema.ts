@@ -1,16 +1,25 @@
 import { z } from "zod"
 
-import { normalizeDigits } from "./totals"
+import { toWesternDigits } from "@/lib/catalog/arabic"
+
 import type { ShippingCity } from "./types"
 
+// سياسة المحتوى في الموقع المنشور (public/_headers) تمنع eval، وZod يجرّب new Function لتسريع التحقق
+// فيبلّغ المتصفح عن مخالفة حتى لو تجاوزها. بلا هذه المحاولة يعمل التحقق في المتصفح بالطريقة العادية.
+z.config({ jitless: true })
+
 /**
- * رقم الجوال بصيغة 05xxxxxxxx: يقبل +966 و00966 والأرقام العربية والمسافات.
+ * رقم الجوال بصيغة 05xxxxxxxx: يقبل +966 و00966 والأرقام العربية والمسافات،
+ * ومن يكتب الصفر بعد مفتاح الدولة (+966 05...).
  * مؤقتاً صيغة السعودية حتى تحديد الدولة (القرار 1 في الخطة).
  */
 export function normalizePhone(value: string) {
-  const digits = normalizeDigits(value).replace(/[\s()-]/g, "")
+  const digits = toWesternDigits(value).replace(/[\s()-]/g, "")
   for (const prefix of ["+966", "00966", "966"]) {
-    if (digits.startsWith(prefix)) return `0${digits.slice(prefix.length)}`
+    if (digits.startsWith(prefix)) {
+      const rest = digits.slice(prefix.length)
+      return rest.startsWith("0") ? rest : `0${rest}`
+    }
   }
   return digits
 }

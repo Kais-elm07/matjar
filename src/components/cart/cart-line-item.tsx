@@ -81,7 +81,7 @@ export function CartLineItem({
           />
           <Button
             variant="ghost"
-            size="icon-lg"
+            size="icon-xl"
             aria-label={`حذف ${line.name} من السلة`}
             onClick={() => remove(line.sku)}
           >

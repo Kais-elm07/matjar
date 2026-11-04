@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 
 import {
   discountPercent,
+  fitsCurrency,
   formatPrice,
   toMajorUnits,
   toMinorUnits,
@@ -29,6 +30,12 @@ describe("formatPrice", () => {
   it("يقرّب أجزاء الهللة", () => {
     expect(formatPrice(1999.6)).toBe(`20${SAR}`)
   })
+
+  it("يعرض صفراً لمبلغ غير صالح، ولا يكتب -0", () => {
+    expect(formatPrice(Number.NaN)).toBe(`0${SAR}`)
+    expect(formatPrice(Number.POSITIVE_INFINITY)).toBe(`0${SAR}`)
+    expect(formatPrice(-0.4)).toBe(`0${SAR}`)
+  })
 })
 
 describe("تحويل الوحدات", () => {
@@ -36,6 +43,13 @@ describe("تحويل الوحدات", () => {
     expect(toMinorUnits(129.5)).toBe(12950)
     expect(toMinorUnits(19.99)).toBe(1999)
     expect(toMinorUnits(0.1 + 0.2)).toBe(30)
+  })
+
+  it("يقبل السعر بخانتين عشريتين على الأكثر", () => {
+    expect(fitsCurrency(129)).toBe(true)
+    expect(fitsCurrency(129.5)).toBe(true)
+    expect(fitsCurrency(19.99)).toBe(true)
+    expect(fitsCurrency(129.555)).toBe(false)
   })
 
   it("يحوّل الهللات إلى ريال", () => {

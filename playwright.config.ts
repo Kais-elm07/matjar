@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs"
+
 import { defineConfig, devices } from "@playwright/test"
 
 const PORT = 3200
@@ -10,6 +12,13 @@ const chrome = isCI ? {} : { channel: "chrome" }
 // Firefox يعمل دائماً في GitHub Actions، ومحلياً عند الطلب: E2E_FIREFOX=1 pnpm test:e2e،
 // لأن نسخة Playwright الحالية منه لا تبدأ على بعض أجهزة Windows (لا يجد مكتبة mozglue)
 const withFirefox = isCI || Boolean(process.env.E2E_FIREFOX)
+
+// الاختبارات تعمل على النسخة المبنية، فبدونها تفشل كلها بأخطاء 404 مربكة
+if (!existsSync("out/index.html")) {
+  throw new Error(
+    "لا توجد نسخة مبنية في out/. شغّل pnpm build أولاً ثم pnpm test:e2e."
+  )
+}
 
 /**
  * اختبارات المتصفح (pnpm test:e2e) على النسخة الثابتة في out/ كما ستُنشر،
@@ -25,7 +34,9 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:${PORT}`,
     locale: "ar-SA",
-    trace: "retain-on-failure",
+    // التتبع عند إعادة المحاولة فقط، ولقطة شاشة عند الفشل، فيبقى التقرير خفيفاً
+    trace: "on-first-retry",
+    screenshot: "only-on-failure",
   },
   webServer: {
     command: `node node_modules/serve/build/main.js out --listen ${PORT} --no-clipboard`,

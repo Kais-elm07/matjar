@@ -35,24 +35,27 @@ export function ProductGallery({
   const [zoomOpen, setZoomOpen] = useState(false)
   const idle = useIdle()
 
-  // معرفة الصورة الظاهرة عند السحب
+  // معرفة الصورة الظاهرة بعد توقف السحب لا أثناءه: التمرير الناعم إلى صورة بعيدة
+  // يمر بالصور التي بينهما، ولو عُدّت كل منها "الحالية" لتوقف التمرير عند أولها
   useEffect(() => {
     const track = trackRef.current
     if (!track) return
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            onActiveIndexChange(
-              Number((entry.target as HTMLElement).dataset.index)
-            )
-          }
-        }
-      },
-      { root: track, threshold: 0.6 }
-    )
-    for (const slide of slideRefs.current) if (slide) observer.observe(slide)
-    return () => observer.disconnect()
+    let timer: ReturnType<typeof setTimeout> | undefined
+    function settle() {
+      if (!track) return
+      // في الاتجاه العربي تكون قيمة التمرير سالبة، فنأخذ قيمتها المطلقة
+      const index = Math.round(Math.abs(track.scrollLeft) / track.clientWidth)
+      onActiveIndexChange(Math.min(index, images.length - 1))
+    }
+    function onScroll() {
+      clearTimeout(timer)
+      timer = setTimeout(settle, 120)
+    }
+    track.addEventListener("scroll", onScroll, { passive: true })
+    return () => {
+      clearTimeout(timer)
+      track.removeEventListener("scroll", onScroll)
+    }
   }, [images.length, onActiveIndexChange])
 
   // الانتقال للصورة المطلوبة عند اختيار صورة مصغرة أو لون
@@ -84,7 +87,6 @@ export function ProductGallery({
               ref={(element) => {
                 slideRefs.current[index] = element
               }}
-              data-index={index}
               className="relative aspect-square w-full shrink-0 snap-center"
             >
               <button
@@ -109,11 +111,11 @@ export function ProductGallery({
             </div>
           ))}
         </div>
-        <span className="pointer-events-none absolute end-3 top-3 flex size-9 items-center justify-center rounded-full bg-card/85 text-foreground shadow-sm">
+        <span className="pointer-events-none absolute end-3 top-3 flex size-9 items-center justify-center rounded-full bg-card/85 text-foreground">
           <ZoomInIcon className="size-4" aria-hidden />
         </span>
         {images.length > 1 && (
-          <span className="pointer-events-none absolute start-3 bottom-3 rounded-full bg-card/85 px-2.5 py-1 text-xs font-medium tabular-nums shadow-sm md:hidden">
+          <span className="pointer-events-none absolute start-3 bottom-3 rounded-full bg-card/85 px-2.5 py-1 text-xs font-medium tabular-nums md:hidden">
             {activeIndex + 1} / {images.length}
           </span>
         )}

@@ -8,12 +8,13 @@ import {
   type ComponentProps,
   type KeyboardEvent,
 } from "react"
-import { cn } from "cn"
+import { cn } from "@/lib/utils"
 
 /**
  * تبويبات خفيفة بنفس واجهة تبويبات shadcn، دون مكتبة Base UI، لتقليل JavaScript الصفحة.
  * كل اللوحات موجودة في HTML (غير النشطة مخفية بالخاصية hidden)، فتقرؤها محركات البحث.
  * الأسهم تنتقل بين التبويبات بحسب اتجاه الصفحة، وHome وEnd إلى الأول والأخير.
+ * الشكل الافتراضي من DESIGN.md: حبوب بحد رمادي، والنشط برتقالي بنص داكن (section-tab-active).
  */
 
 type TabsContextValue = {
@@ -87,7 +88,7 @@ function TabsList({ className, ...props }: ComponentProps<"div">) {
       data-slot="tabs-list"
       onKeyDown={moveBetweenTabs}
       className={cn(
-        "inline-flex w-fit items-center rounded-lg bg-muted p-[3px] text-muted-foreground",
+        "flex w-fit [scrollbar-width:none] items-center gap-2 overflow-x-auto",
         className
       )}
       {...props}
@@ -116,7 +117,7 @@ function TabsTrigger({
       data-active={selected ? "" : undefined}
       onClick={() => select(value)}
       className={cn(
-        "inline-flex items-center justify-center gap-1.5 rounded-md px-1.5 py-0.5 text-sm font-medium whitespace-nowrap text-foreground/60 transition-colors outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 data-active:bg-background data-active:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "inline-flex h-9 flex-none items-center justify-center gap-1.5 rounded-full border border-border px-4 text-sm font-medium whitespace-nowrap text-foreground transition-colors outline-none hover:border-foreground/40 focus-visible:ring-3 focus-visible:ring-ring/50 data-active:border-primary data-active:bg-primary data-active:text-primary-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0",
         className
       )}
       {...props}

@@ -11,7 +11,8 @@ let request: Promise<CartCatalog> | null = null
 
 /** تحميل أسعار ومخزون الموقع المنشور مرة واحدة في كل زيارة. */
 function loadCartCatalog() {
-  request ??= fetch("/cart-catalog.json")
+  // التحقق من نسخة الموقع في كل مرة، فلا تبقى أسعار قديمة في ذاكرة المتصفح بعد نشر تحديث
+  request ??= fetch("/cart-catalog.json", { cache: "no-cache" })
     .then((response) => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
       return response.json() as Promise<CartCatalog>

@@ -15,7 +15,7 @@ import path from "node:path"
 
 import sharp, { type OverlayOptions, type Sharp } from "sharp"
 
-import { IMAGE_WIDTHS } from "@/lib/image-loader"
+import { IMAGE_WIDTHS, imageFile } from "@/lib/image-loader"
 
 /**
  * أدوات رسم صور المشاركة (Open Graph) وقت البناء: نص عربي بخط المتجر، وصور بزوايا دائرية، وشارات.
@@ -219,13 +219,8 @@ export async function pill(
 /** ملف الصورة على القرص لمسار من ملفات البيانات، مثل /images/products/x-1، أو null. */
 export function localImage(src: string) {
   if (/^https?:\/\//.test(src)) return null
-  const hasExtension = /\.[a-z0-9]{2,5}$/i.test(src)
   const largest = IMAGE_WIDTHS[IMAGE_WIDTHS.length - 1]
-  const file = path.join(
-    ROOT,
-    "public",
-    hasExtension ? src : `${src}-${largest}.webp`
-  )
+  const file = path.join(ROOT, "public", imageFile(src, largest))
   return existsSync(file) ? file : null
 }
 

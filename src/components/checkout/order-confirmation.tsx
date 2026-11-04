@@ -21,7 +21,7 @@ export function OrderConfirmation() {
       <div className="mx-auto max-w-3xl space-y-6" aria-hidden>
         <Skeleton className="mx-auto size-16 rounded-full" />
         <Skeleton className="mx-auto h-8 w-64" />
-        <Skeleton className="h-48 rounded-lg" />
+        <Skeleton className="h-48 rounded-xl" />
       </div>
     )
   }
@@ -75,7 +75,7 @@ export function OrderConfirmation() {
       <div className="grid gap-4 md:grid-cols-2">
         <section
           aria-labelledby="delivery-heading"
-          className="rounded-lg border p-5"
+          className="rounded-xl border p-5"
         >
           <h3 id="delivery-heading" className="mb-3 font-bold">
             التوصيل
@@ -94,7 +94,7 @@ export function OrderConfirmation() {
 
         <section
           aria-labelledby="payment-heading"
-          className="rounded-lg border p-5"
+          className="rounded-xl border p-5"
         >
           <h3 id="payment-heading" className="mb-3 font-bold">
             الدفع عند الاستلام
@@ -123,7 +123,7 @@ export function OrderConfirmation() {
 
       <section
         aria-labelledby="items-heading"
-        className="rounded-lg border p-5"
+        className="rounded-xl border p-5"
       >
         <h3 id="items-heading" className="mb-2 font-bold">
           المنتجات ({pluralize(count, PIECE_FORMS)})

@@ -84,6 +84,63 @@ describe("ملفات المنتجات والفئات", () => {
     expect(message).toContain('الفئة "a": تسلسل الفئات الأم دائري.')
   })
 
+  it("يرفض التواريخ غير الموجودة والأسعار بكسور زائدة والمتغيرات المكررة", async () => {
+    vi.doMock("@/data/categories", () => ({
+      categories: [{ slug: "men", name: "رجالي" }],
+    }))
+    vi.doMock("@/data/products", () => ({
+      products: [
+        { ...validProduct, createdAt: "2026-02-30" },
+        {
+          ...validProduct,
+          slug: "odd-price",
+          variants: [{ sku: "T-2", price: 99.999, stock: 1 }],
+        },
+        {
+          ...validProduct,
+          slug: "twins",
+          variants: [
+            { sku: "T-3", options: { المقاس: "M" }, price: 100, stock: 1 },
+            { sku: "T-4", options: { المقاس: "M" }, price: 110, stock: 1 },
+          ],
+        },
+        {
+          ...validProduct,
+          slug: "colored-image",
+          images: [{ src: "/images/products/x-1", color: "أزرق" }],
+          variants: [{ sku: "T-5", price: 100, stock: 1 }],
+        },
+      ],
+    }))
+
+    const message = await errorOf(import("@/lib/catalog/catalog"))
+    expect(message).toContain("الحقل createdAt: التاريخ غير موجود في التقويم")
+    expect(message).toContain("الحقل variants[1].price")
+    expect(message).toContain(`المتغير "T-4" يكرر خيارات متغير آخر`)
+    expect(message).toContain(`للصورة لون "أزرق" لكن المنتج ليس له خيار لون`)
+  })
+
+  it("يعيد منتج العرض المنتهي إلى سعره قبل الخصم", async () => {
+    vi.doMock("@/data/categories", () => ({
+      categories: [{ slug: "men", name: "رجالي" }],
+    }))
+    vi.doMock("@/data/products", () => ({
+      products: [
+        {
+          ...validProduct,
+          saleEndsAt: "2020-01-31",
+          variants: [{ sku: "T-1", price: 80, compareAtPrice: 100, stock: 5 }],
+        },
+      ],
+    }))
+
+    const catalog = await import("@/lib/catalog/catalog")
+    const [product] = catalog.getProducts()
+    expect(product.price).toBe(10000)
+    expect(product.compareAtPrice).toBeNull()
+    expect(product.saleEndsAt).toBeNull()
+  })
+
   it("يقبل بيانات صحيحة", async () => {
     vi.doMock("@/data/categories", () => ({
       categories: [{ slug: "men", name: "رجالي" }],
@@ -127,5 +184,32 @@ describe("ملفا الشحن والكوبونات", () => {
     expect(message).toContain("الملف src/data/coupons.ts فيه أخطاء")
     expect(message).toContain("رمز الكوبون بأحرف إنجليزية كبيرة وأرقام فقط")
     expect(message).toContain("النسبة لا تتجاوز 100")
+  })
+
+  it("يرفض حقولاً لا تنطبق على نوع الكوبون", async () => {
+    vi.doMock("@/data/coupons", () => ({
+      coupons: [
+        {
+          code: "FLAT",
+          type: "fixed",
+          value: 50,
+          maxDiscount: 20,
+          description: "خصم",
+        },
+        { code: "SHIP", type: "free-shipping", value: 10, description: "شحن" },
+        {
+          code: "ZERO",
+          type: "percent",
+          value: 10,
+          maxDiscount: 0,
+          description: "خصم",
+        },
+      ],
+    }))
+
+    const message = await errorOf(import("@/lib/checkout/config"))
+    expect(message).toContain("أقصى خصم (maxDiscount) للكوبونات النسبية فقط")
+    expect(message).toContain("كوبون الشحن المجاني لا يحتاج قيمة (value)")
+    expect(message).toContain("أقصى خصم يجب أن يكون أكبر من صفر")
   })
 })

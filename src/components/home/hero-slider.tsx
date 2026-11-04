@@ -28,12 +28,16 @@ export function HeroSlider({ slides }: { slides: ProductBanner[] }) {
     setActive(Math.round(Math.abs(list.scrollLeft) / list.clientWidth))
   }
 
+  /** ينقل الشرائح وحدها إلى الشريحة المطلوبة، دون تحريك الصفحة رأسياً. */
   function show(index: number) {
     const count = slides.length
-    slideRefs.current[(index + count) % count]?.scrollIntoView({
+    const list = listRef.current
+    const slide = slideRefs.current[(index + count) % count]
+    if (!list || !slide) return
+    list.scrollBy({
+      left:
+        slide.getBoundingClientRect().left - list.getBoundingClientRect().left,
       behavior: scrollBehavior(),
-      block: "nearest",
-      inline: "center",
     })
   }
 

@@ -1,0 +1,61 @@
+import { StarIcon } from "lucide-react"
+
+import type { TestimonialInput } from "@/lib/catalog/types"
+import { cn } from "@/lib/utils"
+
+/** آراء العملاء: تظهر فقط عند وجود آراء حقيقية في src/data/testimonials.ts. */
+export function Testimonials({
+  testimonials,
+}: {
+  testimonials: TestimonialInput[]
+}) {
+  if (testimonials.length === 0) return null
+  return (
+    <section aria-labelledby="testimonials-heading">
+      <h2
+        id="testimonials-heading"
+        className="mb-6 text-2xl font-bold md:text-3xl"
+      >
+        آراء عملائنا
+      </h2>
+      <ul className="grid gap-4 md:grid-cols-3">
+        {testimonials.map((testimonial, index) => (
+          <li
+            key={`${testimonial.name}-${index}`}
+            className="space-y-3 rounded-xl border bg-card p-6"
+          >
+            <p
+              role="img"
+              aria-label={`التقييم ${testimonial.rating} من 5`}
+              className="flex gap-0.5 text-primary"
+            >
+              {Array.from({ length: 5 }, (_, star) => (
+                <StarIcon
+                  key={star}
+                  aria-hidden
+                  className={cn(
+                    "size-4",
+                    star < testimonial.rating ? "fill-current" : "text-border"
+                  )}
+                />
+              ))}
+            </p>
+            <p className="font-bold">{testimonial.title}</p>
+            <p className="text-sm leading-7 text-muted-foreground">
+              {testimonial.text}
+            </p>
+            <p className="text-sm font-bold">
+              {testimonial.name}
+              {testimonial.role && (
+                <span className="font-normal text-muted-foreground">
+                  {" "}
+                  · {testimonial.role}
+                </span>
+              )}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}

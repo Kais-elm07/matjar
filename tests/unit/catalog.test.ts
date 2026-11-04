@@ -2,18 +2,22 @@ import { describe, expect, it } from "vitest"
 
 import { coupons } from "@/data/coupons"
 import { shipping } from "@/data/shipping"
+import { existsSync } from "node:fs"
+import path from "node:path"
+
 import {
   getCartCatalog,
   getCategories,
-  getHomeContent,
-  getHomeSections,
   getProduct,
   getProductCards,
   getProducts,
   getRelatedProducts,
   getSearchIndex,
 } from "@/lib/catalog/catalog"
-import { toMinorUnits } from "@/lib/catalog/money"
+import { storeToday } from "@/lib/catalog/dates"
+import { getHomeContent, getHomeSections } from "@/lib/catalog/home"
+import { discountPercent, toMinorUnits } from "@/lib/catalog/money"
+import { optionsKey } from "@/lib/catalog/variant-key"
 import { getCheckoutConfig } from "@/lib/checkout/config"
 
 /** فحوص على بيانات المتجر الحالية: تفشل إن أُضيف منتج أو فئة بشكل يكسر الموقع. */
@@ -66,6 +70,7 @@ describe("بيانات المتجر الفعلية", () => {
           price: variant.price,
           compareAtPrice: variant.compareAtPrice,
           stock: variant.stock,
+          options: optionsKey(variant.options),
         })
       }
     }
@@ -83,17 +88,54 @@ describe("بيانات المتجر الفعلية", () => {
     }
   })
 
-  it("العروض المحدودة لم تنته بعد، والمقترحات لا تكرر المنتج نفسه", () => {
-    const today = new Date().toISOString().slice(0, 10)
-    for (const deal of getHomeSections().deals) {
-      expect(deal.saleEndsAt! >= today, deal.slug).toBe(true)
+  it("العروض المنتهية أُعيدت لسعرها وقت البناء، والمقترحات لا تكرر المنتج نفسه", () => {
+    const today = storeToday()
+    for (const product of products) {
+      if (product.saleEndsAt === null) continue
+      expect(product.saleEndsAt >= today, product.slug).toBe(true)
+      expect(product.compareAtPrice, product.slug).not.toBeNull()
     }
+    const { deals, maxDiscount } = getHomeSections()
+    expect(deals.every((deal) => deal.saleEndsAt !== null)).toBe(true)
+    // "خصومات تصل إلى" تساوي أكبر خصم بين كل المنتجات المخفضة
+    expect(maxDiscount).toBe(
+      Math.max(
+        0,
+        ...products.map(
+          (product) =>
+            discountPercent(product.price, product.compareAtPrice) ?? 0
+        )
+      )
+    )
     for (const product of products) {
       expect(
         getRelatedProducts(product).map((related) => related.slug),
         product.slug
       ).not.toContain(product.slug)
     }
+  })
+
+  it("لكل صورة في البيانات ملف أصلي في assets/images", () => {
+    const extensions = [".jpg", ".jpeg", ".png", ".webp", ".avif", ".svg"]
+    const hasSource = (src: string) =>
+      extensions.some((extension) =>
+        existsSync(path.join("assets", `${src.slice(1)}${extension}`))
+      )
+    for (const product of products) {
+      for (const image of product.images) {
+        expect(hasSource(image.src), image.src).toBe(true)
+      }
+    }
+    for (const category of categories) {
+      if (category.image) {
+        expect(hasSource(category.image), category.image).toBe(true)
+      }
+    }
+  })
+
+  it("بطاقات القوائم لا تحمل نصوص البحث، وفهرس البحث يحملها", () => {
+    expect(getProductCards()[0]).not.toHaveProperty("searchText")
+    expect(getSearchIndex()[0].searchText.length).toBeGreaterThan(0)
   })
 
   it("إعدادات الشحن والكوبونات تُحوَّل إلى هللات", () => {

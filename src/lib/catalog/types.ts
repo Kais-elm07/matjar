@@ -51,6 +51,7 @@ export type ProductInput = {
   /**
    * آخر يوم في العرض بصيغة 2026-12-31. يُظهر المنتج في قسم "عروض لفترة محدودة"
    * مع عدّاد تنازلي حقيقي، ويختفي من القسم بعد هذا التاريخ. يحتاج سعراً قبل الخصم.
+   * بعد انتهائه يعود السعر إلى السعر قبل الخصم عند إعادة بناء الموقع، فأعد البناء بعد انتهاء العرض.
    */
   saleEndsAt?: string
   /** إخفاء المنتج من الموقع دون حذفه من الملف */
@@ -152,15 +153,18 @@ export type Product = {
   saleEndsAt: string | null
 }
 
-/** بيانات البطاقة: كل ما تحتاجه القوائم والبحث والفلاتر في المتصفح. */
-export type ProductCard = {
+/** صورة البطاقة: المسار ووصف قارئات الشاشة فقط. */
+export type CardImage = { src: string; alt: string }
+
+/** بيانات بطاقة المنتج: كل ما تحتاجه القوائم والفلاتر والترتيب في المتصفح، ولا شيء غيره. */
+export type ProductCardData = {
   slug: string
   name: string
   price: number
   compareAtPrice: number | null
   priceVaries: boolean
   inStock: boolean
-  image: ProductImage | null
+  image: CardImage | null
   /** اسم الفئة الأدق، يظهر فوق اسم المنتج في البطاقة */
   categoryName: string | null
   /** للمنتجات ذات المتغير الواحد: إضافة مباشرة للسلة من البطاقة */
@@ -172,9 +176,10 @@ export type ProductCard = {
   variants: { options: VariantOptions; inStock: boolean }[]
   popularity: number
   createdAt: string
-  /** نص مطبّع للبحث العربي */
-  searchText: string
 }
+
+/** بطاقة في فهرس البحث (search-index.json): البطاقة مع نص مطبّع للبحث العربي. */
+export type SearchCardData = ProductCardData & { searchText: string }
 
 /** بطاقة عرض لمنتج بعد ربطها ببياناته. */
 export type ProductBanner = {
@@ -196,8 +201,16 @@ export type CategoryBanner = {
   image: string | null
 }
 
-/** أسعار ومخزون كل متغير حسب رمزه، تقارن به السلة المحفوظة في المتصفح. */
+/**
+ * أسعار ومخزون كل متغير حسب رمزه، تقارن به السلة المحفوظة في المتصفح.
+ * options مفتاح تركيبة الخيارات (optionsKey)، لكشف رمز صار يدل على خيارات أخرى.
+ */
 export type CartCatalog = Record<
   string,
-  { price: number; compareAtPrice: number | null; stock: number }
+  {
+    price: number
+    compareAtPrice: number | null
+    stock: number
+    options: string
+  }
 >

@@ -19,7 +19,11 @@ export function productImages(
 }
 
 type VariantBase = {
-  /** بادئة رمز المنتج، تُضاف لها أرقام تلقائياً: SHIRT-01، SHIRT-02... */
+  /**
+   * بادئة رمز المنتج، تُضاف لها أرقام تلقائياً: SHIRT-01، SHIRT-02...
+   * الأرقام تتبع ترتيب القيم، فإعادة ترتيبها بعد النشر تغيّر الرموز،
+   * والسلة المحفوظة تحذف عندها السطر الذي تغيّرت خياراته بدل أن تخلطه بمتغير آخر.
+   */
   sku: string
   price: number
   compareAtPrice?: number
@@ -37,7 +41,8 @@ type VariantOverride = Partial<Omit<VariantInput, "sku" | "options">>
  *   // تعديلات اختيارية: لقيمة واحدة ("L") أو لتركيبة كاملة ("L/أزرق")
  *   { L: { price: 139 }, "S/أزرق": { stock: 0 } }
  * )
- * ينتج 6 متغيرات. التعديل على التركيبة الكاملة يتقدم على تعديل القيمة الواحدة.
+ * ينتج 6 متغيرات. التعديل على التركيبة الكاملة يتقدم على تعديل القيمة الواحدة،
+ * ومفتاح تعديل لا يطابق أي قيمة أو تركيبة (خطأ إملائي مثلاً) يوقف البناء برسالة واضحة.
  */
 export function optionMatrix(
   options: Record<string, string[]>,
@@ -49,6 +54,19 @@ export function optionMatrix(
   for (const name of names) {
     combinations = combinations.flatMap((combination) =>
       options[name].map((value) => ({ ...combination, [name]: value }))
+    )
+  }
+
+  const known = new Set([
+    ...Object.values(options).flat(),
+    ...combinations.map((combination) =>
+      names.map((name) => combination[name]).join("/")
+    ),
+  ])
+  const unknown = Object.keys(overrides).filter((key) => !known.has(key))
+  if (unknown.length > 0) {
+    throw new Error(
+      `optionMatrix("${base.sku}"): مفاتيح تعديل لا تطابق أي قيمة أو تركيبة: ${unknown.join("، ")}. اكتب القيمة كما في الخيارات، والتركيبة بترتيبها مفصولة بـ /، مثل "L/أزرق".`
     )
   }
 

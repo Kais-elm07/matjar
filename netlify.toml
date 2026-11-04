@@ -1,0 +1,11 @@
+# إعدادات Netlify: يبني الموقع الثابت وينشر مجلد out.
+# الترويسات في public/_headers، وصفحة 404 تؤخذ من out/404.html تلقائياً.
+# رابط الموقع الحقيقي (NEXT_PUBLIC_SITE_URL) يُضبط من لوحة Netlify:
+# Site configuration → Environment variables، حتى لا يُكتب النطاق في الكود.
+
+[build]
+  command = "pnpm build"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "24"

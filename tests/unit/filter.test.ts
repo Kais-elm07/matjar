@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import { normalizeForSearch } from "@/lib/catalog/arabic"
-import { getProductCards } from "@/lib/catalog/catalog"
+import { getSearchIndex } from "@/lib/catalog/catalog"
 import {
   computeFacets,
   filterCards,
@@ -10,11 +10,11 @@ import {
   sortCards,
 } from "@/lib/catalog/filter"
 import { parseListingParams, type ListingParams } from "@/lib/catalog/listing"
-import type { ProductCard } from "@/lib/catalog/types"
+import type { SearchCardData } from "@/lib/catalog/types"
 
 function card(
-  fields: Partial<ProductCard> & Pick<ProductCard, "slug" | "name">
-): ProductCard {
+  fields: Partial<SearchCardData> & Pick<SearchCardData, "slug" | "name">
+): SearchCardData {
   const merged = {
     price: 10000,
     compareAtPrice: null,
@@ -87,7 +87,7 @@ const params = (changes: Partial<ListingParams> = {}): ListingParams => ({
   ...parseListingParams({}),
   ...changes,
 })
-const slugs = (list: ProductCard[]) => list.map((item) => item.slug)
+const slugs = (list: { slug: string }[]) => list.map((item) => item.slug)
 
 describe("searchCards", () => {
   it("يجد المنتج رغم اختلاف كتابة التاء المربوطة", () => {
@@ -270,7 +270,7 @@ describe("computeFacets", () => {
 })
 
 describe("البحث في منتجات المتجر الفعلية", () => {
-  const all = getProductCards()
+  const all = getSearchIndex()
 
   it.each([
     ["ساعه", "classic-wrist-watch"],

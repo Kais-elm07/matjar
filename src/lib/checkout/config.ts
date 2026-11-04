@@ -44,7 +44,10 @@ const couponSchema = z
     type: z.enum(["percent", "fixed", "free-shipping"]),
     value: z.number().positive().optional(),
     minSubtotal: amount.optional(),
-    maxDiscount: amount.optional(),
+    maxDiscount: z
+      .number()
+      .positive({ error: "أقصى خصم يجب أن يكون أكبر من صفر" })
+      .optional(),
     description: z.string().trim().min(1),
   })
   .refine((coupon) => coupon.type === "free-shipping" || coupon.value, {
@@ -55,6 +58,17 @@ const couponSchema = z
     error: "النسبة لا تتجاوز 100",
     path: ["value"],
   })
+  .refine(
+    (coupon) => coupon.type !== "free-shipping" || coupon.value === undefined,
+    { error: "كوبون الشحن المجاني لا يحتاج قيمة (value)", path: ["value"] }
+  )
+  .refine(
+    (coupon) => coupon.type === "percent" || coupon.maxDiscount === undefined,
+    {
+      error: "أقصى خصم (maxDiscount) للكوبونات النسبية فقط",
+      path: ["maxDiscount"],
+    }
+  )
 
 function fail(file: string, error: z.ZodError): never {
   const problems = error.issues.map(
@@ -73,13 +87,13 @@ function buildConfig(): CheckoutConfig {
   const codes = coupons.data.map((coupon) => coupon.code)
   const duplicate = (list: string[]) =>
     list.find((item, index) => list.indexOf(item) !== index)
-  if (duplicate(names)) {
-    throw new Error(
-      `src/data/shipping.ts: المدينة "${duplicate(names)}" مكررة.`
-    )
+  const duplicateCity = duplicate(names)
+  if (duplicateCity) {
+    throw new Error(`src/data/shipping.ts: المدينة "${duplicateCity}" مكررة.`)
   }
-  if (duplicate(codes)) {
-    throw new Error(`src/data/coupons.ts: الكوبون "${duplicate(codes)}" مكرر.`)
+  const duplicateCode = duplicate(codes)
+  if (duplicateCode) {
+    throw new Error(`src/data/coupons.ts: الكوبون "${duplicateCode}" مكرر.`)
   }
 
   return {

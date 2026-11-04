@@ -8,6 +8,7 @@ import {
   ShoppingCartIcon,
   TruckIcon,
   ZapIcon,
+  type LucideIcon,
 } from "lucide-react"
 
 import { QuantityStepper } from "@/components/cart/quantity-stepper"
@@ -35,8 +36,20 @@ const LOW_STOCK_FORMS = {
 
 type ValueState = "available" | "sold-out" | "unavailable"
 
+/** ما تحتاجه لوحة الشراء فقط، فلا يُرسل الوصف والمواصفات مرة ثانية مع كود الصفحة. */
+export type PurchasableProduct = Pick<
+  Product,
+  | "slug"
+  | "name"
+  | "images"
+  | "variants"
+  | "optionGroups"
+  | "price"
+  | "compareAtPrice"
+>
+
 /** معرض الصور ولوحة الشراء: اختيار المتغير يغيّر السعر والمخزون وصورة اللون. */
-export function ProductDetails({ product }: { product: Product }) {
+export function ProductDetails({ product }: { product: PurchasableProduct }) {
   const groups = product.optionGroups
   const firstAvailable =
     product.variants.find((variant) => variant.stock > 0) ?? product.variants[0]
@@ -255,7 +268,7 @@ export function ProductDetails({ product }: { product: Product }) {
 
 /** صورة اللون المختار إن وُجدت، وإلا تبقى الصورة الحالية. */
 function imageIndexForOptions(
-  product: Product,
+  product: PurchasableProduct,
   options: VariantOptions,
   current: number
 ) {
@@ -269,27 +282,21 @@ function imageIndexForOptions(
 
 /** حالة التوفر بنقطة ملونة: أخضر للمتوفر، وكهرماني داكن للكمية القليلة، وأحمر للنفاد. */
 function StockStatus({ stock }: { stock: number }) {
-  const [tone, text] =
+  const [color, text] =
     stock === 0
       ? ["text-destructive", "نفد من المخزون"]
       : stock <= siteConfig.lowStockThreshold
         ? ["text-warning", pluralize(stock, LOW_STOCK_FORMS)]
         : ["text-success", "متوفر"]
   return (
-    <p className={cn("flex items-center gap-2 text-sm font-bold", tone)}>
+    <p className={cn("flex items-center gap-2 text-sm font-bold", color)}>
       <span aria-hidden className="size-2 rounded-full bg-current" />
       {text}
     </p>
   )
 }
 
-function TrustItem({
-  icon: Icon,
-  text,
-}: {
-  icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>
-  text: string
-}) {
+function TrustItem({ icon: Icon, text }: { icon: LucideIcon; text: string }) {
   return (
     <li className="flex items-center gap-2">
       <Icon className="size-4 shrink-0 text-primary" aria-hidden />

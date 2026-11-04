@@ -14,9 +14,36 @@ import path from "node:path"
 
 const ROOT = process.cwd()
 const force = process.argv.includes("--force")
-const sources = JSON.parse(
-  await readFile(path.join(ROOT, "assets", "images", "sources.json"), "utf8")
-)
+const SOURCES_FILE = path.join(ROOT, "assets", "images", "sources.json")
+
+/** قائمة الصور: اسم الملف دون امتداد ورقم الصورة في Pexels، للمنتجات والفئات. */
+async function readSources() {
+  let sources
+  try {
+    sources = JSON.parse(await readFile(SOURCES_FILE, "utf8"))
+  } catch (error) {
+    console.error(
+      `تعذّرت قراءة assets/images/sources.json: ${error.code === "ENOENT" ? "الملف غير موجود" : "الملف ليس JSON صحيحاً"}.`
+    )
+    process.exit(1)
+  }
+  for (const key of ["products", "categories"]) {
+    const entries = sources[key]
+    const valid =
+      entries &&
+      typeof entries === "object" &&
+      Object.values(entries).every((id) => Number.isInteger(id) && id > 0)
+    if (!valid) {
+      console.error(
+        `assets/images/sources.json: الحقل "${key}" يجب أن يكون قائمة أسماء وأرقام صور، مثل { "shirt-1": 5746087 }.`
+      )
+      process.exit(1)
+    }
+  }
+  return sources
+}
+
+const sources = await readSources()
 
 const url = (id) =>
   `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=1600`

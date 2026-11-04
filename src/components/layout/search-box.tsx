@@ -4,8 +4,9 @@ import { useId, useMemo, useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ArrowLeftIcon, LoaderIcon, SearchIcon } from "lucide-react"
+import { ArrowRightIcon, SearchIcon } from "lucide-react"
 
+import { Skeleton } from "@/components/ui/skeleton"
 import { searchCards } from "@/lib/catalog/filter"
 import { formatPrice } from "@/lib/catalog/money"
 import { useSearchIndex } from "@/lib/catalog/use-search-index"
@@ -158,10 +159,23 @@ export function SearchBox({
               تعذّر تحميل الاقتراحات. اضغط Enter للبحث.
             </p>
           ) : !index ? (
-            <p className="flex items-center gap-2 p-4 text-sm text-muted-foreground">
-              <LoaderIcon className="size-4 animate-spin" aria-hidden />
-              جارٍ البحث...
-            </p>
+            // هياكل بشكل الاقتراحات أثناء تحميل فهرس البحث، بدل مؤشر دوران
+            <div role="status" className="space-y-1 py-2">
+              <span className="sr-only">جارٍ البحث...</span>
+              {Array.from({ length: 3 }, (_, row) => (
+                <div
+                  key={row}
+                  aria-hidden
+                  className="flex items-center gap-3 px-3 py-2"
+                >
+                  <Skeleton className="size-12 shrink-0 rounded-md" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-3 w-3/4" />
+                    <Skeleton className="h-3 w-1/3" />
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : results.length === 0 ? (
             <p className="p-4 text-sm">
               لا توجد منتجات تطابق «{trimmed}». جرّب كلمة أخرى.
@@ -216,7 +230,7 @@ export function SearchBox({
             className="flex items-center justify-between gap-2 border-t px-3 py-3 text-sm font-medium text-primary transition-colors hover:bg-muted"
           >
             عرض كل النتائج لـ «{trimmed}»
-            <ArrowLeftIcon className="size-4 ltr:rotate-180" aria-hidden />
+            <ArrowRightIcon className="size-4 rtl:rotate-180" aria-hidden />
           </Link>
         </div>
       )}

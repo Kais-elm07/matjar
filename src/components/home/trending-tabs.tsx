@@ -1,14 +1,15 @@
-"use client"
-
 import { ProductMiniCard } from "@/components/product/product-mini-card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import type { CategoryLink, ProductCard } from "@/lib/catalog/types"
+import type { CategoryLink, ProductCardData } from "@/lib/catalog/types"
 
-/** "الرائج الآن": تبويب لكل فئة رئيسية، فيه أكثر منتجاتها مبيعاً ببطاقات أفقية صغيرة. */
+/**
+ * "الرائج الآن": تبويب لكل فئة رئيسية، فيه أكثر منتجاتها مبيعاً ببطاقات أفقية صغيرة.
+ * مكوّن خادم: البطاقات تُبنى مسبقاً في HTML، والتبويبات وحدها تعمل في المتصفح.
+ */
 export function TrendingTabs({
   groups,
 }: {
-  groups: { category: CategoryLink; products: ProductCard[] }[]
+  groups: { category: CategoryLink; products: ProductCardData[] }[]
 }) {
   if (groups.length === 0) return null
 
@@ -19,13 +20,9 @@ export function TrendingTabs({
           <h2 id="trending-heading" className="text-2xl font-bold md:text-3xl">
             الرائج الآن
           </h2>
-          <TabsList className="h-auto w-full [scrollbar-width:none] justify-start gap-1 overflow-x-auto bg-transparent p-0 md:w-auto">
+          <TabsList className="w-full justify-start md:w-auto">
             {groups.map(({ category }) => (
-              <TabsTrigger
-                key={category.slug}
-                value={category.slug}
-                className="h-9 flex-none rounded-full border border-border px-4 text-sm text-foreground data-active:border-primary data-active:bg-primary data-active:text-primary-foreground data-active:shadow-none"
-              >
+              <TabsTrigger key={category.slug} value={category.slug}>
                 {category.name}
               </TabsTrigger>
             ))}

@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils"
 
 /**
  * ملخص الطلب: المنتجات، والكوبون، والمبالغ.
- * على الجوال يُطوى في سطر واحد بالإجمالي، وعلى الحاسوب يظهر كاملاً بجانب النموذج.
+ * على الجوال يُطوى في سطر واحد بالإجمالي وزر لفتحه، وعلى الحاسوب يظهر كاملاً بجانب النموذج.
  */
 export function OrderSummary({
   lines,
@@ -39,37 +39,37 @@ export function OrderSummary({
   return (
     <aside
       aria-labelledby="order-summary-heading"
-      className={cn("rounded-lg border bg-muted", className)}
+      className={cn("rounded-xl border bg-card", className)}
     >
-      <button
-        type="button"
-        onClick={() => setOpen((value) => !value)}
-        aria-expanded={open}
-        aria-controls="order-summary-content"
-        className="flex w-full items-center justify-between gap-3 p-4 text-start outline-none focus-visible:ring-3 focus-visible:ring-ring/50 lg:pointer-events-none"
-      >
+      {/* زر الطي على الجوال يغطي السطر كله لتسهيل اللمس، ويختفي على الحاسوب */}
+      <div className="relative flex items-center justify-between gap-3 p-4">
         <h2 id="order-summary-heading" className="text-lg font-bold">
           ملخص الطلب
           <span className="ms-1.5 text-sm font-normal text-muted-foreground">
             ({pluralize(count, PIECE_FORMS)})
           </span>
         </h2>
-        <span className="flex items-center gap-1.5 font-bold text-primary lg:hidden">
+        <button
+          type="button"
+          onClick={() => setOpen((value) => !value)}
+          aria-expanded={open}
+          aria-controls="order-summary-content"
+          className="flex items-center gap-1.5 rounded-sm font-bold text-primary outline-none after:absolute after:inset-0 after:rounded-xl focus-visible:after:ring-3 focus-visible:after:ring-ring/50 lg:hidden"
+        >
+          <span className="sr-only">
+            {open ? "إخفاء ملخص الطلب، " : "عرض ملخص الطلب، "}الإجمالي
+          </span>
           {formatPrice(totals.total)}
           <ChevronDownIcon
             className={cn("size-4 transition-transform", open && "rotate-180")}
             aria-hidden
           />
-        </span>
-      </button>
+        </button>
+      </div>
 
       <div
         id="order-summary-content"
-        className={cn(
-          "space-y-4 px-4 pb-4",
-          open ? "block" : "hidden",
-          "lg:block"
-        )}
+        className={cn("space-y-4 px-4 pb-4 lg:block", !open && "hidden")}
       >
         <ul className="divide-y rounded-lg border bg-background px-3">
           {lines.map((line) => (
@@ -145,17 +145,19 @@ export function OrderSummary({
                   : formatPrice(totals.shipping)}
             </dd>
           </div>
-          {totals.freeShippingRemaining !== null &&
-            totals.freeShippingRemaining > 0 && (
-              <p className="rounded-md bg-background px-3 py-2 text-xs">
-                أضف منتجات بقيمة{" "}
-                <span className="font-bold">
-                  {formatPrice(totals.freeShippingRemaining)}
-                </span>{" "}
-                لتحصل على شحن مجاني.
-              </p>
-            )}
-          <div className="flex justify-between gap-4 border-t pt-3 text-base font-bold">
+        </dl>
+        {totals.freeShippingRemaining !== null &&
+          totals.freeShippingRemaining > 0 && (
+            <p className="rounded-md bg-background px-3 py-2 text-xs">
+              أضف منتجات بقيمة{" "}
+              <span className="font-bold">
+                {formatPrice(totals.freeShippingRemaining)}
+              </span>{" "}
+              لتحصل على شحن مجاني.
+            </p>
+          )}
+        <dl className="border-t pt-3">
+          <div className="flex justify-between gap-4 text-base font-bold">
             <dt>الإجمالي</dt>
             <dd className="text-primary">{formatPrice(totals.total)}</dd>
           </div>
@@ -165,7 +167,10 @@ export function OrderSummary({
   )
 }
 
-/** حقل الكوبون: يتحقق من الرمز وحد الطلب، ويعرض الخصم المطبّق مع زر لإزالته. */
+/**
+ * حقل الكوبون: يتحقق من الرمز وحد الطلب، ويعرض الخصم المطبّق مع زر لإزالته.
+ * إن نزل المجموع بعد التطبيق تحت حد الكوبون يبقى ظاهراً مع تنبيه بأنه لم يعد ينطبق.
+ */
 function CouponField({
   coupon,
   subtotal,
@@ -179,6 +184,8 @@ function CouponField({
 }) {
   const [code, setCode] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const minimumText = (found: Coupon) =>
+    `هذا الكوبون للطلبات من ${formatPrice(found.minSubtotal)} فأكثر`
 
   function apply() {
     if (!code.trim()) return
@@ -188,7 +195,7 @@ function CouponField({
       return
     }
     if (couponProblem(found, subtotal)) {
-      setError(`هذا الكوبون للطلبات من ${formatPrice(found.minSubtotal)} فأكثر`)
+      setError(minimumText(found))
       return
     }
     setError(null)
@@ -197,28 +204,47 @@ function CouponField({
   }
 
   if (coupon) {
+    const belowMinimum = couponProblem(coupon, subtotal) === "minimum"
     return (
-      <div className="flex items-center justify-between gap-3 rounded-lg border border-success/40 bg-background px-3 py-2 text-sm">
-        <span className="flex items-center gap-2">
-          <TagIcon className="size-4 text-success" aria-hidden />
-          <span>
-            <span className="font-bold" dir="ltr">
-              {coupon.code}
-            </span>
-            <span className="block text-xs text-muted-foreground">
-              {coupon.description}
+      <div
+        className={cn(
+          "rounded-lg border bg-background px-3 py-2 text-sm",
+          belowMinimum ? "border-warning/50" : "border-success/40"
+        )}
+      >
+        <div className="flex items-center justify-between gap-3">
+          <span className="flex items-center gap-2">
+            <TagIcon
+              className={cn(
+                "size-4",
+                belowMinimum ? "text-warning" : "text-success"
+              )}
+              aria-hidden
+            />
+            <span>
+              <span className="font-bold" dir="ltr">
+                {coupon.code}
+              </span>
+              <span className="block text-xs text-muted-foreground">
+                {coupon.description}
+              </span>
             </span>
           </span>
-        </span>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-lg"
-          aria-label={`إزالة الكوبون ${coupon.code}`}
-          onClick={() => onChange(null)}
-        >
-          <XIcon aria-hidden />
-        </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-xl"
+            aria-label={`إزالة الكوبون ${coupon.code}`}
+            onClick={() => onChange(null)}
+          >
+            <XIcon aria-hidden />
+          </Button>
+        </div>
+        {belowMinimum && (
+          <p role="status" className="mt-1 text-xs font-medium text-warning">
+            لم يعد الكوبون ينطبق: {minimumText(coupon)}.
+          </p>
+        )}
       </div>
     )
   }

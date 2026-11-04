@@ -1,6 +1,6 @@
 import { expect, type APIRequestContext, type Page } from "@playwright/test"
 
-import type { ProductCard } from "../../src/lib/catalog/types"
+import type { SearchCardData } from "../../src/lib/catalog/types"
 
 /**
  * يفتح الصفحة وينتظر حتى تصبح تفاعلية وتُستعاد السلة والمفضلة،
@@ -14,7 +14,7 @@ export async function open(page: Page, path: string) {
 /** منتجات الموقع من فهرس البحث المنشور، حتى لا ترتبط الاختبارات بمنتج بعينه. */
 export async function loadProducts(
   request: APIRequestContext
-): Promise<ProductCard[]> {
+): Promise<SearchCardData[]> {
   const response = await request.get("/search-index.json")
   expect(response.ok()).toBe(true)
   return response.json()

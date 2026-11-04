@@ -1,0 +1,33 @@
+# ترويسات الأمان والتخزين المؤقت للموقع الثابت.
+# تُنسخ مع مجلد public إلى out/ عند البناء، وتقرأها Netlify وCloudflare Pages تلقائياً.
+# GitHub Pages لا يدعم ترويسات مخصصة، واستضافة cPanel تضبطها في ملف .htaccess (انظر دليل-النشر.md).
+#
+# سياسة المحتوى (CSP) تسمح بملفات الموقع نفسه فقط، مع السماح بالسكربتات والأنماط المضمّنة
+# التي يحتاجها Next.js في الموقع الثابت. عند تفعيل الإحصاءات (src/config/site.ts) أضف نطاق الأداة
+# إلى script-src وconnect-src، مثل https://plausible.io
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
+
+# ملفات JavaScript وCSS والخطوط تحمل بصمة في اسمها، فتُخزَّن في المتصفح سنة كاملة
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# الصور قد تُستبدل بالاسم نفسه، فتُخزَّن يوماً واحداً
+/images/*
+  Cache-Control: public, max-age=86400
+
+# صور المشاركة تتغير مع الأسعار والأسماء، فتُخزَّن ساعة
+/og/*
+  Cache-Control: public, max-age=3600
+
+# الأسعار والمخزون وفهرس البحث يجب أن يتحدثا فور نشر أي تعديل
+/cart-catalog.json
+  Cache-Control: public, max-age=0, must-revalidate
+/search-index.json
+  Cache-Control: public, max-age=0, must-revalidate

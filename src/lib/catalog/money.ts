@@ -13,14 +13,22 @@ function groupThousands(value: number) {
  * الكسور تظهر فقط عند وجودها: 12900 تصبح "129 ر.س".
  */
 export function formatPrice(amountMinor: number) {
-  const abs = Math.abs(Math.round(amountMinor))
+  // مبلغ غير صالح (NaN) يُعرض صفراً بدل نص مكسور
+  const rounded = Number.isFinite(amountMinor) ? Math.round(amountMinor) : 0
+  const abs = Math.abs(rounded)
   const major = Math.floor(abs / factor)
   const minor = abs % factor
   const number =
     minor === 0
       ? groupThousands(major)
       : `${groupThousands(major)}.${String(minor).padStart(fractionDigits, "0")}`
-  return `${amountMinor < 0 ? "-" : ""}${number}\u00A0${symbol}`
+  return `${rounded < 0 ? "-" : ""}${number}\u00A0${symbol}`
+}
+
+/** هل يُكتب المبلغ بخانات عشرية لا تزيد على خانات العملة؟ 129.5 نعم، و129.555 لا. */
+export function fitsCurrency(amountMajor: number) {
+  const scaled = amountMajor * factor
+  return Math.abs(scaled - Math.round(scaled)) < 1e-6
 }
 
 /** تحويل سعر مكتوب بالوحدة الكبرى (مثل 129.5) إلى أصغر وحدة (12950). */

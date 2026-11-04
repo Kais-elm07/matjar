@@ -221,9 +221,13 @@ function renameFamily(font, { subset, weight, italic }) {
   const names = readNames(tables.get("name"))
   const weightName = WEIGHT_NAMES[weight] ?? "Regular"
   const weightWords = new RegExp(` (${Object.values(WEIGHT_NAMES).join("|")})$`)
-  const family =
-    (names.get(16) ?? names.get(1)).replace(weightWords, "") +
-    FAMILY_SUFFIX[subset]
+  const original = names.get(16) ?? names.get(1)
+  if (!original) {
+    throw new Error(
+      "ملف الخط لا يحوي اسم العائلة (الجدول name)، فلا يمكن تجهيزه. استخدم ملفات Fontsource الأصلية."
+    )
+  }
+  const family = original.replace(weightWords, "") + FAMILY_SUFFIX[subset]
   const style = !italic
     ? weightName
     : weight === 400

@@ -54,7 +54,7 @@ const INLINE = /(\*\*[^*]+\*\*|\[[^\]]+\]\([^)\s]+\))/g
 const LINK = /^\[([^\]]+)\]\(([^)\s]+)\)$/
 
 /** تنسيق داخل السطر: **نص عريض** و[نص الرابط](/pages/contact). */
-export function InlineText({ text }: { text: string }) {
+function InlineText({ text }: { text: string }) {
   return text.split(INLINE).map((part, index) => {
     if (part.startsWith("**") && part.endsWith("**")) {
       return (
@@ -123,8 +123,8 @@ export function RichText({
                 block.ordered ? "list-decimal marker:font-bold" : "list-disc"
               )}
             >
-              {block.items.map((item) => (
-                <li key={item}>
+              {block.items.map((item, itemIndex) => (
+                <li key={itemIndex}>
                   <InlineText text={item} />
                 </li>
               ))}

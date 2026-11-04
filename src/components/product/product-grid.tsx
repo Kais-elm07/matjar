@@ -1,7 +1,7 @@
 import { ProductCard } from "@/components/product/product-card"
 import { Carousel } from "@/components/store/carousel"
 import { Skeleton } from "@/components/ui/skeleton"
-import type { ProductCard as ProductCardData } from "@/lib/catalog/types"
+import type { ProductCardData } from "@/lib/catalog/types"
 import { cn } from "@/lib/utils"
 
 /** شبكة بطاقات داكنة مستقلة بفجوات بينها: عمودان على الجوال، و3 على اللوحي، و4 على الحاسوب. */

@@ -5,6 +5,9 @@ import { MenuIcon } from "lucide-react"
 
 import { useUiStore } from "@/lib/store/ui"
 import { useIdle } from "@/lib/use-idle"
+import { cn } from "@/lib/utils"
+
+import { HEADER_ICON_BUTTON } from "./header-styles"
 
 export type NavCategory = {
   slug: string
@@ -37,7 +40,7 @@ export function MobileNav({ categories }: { categories: NavCategory[] }) {
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={() => setOpen(true)}
-        className="-ms-2 inline-flex size-11 shrink-0 items-center justify-center rounded-full transition-colors outline-none hover:bg-foreground/10 focus-visible:ring-3 focus-visible:ring-ring md:hidden [&_svg]:size-6"
+        className={cn(HEADER_ICON_BUTTON, "-ms-2 md:hidden")}
       >
         <MenuIcon aria-hidden />
       </button>

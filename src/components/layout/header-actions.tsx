@@ -8,8 +8,7 @@ import { useUiStore } from "@/lib/store/ui"
 import { useWishlistCount } from "@/lib/store/wishlist"
 import { cn } from "@/lib/utils"
 
-const ICON_BUTTON =
-  "relative inline-flex size-11 shrink-0 items-center justify-center rounded-full outline-none transition-colors hover:bg-foreground/10 focus-visible:ring-3 focus-visible:ring-ring [&_svg]:size-6"
+import { HEADER_ICON_BUTTON as ICON_BUTTON } from "./header-styles"
 
 /** أيقونتا المفضلة والسلة في الرأس، مع عدّاد برتقالي لا يظهر عند الصفر. */
 export function HeaderActions({ className }: { className?: string }) {

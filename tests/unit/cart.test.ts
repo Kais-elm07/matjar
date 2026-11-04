@@ -105,11 +105,12 @@ describe("مطابقة السلة مع بيانات الموقع", () => {
     cart().add(speaker, 1)
     cart().add(lamp, 1)
 
+    // الأسطر هنا بلا خيارات، فمفتاح خياراتها نص فارغ
     const notices = cart().sync({
-      "SHIRT-M": { price: 12900, compareAtPrice: null, stock: 1 },
-      CHARGER: { price: 15900, compareAtPrice: null, stock: 50 },
-      SPEAKER: { price: 10000, compareAtPrice: null, stock: 0 },
-      LAMP: { price: 13900, compareAtPrice: 15900, stock: 5 },
+      "SHIRT-M": { price: 12900, compareAtPrice: null, stock: 1, options: "" },
+      CHARGER: { price: 15900, compareAtPrice: null, stock: 50, options: "" },
+      SPEAKER: { price: 10000, compareAtPrice: null, stock: 0, options: "" },
+      LAMP: { price: 13900, compareAtPrice: 15900, stock: 5, options: "" },
     })
 
     expect(notices).toEqual([

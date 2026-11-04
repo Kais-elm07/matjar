@@ -1,3 +1,5 @@
+import { toWesternDigits } from "@/lib/catalog/arabic"
+
 import type {
   CheckoutConfig,
   Coupon,
@@ -6,16 +8,9 @@ import type {
   ShippingMethod,
 } from "./types"
 
-/** يحوّل الأرقام العربية والفارسية إلى 0-9، فيقبل الحقل ما يكتبه الزائر بأي لوحة مفاتيح. */
-export function normalizeDigits(value: string) {
-  return value
-    .replace(/[٠-٩]/g, (digit) => String(digit.charCodeAt(0) - 0x660))
-    .replace(/[۰-۹]/g, (digit) => String(digit.charCodeAt(0) - 0x6f0))
-}
-
 /** يبحث عن كوبون برمزه، دون اعتبار لحالة الأحرف أو المسافات. */
 export function findCoupon(config: CheckoutConfig, code: string) {
-  const wanted = normalizeDigits(code).trim().toUpperCase()
+  const wanted = toWesternDigits(code).trim().toUpperCase()
   return config.coupons.find((coupon) => coupon.code === wanted)
 }
 

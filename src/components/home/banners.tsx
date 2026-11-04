@@ -60,10 +60,13 @@ export function PromoTile({
 
 /** بطاقة الخصم بجانب مربعات العروض: نسبة الخصم الحقيقية القصوى وزر "تسوّق العروض". */
 export function DiscountCard({
+  headingId,
   maxDiscount,
   className,
 }: {
-  /** أكبر نسبة خصم بين منتجات العروض، أو 0 إن لم توجد عروض */
+  /** معرّف العنوان، يربطه القسم المحيط به عبر aria-labelledby */
+  headingId: string
+  /** أكبر نسبة خصم بين المنتجات المخفضة، أو 0 إن لم توجد عروض */
   maxDiscount: number
   className?: string
 }) {
@@ -76,7 +79,7 @@ export function DiscountCard({
     >
       <p className="text-sm font-medium text-muted-foreground">عروض مختارة</p>
       <h2
-        id="discount-heading"
+        id={headingId}
         className="text-2xl leading-snug font-bold md:text-3xl"
       >
         {maxDiscount > 0 ? (

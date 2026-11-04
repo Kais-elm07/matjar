@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import { siteConfig } from "@/config/site"
 import { toSchemaPrice } from "@/lib/catalog/money"
 import type { Product } from "@/lib/catalog/types"
-import { IMAGE_WIDTHS } from "@/lib/image-loader"
+import { IMAGE_WIDTHS, imageFile } from "@/lib/image-loader"
 
 /** صور المشاركة بمقاس 1200×630، تولّدها مسارات src/app/og وقت البناء. */
 export const shareImages = {
@@ -62,9 +62,7 @@ export function absoluteUrl(path: string) {
 /** رابط كامل لأكبر نسخة من الصورة، لصور المشاركة والبيانات المنظمة. */
 export function absoluteImageUrl(src: string) {
   if (/^https?:\/\//.test(src)) return src
-  const hasExtension = /\.[a-z0-9]{2,5}$/i.test(src)
-  const largest = IMAGE_WIDTHS[IMAGE_WIDTHS.length - 1]
-  return `${siteConfig.url}${hasExtension ? src : `${src}-${largest}.webp`}`
+  return `${siteConfig.url}${imageFile(src, IMAGE_WIDTHS[IMAGE_WIDTHS.length - 1])}`
 }
 
 /** نص عادي مختصر من الوصف، لوصف الصفحة في نتائج البحث. نقاط القوائم تُفصل بفواصل. */

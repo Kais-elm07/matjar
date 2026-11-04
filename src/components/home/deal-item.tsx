@@ -3,8 +3,8 @@
 import { useSyncExternalStore } from "react"
 import { TimerIcon } from "lucide-react"
 
-import { siteConfig } from "@/config/site"
 import { pluralize, type PluralForms } from "@/lib/arabic-plural"
+import { saleEndTime } from "@/lib/catalog/dates"
 import { cn } from "@/lib/utils"
 
 const MONTHS = [
@@ -56,7 +56,7 @@ export function DealItem({
   className?: string
 }) {
   const now = useSyncExternalStore(subscribe, nowInSeconds, atBuildTime)
-  const end = Date.parse(`${endsAt}T23:59:59${siteConfig.utcOffset}`) / 1000
+  const end = saleEndTime(endsAt) / 1000
 
   if (now !== null && now >= end) return null
 

@@ -2,10 +2,9 @@ import { describe, expect, it } from "vitest"
 
 import { PIECE_FORMS, PRODUCT_FORMS, pluralize } from "@/lib/arabic-plural"
 import {
-  decodeSlug,
   normalizeForSearch,
-  slugify,
   toSearchTerms,
+  toWesternDigits,
 } from "@/lib/catalog/arabic"
 import {
   getColorHex,
@@ -54,16 +53,21 @@ describe("toSearchTerms", () => {
   })
 })
 
-describe("الروابط", () => {
-  it("ينشئ رابطاً مقروءاً من الاسم", () => {
-    expect(slugify("قميص قطني أزرق")).toBe("قميص-قطني-أزرق")
-    expect(slugify("  Hello, World!! ")).toBe("hello-world")
+describe("حروف لوحات المفاتيح المختلفة", () => {
+  it("يوحّد الياء والكاف الفارسيتين مع العربيتين", () => {
+    expect(normalizeForSearch("کیس")).toBe(normalizeForSearch("كيس"))
+    expect(normalizeForSearch("ساعی")).toBe("ساعي")
   })
 
-  it("يفك ترميز الروابط العربية ويترك الترميز التالف كما هو", () => {
-    expect(decodeSlug("%D9%82%D9%85%D9%8A%D8%B5")).toBe("قميص")
-    expect(decodeSlug("%E0%A4%A")).toBe("%E0%A4%A")
-    expect(decodeSlug("classic-shirt")).toBe("classic-shirt")
+  it("يحوّل أشكال العرض المنسوخة من ملفات PDF إلى الحروف العادية", () => {
+    // "ﻗﻤﻴﺺ" بأشكال العرض العربية
+    expect(normalizeForSearch("ﻗﻤﻴﺺ")).toBe("قميص")
+  })
+
+  it("يحوّل الأرقام العربية والفارسية إلى 0-9", () => {
+    expect(toWesternDigits("٠٥٠١٢٣٤٥٦٧")).toBe("0501234567")
+    expect(toWesternDigits("۰۵۰۱")).toBe("0501")
+    expect(toWesternDigits("رقم 12")).toBe("رقم 12")
   })
 })
 

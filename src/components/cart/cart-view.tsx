@@ -50,7 +50,7 @@ export function CartView() {
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
       <section
         aria-labelledby="cart-items-heading"
-        className="rounded-lg border"
+        className="rounded-xl border"
       >
         <h2 id="cart-items-heading" className="sr-only">
           المنتجات في السلة
@@ -117,7 +117,7 @@ function CartSkeleton() {
       className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]"
       aria-hidden
     >
-      <div className="space-y-4 rounded-lg border p-4">
+      <div className="space-y-4 rounded-xl border p-4">
         {Array.from({ length: 2 }, (_, index) => (
           <div key={index} className="flex gap-3">
             <Skeleton className="size-20 rounded-lg" />
@@ -129,7 +129,7 @@ function CartSkeleton() {
           </div>
         ))}
       </div>
-      <Skeleton className="h-64 rounded-lg" />
+      <Skeleton className="h-64 rounded-xl" />
     </div>
   )
 }

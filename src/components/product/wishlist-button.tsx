@@ -75,7 +75,7 @@ export function WishlistButton({
         className
       )}
     >
-      <span className="flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-colors group-hover/heart:bg-primary/90 group-focus-visible/heart:ring-3 group-focus-visible/heart:ring-foreground [&_svg]:size-[18px]">
+      <span className="flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground transition-colors group-hover/heart:bg-primary/90 group-focus-visible/heart:ring-3 group-focus-visible/heart:ring-foreground [&_svg]:size-[18px]">
         {icon}
       </span>
     </button>

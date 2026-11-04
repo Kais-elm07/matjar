@@ -65,7 +65,17 @@ export default async function ProductPage({
     <div className="page-container space-y-12 py-5 md:space-y-16 md:py-8">
       <div>
         <Breadcrumbs items={[...trail, { name: product.name }]} />
-        <ProductDetails product={product} />
+        <ProductDetails
+          product={{
+            slug: product.slug,
+            name: product.name,
+            images: product.images,
+            variants: product.variants,
+            optionGroups: product.optionGroups,
+            price: product.price,
+            compareAtPrice: product.compareAtPrice,
+          }}
+        />
       </div>
 
       <ProductTabs product={product} />

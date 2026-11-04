@@ -198,6 +198,10 @@ function luminance(hex) {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b
 }
 
+/**
+ * رسم الأيقونة من ملفات lucide-react الداخلية. مسار الملفات ليس واجهة رسمية للمكتبة،
+ * فإن تغيّر بعد تحديثها يتوقف رسم الصور البديلة فقط (pnpm images:demo)، لا بناء الموقع.
+ */
 async function iconMarkup(name) {
   const { __iconData } = await import(`lucide-react/dist/esm/icons/${name}.mjs`)
   return __iconData.node

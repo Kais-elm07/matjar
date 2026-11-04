@@ -4,8 +4,20 @@ import Link from "next/link"
 import { ShoppingBagIcon } from "lucide-react"
 
 import { useAddToCart } from "@/components/cart/use-add-to-cart"
-import type { ProductCard } from "@/lib/catalog/types"
+import type { ProductCardData } from "@/lib/catalog/types"
 import { cn } from "@/lib/utils"
+
+/** ما يحتاجه الزر فقط، حتى لا تُرسل بيانات البطاقة كاملة مع كل زر في الصفحة. */
+export type QuickAddProduct = Pick<
+  ProductCardData,
+  | "slug"
+  | "name"
+  | "image"
+  | "price"
+  | "compareAtPrice"
+  | "inStock"
+  | "quickAdd"
+>
 
 /**
  * زر دائري برتقالي في ركن البطاقة السفلي من جهة النهاية، محاط بحلقة بلون الخلفية
@@ -22,7 +34,7 @@ export function QuickAddButton({
   product,
   className,
 }: {
-  product: ProductCard
+  product: QuickAddProduct
   className?: string
 }) {
   const addToCart = useAddToCart()
@@ -52,9 +64,7 @@ export function QuickAddButton({
             sku: quick.sku,
             slug: product.slug,
             name: product.name,
-            image: product.image
-              ? { src: product.image.src, alt: product.image.alt }
-              : null,
+            image: product.image,
             options: {},
             price: product.price,
             compareAtPrice: product.compareAtPrice,

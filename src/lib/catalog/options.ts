@@ -9,18 +9,6 @@ export type OptionGroup = {
   isColor: boolean
 }
 
-/** قراءة آمنة لحقل الخيارات من قاعدة البيانات. */
-export function parseVariantOptions(value: unknown): VariantOptions {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return {}
-  const options: VariantOptions = {}
-  for (const [name, optionValue] of Object.entries(value)) {
-    if (typeof optionValue === "string" && name.trim() && optionValue.trim()) {
-      options[name.trim()] = optionValue.trim()
-    }
-  }
-  return options
-}
-
 const COLOR_OPTION_NAMES = new Set(
   ["اللون", "لون", "الألوان", "ألوان", "color", "colour"].map(
     normalizeForSearch
@@ -132,9 +120,4 @@ export function getOptionGroups(
     values,
     isColor: isColorOption(name),
   }))
-}
-
-/** وصف المتغير للعرض: "L / أزرق". */
-export function describeOptions(options: VariantOptions) {
-  return Object.values(options).join(" / ")
 }

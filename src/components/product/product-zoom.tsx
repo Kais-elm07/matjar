@@ -47,7 +47,7 @@ export function ProductZoom({
               onClick={showPrevious}
               aria-label="الصورة السابقة"
             >
-              <ChevronRightIcon className="ltr:rotate-180" aria-hidden />
+              <ChevronLeftIcon className="rtl:rotate-180" aria-hidden />
             </Button>
             <span className="text-sm text-muted-foreground tabular-nums">
               {activeIndex + 1} / {images.length}
@@ -58,7 +58,7 @@ export function ProductZoom({
               onClick={showNext}
               aria-label="الصورة التالية"
             >
-              <ChevronLeftIcon className="ltr:rotate-180" aria-hidden />
+              <ChevronRightIcon className="rtl:rotate-180" aria-hidden />
             </Button>
           </div>
         )}

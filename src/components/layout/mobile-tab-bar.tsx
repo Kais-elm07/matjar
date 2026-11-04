@@ -26,6 +26,7 @@ export function MobileTabBar() {
   const cartCount = useCartCount()
   const wishlistCount = useWishlistCount()
   const setCartOpen = useUiStore((state) => state.setCartOpen)
+  const menuOpen = useUiStore((state) => state.menuOpen)
   const setMenuOpen = useUiStore((state) => state.setMenuOpen)
 
   const isActive = (href: string) =>
@@ -48,6 +49,8 @@ export function MobileTabBar() {
         <li>
           <button
             type="button"
+            aria-haspopup="dialog"
+            aria-expanded={menuOpen}
             onClick={() => setMenuOpen(true)}
             className={cn(ITEM, "w-full text-muted-foreground")}
           >

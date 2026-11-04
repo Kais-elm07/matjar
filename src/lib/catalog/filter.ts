@@ -2,7 +2,7 @@ import { normalizeForSearch, toSearchTerms } from "./arabic"
 import type { ListingParams, SortValue } from "./listing"
 import { toMajorUnits, toMinorUnits } from "./money"
 import { getColorHex, isColorOption, sortOptionValues } from "./options"
-import type { ProductCard } from "./types"
+import type { ProductCardData, SearchCardData } from "./types"
 
 /**
  * البحث والفلترة والترتيب داخل المتصفح.
@@ -10,7 +10,10 @@ import type { ProductCard } from "./types"
  */
 
 /** نتائج البحث مرتبة حسب الصلة: التطابق في الاسم أولاً، ثم الأكثر مبيعاً. */
-export function searchCards(cards: ProductCard[], query: string) {
+export function searchCards<T extends SearchCardData>(
+  cards: T[],
+  query: string
+): T[] {
   const terms = toSearchTerms(query)
   if (terms.length === 0) return []
   const phrase = terms.join(" ")
@@ -30,7 +33,7 @@ export function searchCards(cards: ProductCard[], query: string) {
 }
 
 function matchesOptions(
-  card: ProductCard,
+  card: ProductCardData,
   selected: Record<string, string[]>,
   inStockOnly: boolean
 ) {
@@ -47,7 +50,10 @@ function matchesOptions(
 }
 
 /** تطبيق الفلاتر (دون البحث والترتيب). */
-export function filterCards(cards: ProductCard[], params: ListingParams) {
+export function filterCards<T extends ProductCardData>(
+  cards: T[],
+  params: ListingParams
+): T[] {
   const min = params.minPrice === null ? null : toMinorUnits(params.minPrice)
   const max = params.maxPrice === null ? null : toMinorUnits(params.maxPrice)
 
@@ -63,7 +69,10 @@ export function filterCards(cards: ProductCard[], params: ListingParams) {
 }
 
 /** الترتيب. "الأكثر صلة" يُبقي ترتيب نتائج البحث كما هو. */
-export function sortCards(cards: ProductCard[], sort: SortValue) {
+export function sortCards<T extends ProductCardData>(
+  cards: T[],
+  sort: SortValue
+): T[] {
   const sorted = [...cards]
   switch (sort) {
     case "newest":
@@ -105,7 +114,7 @@ export type Facets = {
 }
 
 /** قيم الفلاتر المتاحة من مجموعة منتجات: نطاق السعر، والخيارات، والفئات. */
-export function computeFacets(cards: ProductCard[]): Facets {
+export function computeFacets(cards: ProductCardData[]): Facets {
   if (cards.length === 0) {
     return { priceRange: null, options: [], categoryCounts: {} }
   }

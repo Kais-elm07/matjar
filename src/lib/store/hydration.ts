@@ -23,7 +23,11 @@ export function useRestoreStores() {
 
     function onStorage(event: StorageEvent) {
       for (const store of stores) {
-        if (event.key === store.persist.getOptions().name) {
+        // key فارغ يعني أن التخزين كله مُسح من تبويب آخر
+        if (
+          event.key === null ||
+          event.key === store.persist.getOptions().name
+        ) {
           void store.persist.rehydrate()
         }
       }

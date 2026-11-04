@@ -4,7 +4,7 @@ import type { OverlayOptions } from "sharp"
 
 import { siteConfig } from "@/config/site"
 import { PRODUCT_FORMS, pluralize } from "@/lib/arabic-plural"
-import { getHomeSections } from "@/lib/catalog/catalog"
+import { getHomeSections } from "@/lib/catalog/home"
 import { discountPercent, formatPrice } from "@/lib/catalog/money"
 import type { Category, Product } from "@/lib/catalog/types"
 import { getCheckoutConfig } from "@/lib/checkout/config"

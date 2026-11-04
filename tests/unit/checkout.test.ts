@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest"
 
+import { buildOrder } from "@/lib/checkout/order"
 import { checkoutSchema, normalizePhone } from "@/lib/checkout/schema"
 import {
   calculateTotals,
   couponProblem,
   findCoupon,
-  normalizeDigits,
   shippingFee,
 } from "@/lib/checkout/totals"
 import type {
@@ -75,12 +75,6 @@ function totals(
 }
 
 describe("الأرقام والكوبونات", () => {
-  it("يحوّل الأرقام العربية والفارسية إلى 0-9", () => {
-    expect(normalizeDigits("٠٥٠١٢٣٤٥٦٧")).toBe("0501234567")
-    expect(normalizeDigits("۰۵۰۱")).toBe("0501")
-    expect(normalizeDigits("رقم 12")).toBe("رقم 12")
-  })
-
   it("يجد الكوبون دون اعتبار لحالة الأحرف والمسافات والأرقام العربية", () => {
     expect(findCoupon(config, " welcome10 ")).toBe(WELCOME10)
     expect(findCoupon(config, "WELCOME١٠")).toBe(WELCOME10)
@@ -178,6 +172,8 @@ describe("normalizePhone", () => {
     ["+966 50 123 4567", "0501234567"],
     ["00966501234567", "0501234567"],
     ["966501234567", "0501234567"],
+    ["+966 0501234567", "0501234567"],
+    ["009660501234567", "0501234567"],
     ["٠٥٠١٢٣٤٥٦٧", "0501234567"],
     ["(050) 123-4567", "0501234567"],
   ])("%s ← %s", (input, expected) => {
@@ -242,5 +238,72 @@ describe("checkoutSchema", () => {
     expect(errorsFor({ ...valid, city: "أبها" })).toEqual({
       shippingMethod: "التوصيل السريع غير متاح في هذه المدينة",
     })
+  })
+})
+
+describe("buildOrder", () => {
+  const values = {
+    fullName: "أحمد محمد",
+    phone: "0501234567",
+    email: "",
+    city: "الرياض",
+    district: "النرجس",
+    street: "شارع الملك فهد 12",
+    notes: "",
+    shippingMethod: "standard" as const,
+  }
+  const line = {
+    sku: "SHIRT-01",
+    slug: "classic-cotton-shirt",
+    name: "قميص قطني كلاسيكي",
+    image: null,
+    options: { المقاس: "M" },
+    price: 12900,
+    compareAtPrice: null,
+    stock: 5,
+    quantity: 2,
+  }
+  const now = new Date("2026-11-04T10:00:00Z")
+
+  it("يبني الطلب بالمبالغ التي رآها الزائر قبل التأكيد", () => {
+    const order = buildOrder({
+      values,
+      lines: [line],
+      coupon: WELCOME10,
+      config,
+      now,
+    })
+    expect(order).not.toBeNull()
+    expect(order?.number).toMatch(/^261104-\d{4}$/)
+    expect(order?.customer).toEqual({
+      name: "أحمد محمد",
+      phone: "0501234567",
+      city: "الرياض",
+      address: "النرجس، شارع الملك فهد 12",
+    })
+    expect(order?.couponCode).toBe("WELCOME10")
+    expect(order?.shipping).toEqual({
+      label: "توصيل عادي",
+      days: "خلال يوم إلى يومين",
+    })
+    expect(order?.totals).toEqual(
+      totals(25800, { city: riyadh, coupon: WELCOME10 })
+    )
+  })
+
+  it("لا يسجل كوبوناً لم يعد ينطبق، ويرفض مدينة خارج مدن الشحن", () => {
+    expect(
+      buildOrder({ values, lines: [line], coupon: SAVE50, config, now })
+        ?.couponCode
+    ).toBeNull()
+    expect(
+      buildOrder({
+        values: { ...values, city: "دبي" },
+        lines: [line],
+        coupon: null,
+        config,
+        now,
+      })
+    ).toBeNull()
   })
 })

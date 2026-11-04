@@ -4,15 +4,14 @@ import { RichText } from "@/components/store/rich-text"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { Product } from "@/lib/catalog/types"
 
-/** التبويبات حبوب بحد رمادي، والنشطة برتقالية بنص داكن، كما في DESIGN.md (section-tab-active). */
-const TAB =
-  "h-10 flex-none rounded-full border border-border px-5 text-base text-foreground data-active:border-primary data-active:bg-primary data-active:text-primary-foreground data-active:shadow-none"
+/** تبويبات صفحة المنتج أكبر قليلاً من الشكل الافتراضي */
+const TAB = "h-10 px-5 text-base"
 
 /** تبويبات المعلومات أسفل صفحة المنتج: الوصف، والمواصفات، والشحن والإرجاع. */
 export function ProductTabs({ product }: { product: Product }) {
   return (
     <Tabs defaultValue="description" className="gap-6 border-t pt-8">
-      <TabsList className="h-auto w-full [scrollbar-width:none] justify-start gap-2 overflow-x-auto bg-transparent p-0">
+      <TabsList className="w-full justify-start">
         <TabsTrigger value="description" className={TAB}>
           الوصف
         </TabsTrigger>
@@ -32,7 +31,7 @@ export function ProductTabs({ product }: { product: Product }) {
 
       {product.specs.length > 0 && (
         <TabsContent value="specs" className="max-w-2xl">
-          <dl className="divide-y rounded-lg border">
+          <dl className="divide-y rounded-xl border">
             {product.specs.map((spec) => (
               <div
                 key={spec.label}

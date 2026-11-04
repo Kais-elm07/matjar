@@ -26,6 +26,9 @@ export function CategoryMenu({
   const buttonRef = useRef<HTMLButtonElement>(null)
   const hoverTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
 
+  // إلغاء فتح أو إغلاق مؤجل إن اختفت القائمة قبله
+  useEffect(() => () => clearTimeout(hoverTimer.current), [])
+
   useEffect(() => {
     if (!open) return
     function onPointerDown(event: PointerEvent) {
@@ -60,6 +63,12 @@ export function CategoryMenu({
       onPointerLeave={(event) =>
         event.pointerType === "mouse" && hoverTo(false)
       }
+      // خروج التركيز من الزر واللوحة (بزر Tab مثلاً) يغلق اللوحة
+      onBlur={(event) => {
+        if (!rootRef.current?.contains(event.relatedTarget as Node | null)) {
+          setOpen(false)
+        }
+      }}
     >
       <button
         ref={buttonRef}

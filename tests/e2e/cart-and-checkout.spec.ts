@@ -1,6 +1,10 @@
 import { expect, test, type Page } from "@playwright/test"
 
+import { coupons } from "../../src/data/coupons"
 import { isPhone, open, simpleProduct } from "./helpers"
+
+/** أول كوبون نسبي في بيانات المتجر، حتى لا يرتبط الاختبار برمز بعينه. */
+const percentCoupon = coupons.find((coupon) => coupon.type === "percent")
 
 /** زر الإضافة في صفحة المنتج، قبل أزرار الإضافة السريعة في المنتجات المقترحة. */
 const addToCart = (page: Page) =>
@@ -70,16 +74,25 @@ test("إتمام طلب تجريبي برقم جوال بالأرقام العر
   if (isPhone(page)) {
     await page.getByRole("button", { name: /ملخص الطلب/ }).click()
   }
-  await page.getByLabel("كوبون الخصم", { exact: true }).fill("welcome10")
+  if (!percentCoupon)
+    throw new Error("لا يوجد كوبون نسبي في src/data/coupons.ts")
+  // بحروف صغيرة: الرمز يُقبل دون اعتبار لحالة الأحرف
+  await page
+    .getByLabel("كوبون الخصم", { exact: true })
+    .fill(percentCoupon.code.toLowerCase())
   await page.getByRole("button", { name: "تطبيق", exact: true }).click()
-  await expect(page.getByText(/الخصم \(WELCOME10\)/).first()).toBeVisible()
+  await expect(
+    page.getByText(`الخصم (${percentCoupon.code})`).first()
+  ).toBeVisible()
 
   await confirm.click()
   await expect(page).toHaveURL(/\/checkout\/success\/$/)
   await expect(page.getByText(/رقم الطلب/)).toBeVisible()
   await expect(page.getByText(/طلب تجريبي/).first()).toBeVisible()
-  // السلة فرغت بعد التأكيد
-  await expect(page.getByLabel(/السلة \(\d+\)/)).toHaveCount(0)
+  // السلة فرغت بعد التأكيد: زر السلة في الرأس بلا عدّاد
+  await expect(
+    page.getByRole("button", { name: "السلة", exact: true }).first()
+  ).toBeVisible()
 })
 
 test("حفظ منتج في المفضلة يظهر في صفحتها ويُزال منها", async ({ page }) => {
