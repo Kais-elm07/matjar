@@ -5,7 +5,6 @@ import Image from "next/image"
 import Link from "next/link"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
-import { BANNER_THEME } from "@/components/home/banner-theme"
 import { buttonVariants } from "@/components/ui/button"
 import { formatPrice } from "@/lib/catalog/money"
 import type { ProductBanner } from "@/lib/catalog/types"
@@ -13,8 +12,9 @@ import { scrollBehavior } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
 /**
- * شرائح العرض الرئيسي: تُسحب باللمس، ولها أسهم على الحاسوب ونقاط تحتها.
- * لا تتحرك تلقائياً، فالزائر يقرر متى ينتقل.
+ * الواجهة الرئيسية بعرض الشاشة: صورة كبيرة بتدرج داكن من الأسفل، والنص والزر في ركنها السفلي.
+ * تبدأ تحت الرأس الشفاف (هامش علوي سالب بارتفاع الرأس). أكثر من شريحة تُسحب باللمس،
+ * ولها أسهم على الحاسوب ونقاط فوق الصورة، ولا تتحرك تلقائياً.
  */
 export function HeroSlider({ slides }: { slides: ProductBanner[] }) {
   const listRef = useRef<HTMLUListElement>(null)
@@ -38,130 +38,125 @@ export function HeroSlider({ slides }: { slides: ProductBanner[] }) {
   }
 
   return (
-    <section aria-roledescription="عرض شرائح" aria-label="أبرز العروض">
-      <div className="relative">
-        <ul
-          ref={listRef}
-          onScroll={onScroll}
-          className="flex snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto overscroll-x-contain rounded-lg [&::-webkit-scrollbar]:hidden"
-        >
-          {slides.map((slide, index) => {
-            const theme = BANNER_THEME[slide.theme]
-            return (
-              <li
-                key={slide.href}
-                ref={(element) => {
-                  slideRefs.current[index] = element
-                }}
-                aria-roledescription="شريحة"
-                aria-label={`${index + 1} من ${slides.length}`}
-                className="w-full shrink-0 snap-center"
-              >
-                <div
-                  className={cn(
-                    "grid min-h-72 items-center gap-6 px-6 py-8 sm:grid-cols-[minmax(0,1fr)_auto] sm:px-12 md:min-h-96 md:px-16",
-                    theme.surface
-                  )}
-                >
-                  <div className="max-w-xl space-y-3">
+    <section
+      aria-roledescription="عرض شرائح"
+      aria-label="أبرز العروض"
+      className="relative -mt-16 bg-muted md:-mt-[72px]"
+    >
+      <ul
+        ref={listRef}
+        onScroll={onScroll}
+        className="flex snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto overscroll-x-contain [&::-webkit-scrollbar]:hidden"
+      >
+        {slides.map((slide, index) => (
+          <li
+            key={slide.href}
+            ref={(element) => {
+              slideRefs.current[index] = element
+            }}
+            aria-roledescription="شريحة"
+            aria-label={`${index + 1} من ${slides.length}`}
+            className="relative w-full shrink-0 snap-center"
+          >
+            <div className="relative aspect-[4/5] sm:aspect-[16/9] md:aspect-auto md:h-[min(80svh,46rem)] md:min-h-[32rem]">
+              {slide.image && (
+                <Image
+                  src={slide.image.src}
+                  alt={slide.image.alt}
+                  fill
+                  sizes="100vw"
+                  priority={index === 0}
+                  className="object-cover"
+                />
+              )}
+              {/* تدرج داكن من الأسفل يضمن قراءة النص الأبيض، وآخر من الأعلى لنص الرأس الشفاف */}
+              <div
+                aria-hidden
+                className="absolute inset-0 bg-gradient-to-t from-foreground/75 via-foreground/25 to-foreground/5"
+              />
+              <div
+                aria-hidden
+                className="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-foreground/55 to-transparent"
+              />
+              <div className="absolute inset-x-0 bottom-0">
+                <div className="page-container pb-16 md:pb-20">
+                  <div className="max-w-xl space-y-4 text-primary-foreground">
                     {slide.tag && (
-                      <p
-                        className={cn(
-                          "inline-flex rounded-sm px-2.5 py-1 text-xs font-bold",
-                          theme.tag
-                        )}
-                      >
+                      <p className="inline-flex rounded-full bg-background/90 px-3 py-1 text-xs font-bold text-foreground">
                         {slide.tag}
                       </p>
                     )}
-                    <h2 className="text-3xl leading-snug font-bold md:text-5xl md:leading-tight">
+                    <h2 className="text-4xl leading-[1.25] font-bold md:text-6xl md:leading-[1.15]">
                       {slide.title}
                     </h2>
                     {slide.text && (
-                      <p className={cn("text-base md:text-lg", theme.muted)}>
+                      <p className="text-base text-primary-foreground/85 md:text-lg">
                         {slide.text}
                       </p>
                     )}
-                    <p className="text-base">
+                    <p className="text-sm text-primary-foreground/85">
                       {slide.priceVaries ? "يبدأ من " : "بسعر "}
-                      <span
-                        className={cn(
-                          "text-2xl font-bold md:text-3xl",
-                          theme.price
-                        )}
-                      >
+                      <span className="text-xl font-bold text-primary-foreground">
                         {formatPrice(slide.price)}
                       </span>
                     </p>
                     <Link
                       href={slide.href}
                       className={cn(
-                        buttonVariants({ variant: theme.button, size: "xl" }),
-                        "mt-1"
+                        buttonVariants({ variant: "on-image", size: "xl" }),
+                        "mt-2 h-12 px-7"
                       )}
                     >
                       تسوّق الآن
                     </Link>
                   </div>
-                  {slide.image && (
-                    <div className="relative hidden size-56 overflow-hidden rounded-lg bg-background sm:block md:size-72 lg:size-80">
-                      <Image
-                        src={slide.image.src}
-                        alt={slide.image.alt}
-                        fill
-                        sizes="(min-width: 1024px) 320px, (min-width: 768px) 288px, 224px"
-                        className="object-cover"
-                      />
-                    </div>
-                  )}
                 </div>
-              </li>
-            )
-          })}
-        </ul>
-
-        {slides.length > 1 && (
-          <>
-            <button
-              type="button"
-              onClick={() => show(active - 1)}
-              aria-label="الشريحة السابقة"
-              className="absolute start-3 top-1/2 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-foreground shadow-md outline-none hover:bg-background focus-visible:ring-3 focus-visible:ring-ring md:flex"
-            >
-              <ChevronLeftIcon className="size-5 rtl:rotate-180" aria-hidden />
-            </button>
-            <button
-              type="button"
-              onClick={() => show(active + 1)}
-              aria-label="الشريحة التالية"
-              className="absolute end-3 top-1/2 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-foreground shadow-md outline-none hover:bg-background focus-visible:ring-3 focus-visible:ring-ring md:flex"
-            >
-              <ChevronRightIcon className="size-5 rtl:rotate-180" aria-hidden />
-            </button>
-          </>
-        )}
-      </div>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
 
       {slides.length > 1 && (
-        <div className="mt-2 flex justify-center">
-          {slides.map((slide, index) => (
-            <button
-              key={slide.href}
-              type="button"
-              onClick={() => show(index)}
-              aria-label={`الشريحة ${index + 1}`}
-              aria-current={index === active}
-              className="group/dot flex h-8 min-w-6 items-center justify-center px-2 outline-none"
-            >
-              <span
-                className={cn(
-                  "block h-2.5 rounded-full transition-all group-focus-visible/dot:ring-3 group-focus-visible/dot:ring-ring",
-                  index === active ? "w-7 bg-primary" : "w-2.5 bg-border"
-                )}
-              />
-            </button>
-          ))}
-        </div>
+        <>
+          <button
+            type="button"
+            onClick={() => show(active - 1)}
+            aria-label="الشريحة السابقة"
+            className="absolute start-4 top-1/2 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-foreground outline-none hover:bg-background focus-visible:ring-3 focus-visible:ring-ring md:flex"
+          >
+            <ChevronLeftIcon className="size-5 rtl:rotate-180" aria-hidden />
+          </button>
+          <button
+            type="button"
+            onClick={() => show(active + 1)}
+            aria-label="الشريحة التالية"
+            className="absolute end-4 top-1/2 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-foreground outline-none hover:bg-background focus-visible:ring-3 focus-visible:ring-ring md:flex"
+          >
+            <ChevronRightIcon className="size-5 rtl:rotate-180" aria-hidden />
+          </button>
+          <div className="absolute inset-x-0 bottom-4 flex justify-center md:bottom-6">
+            {slides.map((slide, index) => (
+              <button
+                key={slide.href}
+                type="button"
+                onClick={() => show(index)}
+                aria-label={`الشريحة ${index + 1}`}
+                aria-current={index === active}
+                className="group/dot flex h-8 min-w-6 items-center justify-center px-2 outline-none"
+              >
+                <span
+                  className={cn(
+                    "block h-2 rounded-full transition-all group-focus-visible/dot:ring-3 group-focus-visible/dot:ring-ring",
+                    index === active
+                      ? "w-7 bg-background"
+                      : "w-2 bg-background/50"
+                  )}
+                />
+              </button>
+            ))}
+          </div>
+        </>
       )}
     </section>
   )

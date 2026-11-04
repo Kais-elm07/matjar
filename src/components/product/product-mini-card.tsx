@@ -7,15 +7,15 @@ import type { ProductCard } from "@/lib/catalog/types"
 /** بطاقة منتج أفقية صغيرة: الصورة بجانب الاسم والسعر، لقسم "الرائج الآن". */
 export function ProductMiniCard({ product }: { product: ProductCard }) {
   return (
-    <article className="group relative flex items-center gap-3 rounded-lg border bg-card p-3 transition-[border-color,box-shadow] hover:border-foreground/20 hover:shadow-md">
-      <div className="relative size-20 shrink-0 overflow-hidden rounded-md bg-background">
+    <article className="group relative flex items-center gap-4 rounded-lg p-2 transition-colors hover:bg-muted/70">
+      <div className="relative size-24 shrink-0 overflow-hidden rounded-lg bg-muted">
         {product.image && (
           <Image
             src={product.image.src}
             alt={product.image.alt}
             fill
-            sizes="80px"
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="96px"
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
         )}
       </div>

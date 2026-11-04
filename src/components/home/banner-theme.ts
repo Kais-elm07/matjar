@@ -2,7 +2,8 @@ import type { BannerTheme } from "@/lib/catalog/types"
 
 /**
  * ألوان بطاقات الصفحة الرئيسية حسب السمة في src/data/home.ts.
- * كل تركيبة تجتاز تباين 4.5:1: الكهرماني على الكحلي 9.1:1، والكحلي على الكهرماني 9.1:1.
+ * primary: كحلي بنص أبيض. highlight: داكن (#111) بنص أبيض. light: رمادي فاتح بنص داكن.
+ * لا كهرماني هنا، فهو لشارات الخصم فقط.
  */
 export const BANNER_THEME: Record<
   BannerTheme,
@@ -11,26 +12,26 @@ export const BANNER_THEME: Record<
     tag: string
     muted: string
     price: string
-    button: "cta" | "default"
+    button: "cta" | "on-image"
   }
 > = {
   primary: {
     surface: "bg-primary text-primary-foreground",
-    tag: "bg-highlight text-highlight-foreground",
+    tag: "bg-background text-foreground",
     muted: "text-primary-foreground-muted",
-    price: "text-highlight",
-    button: "cta",
+    price: "text-primary-foreground",
+    button: "on-image",
   },
   highlight: {
-    surface: "bg-highlight text-highlight-foreground",
-    tag: "bg-primary text-primary-foreground",
-    muted: "text-highlight-foreground/80",
-    price: "text-primary",
-    button: "default",
+    surface: "bg-foreground text-background",
+    tag: "bg-background text-foreground",
+    muted: "text-background/70",
+    price: "text-background",
+    button: "on-image",
   },
   light: {
     surface: "bg-muted text-foreground",
-    tag: "bg-primary text-primary-foreground",
+    tag: "bg-background text-foreground",
     muted: "text-muted-foreground",
     price: "text-primary",
     button: "cta",

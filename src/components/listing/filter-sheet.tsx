@@ -43,6 +43,7 @@ export function FilterSheet({
             </Button>
           )}
           <Button
+            variant="cta"
             size="xl"
             className="flex-1"
             onClick={() => onOpenChange(false)}

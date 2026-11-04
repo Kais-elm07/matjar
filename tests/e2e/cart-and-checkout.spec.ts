@@ -88,7 +88,10 @@ test("حفظ منتج في المفضلة يظهر في صفحتها ويُزا�
   const name = (await card.getByRole("heading").textContent())?.trim() ?? ""
   await card.getByRole("button", { name: `حفظ ${name} في المفضلة` }).click()
   await expect(page.getByText("أُضيف إلى المفضلة")).toBeVisible()
-  await expect(page.getByLabel("المفضلة (1)").first()).toBeVisible()
+  // العدّاد في الرأس على الحاسوب، وفي الشريط السفلي على الجوال؛ getByRole يتجاهل المخفي منهما
+  await expect(
+    page.getByRole("link", { name: "المفضلة (1)" }).first()
+  ).toBeVisible()
 
   await open(page, "/wishlist/")
   const saved = page.getByRole("article").filter({ hasText: name })

@@ -75,7 +75,7 @@ export function DealItem({
   return (
     <li className={cn("flex flex-col gap-2", className)}>
       <p className="flex items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground tabular-nums">
-        <TimerIcon className="size-3.5 shrink-0 text-highlight" aria-hidden />
+        <TimerIcon className="size-3.5 shrink-0" aria-hidden />
         {label}
       </p>
       <div className="flex-1">{children}</div>

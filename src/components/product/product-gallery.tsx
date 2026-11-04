@@ -76,7 +76,7 @@ export function ProductGallery({
       <div className="relative lg:min-w-0 lg:flex-1">
         <div
           ref={trackRef}
-          className="flex snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto overscroll-x-contain rounded-lg border bg-background [&::-webkit-scrollbar]:hidden"
+          className="flex snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto overscroll-x-contain rounded-lg bg-muted [&::-webkit-scrollbar]:hidden"
         >
           {images.map((image, index) => (
             <div

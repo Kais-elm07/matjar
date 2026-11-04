@@ -4,8 +4,9 @@ import { Skeleton } from "@/components/ui/skeleton"
 import type { ProductCard as ProductCardData } from "@/lib/catalog/types"
 import { cn } from "@/lib/utils"
 
+/** شبكة بخطوط فاصلة رفيعة: الفجوة بكسل واحد بلون الحد، وكل خلية بخلفية بيضاء. */
 const GRID =
-  "grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5"
+  "grid grid-cols-2 gap-px border bg-border sm:grid-cols-3 lg:grid-cols-4"
 
 export function ProductGrid({
   products,
@@ -19,7 +20,7 @@ export function ProductGrid({
   return (
     <ul className={cn(GRID, className)}>
       {products.map((product, index) => (
-        <li key={product.slug}>
+        <li key={product.slug} className="bg-background">
           <ProductCard product={product} priority={index < priorityCount} />
         </li>
       ))}
@@ -38,8 +39,8 @@ export function ProductGridSkeleton({
   return (
     <ul className={cn(GRID, className)} aria-hidden>
       {Array.from({ length: count }, (_, index) => (
-        <li key={index} className="space-y-3 rounded-lg border p-3">
-          <Skeleton className="aspect-square w-full rounded-md" />
+        <li key={index} className="space-y-3 bg-background p-3 md:p-4">
+          <Skeleton className="aspect-square w-full rounded-lg" />
           <Skeleton className="h-3 w-1/3" />
           <Skeleton className="h-4 w-4/5" />
           <Skeleton className="h-4 w-1/3" />
@@ -65,9 +66,12 @@ export function ProductRail({
   header?: React.ReactNode
 }) {
   return (
-    <Carousel label={label} header={header}>
-      {products.map((product) => (
-        <li key={product.slug} className={RAIL_ITEM}>
+    <Carousel label={label} header={header} listClassName="gap-px md:gap-px">
+      {products.map((product, index) => (
+        <li
+          key={product.slug}
+          className={cn(RAIL_ITEM, index > 0 && "border-s")}
+        >
           <ProductCard product={product} />
         </li>
       ))}

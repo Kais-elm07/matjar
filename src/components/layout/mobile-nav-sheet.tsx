@@ -25,14 +25,10 @@ export function MobileNavSheet({ categories }: { categories: NavCategory[] }) {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent
-        side="right"
-        // زر الإغلاق فوق رأس القائمة الكحلي، فيصبح أبيض
-        className="w-[85%] gap-0 p-0 [&>[data-slot=sheet-close]]:text-primary-foreground [&>[data-slot=sheet-close]]:hover:bg-white/10 [&>[data-slot=sheet-close]]:hover:text-primary-foreground"
-      >
-        <SheetHeader className="border-b bg-primary pe-14 text-primary-foreground">
+      <SheetContent side="right" className="w-[85%] gap-0 p-0">
+        <SheetHeader className="border-b pe-14">
           <SheetTitle className="sr-only">القائمة الرئيسية</SheetTitle>
-          <Logo tone="light" onNavigate={close} />
+          <Logo onNavigate={close} />
         </SheetHeader>
         <nav
           aria-label="القائمة الرئيسية"

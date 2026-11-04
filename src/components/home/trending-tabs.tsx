@@ -16,7 +16,7 @@ export function TrendingTabs({
     <section aria-labelledby="trending-heading">
       <Tabs defaultValue={groups[0].category.slug} className="gap-5">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <h2 id="trending-heading" className="text-xl font-bold md:text-2xl">
+          <h2 id="trending-heading" className="text-2xl font-bold md:text-3xl">
             الرائج الآن
           </h2>
           <TabsList className="h-auto w-full [scrollbar-width:none] justify-start gap-1 overflow-x-auto bg-transparent p-0 md:w-auto">
@@ -24,7 +24,7 @@ export function TrendingTabs({
               <TabsTrigger
                 key={category.slug}
                 value={category.slug}
-                className="h-9 flex-none rounded-full px-4 text-sm text-foreground data-active:bg-highlight data-active:text-highlight-foreground data-active:shadow-none"
+                className="h-9 flex-none rounded-full px-4 text-sm text-foreground data-active:bg-primary data-active:text-primary-foreground data-active:shadow-none"
               >
                 {category.name}
               </TabsTrigger>

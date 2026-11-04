@@ -15,6 +15,10 @@ test("البحث يجد المنتج رغم كتابة التاء المربوط
   const query = `${word.slice(0, -1)}ه`
 
   await open(page, "/")
+  // على الجوال يظهر حقل البحث بعد الضغط على زر البحث في الرأس
+  if (isPhone(page)) {
+    await page.getByRole("button", { name: "البحث", exact: true }).click()
+  }
   const box = page.getByRole("combobox", { name: "ابحث في المتجر" })
   await box.fill(query)
   await expect(page.getByRole("option", { name: product.name })).toBeVisible()

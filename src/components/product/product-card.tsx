@@ -10,11 +10,12 @@ import { cn } from "@/lib/utils"
 
 /** عرض الصورة حسب الشاشة: عمودان على الجوال، و3 على الأجهزة اللوحية، و4 على الحاسوب. */
 const IMAGE_SIZES =
-  "(min-width: 1280px) 270px, (min-width: 1024px) 22vw, (min-width: 640px) 30vw, 46vw"
+  "(min-width: 1280px) 300px, (min-width: 1024px) 24vw, (min-width: 640px) 32vw, 48vw"
 
 /**
- * بطاقة المنتج: بطاقة بيضاء بحد خفيف، فيها الصورة واسم الفئة والاسم والسعر،
- * والقلب فوق الصورة، وزر الإضافة للسلة ظاهر دائماً أسفلها.
+ * بطاقة المنتج: بلا إطار ولا ظل (الشبكة تفصلها بخطوط رفيعة): الصورة تملأ البطاقة،
+ * والقلب وشارة الخصم فوقها، ثم اسم الفئة بالرمادي والاسم والسعر الكحلي،
+ * وزر الإضافة للسلة ظاهر دائماً في الأسفل.
  */
 export function ProductCard({
   product,
@@ -25,8 +26,8 @@ export function ProductCard({
   priority?: boolean
 }) {
   return (
-    <article className="group relative flex h-full flex-col rounded-lg border bg-card p-3 transition-[border-color,box-shadow] hover:border-foreground/20 hover:shadow-md">
-      <div className="relative aspect-square overflow-hidden rounded-md bg-background">
+    <article className="group relative flex h-full flex-col bg-background p-3 md:p-4">
+      <div className="relative aspect-square overflow-hidden rounded-lg bg-muted">
         {product.image ? (
           <Image
             src={product.image.src}
@@ -36,7 +37,7 @@ export function ProductCard({
             loading={priority ? "eager" : "lazy"}
             fetchPriority={priority ? "high" : "auto"}
             className={cn(
-              "object-cover transition-transform duration-300 group-hover:scale-105",
+              "object-cover transition-transform duration-300 group-hover:scale-[1.03]",
               !product.inStock && "opacity-60"
             )}
           />
@@ -73,7 +74,7 @@ export function ProductCard({
           {/* الرابط يغطي البطاقة كلها لتسهيل اللمس */}
           <Link
             href={`/product/${product.slug}`}
-            className="outline-none after:absolute after:inset-0 after:rounded-lg focus-visible:after:ring-3 focus-visible:after:ring-ring/50"
+            className="outline-none after:absolute after:inset-0 focus-visible:after:ring-3 focus-visible:after:ring-ring/50 focus-visible:after:ring-inset"
           >
             {product.name}
           </Link>

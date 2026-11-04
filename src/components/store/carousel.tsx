@@ -69,8 +69,9 @@ export function Carousel({
           {controls === "header" && (
             <div className="hidden shrink-0 items-center gap-2 md:flex">
               <Button
-                variant="secondary"
+                variant="outline"
                 size="icon-lg"
+                className="size-10"
                 aria-label={`السابق في ${label}`}
                 disabled={edges.atStart}
                 onClick={() => scrollByPage(-1)}
@@ -78,8 +79,9 @@ export function Carousel({
                 <ChevronLeftIcon className="rtl:rotate-180" aria-hidden />
               </Button>
               <Button
-                variant="secondary"
+                variant="outline"
                 size="icon-lg"
+                className="size-10"
                 aria-label={`التالي في ${label}`}
                 disabled={edges.atEnd}
                 onClick={() => scrollByPage(1)}

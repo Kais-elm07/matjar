@@ -7,10 +7,14 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // الكحلي للفعل الثاني القوي، مثل "اشترِ الآن" و"عرض السلة"
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        // الكهرماني للفعل الأهم في المنطقة، مثل "أضف للسلة" و"تسوّق الآن"
-        cta: "bg-highlight text-highlight-foreground hover:bg-highlight/85",
+        // أبيض بحد كحلي للفعل الثاني، مثل "اشترِ الآن" و"عرض السلة" (DESIGN.md: button-secondary)
+        default:
+          "border-primary bg-background text-primary hover:bg-primary/5 aria-expanded:bg-primary/5",
+        // الكحلي للفعل الأهم في المنطقة، مثل "أضف للسلة" و"إتمام الطلب" (DESIGN.md: button-cta)
+        cta: "bg-primary text-primary-foreground hover:bg-primary/90",
+        // أبيض بنص داكن فوق الصور، مثل زر الواجهة (DESIGN.md: button-on-image)
+        "on-image":
+          "bg-background text-foreground hover:bg-background/90 focus-visible:ring-background/60",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:

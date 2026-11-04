@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic"
 import { MenuIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import { useUiStore } from "@/lib/store/ui"
 import { useIdle } from "@/lib/use-idle"
 
@@ -32,17 +31,16 @@ export function MobileNav({ categories }: { categories: NavCategory[] }) {
 
   return (
     <>
-      <Button
-        variant="ghost"
-        size="icon-xl"
-        className="-ms-2 text-primary-foreground hover:bg-white/10 hover:text-primary-foreground md:hidden"
+      <button
+        type="button"
         aria-label="فتح القائمة"
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={() => setOpen(true)}
+        className="-ms-2 inline-flex size-11 shrink-0 items-center justify-center rounded-full transition-colors outline-none hover:bg-foreground/5 group-data-[tone=light]/hdr:hover:bg-white/10 focus-visible:ring-3 focus-visible:ring-ring md:hidden [&_svg]:size-6"
       >
         <MenuIcon aria-hidden />
-      </Button>
+      </button>
       {(open || idle) && <MobileNavSheet categories={categories} />}
     </>
   )

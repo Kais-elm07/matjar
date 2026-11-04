@@ -176,7 +176,7 @@ export function ProductDetails({ product }: { product: Product }) {
                     className={cn(
                       "relative inline-flex h-11 min-w-11 items-center justify-center gap-2 rounded-full border px-4 text-sm font-medium transition-colors hover:border-foreground/50 disabled:cursor-not-allowed disabled:opacity-40",
                       isSelected &&
-                        "border-primary bg-primary/10 text-primary ring-1 ring-primary hover:border-primary",
+                        "border-primary bg-primary text-primary-foreground hover:border-primary",
                       state === "sold-out" &&
                         "text-muted-foreground line-through decoration-1"
                     )}
@@ -237,7 +237,7 @@ export function ProductDetails({ product }: { product: Product }) {
           </div>
         </div>
 
-        <ul className="grid gap-3 rounded-xl bg-muted/60 p-4 text-sm sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-3">
+        <ul className="grid gap-3 rounded-lg bg-muted p-4 text-sm sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-3">
           <TrustItem icon={BanknoteIcon} text="الدفع عند الاستلام" />
           <TrustItem icon={TruckIcon} text="توصيل إلى باب بيتك" />
           <TrustItem icon={RotateCcwIcon} text="إرجاع واستبدال بسهولة" />

@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react"
 import Link from "next/link"
-import { ChevronDownIcon, ChevronRightIcon, LayoutGridIcon } from "lucide-react"
+import { ChevronDownIcon, ChevronRightIcon } from "lucide-react"
 
 import type { NavCategory } from "@/components/layout/mobile-nav"
 import { cn } from "@/lib/utils"
@@ -12,7 +12,14 @@ import { cn } from "@/lib/utils"
  * وفئاتها الفرعية. يفتح بالنقر أو بمرور الفأرة، ويُغلق بـ Escape أو بالنقر خارجه.
  * مبني كزر إفصاح بسيط دون مكتبة نوافذ عائمة، حتى لا يثقل صفحات الجوال التي لا تعرضه.
  */
-export function CategoryMenu({ categories }: { categories: NavCategory[] }) {
+export function CategoryMenu({
+  categories,
+  className,
+}: {
+  categories: NavCategory[]
+  /** شكل الزر، ليطابق بقية روابط الرأس */
+  className?: string
+}) {
   const [open, setOpen] = useState(false)
   const panelId = useId()
   const rootRef = useRef<HTMLDivElement>(null)
@@ -63,10 +70,9 @@ export function CategoryMenu({ categories }: { categories: NavCategory[] }) {
           clearTimeout(hoverTimer.current)
           setOpen((value) => !value)
         }}
-        className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full bg-highlight px-4 text-sm font-bold text-highlight-foreground outline-none hover:bg-highlight/85 focus-visible:ring-3 focus-visible:ring-ring"
+        className={cn("gap-1", className)}
       >
-        <LayoutGridIcon className="size-4" aria-hidden />
-        كل الفئات
+        الفئات
         <ChevronDownIcon
           className={cn("size-4 transition-transform", open && "rotate-180")}
           aria-hidden
@@ -76,6 +82,7 @@ export function CategoryMenu({ categories }: { categories: NavCategory[] }) {
       <div
         id={panelId}
         hidden={!open}
+        // اللوحة تمتد بعرض الرأس كله (الرأس هو الحاوية النسبية)، بنص داكن مهما كان لون الرأس
         className="absolute inset-x-0 top-full z-50 border-b bg-popover text-popover-foreground shadow-lg"
       >
         <div className="page-container py-6">

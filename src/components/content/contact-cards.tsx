@@ -67,7 +67,7 @@ export function ContactCards() {
       {items.map(({ icon: Icon, label, value, href, ltr, external }) => {
         const content = (
           <>
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-tile-yellow text-primary">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-muted text-primary">
               <Icon className="size-5" aria-hidden />
             </span>
             <span className="min-w-0">

@@ -22,7 +22,7 @@ export function PromoCard({ banner }: { banner: ProductBanner }) {
         {banner.tag && (
           <p
             className={cn(
-              "inline-flex rounded-sm px-2 py-0.5 text-xs font-bold",
+              "inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold",
               theme.tag
             )}
           >
@@ -114,7 +114,7 @@ export function WideBanner({ banner }: { banner: ProductBanner }) {
         {banner.tag && (
           <p
             className={cn(
-              "inline-flex rounded-sm px-2.5 py-1 text-xs font-bold",
+              "inline-flex rounded-full px-3 py-1 text-xs font-bold",
               theme.tag
             )}
           >

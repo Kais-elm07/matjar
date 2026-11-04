@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { ShoppingCartIcon } from "lucide-react"
+import { ShoppingBagIcon } from "lucide-react"
 
 import { useAddToCart } from "@/components/cart/use-add-to-cart"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -35,10 +35,7 @@ export function QuickAddButton({
     return (
       <Link
         href={`/product/${product.slug}`}
-        className={cn(
-          buttonVariants({ variant: "outline", size: "xl" }),
-          classes
-        )}
+        className={cn(buttonVariants({ size: "xl" }), classes)}
       >
         اختر الخيارات
         <span className="sr-only">: {product.name}</span>
@@ -48,7 +45,6 @@ export function QuickAddButton({
 
   return (
     <Button
-      variant="cta"
       size="xl"
       className={classes}
       onClick={() =>
@@ -69,7 +65,7 @@ export function QuickAddButton({
         )
       }
     >
-      <ShoppingCartIcon data-icon="inline-start" aria-hidden />
+      <ShoppingBagIcon data-icon="inline-start" aria-hidden />
       أضف للسلة
       <span className="sr-only">: {product.name}</span>
     </Button>
