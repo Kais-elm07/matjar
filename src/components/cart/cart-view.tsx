@@ -69,7 +69,7 @@ export function CartView() {
 
       <aside
         aria-labelledby="cart-summary-heading"
-        className="space-y-4 rounded-lg border bg-muted p-5 lg:sticky lg:top-36"
+        className="space-y-4 rounded-xl border bg-card p-5 lg:sticky lg:top-32"
       >
         <h2 id="cart-summary-heading" className="text-lg font-bold">
           ملخص الطلب

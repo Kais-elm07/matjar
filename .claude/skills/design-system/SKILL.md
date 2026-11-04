@@ -18,64 +18,67 @@ description: الهوية البصرية للمتجر وفق ملف DESIGN.md (�
 
 القيم مطبّقة في `src/app/globals.css` كمتغيرات shadcn بنفس قيم hex، فتُستخدم عبر هذه الأصناف:
 
-| قيمة DESIGN.md                           | الصنف في الكود                                                                 |
-| ---------------------------------------- | ------------------------------------------------------------------------------ |
-| `colors.primary` (الكحلي)                | `bg-primary` / `text-primary` / `border-primary`                               |
-| `colors.on-primary`                      | `text-primary-foreground`                                                      |
-| `colors.on-primary-muted`                | `text-primary-foreground-muted` (نص ثانوي فوق الكحلي)                          |
-| `colors.primary-soft`                    | `bg-primary/10`                                                                |
-| `colors.highlight` (الكهرماني)           | `bg-highlight text-highlight-foreground` (شارة الخصم فقط)                      |
-| `colors.ring`                            | `ring-ring/50` (يأتي تلقائياً في مكونات ui)                                    |
-| `colors.background` و `colors.surface`   | `bg-background` / `bg-card`                                                    |
-| `colors.foreground`                      | `text-foreground`                                                              |
-| `colors.surface-muted`                   | `bg-muted`                                                                     |
-| `colors.muted-foreground`                | `text-muted-foreground`                                                        |
-| `colors.border`                          | `border` / `border-border`                                                     |
-| `colors.error` / `warning` / `success`   | `text-destructive` / `text-warning` / `text-success`                           |
-| `button-cta` (كحلي) / `button-secondary` | `<Button variant="cta">` / `<Button>` (أبيض بحد كحلي)                          |
-| `button-outline` / `button-on-image`     | `<Button variant="outline">` / `<Button variant="on-image">` (فوق الصور)       |
-| `rounded.sm` / `lg` / `xl` / `full`      | `rounded-sm` (4px) / `rounded-lg` (8px) / `rounded-xl` (12px) / `rounded-full` |
-| `typography.headline-display`            | `text-4xl md:text-6xl font-bold`                                               |
-| `typography.headline-lg`                 | `text-2xl md:text-3xl font-bold`                                               |
-| `typography.headline-md`                 | `text-xl md:text-2xl font-bold`                                                |
-| `typography.body-md`                     | `text-base leading-7` (النصوص الطويلة `leading-8`)                             |
-| `typography.body-sm`                     | `text-sm`                                                                      |
-| `typography.label-md`                    | `text-sm font-medium`                                                          |
-| `typography.label-sm`                    | `text-xs font-bold`                                                            |
-| `typography.price-lg` / `price-md`       | `text-2xl md:text-3xl font-bold` / `text-base font-bold`                       |
-| `spacing.gutter-*` و `container-max`     | `page-container`                                                               |
-| `spacing.touch-target`                   | زر `size="xl"` أو `size="icon-xl"`، أو `h-11`                                  |
+| قيمة DESIGN.md                              | الصنف في الكود                                                                     |
+| ------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `colors.primary` (البرتقالي)                | `bg-primary` / `text-primary` / `border-primary`                                   |
+| `colors.on-primary` (نص داكن فوق البرتقالي) | `text-primary-foreground`                                                          |
+| `colors.primary-soft`                       | `bg-primary/10` (خلفية الخيار المختار، ونصه `text-primary`)                        |
+| `colors.ring`                               | `ring-ring/50` (يأتي تلقائياً في مكونات ui). فوق زر برتقالي: `ring-foreground`     |
+| `colors.background`                         | `bg-background` (أرضية الصفحات، وحلقة زر السلة الدائري `ring-background`)          |
+| `colors.surface`                            | `bg-card` / `bg-popover` (الرأس والتذييل والبطاقات والنوافذ)                       |
+| `colors.surface-muted`                      | `bg-muted` (مربعات الصور وحقل البحث ودوائر الأيقونات والهياكل)                     |
+| `colors.foreground`                         | `text-foreground`                                                                  |
+| `colors.muted-foreground`                   | `text-muted-foreground`                                                            |
+| `colors.border`                             | `border` / `border-border`                                                         |
+| `colors.error` / `warning` / `success`      | `text-destructive` / `text-warning` / `text-success`                               |
+| `colors.whatsapp`                           | `bg-whatsapp` (زر واتساب العائم فقط)                                               |
+| `button-cta` (برتقالي)                      | `<Button variant="cta">`                                                           |
+| `button-secondary` (حد أبيض)                | `<Button>` (الافتراضي)                                                             |
+| `button-outline` (حد رمادي)                 | `<Button variant="outline">`                                                       |
+| `rounded.sm` / `lg` / `xl` / `full`         | `rounded-sm` (4px) / `rounded-lg` (8px) / `rounded-xl` (12px) / `rounded-full`     |
+| `typography.headline-display`               | `text-4xl md:text-6xl font-bold`                                                   |
+| `typography.headline-lg`                    | `text-2xl md:text-3xl font-bold`                                                   |
+| `typography.headline-md`                    | `text-xl md:text-2xl font-bold`                                                    |
+| `typography.body-md`                        | `text-base leading-7` (النصوص الطويلة `leading-8`)                                 |
+| `typography.body-sm`                        | `text-sm`                                                                          |
+| `typography.label-md`                       | `text-sm font-medium`                                                              |
+| `typography.label-sm`                       | `text-xs font-bold`                                                                |
+| `typography.price-lg` / `price-md`          | `text-2xl md:text-3xl font-bold text-primary` / `text-base font-bold text-primary` |
+| `spacing.gutter-*` و `container-max`        | `page-container`                                                                   |
+| `spacing.touch-target`                      | زر `size="xl"` أو `size="icon-xl"`، أو `h-11`                                      |
 
 ## قواعد لا تُكسر
 
 - الواجهة من اليمين لليسار: استخدم `ms-` و`me-` و`ps-` و`pe-` و`start-` و`end-`، ولا تستخدم `ml-` و`mr-` و`left-` و`right-`. الأسهم التي تعني "التالي" تأخذ `rtl:rotate-180`.
 - الجوال أولاً: الأصناف بلا بادئة للجوال، ثم `sm:` و`md:` و`lg:` للأكبر.
 - كل عنصر قابل للنقر بارتفاع 44 بكسل على الأقل.
-- خط واحد فقط (IBM Plex Sans Arabic) بثلاثة أوزان: `font-normal` و`font-medium` و`font-bold`. لا تستخدم `font-semibold` أو `font-extrabold` لأن الخط لا يملكها.
-- الأسعار بأرقام 0-9 عبر `formatPrice`.
+- خط واحد فقط (IBM Plex Sans Arabic) بثلاثة أوزان: `font-normal` و`font-medium` و`font-bold`. لا تستخدم `font-semibold` أو `font-extrabold` لأن الخط لا يملكها، ولا `tracking-*` على نص عربي لأنه يقطع الحروف المتصلة.
+- الأسعار بأرقام 0-9 عبر `formatPrice`، وبالبرتقالي دائماً (`Price`).
 - الأعداد بصيغ الجمع العربية الصحيحة عبر `pluralize` في `src/lib/arabic-plural.ts`.
-- الكحلي (`variant="cta"`) للفعل الأهم في المنطقة، والزر الافتراضي (أبيض بحد كحلي) للفعل الثاني، و`variant="on-image"` (أبيض) فوق الصور والخلفيات الداكنة.
-- الكهرماني لشارات الخصم فقط (`DiscountBadge`): لا أزرار ولا خلفيات كهرمانية، ولا نص كهرماني على الأبيض (تباينه 1.7:1).
+- المتجر داكن دائماً: لا وضع فاتح ولا صنف `.dark`، ولا تكتب `bg-white` أو `text-white` أو `bg-black`، بل `bg-background` و`text-foreground` و`bg-card`.
+- البرتقالي (`variant="cta"`) لفعل واحد بارز في كل منطقة، والزر الافتراضي (شفاف بحد أبيض) للفعل الثاني، و`variant="outline"` للأفعال البديلة. فوق الصور أيضاً زر `cta`.
+- النص فوق البرتقالي داكن دائماً (`text-primary-foreground`)، ولا نص أبيض أو برتقالي فوقه. ولا خلفيات برتقالية كبيرة غير شريط الإعلان وشريط التذييل.
 - الأحمر للأخطاء والنفاد فقط.
-- الأزرار والشرائح وحقل البحث والتبويبات حبوب (`rounded-full`)، والصور والحقول `rounded-lg` (8 بكسل)، والواجهة والتذييل بلا زوايا.
-- بطاقات المنتجات بلا إطار ولا ظل: الشبكة `grid gap-px border bg-border` وكل خلية `bg-background` (انظر `ProductGrid`).
-- الرأس شفاف فوق واجهة الرئيسية ثم أبيض عند التمرير (`HeaderFrame`). أي عنصر داخله يأخذ لونه من المجموعة: `text-current` للحالة العادية، و`group-data-[tone=light]/hdr:` للنسخة البيضاء فوق الصورة.
-- النص فوق الصور أبيض فوق تدرج داكن (`bg-gradient-to-t from-foreground/75`)، لا فوق الصورة مباشرة.
+- الأزرار والحقول ومربعات الصور `rounded-lg` (8 بكسل)، والبطاقات والنوافذ والمربعات المصوّرة `rounded-xl` (12 بكسل)، والتبويبات والشرائح وحقل البحث والشارات حبوب (`rounded-full`). الواجهة وشريط الثقة والتذييل بلا زوايا.
+- بطاقات المنتجات `rounded-xl bg-card` بلا إطار ولا ظل، مستقلة بفجوات في الشبكة (`grid gap-3 md:gap-4`، انظر `ProductGrid`)، وزر السلة الدائري في ركنها (`QuickAddButton`) محاط بـ `ring-[6px] ring-background`، فاترك له مساحة `pe-12` في عمود النص.
+- الرأس داكن ثابت (`sticky top-0 bg-card`) بارتفاع 64 بكسل، ومعه على الحاسوب صف روابط بارتفاع 40. العناصر المثبتة تحته تبدأ من `top-32`.
+- النص فوق الصور أبيض فوق تعتيم بلون الخلفية (`bg-background/45`) وتدرج داكن (`bg-gradient-to-t from-background/95`)، لا فوق الصورة مباشرة.
 - زر الإضافة للسلة ظاهر دائماً في البطاقة، ولا شيء مهم يظهر بمرور الفأرة فقط.
-- لا أرقام وهمية ("يشاهده الآن")، ولا عدّاد تنازلي دون تاريخ حقيقي في البيانات، ولا آراء عملاء مختلقة.
+- لا أرقام وهمية ("يشاهده الآن")، ولا عدّاد تنازلي دون تاريخ حقيقي في البيانات، ولا آراء عملاء ولا نجوم تقييم مختلقة.
 - الشبكة (`grid`) التي تحوي صفاً يُسحب أفقياً تحتاج `grid-cols-1` على الجوال، وإلا اتسعت الصفحة بعرض الصف.
 - الحركة قصيرة (300 ملّي ثانية أو أقل) ولغرض واضح، والتمرير الناعم عبر `scrollBehavior()` في `src/lib/motion.ts` حتى يحترم إعداد "تقليل الحركة". لا حركة لإظهار المحتوى عند التمرير.
 - أي نافذة أو لوحة لا تظهر إلا بضغطة تُحمَّل بـ `next/dynamic` عند فتحها أو بعد فراغ المتصفح (`useIdle` في `src/lib/use-idle.ts`)، كما في `LazyCartSheet` و`MobileNav`، حتى لا تؤخر ظهور الصفحة على الجوال.
 
 ## مكونات جاهزة قبل إنشاء جديد
 
-- `ProductCard` و`ProductGrid` و`ProductRail` في `src/components/product`: بطاقة المنتج وشبكتها وصفها الأفقي.
-- `Carousel` و`SectionHeading` في `src/components/store`: صف يُسحب بأزرار تمرير، وعنوان قسم مع "عرض الكل".
-- `PromoCard` و`SpotlightCard` و`WideBanner` و`BANNER_THEME` في `src/components/home`: بطاقات العروض بسماتها الثلاث.
+- `ProductCard` و`ProductGrid` و`ProductRail` في `src/components/product`: بطاقة المنتج الداكنة بزر السلة الدائري، وشبكتها وصفها الأفقي.
+- `Carousel` و`SectionHeading` في `src/components/store`: صف يُسحب بأزرار تمرير دائرية، وعنوان قسم مع رابط برتقالي "عرض الكل" ووصف اختياري.
+- `PromoTile` و`DiscountCard` و`SpotlightCard` و`WideBanner` في `src/components/home/banners.tsx`: مربعات العروض المصوّرة وبطاقة الخصم وبطاقات الفئات واللافتة العريضة.
+- `HeroSlider` في `src/components/home`: الواجهة بعرض الشاشة بنص في المنتصف فوق تعتيم وتدرج.
+- `ContactCards` في `src/components/content`: بطاقات التواصل بدوائر برتقالية، للصفحة الرئيسية وصفحة "تواصل معنا".
 - `useAddToCart` و`QuantityStepper` في `src/components/cart`: الإضافة للسلة مع فتح نافذتها، ومحدد الكمية.
-- `Tabs` في `src/components/ui/tabs.tsx`: تبويبات خفيفة بواجهة shadcn دون Base UI، وكل لوحاتها في HTML.
-- `HeaderFrame` و`SearchBox variant="header"` في `src/components/layout`: إطار الرأس بلونيه، وحقل البحث القصير داخله.
-- `HeroSlider` في `src/components/home`: الواجهة بعرض الشاشة تحت الرأس الشفاف (هامش علوي سالب بارتفاع الرأس).
+- `Tabs` في `src/components/ui/tabs.tsx`: تبويبات خفيفة بواجهة shadcn دون Base UI، وكل لوحاتها في HTML. التبويب حبة بحد رمادي والنشط برتقالي (انظر `ProductTabs`).
+- `SearchBox variant="header"` في `src/components/layout`: حقل البحث العريض في منتصف الرأس.
 - `toast` في `src/lib/toast.ts`: رسائل التنبيه القصيرة، تُحمّل مكتبتها عند أول رسالة. لا تستورد من `sonner` مباشرة.
 - `openGraph` و`shareImages` في `src/lib/seo.ts`: بيانات المشاركة لأي صفحة جديدة مع صورتها.
 
@@ -88,7 +91,8 @@ description: الهوية البصرية للمتجر وفق ملف DESIGN.md (�
 
 1. عدّل `DESIGN.md`: القيم في الرأس، والشرح في قسمي Overview وColors.
 2. شغّل `pnpm design:lint` حتى يصبح بلا أخطاء ولا تحذيرات.
-3. انسخ الألوان بنفس قيم hex إلى `src/app/globals.css` في قسم `:root` (المتغيرات `--primary` و`--ring` و`--sidebar-primary` وغيرها)، والزوايا إلى `--radius` (قيمة `rounded.lg`).
-4. حدّث `themeColor` في `src/app/layout.tsx`، ولون `src/app/icon.svg`، واسم المتجر في `src/config/site.ts`.
-5. لتغيير الخط: ضع ملفات woff2 الأصلية من Fontsource مع ترخيصها في `assets/fonts/<اسم-الخط>`، وشغّل `pnpm fonts` ليولّد نسخها المصغّرة في `src/fonts/<اسم-الخط>`، ثم حدّث `localFont` في `src/app/layout.tsx`. ملف للحروف العربية وآخر للاتينية، ولكل وزن ملف إن لم يكن الخط متغير الوزن. احذف مجلد الخط القديم من المكانين.
-6. لاستعراض صيغة الملف كاملة: `pnpm exec designmd spec`.
+3. انسخ الألوان بنفس قيم hex إلى `src/app/globals.css` في قسم `:root` (المتغيرات `--primary` و`--ring` و`--card` وغيرها)، والزوايا إلى `--radius` (قيمة `rounded.lg`).
+4. انسخ الألوان نفسها إلى `OG_COLORS` في `src/lib/og/render.ts` لصور المشاركة، ثم ابنِ الموقع أكثر من مرة للتأكد من ثبات رسمها.
+5. حدّث `themeColor` في `src/app/layout.tsx`، ولون `src/app/icon.svg`، واسم المتجر في `src/config/site.ts`.
+6. لتغيير الخط: ضع ملفات woff2 الأصلية من Fontsource مع ترخيصها في `assets/fonts/<اسم-الخط>`، وشغّل `pnpm fonts` ليولّد نسخها المصغّرة في `src/fonts/<اسم-الخط>`، ثم حدّث `localFont` في `src/app/layout.tsx`. ملف للحروف العربية وآخر للاتينية، ولكل وزن ملف إن لم يكن الخط متغير الوزن. احذف مجلد الخط القديم من المكانين.
+7. لاستعراض صيغة الملف كاملة: `pnpm exec designmd spec`.

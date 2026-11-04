@@ -12,8 +12,8 @@ import {
 const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
-      // المتجر بالوضع الفاتح فقط في النسخة الأولى
-      theme="light"
+      // هوية المتجر داكنة، فالرسائل داكنة بألوان السطح
+      theme="dark"
       dir="rtl"
       position="top-center"
       className="toaster group"

@@ -4,9 +4,9 @@ import { RichText } from "@/components/store/rich-text"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { Product } from "@/lib/catalog/types"
 
-/** التبويب النشط حبة كحلية، كما في DESIGN.md (section-tab-active). */
+/** التبويبات حبوب بحد رمادي، والنشطة برتقالية بنص داكن، كما في DESIGN.md (section-tab-active). */
 const TAB =
-  "h-10 flex-none rounded-full px-5 text-base text-foreground data-active:bg-primary data-active:text-primary-foreground data-active:shadow-none"
+  "h-10 flex-none rounded-full border border-border px-5 text-base text-foreground data-active:border-primary data-active:bg-primary data-active:text-primary-foreground data-active:shadow-none"
 
 /** تبويبات المعلومات أسفل صفحة المنتج: الوصف، والمواصفات، والشحن والإرجاع. */
 export function ProductTabs({ product }: { product: Product }) {

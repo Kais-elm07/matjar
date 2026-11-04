@@ -23,7 +23,7 @@ export default function StoreLayout({
       {/* أول ما يصله زر Tab: يتخطى الإعلان والرأس إلى المحتوى */}
       <a
         href="#main-content"
-        className="sr-only rounded-full bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:start-4 focus:top-3 focus:z-50"
+        className="sr-only rounded-lg bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:start-4 focus:top-3 focus:z-50"
       >
         انتقل إلى المحتوى
       </a>

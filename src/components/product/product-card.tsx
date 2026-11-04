@@ -13,9 +13,9 @@ const IMAGE_SIZES =
   "(min-width: 1280px) 300px, (min-width: 1024px) 24vw, (min-width: 640px) 32vw, 48vw"
 
 /**
- * بطاقة المنتج: بلا إطار ولا ظل (الشبكة تفصلها بخطوط رفيعة): الصورة تملأ البطاقة،
- * والقلب وشارة الخصم فوقها، ثم اسم الفئة بالرمادي والاسم والسعر الكحلي،
- * وزر الإضافة للسلة ظاهر دائماً في الأسفل.
+ * بطاقة المنتج: سطح داكن بزوايا 12 بكسل بلا ظل، وداخله مربع الصورة وعليه شارة الخصم وزر القلب،
+ * ثم اسم الفئة بالرمادي والاسم والسعر البرتقالي، وزر السلة الدائري في ركن البطاقة السفلي
+ * (DESIGN.md: product-card و card-cart-button).
  */
 export function ProductCard({
   product,
@@ -26,7 +26,7 @@ export function ProductCard({
   priority?: boolean
 }) {
   return (
-    <article className="group relative flex h-full flex-col bg-background p-3 md:p-4">
+    <article className="group relative flex h-full flex-col rounded-xl bg-card p-2.5 md:p-3">
       <div className="relative aspect-square overflow-hidden rounded-lg bg-muted">
         {product.image ? (
           <Image
@@ -55,26 +55,27 @@ export function ProductCard({
         <WishlistButton
           slug={product.slug}
           name={product.name}
-          className="absolute end-0 top-0"
+          className="absolute end-0.5 top-0.5"
         />
         {!product.inStock && (
-          <span className="absolute inset-x-2 bottom-2 rounded-sm bg-background/90 py-1 text-center text-xs font-bold">
+          <span className="absolute inset-x-2 bottom-2 rounded-sm bg-background/85 py-1 text-center text-xs font-bold">
             نفد من المخزون
           </span>
         )}
       </div>
 
-      <div className="mt-3 flex flex-1 flex-col gap-1">
+      {/* مساحة في جهة النهاية لزر السلة الدائري */}
+      <div className="mt-3 flex flex-1 flex-col gap-1 pe-12">
         {product.categoryName && (
           <p className="text-xs text-muted-foreground">
             {product.categoryName}
           </p>
         )}
-        <h3 className="line-clamp-2 text-sm leading-6 font-medium">
+        <h3 className="line-clamp-2 text-sm leading-6 font-bold">
           {/* الرابط يغطي البطاقة كلها لتسهيل اللمس */}
           <Link
             href={`/product/${product.slug}`}
-            className="outline-none after:absolute after:inset-0 focus-visible:after:ring-3 focus-visible:after:ring-ring/50 focus-visible:after:ring-inset"
+            className="outline-none after:absolute after:inset-0 after:rounded-xl focus-visible:after:ring-3 focus-visible:after:ring-ring/50 focus-visible:after:ring-inset"
           >
             {product.name}
           </Link>
@@ -87,7 +88,7 @@ export function ProductCard({
         />
       </div>
 
-      <QuickAddButton product={product} className="mt-3" />
+      <QuickAddButton product={product} />
     </article>
   )
 }

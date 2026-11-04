@@ -4,13 +4,19 @@ import Link from "next/link"
 import { ShoppingBagIcon } from "lucide-react"
 
 import { useAddToCart } from "@/components/cart/use-add-to-cart"
-import { Button, buttonVariants } from "@/components/ui/button"
 import type { ProductCard } from "@/lib/catalog/types"
 import { cn } from "@/lib/utils"
 
 /**
+ * زر دائري برتقالي في ركن البطاقة السفلي من جهة النهاية، محاط بحلقة بلون الخلفية
+ * فتبدو البطاقة مقطوعة حوله (DESIGN.md: card-cart-button). حلقة التركيز بيضاء لتظهر فوق البرتقالي.
+ */
+const CIRCLE =
+  "absolute bottom-0 end-0 z-10 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground ring-[6px] ring-background transition-colors outline-none hover:bg-primary/90 focus-visible:ring-foreground [&_svg]:size-5"
+
+/**
  * زر البطاقة الظاهر دائماً: إضافة مباشرة للسلة للمنتج ذي الخيار الواحد،
- * و"اختر الخيارات" للمنتج متعدد المقاسات أو الألوان.
+ * وفتح صفحة المنتج لاختيار المقاس أو اللون للمنتج متعدد الخيارات. المنتج النافد بلا زر.
  */
 export function QuickAddButton({
   product,
@@ -20,33 +26,26 @@ export function QuickAddButton({
   className?: string
 }) {
   const addToCart = useAddToCart()
-  const classes = cn("relative z-10 w-full text-sm", className)
-
-  if (!product.inStock) {
-    return (
-      <Button variant="outline" size="xl" disabled className={classes}>
-        نفد من المخزون
-      </Button>
-    )
-  }
+  if (!product.inStock) return null
 
   const quick = product.quickAdd
   if (!quick) {
     return (
       <Link
         href={`/product/${product.slug}`}
-        className={cn(buttonVariants({ size: "xl" }), classes)}
+        aria-label={`اختر الخيارات: ${product.name}`}
+        className={cn(CIRCLE, className)}
       >
-        اختر الخيارات
-        <span className="sr-only">: {product.name}</span>
+        <ShoppingBagIcon aria-hidden />
       </Link>
     )
   }
 
   return (
-    <Button
-      size="xl"
-      className={classes}
+    <button
+      type="button"
+      aria-label={`أضف للسلة: ${product.name}`}
+      className={cn(CIRCLE, className)}
       onClick={() =>
         addToCart(
           {
@@ -65,9 +64,7 @@ export function QuickAddButton({
         )
       }
     >
-      <ShoppingBagIcon data-icon="inline-start" aria-hidden />
-      أضف للسلة
-      <span className="sr-only">: {product.name}</span>
-    </Button>
+      <ShoppingBagIcon aria-hidden />
+    </button>
   )
 }

@@ -12,9 +12,9 @@ import { scrollBehavior } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
 /**
- * الواجهة الرئيسية بعرض الشاشة: صورة كبيرة بتدرج داكن من الأسفل، والنص والزر في ركنها السفلي.
- * تبدأ تحت الرأس الشفاف (هامش علوي سالب بارتفاع الرأس). أكثر من شريحة تُسحب باللمس،
- * ولها أسهم على الحاسوب ونقاط فوق الصورة، ولا تتحرك تلقائياً.
+ * الواجهة الرئيسية بعرض الشاشة: صورة كبيرة فوقها تعتيم بلون الخلفية وتدرج أغمق من الأسفل،
+ * والشارة والعنوان والوصف والسعر والزر البرتقالي في منتصفها. أكثر من شريحة تُسحب باللمس،
+ * ولها أسهم على الحاسوب ونقاط (النشطة برتقالية)، ولا تتحرك تلقائياً.
  */
 export function HeroSlider({ slides }: { slides: ProductBanner[] }) {
   const listRef = useRef<HTMLUListElement>(null)
@@ -41,7 +41,7 @@ export function HeroSlider({ slides }: { slides: ProductBanner[] }) {
     <section
       aria-roledescription="عرض شرائح"
       aria-label="أبرز العروض"
-      className="relative -mt-16 bg-muted md:-mt-[72px]"
+      className="relative bg-muted"
     >
       <ul
         ref={listRef}
@@ -58,7 +58,7 @@ export function HeroSlider({ slides }: { slides: ProductBanner[] }) {
             aria-label={`${index + 1} من ${slides.length}`}
             className="relative w-full shrink-0 snap-center"
           >
-            <div className="relative aspect-[4/5] sm:aspect-[16/9] md:aspect-auto md:h-[min(80svh,46rem)] md:min-h-[32rem]">
+            <div className="relative flex min-h-[32rem] items-center md:h-[min(72svh,42rem)] md:min-h-[30rem]">
               {slide.image && (
                 <Image
                   src={slide.image.src}
@@ -69,47 +69,42 @@ export function HeroSlider({ slides }: { slides: ProductBanner[] }) {
                   className="object-cover"
                 />
               )}
-              {/* تدرج داكن من الأسفل يضمن قراءة النص الأبيض، وآخر من الأعلى لنص الرأس الشفاف */}
+              {/* تعتيم موحد يضمن قراءة النص الأبيض، وتدرج يذيب أسفل الصورة في خلفية الصفحة */}
+              <div aria-hidden className="absolute inset-0 bg-background/45" />
               <div
                 aria-hidden
-                className="absolute inset-0 bg-gradient-to-t from-foreground/75 via-foreground/25 to-foreground/5"
+                className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-background via-background/55 to-transparent"
               />
-              <div
-                aria-hidden
-                className="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-foreground/55 to-transparent"
-              />
-              <div className="absolute inset-x-0 bottom-0">
-                <div className="page-container pb-16 md:pb-20">
-                  <div className="max-w-xl space-y-4 text-primary-foreground">
-                    {slide.tag && (
-                      <p className="inline-flex rounded-full bg-background/90 px-3 py-1 text-xs font-bold text-foreground">
-                        {slide.tag}
-                      </p>
-                    )}
-                    <h2 className="text-4xl leading-[1.25] font-bold md:text-6xl md:leading-[1.15]">
-                      {slide.title}
-                    </h2>
-                    {slide.text && (
-                      <p className="text-base text-primary-foreground/85 md:text-lg">
-                        {slide.text}
-                      </p>
-                    )}
-                    <p className="text-sm text-primary-foreground/85">
-                      {slide.priceVaries ? "يبدأ من " : "بسعر "}
-                      <span className="text-xl font-bold text-primary-foreground">
-                        {formatPrice(slide.price)}
-                      </span>
+              <div className="relative page-container flex justify-center py-16 md:py-20">
+                <div className="flex max-w-3xl flex-col items-center gap-4 text-center">
+                  {slide.tag && (
+                    <p className="inline-flex rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground">
+                      {slide.tag}
                     </p>
-                    <Link
-                      href={slide.href}
-                      className={cn(
-                        buttonVariants({ variant: "on-image", size: "xl" }),
-                        "mt-2 h-12 px-7"
-                      )}
-                    >
-                      تسوّق الآن
-                    </Link>
-                  </div>
+                  )}
+                  <h2 className="text-4xl leading-[1.25] font-bold md:text-6xl md:leading-[1.15]">
+                    {slide.title}
+                  </h2>
+                  {slide.text && (
+                    <p className="max-w-xl text-base text-foreground/85 md:text-lg">
+                      {slide.text}
+                    </p>
+                  )}
+                  <p className="text-sm text-foreground/85">
+                    {slide.priceVaries ? "يبدأ من " : "بسعر "}
+                    <span className="text-xl font-bold text-primary">
+                      {formatPrice(slide.price)}
+                    </span>
+                  </p>
+                  <Link
+                    href={slide.href}
+                    className={cn(
+                      buttonVariants({ variant: "cta", size: "xl" }),
+                      "mt-2 h-12 px-8"
+                    )}
+                  >
+                    تسوّق الآن
+                  </Link>
                 </div>
               </div>
             </div>
@@ -123,7 +118,7 @@ export function HeroSlider({ slides }: { slides: ProductBanner[] }) {
             type="button"
             onClick={() => show(active - 1)}
             aria-label="الشريحة السابقة"
-            className="absolute start-4 top-1/2 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-foreground outline-none hover:bg-background focus-visible:ring-3 focus-visible:ring-ring md:flex"
+            className="absolute start-4 top-1/2 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-card/80 text-foreground outline-none hover:bg-card focus-visible:ring-3 focus-visible:ring-ring md:flex"
           >
             <ChevronLeftIcon className="size-5 rtl:rotate-180" aria-hidden />
           </button>
@@ -131,11 +126,11 @@ export function HeroSlider({ slides }: { slides: ProductBanner[] }) {
             type="button"
             onClick={() => show(active + 1)}
             aria-label="الشريحة التالية"
-            className="absolute end-4 top-1/2 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-foreground outline-none hover:bg-background focus-visible:ring-3 focus-visible:ring-ring md:flex"
+            className="absolute end-4 top-1/2 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-card/80 text-foreground outline-none hover:bg-card focus-visible:ring-3 focus-visible:ring-ring md:flex"
           >
             <ChevronRightIcon className="size-5 rtl:rotate-180" aria-hidden />
           </button>
-          <div className="absolute inset-x-0 bottom-4 flex justify-center md:bottom-6">
+          <div className="absolute inset-x-0 bottom-3 flex justify-center md:bottom-5">
             {slides.map((slide, index) => (
               <button
                 key={slide.href}
@@ -148,9 +143,7 @@ export function HeroSlider({ slides }: { slides: ProductBanner[] }) {
                 <span
                   className={cn(
                     "block h-2 rounded-full transition-all group-focus-visible/dot:ring-3 group-focus-visible/dot:ring-ring",
-                    index === active
-                      ? "w-7 bg-background"
-                      : "w-2 bg-background/50"
+                    index === active ? "w-7 bg-primary" : "w-2 bg-foreground/40"
                   )}
                 />
               </button>

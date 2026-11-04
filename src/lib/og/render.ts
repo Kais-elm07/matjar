@@ -24,14 +24,14 @@ import { IMAGE_WIDTHS } from "@/lib/image-loader"
 
 export const OG_SIZE = { width: 1200, height: 630 }
 
-/** ألوان DESIGN.md المستخدمة في صور المشاركة */
+/** ألوان DESIGN.md المستخدمة في صور المشاركة: خلفية داكنة ونص أبيض وبرتقالي للسعر والشارات */
 export const OG_COLORS = {
-  primary: "#1d2733",
-  onPrimary: "#ffffff",
-  onPrimaryMuted: "#bbbec2",
-  highlight: "#febd69",
-  onHighlight: "#111111",
-  surfaceMuted: "#f5f5f5",
+  background: "#121214",
+  surface: "#2a2a2e",
+  foreground: "#ffffff",
+  muted: "#a1a1a6",
+  primary: "#ffa629",
+  onPrimary: "#111111",
 }
 
 const ROOT = process.cwd()
@@ -230,7 +230,7 @@ export function localImage(src: string) {
 }
 
 /**
- * صورة مربعة بزوايا دائرية. إن لم تتوفر الصورة يظهر مربع رمادي فاتح عليه الشعار،
+ * صورة مربعة بزوايا دائرية. إن لم تتوفر الصورة يظهر مربع بلون السطح الفاتح عليه الشعار،
  * كما في بطاقات المنتجات بلا صور.
  */
 export async function roundedImage(
@@ -249,7 +249,7 @@ export async function roundedImage(
             width: size,
             height: size,
             channels: 4,
-            background: OG_COLORS.surfaceMuted,
+            background: OG_COLORS.surface,
           },
         }).composite([{ input: await logoMark(Math.round(size / 4)) }])
       )
@@ -259,18 +259,18 @@ export async function roundedImage(
   return { input, width: size, height: size }
 }
 
-/** شعار المتجر (حقيبة كحلية في مربع كهرماني) من ملف أيقونة الموقع src/app/icon.svg. */
+/** شعار المتجر (حقيبة داكنة في مربع برتقالي) من ملف أيقونة الموقع src/app/icon.svg. */
 export async function logoMark(size: number) {
   const svg = await readFile(path.join(ROOT, "src", "app", "icon.svg"))
   // الأيقونة مرسومة على مربع 32 بكسل، فتُكبَّر الكثافة لترسم بالمقاس المطلوب بوضوح
   return toPng(sharp(svg, { density: (72 * size) / 32 }).resize(size, size))
 }
 
-/** يجمع الطبقات على خلفية كحلية بمقاس 1200×630، ويحفظها JPEG خفيفاً تقبله كل المنصات. */
+/** يجمع الطبقات على خلفية داكنة بمقاس 1200×630، ويحفظها JPEG خفيفاً تقبله كل المنصات. */
 export function renderCard(layers: OverlayOptions[]) {
   return serial(() =>
     sharp({
-      create: { ...OG_SIZE, channels: 3, background: OG_COLORS.primary },
+      create: { ...OG_SIZE, channels: 3, background: OG_COLORS.background },
     })
       .composite(layers)
       .jpeg({ quality: 82, mozjpeg: true })

@@ -5,7 +5,8 @@
  *   pnpm images        يحوّل الصور الأصلية في assets/images إلى WebP بعرض 400 و800 و1200 بكسل
  *                      داخل public/images. يعمل تلقائياً قبل pnpm dev وpnpm build،
  *                      ويتخطى الصور التي لم تتغير منذ آخر تشغيل.
- *   pnpm images:demo   يعيد توليد الصور التجريبية (ملفات SVG) في assets/images ثم يعالجها.
+ *   pnpm images:demo   يرسم صوراً تجريبية (SVG) للمنتجات والفئات التي ليست لها صورة حقيقية، ثم يعالجها.
+ *   pnpm images:photos يحمّل صور Pexels المذكورة في assets/images/sources.json (scripts/fetch-demo-photos.mjs).
  *
  * طريقة إضافة صورة منتج حقيقية:
  *   1. ضع الصورة في assets/images/products/ باسم مثل classic-cotton-shirt-1.jpg
@@ -260,6 +261,12 @@ function categorySvg(icon, color) {
 
 const ICONS = new Map()
 
+/** صورة حقيقية بالاسم نفسه (jpg أو png أو webp أو avif) تغني عن الرسم التجريبي. */
+const hasPhoto = (dir, name) =>
+  [".jpg", ".jpeg", ".png", ".webp", ".avif"].some((ext) =>
+    existsSync(path.join(dir, `${name}${ext}`))
+  )
+
 async function generateDemoImages() {
   const iconNames = new Set([
     ...DEMO_CATEGORIES.map(([, icon]) => icon),
@@ -273,6 +280,7 @@ async function generateDemoImages() {
   await mkdir(productsDir, { recursive: true })
 
   for (const [slug, icon, color] of DEMO_CATEGORIES) {
+    if (hasPhoto(categoriesDir, slug)) continue
     await writeFile(
       path.join(categoriesDir, `${slug}.svg`),
       categorySvg(icon, color)
@@ -282,6 +290,7 @@ async function generateDemoImages() {
   let count = 0
   for (const [slug, icon, shots] of DEMO_PRODUCTS) {
     for (const [index, shot] of shots.entries()) {
+      if (hasPhoto(productsDir, `${slug}-${index + 1}`)) continue
       const [colorName, mode] = shot.split(":")
       const base = COLORS[colorName] ?? colorName
       await writeFile(

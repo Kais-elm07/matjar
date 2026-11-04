@@ -34,7 +34,7 @@ export function MobileTabBar() {
   return (
     <nav
       aria-label="التنقل السريع"
-      className="fixed inset-x-0 bottom-0 z-40 border-t bg-background pb-[env(safe-area-inset-bottom)] md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t bg-card pb-[env(safe-area-inset-bottom)] md:hidden"
     >
       <ul className="grid h-16 grid-cols-5">
         <li>

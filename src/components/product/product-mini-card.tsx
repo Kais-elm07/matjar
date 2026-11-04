@@ -4,10 +4,10 @@ import Link from "next/link"
 import { Price } from "@/components/product/price"
 import type { ProductCard } from "@/lib/catalog/types"
 
-/** بطاقة منتج أفقية صغيرة: الصورة بجانب الاسم والسعر، لقسم "الرائج الآن". */
+/** بطاقة منتج أفقية صغيرة بلون السطح: الصورة بجانب الاسم والسعر، لقسم "الرائج الآن". */
 export function ProductMiniCard({ product }: { product: ProductCard }) {
   return (
-    <article className="group relative flex items-center gap-4 rounded-lg p-2 transition-colors hover:bg-muted/70">
+    <article className="group relative flex items-center gap-4 rounded-xl bg-card p-2 transition-colors hover:bg-muted/60">
       <div className="relative size-24 shrink-0 overflow-hidden rounded-lg bg-muted">
         {product.image && (
           <Image
@@ -28,7 +28,7 @@ export function ProductMiniCard({ product }: { product: ProductCard }) {
         <h3 className="line-clamp-2 text-sm leading-6 font-medium">
           <Link
             href={`/product/${product.slug}`}
-            className="outline-none after:absolute after:inset-0 after:rounded-lg focus-visible:after:ring-3 focus-visible:after:ring-ring/50"
+            className="outline-none after:absolute after:inset-0 after:rounded-xl focus-visible:after:ring-3 focus-visible:after:ring-ring/50"
           >
             {product.name}
           </Link>

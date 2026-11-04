@@ -7,7 +7,7 @@ import { useUiStore } from "@/lib/store/ui"
 import { cn } from "@/lib/utils"
 
 const ICON_BUTTON =
-  "inline-flex size-11 shrink-0 items-center justify-center rounded-full outline-none transition-colors hover:bg-foreground/5 focus-visible:ring-3 focus-visible:ring-ring group-data-[tone=light]/hdr:hover:bg-white/10 [&_svg]:size-6"
+  "inline-flex size-11 shrink-0 items-center justify-center rounded-full outline-none transition-colors hover:bg-foreground/10 focus-visible:ring-3 focus-visible:ring-ring [&_svg]:size-6"
 
 /** زر البحث في رأس الجوال: يفتح حقل البحث في سطر تحت الرأس ويغلقه. */
 export function MobileSearchButton({ className }: { className?: string }) {

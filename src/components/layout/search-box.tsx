@@ -18,7 +18,7 @@ const searchHref = (query: string) => `/search/?q=${encodeURIComponent(query)}`
 /**
  * حقل البحث مع اقتراحات فورية أثناء الكتابة.
  * الأسهم تتنقل بين الاقتراحات، وEnter يفتح الاقتراح أو صفحة النتائج، وEscape يغلق القائمة.
- * variant="header": حبة رمادية قصيرة تتسع عند التركيز، وتأخذ لون الرأس فوق الواجهة.
+ * variant="header": حبة أقصر بلون السطح الفاتح تملأ منتصف الرأس على الحاسوب (DESIGN.md: search-input).
  */
 export function SearchBox({
   className,
@@ -94,26 +94,18 @@ export function SearchBox({
       role="search"
       action="/search/"
       onSubmit={submit}
-      className={cn(
-        "relative",
-        header
-          ? "w-40 transition-[width] duration-300 focus-within:w-64 lg:w-52 lg:focus-within:w-80"
-          : "w-full",
-        className
-      )}
+      className={cn("relative w-full", className)}
     >
       <div
         className={cn(
-          "flex items-center rounded-full border transition-colors focus-within:border-ring/50",
-          header
-            ? "h-10 border-transparent bg-muted ps-0.5 pe-2 text-foreground group-data-[tone=light]/hdr:bg-white/15 group-data-[tone=light]/hdr:text-primary-foreground"
-            : "h-11 border-border bg-background ps-1 pe-3 text-foreground"
+          "flex items-center rounded-full border bg-muted text-foreground transition-colors focus-within:border-primary/70",
+          header ? "h-10 border-border/70 ps-0.5 pe-2" : "h-11 ps-1 pe-3"
         )}
       >
         <button
           type="submit"
           aria-label="بحث"
-          className="flex size-9 shrink-0 items-center justify-center rounded-full outline-none hover:bg-foreground/5 group-data-[tone=light]/hdr:hover:bg-white/10 focus-visible:ring-3 focus-visible:ring-ring [&_svg]:size-5"
+          className="flex size-9 shrink-0 items-center justify-center rounded-full outline-none hover:bg-foreground/10 focus-visible:ring-3 focus-visible:ring-ring [&_svg]:size-5"
         >
           <SearchIcon aria-hidden />
         </button>
@@ -136,9 +128,7 @@ export function SearchBox({
           autoComplete="off"
           className={cn(
             "min-w-0 flex-1 bg-transparent outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden",
-            header
-              ? "text-sm group-data-[tone=light]/hdr:placeholder:text-white/75"
-              : "text-base"
+            header ? "text-sm" : "text-base"
           )}
           onChange={(event) => {
             setQuery(event.target.value)
@@ -159,7 +149,7 @@ export function SearchBox({
           // منع فقدان التركيز عند النقر على اقتراح
           onMouseDown={(event) => event.preventDefault()}
           className={cn(
-            "absolute top-full z-50 mt-2 overflow-hidden rounded-lg border bg-popover text-popover-foreground shadow-lg",
+            "absolute top-full z-50 mt-2 overflow-hidden rounded-xl border bg-popover text-popover-foreground shadow-lg",
             header ? "inset-x-0 min-w-80" : "inset-x-0"
           )}
         >

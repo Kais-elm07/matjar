@@ -74,8 +74,9 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  // لون شريط المتصفح على الجوال، وهو نفس اللون الأساسي
-  themeColor: "#1d2733",
+  // لون شريط المتصفح على الجوال بلون خلفية المتجر الداكنة، والحقول والقوائم الأصلية داكنة أيضاً
+  themeColor: "#121214",
+  colorScheme: "dark",
 }
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -54,7 +54,7 @@ export default async function ContentPageRoute({
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start">
         <nav
           aria-label="صفحات المساعدة"
-          className="hidden rounded-lg border p-2 lg:sticky lg:top-36 lg:block"
+          className="hidden rounded-xl border bg-card p-2 lg:sticky lg:top-32 lg:block"
         >
           <ul>
             {getContentPages().map((item) => (

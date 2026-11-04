@@ -57,9 +57,6 @@ export type ProductInput = {
   hidden?: boolean
 }
 
-/** لون بطاقة في الصفحة الرئيسية: كحلي بنص أبيض، أو كهرماني أو رمادي فاتح بنص داكن. */
-export type BannerTheme = "primary" | "highlight" | "light"
-
 /** بطاقة عرض لمنتج: تؤخذ صورته وسعره من ملف المنتجات تلقائياً. */
 export type ProductBannerInput = {
   /** رابط المنتج */
@@ -68,7 +65,6 @@ export type ProductBannerInput = {
   text?: string
   /** نص الشارة الصغيرة. الافتراضي: نسبة الخصم إن كان على المنتج خصم */
   tag?: string
-  theme: BannerTheme
 }
 
 /** بطاقة عرض لفئة: تؤخذ صورتها من ملف الفئات. */
@@ -77,7 +73,6 @@ export type CategoryBannerInput = {
   category: string
   title: string
   text?: string
-  theme: BannerTheme
 }
 
 export type HomeContentInput = {
@@ -187,7 +182,6 @@ export type ProductBanner = {
   title: string
   text: string | null
   tag: string | null
-  theme: BannerTheme
   image: ProductImage | null
   price: number
   compareAtPrice: number | null
@@ -199,7 +193,6 @@ export type CategoryBanner = {
   href: string
   title: string
   text: string | null
-  theme: BannerTheme
   image: string | null
 }
 

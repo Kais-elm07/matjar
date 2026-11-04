@@ -37,7 +37,7 @@ export function MobileNav({ categories }: { categories: NavCategory[] }) {
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={() => setOpen(true)}
-        className="-ms-2 inline-flex size-11 shrink-0 items-center justify-center rounded-full transition-colors outline-none hover:bg-foreground/5 group-data-[tone=light]/hdr:hover:bg-white/10 focus-visible:ring-3 focus-visible:ring-ring md:hidden [&_svg]:size-6"
+        className="-ms-2 inline-flex size-11 shrink-0 items-center justify-center rounded-full transition-colors outline-none hover:bg-foreground/10 focus-visible:ring-3 focus-visible:ring-ring md:hidden [&_svg]:size-6"
       >
         <MenuIcon aria-hidden />
       </button>

@@ -291,7 +291,7 @@ function OptionFilter({
               {color && (
                 <span
                   aria-hidden
-                  className="size-4 rounded-full border border-black/15"
+                  className="size-4 rounded-full border border-foreground/20"
                   style={{ backgroundColor: color }}
                 />
               )}

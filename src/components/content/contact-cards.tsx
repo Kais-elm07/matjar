@@ -9,6 +9,7 @@ import {
 
 import { siteConfig } from "@/config/site"
 import { mapHref, phoneHref, whatsappHref } from "@/lib/contact"
+import { cn } from "@/lib/utils"
 
 type ContactItem = {
   icon: LucideIcon
@@ -20,8 +21,11 @@ type ContactItem = {
   external?: boolean
 }
 
-/** بطاقات التواصل في صفحة "تواصل معنا". أي حقل فارغ في الإعدادات لا تظهر بطاقته. */
-export function ContactCards() {
+/**
+ * بطاقات التواصل بلون السطح، لكل وسيلة دائرة بأيقونة برتقالية (DESIGN.md: تواصل معنا).
+ * تظهر في الصفحة الرئيسية وصفحة "تواصل معنا". أي حقل فارغ في الإعدادات لا تظهر بطاقته.
+ */
+export function ContactCards({ className }: { className?: string }) {
   const { email, phone, whatsapp, hours, address } = siteConfig.contact
   const items: ContactItem[] = []
   if (whatsapp) {
@@ -63,11 +67,11 @@ export function ContactCards() {
   }
 
   return (
-    <ul className="grid gap-3 sm:grid-cols-2">
+    <ul className={cn("grid gap-3 sm:grid-cols-2", className)}>
       {items.map(({ icon: Icon, label, value, href, ltr, external }) => {
         const content = (
           <>
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-muted text-primary">
+            <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-muted text-primary">
               <Icon className="size-5" aria-hidden />
             </span>
             <span className="min-w-0">
@@ -81,7 +85,7 @@ export function ContactCards() {
           </>
         )
         const card =
-          "flex h-full items-center gap-3 rounded-lg border p-4 outline-none"
+          "flex h-full items-center gap-3 rounded-xl border bg-card p-4 outline-none"
         return (
           <li key={label}>
             {href ? (

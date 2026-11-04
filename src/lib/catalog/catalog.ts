@@ -494,7 +494,6 @@ function toProductBanner(input: ProductBannerInput): ProductBanner {
     title: input.title,
     text: input.text ?? null,
     tag: input.tag ?? (discount ? `خصم ${discount}%` : null),
-    theme: input.theme,
     image: product.images[0] ?? null,
     price: product.price,
     compareAtPrice: product.compareAtPrice,
@@ -513,7 +512,6 @@ function toCategoryBanner(input: CategoryBannerInput): CategoryBanner {
     href: `/category/${category.slug}`,
     title: input.title,
     text: input.text ?? null,
-    theme: input.theme,
     image: category.image,
   }
 }

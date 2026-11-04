@@ -21,7 +21,7 @@ import {
 } from "@/lib/og/render"
 
 /**
- * تصاميم صور المشاركة: الصورة على اليسار، والنص في عمود على اليمين فوق خلفية كحلية.
+ * تصاميم صور المشاركة: الصورة على اليسار، والنص في عمود على اليمين فوق خلفية داكنة.
  * الألوان والخط من DESIGN.md، والمقاس 1200×630 الذي تعرضه كل منصات التواصل كاملاً.
  */
 
@@ -52,7 +52,7 @@ async function brandRow(markSize = 56, nameSize = 36) {
     text(siteConfig.name, {
       size: nameSize,
       weight: 700,
-      color: OG_COLORS.onPrimary,
+      color: OG_COLORS.foreground,
     }),
   ])
   return {
@@ -70,13 +70,13 @@ async function storeFacts() {
   const [payment, shipping] = await Promise.all([
     pill("الدفع عند الاستلام", {
       ...options,
-      color: OG_COLORS.onHighlight,
-      background: OG_COLORS.highlight,
+      color: OG_COLORS.onPrimary,
+      background: OG_COLORS.primary,
     }),
     pill(`شحن مجاني من ${formatPrice(getCheckoutConfig().freeShippingFrom)}`, {
       ...options,
-      color: OG_COLORS.onPrimary,
-      border: OG_COLORS.onPrimaryMuted,
+      color: OG_COLORS.foreground,
+      border: OG_COLORS.muted,
     }),
   ])
   const gap = 14
@@ -123,13 +123,13 @@ export async function siteCard() {
     text(siteConfig.tagline, {
       size: 40,
       weight: 500,
-      color: OG_COLORS.onPrimary,
+      color: OG_COLORS.foreground,
       width: COLUMN,
       maxLines: 2,
     }),
     text(siteConfig.description, {
       size: 28,
-      color: OG_COLORS.onPrimaryMuted,
+      color: OG_COLORS.muted,
       width: COLUMN,
       maxLines: 4,
     }),
@@ -167,8 +167,8 @@ export async function productCard(product: Product) {
     const badge = await pill(`خصم ${discount}%`, {
       size: 28,
       weight: 700,
-      color: OG_COLORS.onHighlight,
-      background: OG_COLORS.highlight,
+      color: OG_COLORS.onPrimary,
+      background: OG_COLORS.primary,
       paddingX: 20,
       paddingY: 8,
     })
@@ -185,7 +185,7 @@ export async function productCard(product: Product) {
     const label = await text(categoryName, {
       size: 28,
       weight: 500,
-      color: OG_COLORS.onPrimaryMuted,
+      color: OG_COLORS.muted,
       width: COLUMN,
       maxLines: 1,
     })
@@ -195,7 +195,7 @@ export async function productCard(product: Product) {
   const name = await text(product.name, {
     size: 50,
     weight: 700,
-    color: OG_COLORS.onPrimary,
+    color: OG_COLORS.foreground,
     width: COLUMN,
     maxLines: 3,
   })
@@ -208,7 +208,7 @@ export async function productCard(product: Product) {
     {
       size: 60,
       weight: 700,
-      color: product.inStock ? OG_COLORS.highlight : OG_COLORS.onPrimaryMuted,
+      color: product.inStock ? OG_COLORS.primary : OG_COLORS.muted,
     }
   )
   const priceTop = BOTTOM - price.height
@@ -218,8 +218,8 @@ export async function productCard(product: Product) {
     ? await pill("نفد من المخزون", {
         size: 26,
         weight: 500,
-        color: OG_COLORS.onPrimary,
-        border: OG_COLORS.onPrimaryMuted,
+        color: OG_COLORS.foreground,
+        border: OG_COLORS.muted,
         paddingX: 18,
         paddingY: 6,
       })
@@ -227,7 +227,7 @@ export async function productCard(product: Product) {
       ? await text(formatPrice(product.compareAtPrice), {
           size: 32,
           weight: 500,
-          color: OG_COLORS.onPrimaryMuted,
+          color: OG_COLORS.muted,
           strikethrough: true,
         })
       : null
@@ -260,21 +260,21 @@ export async function categoryCard(category: Category) {
     text(parent, {
       size: 28,
       weight: 500,
-      color: OG_COLORS.onPrimaryMuted,
+      color: OG_COLORS.muted,
       width: COLUMN,
       maxLines: 1,
     }),
     text(category.name, {
       size: 68,
       weight: 700,
-      color: OG_COLORS.onPrimary,
+      color: OG_COLORS.foreground,
       width: COLUMN,
       maxLines: 2,
     }),
     text(pluralize(category.productCount, PRODUCT_FORMS), {
       size: 30,
       weight: 500,
-      color: OG_COLORS.highlight,
+      color: OG_COLORS.primary,
     }),
   ])
   const eyebrowTop = brand.bottom + 48

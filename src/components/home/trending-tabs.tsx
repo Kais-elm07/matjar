@@ -24,7 +24,7 @@ export function TrendingTabs({
               <TabsTrigger
                 key={category.slug}
                 value={category.slug}
-                className="h-9 flex-none rounded-full px-4 text-sm text-foreground data-active:bg-primary data-active:text-primary-foreground data-active:shadow-none"
+                className="h-9 flex-none rounded-full border border-border px-4 text-sm text-foreground data-active:border-primary data-active:bg-primary data-active:text-primary-foreground data-active:shadow-none"
               >
                 {category.name}
               </TabsTrigger>

@@ -184,7 +184,7 @@ export function ProductDetails({ product }: { product: Product }) {
                     {color && (
                       <span
                         aria-hidden
-                        className="size-5 rounded-full border border-black/15"
+                        className="size-5 rounded-full border border-foreground/20"
                         style={{ backgroundColor: color }}
                       />
                     )}
@@ -237,7 +237,7 @@ export function ProductDetails({ product }: { product: Product }) {
           </div>
         </div>
 
-        <ul className="grid gap-3 rounded-lg bg-muted p-4 text-sm sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-3">
+        <ul className="grid gap-3 rounded-xl border bg-card p-4 text-sm sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-3">
           <TrustItem icon={BanknoteIcon} text="الدفع عند الاستلام" />
           <TrustItem icon={TruckIcon} text="توصيل إلى باب بيتك" />
           <TrustItem icon={RotateCcwIcon} text="إرجاع واستبدال بسهولة" />

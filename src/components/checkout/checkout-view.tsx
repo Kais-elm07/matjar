@@ -198,7 +198,7 @@ export function CheckoutView({ config }: { config: CheckoutConfig }) {
         coupon={coupon}
         onCouponChange={setCoupon}
         config={config}
-        className="lg:sticky lg:top-36 lg:order-last"
+        className="lg:sticky lg:top-32 lg:order-last"
       />
 
       <form

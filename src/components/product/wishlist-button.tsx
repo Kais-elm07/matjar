@@ -9,7 +9,7 @@ import { toast } from "@/lib/toast"
 import { cn } from "@/lib/utils"
 
 /**
- * زر المفضلة: قلب فوق صورة البطاقة، أو زر بنص في صفحة المنتج.
+ * زر المفضلة: قلب في دائرة برتقالية فوق صورة البطاقة، أو زر بنص في صفحة المنتج.
  * القلب الممتلئ يعني أن المنتج محفوظ.
  */
 export function WishlistButton({
@@ -42,7 +42,7 @@ export function WishlistButton({
       aria-hidden
       className={cn(
         "transition-colors",
-        saved && "fill-primary text-primary",
+        saved && "fill-current",
         saved && pops > 0 && "animate-in duration-300 zoom-in-50"
       )}
     />
@@ -75,7 +75,7 @@ export function WishlistButton({
         className
       )}
     >
-      <span className="flex size-9 items-center justify-center rounded-full bg-background/90 shadow-sm transition-colors group-hover/heart:bg-background group-focus-visible/heart:ring-3 group-focus-visible/heart:ring-ring/50 [&_svg]:size-[18px]">
+      <span className="flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-colors group-hover/heart:bg-primary/90 group-focus-visible/heart:ring-3 group-focus-visible/heart:ring-foreground [&_svg]:size-[18px]">
         {icon}
       </span>
     </button>

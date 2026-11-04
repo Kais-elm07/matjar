@@ -67,7 +67,7 @@ export function DiscountBadge({
   return (
     <span
       className={cn(
-        "inline-flex rounded-sm bg-highlight px-1.5 py-0.5 text-xs font-bold text-highlight-foreground",
+        "inline-flex rounded-sm bg-primary px-1.5 py-0.5 text-xs font-bold text-primary-foreground",
         className
       )}
     >

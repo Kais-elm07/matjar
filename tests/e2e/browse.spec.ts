@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test"
 
-import { loadProducts, open } from "./helpers"
+import { getWithRetry, loadProducts, open } from "./helpers"
 
 test("التصفح من الرئيسية إلى قسم ثم إلى منتج", async ({ page }) => {
   await open(page, "/")
@@ -52,7 +52,7 @@ test("لكل منتج صورة مشاركة بصيغة JPEG", async ({ page, req
     .locator('meta[property="og:image"]')
     .getAttribute("content")
   expect(image).toContain(`/og/product/${product.slug}.jpg`)
-  const response = await request.get(new URL(image ?? "").pathname)
+  const response = await getWithRetry(request, new URL(image ?? "").pathname)
   expect(response.ok()).toBe(true)
   expect(response.headers()["content-type"]).toContain("image/jpeg")
 })

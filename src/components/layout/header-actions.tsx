@@ -9,9 +9,9 @@ import { useWishlistCount } from "@/lib/store/wishlist"
 import { cn } from "@/lib/utils"
 
 const ICON_BUTTON =
-  "relative inline-flex size-11 shrink-0 items-center justify-center rounded-full outline-none transition-colors hover:bg-foreground/5 focus-visible:ring-3 focus-visible:ring-ring group-data-[tone=light]/hdr:hover:bg-white/10 [&_svg]:size-6"
+  "relative inline-flex size-11 shrink-0 items-center justify-center rounded-full outline-none transition-colors hover:bg-foreground/10 focus-visible:ring-3 focus-visible:ring-ring [&_svg]:size-6"
 
-/** أيقونتا المفضلة والسلة في الرأس، بلون الرأس نفسه، مع عدّاد كحلي لا يظهر عند الصفر. */
+/** أيقونتا المفضلة والسلة في الرأس، مع عدّاد برتقالي لا يظهر عند الصفر. */
 export function HeaderActions({ className }: { className?: string }) {
   const cartCount = useCartCount()
   const wishlistCount = useWishlistCount()
@@ -42,7 +42,7 @@ export function HeaderActions({ className }: { className?: string }) {
   )
 }
 
-/** عدّاد كحلي صغير بحلقة بيضاء فوق الأيقونة. */
+/** عدّاد برتقالي صغير بحلقة بلون السطح فوق الأيقونة (DESIGN.md: counter-badge). */
 export function CountBadge({
   count,
   className,
@@ -55,7 +55,7 @@ export function CountBadge({
     <span
       aria-hidden
       className={cn(
-        "absolute end-0.5 top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[11px] leading-none font-bold text-primary-foreground tabular-nums ring-2 ring-background",
+        "absolute end-0.5 top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[11px] leading-none font-bold text-primary-foreground tabular-nums ring-2 ring-card",
         className
       )}
     >

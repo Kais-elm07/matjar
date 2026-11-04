@@ -38,7 +38,7 @@ export function QuantityStepper({
       <Button
         variant="ghost"
         size={buttonSize}
-        className="h-full"
+        className="h-full rounded-full"
         disabled={disabled || value >= max}
         onClick={() => onChange(value + 1)}
         aria-label="زيادة الكمية"
@@ -57,7 +57,7 @@ export function QuantityStepper({
       <Button
         variant="ghost"
         size={buttonSize}
-        className="h-full"
+        className="h-full rounded-full"
         disabled={disabled || value <= 1}
         onClick={() => onChange(value - 1)}
         aria-label="إنقاص الكمية"

@@ -76,7 +76,7 @@ export function ProductGallery({
       <div className="relative lg:min-w-0 lg:flex-1">
         <div
           ref={trackRef}
-          className="flex snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto overscroll-x-contain rounded-lg bg-muted [&::-webkit-scrollbar]:hidden"
+          className="flex snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto overscroll-x-contain rounded-xl border bg-muted [&::-webkit-scrollbar]:hidden"
         >
           {images.map((image, index) => (
             <div
@@ -109,11 +109,11 @@ export function ProductGallery({
             </div>
           ))}
         </div>
-        <span className="pointer-events-none absolute end-3 top-3 flex size-9 items-center justify-center rounded-full bg-background/80 text-muted-foreground shadow-sm">
+        <span className="pointer-events-none absolute end-3 top-3 flex size-9 items-center justify-center rounded-full bg-card/85 text-foreground shadow-sm">
           <ZoomInIcon className="size-4" aria-hidden />
         </span>
         {images.length > 1 && (
-          <span className="pointer-events-none absolute start-3 bottom-3 rounded-full bg-background/85 px-2.5 py-1 text-xs font-medium tabular-nums shadow-sm md:hidden">
+          <span className="pointer-events-none absolute start-3 bottom-3 rounded-full bg-card/85 px-2.5 py-1 text-xs font-medium tabular-nums shadow-sm md:hidden">
             {activeIndex + 1} / {images.length}
           </span>
         )}
@@ -129,7 +129,7 @@ export function ProductGallery({
                 aria-label={`عرض الصورة ${index + 1}`}
                 aria-current={index === activeIndex}
                 className={cn(
-                  "relative block size-16 overflow-hidden rounded-md border-2 border-border bg-background transition-colors md:size-20",
+                  "relative block size-16 overflow-hidden rounded-md border-2 border-border bg-muted transition-colors md:size-20",
                   index === activeIndex
                     ? "border-primary"
                     : "opacity-70 hover:opacity-100"

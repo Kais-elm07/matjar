@@ -43,3 +43,21 @@ export const isPhone = (page: Page) =>
 /** الأرقام في نص مثل "1,299 ر.س" */
 export const priceOf = (text: string) =>
   Number(text.replace(/[^\d.]/g, "").replace(/\.$/, ""))
+
+/** طلب HTTP يعيد المحاولة عند انقطاع الاتصال العابر بخادم المعاينة المحلي (ECONNRESET). */
+export async function getWithRetry(
+  request: APIRequestContext,
+  url: string,
+  attempts = 3
+) {
+  let lastError: unknown
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      return await request.get(url)
+    } catch (error) {
+      lastError = error
+      await new Promise((resolve) => setTimeout(resolve, 500 * attempt))
+    }
+  }
+  throw lastError
+}
