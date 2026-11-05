@@ -35,10 +35,7 @@ export default function NotFound() {
           >
             العودة إلى الرئيسية
           </Link>
-          <Link
-            href="/products"
-            className={buttonVariants({ variant: "outline", size: "xl" })}
-          >
+          <Link href="/products" className={buttonVariants({ size: "xl" })}>
             تصفّح المنتجات
           </Link>
         </div>

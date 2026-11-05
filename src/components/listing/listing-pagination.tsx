@@ -68,7 +68,7 @@ export function ListingPagination({
             <a
               href={hrefFor(page - 1)}
               onClick={handle(page - 1)}
-              className={cn(buttonVariants({ variant: "ghost", size: "lg" }))}
+              className={cn(buttonVariants({ variant: "ghost", size: "xl" }))}
             >
               <ChevronLeftIcon className="rtl:rotate-180" aria-hidden />
               السابق
@@ -94,7 +94,7 @@ export function ListingPagination({
                 className={cn(
                   buttonVariants({
                     variant: item.page === page ? "default" : "ghost",
-                    size: "icon-lg",
+                    size: "icon-xl",
                   }),
                   "tabular-nums"
                 )}
@@ -109,7 +109,7 @@ export function ListingPagination({
             <a
               href={hrefFor(page + 1)}
               onClick={handle(page + 1)}
-              className={cn(buttonVariants({ variant: "ghost", size: "lg" }))}
+              className={cn(buttonVariants({ variant: "ghost", size: "xl" }))}
             >
               التالي
               <ChevronRightIcon className="rtl:rotate-180" aria-hidden />

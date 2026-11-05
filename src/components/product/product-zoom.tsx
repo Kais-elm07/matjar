@@ -51,7 +51,11 @@ export function ProductZoom({
             >
               <ChevronLeftIcon className="rtl:rotate-180" aria-hidden />
             </Button>
-            <span className="text-sm text-muted-foreground tabular-nums">
+            {/* Left to right, so it reads "1 / 3" and not "3 / 1" in the Arabic direction */}
+            <span
+              dir="ltr"
+              className="text-sm text-muted-foreground tabular-nums"
+            >
               {activeIndex + 1} / {images.length}
             </span>
             <Button

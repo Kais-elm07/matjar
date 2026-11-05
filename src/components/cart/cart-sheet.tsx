@@ -98,7 +98,7 @@ export function CartSheet() {
                 <Link
                   href="/cart"
                   onClick={close}
-                  className={buttonVariants({ variant: "outline", size: "xl" })}
+                  className={buttonVariants({ size: "xl" })}
                 >
                   عرض السلة
                 </Link>

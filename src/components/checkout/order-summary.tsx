@@ -107,12 +107,15 @@ export function OrderSummary({
             </li>
           ))}
         </ul>
-        <Link
-          href="/cart"
-          className="-my-3 inline-block rounded-sm py-3 text-sm font-medium text-primary underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-        >
-          تعديل السلة
-        </Link>
+        {/* The paragraph takes the list's spacing; the link's padding and negative margin only add a 44 px target */}
+        <p>
+          <Link
+            href="/cart"
+            className="-my-3 inline-block rounded-sm py-3 text-sm font-medium text-primary underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          >
+            تعديل السلة
+          </Link>
+        </p>
 
         <CouponField
           coupon={coupon}

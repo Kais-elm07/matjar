@@ -171,10 +171,7 @@ export function OrderConfirmation() {
         >
           متابعة التسوق
         </Link>
-        <Link
-          href="/"
-          className={buttonVariants({ variant: "outline", size: "xl" })}
-        >
+        <Link href="/" className={buttonVariants({ size: "xl" })}>
           الصفحة الرئيسية
         </Link>
       </div>
