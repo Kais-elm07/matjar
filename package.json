@@ -7,7 +7,6 @@
   },
   "scripts": {
     "images": "node scripts/images.mjs",
-    "images:demo": "node scripts/images.mjs --demo",
     "images:photos": "node scripts/fetch-demo-photos.mjs",
     "fonts": "node scripts/fonts.mjs",
     "predev": "pnpm images",

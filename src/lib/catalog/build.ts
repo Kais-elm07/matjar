@@ -22,6 +22,8 @@ import { discountPercent, toMinorUnits } from "@/lib/money"
  * Builds the catalog once at build time from the src/data files, after validating them:
  * prices in the smallest unit, each category's path and product count, and ready-sorted lists.
  * Neither this file nor the full data files reach the visitor's browser.
+ * The catalog is built when this module is first imported, so a mistake in the data throws there
+ * and stops the build with its Arabic message.
  */
 
 const byPopularity = (a: Product, b: Product) => b.popularity - a.popularity

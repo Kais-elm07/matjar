@@ -3,10 +3,10 @@ import { ProductCard } from "@/components/product/product-card"
 import { RAIL_ITEM } from "@/components/product/product-styles"
 import { Carousel } from "@/components/shared/carousel"
 import { SectionHeading } from "@/components/shared/section-heading"
-import type { ProductCardData } from "@/lib/catalog/types"
+import type { DealCard } from "@/lib/catalog/types"
 
 interface DealsRailProps {
-  products: ProductCardData[]
+  products: DealCard[]
 }
 
 /** "عروض لفترة محدودة" (Limited-time deals): products with a real end date, each with a countdown above it. */
@@ -28,7 +28,7 @@ export function DealsRail({ products }: DealsRailProps) {
         {products.map((product) => (
           <DealItem
             key={product.slug}
-            endsAt={product.saleEndsAt ?? ""}
+            endsAt={product.saleEndsAt}
             className={RAIL_ITEM}
           >
             <ProductCard product={product} />

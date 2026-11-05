@@ -31,6 +31,7 @@ export function Price({
       )}
     >
       <span
+        // The browser tests find the price by this attribute
         data-slot="price"
         className={cn(
           "font-bold text-primary",

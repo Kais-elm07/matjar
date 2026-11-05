@@ -15,7 +15,7 @@ interface StockStatusProps {
   stock: number
 }
 
-/** Availability with a colored dot: green for in stock, dark amber for low stock, red for sold out. */
+/** Availability with a colored dot: green for in stock, amber for low stock, red for sold out. */
 export function StockStatus({ stock }: StockStatusProps) {
   const [color, text] =
     stock === 0

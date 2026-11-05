@@ -2,27 +2,15 @@
 
 import * as React from "react"
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
-import { cn } from "@/lib/utils"
+import { XIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { XIcon } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface SheetProps extends SheetPrimitive.Root.Props {}
 
 function Sheet({ ...props }: SheetProps) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />
-}
-
-interface SheetTriggerProps extends SheetPrimitive.Trigger.Props {}
-
-function SheetTrigger({ ...props }: SheetTriggerProps) {
-  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />
-}
-
-interface SheetCloseProps extends SheetPrimitive.Close.Props {}
-
-function SheetClose({ ...props }: SheetCloseProps) {
-  return <SheetPrimitive.Close data-slot="sheet-close" {...props} />
 }
 
 interface SheetPortalProps extends SheetPrimitive.Portal.Props {}
@@ -149,8 +137,6 @@ function SheetDescription({ className, ...props }: SheetDescriptionProps) {
 
 export {
   Sheet,
-  SheetTrigger,
-  SheetClose,
   SheetContent,
   SheetHeader,
   SheetFooter,

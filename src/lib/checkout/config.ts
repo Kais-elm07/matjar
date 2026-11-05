@@ -10,6 +10,7 @@ import { toMinorUnits } from "@/lib/money"
 /**
  * Checkout settings, validated at build time: shipping and coupons.
  * Any error in the two files stops the build with an Arabic message, and the result is passed to the checkout page.
+ * The files are read and checked when this module is first imported.
  */
 
 z.config(z.locales.ar())

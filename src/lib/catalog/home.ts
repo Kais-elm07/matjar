@@ -8,6 +8,8 @@ import { getRootCategories } from "@/lib/catalog/catalog"
 import type {
   CategoryBanner,
   CategoryBannerInput,
+  DealCard,
+  Product,
   ProductBanner,
   ProductBannerInput,
 } from "@/lib/catalog/types"
@@ -18,6 +20,14 @@ const RAIL_LIMIT = 8
 /** Number of products in each tab of "الرائج الآن" (trending now) */
 const TRENDING_LIMIT = 6
 
+const hasEndDate = (
+  product: Product
+): product is Product & { saleEndsAt: string } => product.saleEndsAt !== null
+
+function toDealCard(product: Product & { saleEndsAt: string }): DealCard {
+  return { ...toProductCard(product), saleEndsAt: product.saleEndsAt }
+}
+
 function buildSections() {
   const { products, byNewest, byPopularity } = catalog
   const onSale = products.filter((product) => product.compareAtPrice !== null)
@@ -26,10 +36,10 @@ function buildSections() {
     bestSellers: byPopularity.slice(0, RAIL_LIMIT).map(toProductCard),
     /** Sales with an end date, ending soonest first. Ended sales were removed at build time */
     deals: onSale
-      .filter((product) => product.saleEndsAt !== null)
-      .sort((a, b) => (a.saleEndsAt ?? "").localeCompare(b.saleEndsAt ?? ""))
+      .filter(hasEndDate)
+      .sort((a, b) => a.saleEndsAt.localeCompare(b.saleEndsAt))
       .slice(0, RAIL_LIMIT)
-      .map(toProductCard),
+      .map(toDealCard),
     /** The largest real discount among all discounted products, for the "خصومات تصل إلى" (discounts up to) card */
     maxDiscount: Math.max(
       0,

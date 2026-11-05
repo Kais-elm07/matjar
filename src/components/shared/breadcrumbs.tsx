@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import { cn } from "@/lib/utils"
 
-export type BreadcrumbEntry = { name: string; href?: string }
+type BreadcrumbEntry = { name: string; href?: string }
 
 /** A 44 px touch target from vertical padding; the negative margin keeps the trail's height. */
 const LINK = "-my-3 py-3"

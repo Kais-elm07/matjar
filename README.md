@@ -4,7 +4,7 @@ An Arabic (right-to-left), mobile-first online storefront that runs as a fully s
 The storefront itself is in Arabic for Arabic-speaking shoppers. The project documentation is in English.
 The full plan and implementation phases are in [PLAN.md](PLAN.md).
 
-**Current status:** Phases 1 to 7 are complete: the project scaffold, the full catalog (categories, products, search, filters), the cart and wishlist in the browser, the demo checkout, the static pages, polish (share images, performance, copy and accessibility review, light motion, optional analytics) and automated tests. Items that only the owner can do are still open: a review on a real phone, testing with real people, and real contact details. On November 4, 2026 the interface was redesigned at the owner's request in the "Warm Night" style: a dark background, a single orange accent for actions and prices, dark product cards with a round cart button in the corner, a dark header with a wide search field, a footer ending in an orange bar, and real product photos from Pexels instead of drawn placeholders (details in `DESIGN.md`). For phase 8 (deployment) the hosting files (`public/_headers` and `netlify.toml`) and the [DEPLOYMENT.md](DEPLOYMENT.md) guide are ready, and the owner postponed the deployment itself. After that, a full review of code quality, performance and load capacity was carried out (see "Performance and load capacity"). The GitHub Actions checks pass.
+**Current status:** Phases 1 to 7 are complete: the project scaffold, the full catalog (categories, products, search, filters), the cart and wishlist in the browser, the demo checkout, the static pages, polish (share images, performance, copy and accessibility review, light motion, optional analytics) and automated tests. Items that only the owner can do are still open: a review on a real phone, testing with real people, and real contact details. On November 4, 2026 the interface was redesigned at the owner's request in the "Warm Night" style: a dark background, a single orange accent for actions and prices, dark product cards with a round cart button in the corner, a dark header with a wide search field, a footer ending in an orange bar, and real product photos from Pexels instead of drawn placeholders (details in `DESIGN.md`). For phase 8 (deployment) the hosting files (`public/_headers` and `netlify.toml`) and the [DEPLOYMENT.md](DEPLOYMENT.md) guide are ready, and the owner postponed the deployment itself. On November 4 and 5, 2026 the code was reviewed for quality, performance and load capacity: strict types, one component per file, English code comments, a design polish, a faster first screen on phones, and folders and names that say what they hold (see "Project structure", "How the code fits together" and "Performance and load capacity"). The GitHub Actions checks pass.
 
 ## Requirements
 
@@ -20,6 +20,8 @@ pnpm dev
 ```
 
 Then open http://localhost:3000
+
+The route types that pages and layouts use (`PageProps`, `LayoutProps`) are generated into `.next/types`, which is not in Git. After cloning, run `pnpm dev` or `pnpm typecheck` once, or the editor reports them as missing.
 
 ## Building for deployment
 
@@ -40,9 +42,10 @@ Deployment steps for Cloudflare Pages, Netlify or regular hosting, and what to d
 | `pnpm build`         | Build the static site into `out/`                                           |
 | `pnpm preview`       | Serve the built site locally before deploying                               |
 | `pnpm images`        | Process images (runs automatically before `dev` and `build`)                |
-| `pnpm images:demo`   | Draw SVG placeholders for anything without a real photo                     |
 | `pnpm images:photos` | Download the Pexels demo photos listed in `assets/images/sources.json`      |
 | `pnpm fonts`         | Subset the font files from `assets/fonts` into `src/fonts`                  |
+| `pnpm lint`          | ESLint, where any warning counts as an error                                |
+| `pnpm typecheck`     | Check types, after generating the route types (`next typegen`)              |
 | `pnpm check`         | Check formatting, lint errors, types and the design file in one go          |
 | `pnpm verify`        | `pnpm check` plus the unit tests: the full check before saving or deploying |
 | `pnpm test`          | Unit tests (Vitest), in seconds                                             |
@@ -92,7 +95,7 @@ Each page is a text file in `src/content/pages`, and the file name is its URL: `
 
 - **Front matter:** between two `---` lines, write `title`, `description` (for search engines) and `order` (position in the side menu). The optional `layout` field adds a special block: `contact` adds the contact cards, `shipping` adds the table of cities and prices from the shipping file, and `faq` turns the questions into an expandable list.
 - **Text formatting:** a blank line between paragraphs, `## ` for a heading, `### ` for a subheading (a question on the FAQ page), `- ` for a bullet, `1. ` for a numbered step, `**text**` for bold, and `[link text](/pages/contact)` for links.
-- **Values that update automatically:** `{store}` for the store name, `{email}`, `{phone}`, and `{freeShipping}` for the free shipping threshold.
+- **Values that update automatically:** `{store}` for the store name, `{email}`, `{phone}`, `{freeShipping}` for the free shipping threshold, and `{analytics}` for the privacy page's sentence about analytics.
 - **Contact details:** in `src/config/site.ts` under `contact`. The current values are deliberately invalid placeholders: all-zero numbers and an address on the reserved `example.com` domain. Put your real details there, and leave any field empty (`""`) to hide its card. The floating WhatsApp button only appears when a number is set.
 - **Announcement bar:** `announcement` in the same file, or `null` to hide it.
 - Every `/pages/...` link in the site menus must have a matching file, otherwise the build stops with a message naming the missing link.
@@ -123,7 +126,7 @@ The script loads after the page has finished loading, so it does not slow it dow
 
 The `public/images` folder is generated automatically and is not committed to Git, so never put images there by hand. Category images go in `assets/images/categories/` the same way. A production build stops with a list of any image that the data mentions but that does not exist.
 
-The current images are free real photos from [Pexels](https://www.pexels.com/license/) (their license allows use without attribution), shown until they are replaced by your own product photos with the same names. Each photo's Pexels ID is recorded in `assets/images/sources.json`, and `pnpm images:photos` downloads any that are missing. For any product or category without a photo, `pnpm images:demo` draws an SVG placeholder.
+The current images are free real photos from [Pexels](https://www.pexels.com/license/) (their license allows use without attribution), shown until they are replaced by your own product photos with the same names. Each photo's Pexels ID is recorded in `assets/images/sources.json`, and `pnpm images:photos` downloads any that are missing.
 
 ## Font
 
@@ -140,7 +143,7 @@ The whole visual identity is described in [DESIGN.md](DESIGN.md), in [Google's D
 
 - It is the reference Claude reads before any interface work, through the project skill `.claude/skills/design-system`.
 - `pnpm design:lint` validates the file and its color contrast, and runs automatically in GitHub Actions and before each commit that changes it.
-- To change the identity: edit `DESIGN.md` first, lint it, then copy the colors into `src/app/globals.css`.
+- To change the identity: edit `DESIGN.md` first and lint it, then copy the colors into `src/app/globals.css`, `OG_COLORS` in `src/lib/og/render.ts` (share images), `themeColor` in `src/app/layout.tsx` and `src/app/icon.svg`. The full checklist is at the end of `.claude/skills/design-system/SKILL.md`.
 
 ## Where to change...
 
@@ -154,10 +157,20 @@ The whole visual identity is described in [DESIGN.md](DESIGN.md), in [Google's D
 | Contact details and announcement bar     | `src/config/site.ts` (`contact` and `announcement`)         |
 | Analytics                                | `src/config/site.ts` (`analytics`)                          |
 | Share image layout                       | `src/lib/og/share-images.ts`                                |
-| Brand colors and corner radii            | `DESIGN.md`, then `src/app/globals.css` (`:root`)           |
+| Brand colors and corner radii            | `DESIGN.md`, then the files listed under "Design system"    |
 | Option swatch colors (red, blue...)      | `src/lib/catalog/options.ts`                                |
 | Arabic font                              | `assets/fonts`, then `pnpm fonts`, and `src/app/layout.tsx` |
 | Site icon                                | `src/app/icon.svg`                                          |
+
+## Changing the country
+
+The store is set up for Saudi Arabia for now (decision 1 in the plan). Another country touches these places:
+
+- `src/config/site.ts`: the currency (`currency`: its code, symbol and decimal places), the time zone (`utcOffset`, which decides when a deal ends), and the contact numbers.
+- `src/data/shipping.ts`: the cities, prices and delivery times.
+- `src/data/coupons.ts`: the coupon descriptions, which name the currency.
+- `src/lib/checkout/form-schema.ts`: the mobile number rule (05xxxxxxxx, also accepting +966 and 00966) and its Arabic messages.
+- `playwright.config.ts`: the locale of the browser tests (`ar-SA`).
 
 ## Project structure
 
@@ -301,17 +314,18 @@ Each file loads once per visit and is shared by every part of the page. A networ
 
 With 1,000 visitors the wait gets longer but no request fails, because the server only sends ready-made files.
 
-**Lighthouse on mobile** (simulating a mid-range phone on a slow 4G network):
+**Lighthouse on mobile** (November 5, 2026, two runs on the built site, simulating a mid-range phone on a slow 4G network):
 
 | Page         | Performance | Accessibility | Best practices | SEO |
 | ------------ | ----------- | ------------- | -------------- | --- |
-| Home         | 90          | 100           | 100            | 100 |
-| Product page | 90          | 100           | 100            | 100 |
-| All products | 88          | 100           | 100            | 100 |
+| Home         | 92-93       | 100           | 100            | 100 |
+| Product page | 91-92       | 100           | 100            | 100 |
+| All products | 88-89       | 100           | 100            | 100 |
 
 **Lazy loading and lighter pages:**
 
-- **Images:** every image is prepared in three WebP sizes, and the browser takes the smallest size that fits the screen. Images further down the page load as the visitor approaches them, and only the first hero image is preloaded with high priority.
+- **Images:** every image is prepared in four WebP sizes (200, 400, 800 and 1200 pixels wide), and the browser takes the smallest size that fits the screen. Images further down the page load as the visitor approaches them. Only the first photo of the hero and of the product gallery is in the page's HTML, with high priority; the other slides load once the page has loaded, or as soon as they are shown.
+- **Sections further down:** on the home and product pages, the sections below the first screen and the footer are laid out and painted only when they come near the screen (`section-later` and `render-later` in `src/app/globals.css`). After a reload, back or forward, or a move inside the store, everything renders at once, so the browser returns to the same place (`src/lib/render-later.ts`).
 - **Drawers and panels:** the cart, the mobile menu, the image zoom, the filter sheet and the toast messages load their code after the page appears or on the first tap (`src/hooks/use-idle.ts`). The phone filter sheet never loads on desktop, and vice versa.
 - **As little JavaScript as possible:** components are rendered ahead of time, only the interactive part runs in the browser, and it receives only the fields it needs (the cart button on a card does not carry the whole product). Buttons and inputs are native elements without a library.
 - **Font:** a subset with only the store's characters (66 KB for the three weights).

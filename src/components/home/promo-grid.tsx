@@ -12,7 +12,7 @@ interface PromoGridProps {
 }
 
 /**
- * The deals grid: two image tiles, one above the other, and a tall tile beside them, then the discount card.
+ * The promo grid: two image tiles, one above the other, and a tall tile beside them, then the discount card.
  * With fewer than three cards, the tiles show in a single row beside the discount card.
  */
 export function PromoGrid({ promos, maxDiscount }: PromoGridProps) {

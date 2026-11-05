@@ -8,7 +8,7 @@ interface ProductGridSkeletonProps {
   className?: string
 }
 
-/** A skeleton in the light surface color, in the same shape as the grid, while loading. */
+/** A skeleton in the muted surface color, in the same shape as the grid, while loading. */
 export function ProductGridSkeleton({
   count = 8,
   className,

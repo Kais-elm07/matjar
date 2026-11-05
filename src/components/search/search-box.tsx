@@ -19,7 +19,6 @@ const searchHref = (query: string) => `/search/?q=${encodeURIComponent(query)}`
 
 interface SearchBoxProps {
   className?: string
-  defaultValue?: string
   autoFocus?: boolean
   variant?: "default" | "header"
   /** Called after going to a result or the results page, for example to close the mobile search field */
@@ -30,12 +29,11 @@ interface SearchBoxProps {
  * The search field, with instant suggestions while typing.
  * The arrow keys move between suggestions, Enter opens the suggestion or the results page,
  * and Escape closes the list.
- * variant="header": a shorter pill in the light surface color that fills the middle of the
- * header on desktop (DESIGN.md: search-input).
+ * variant="header": the field in the middle of the header on desktop, with a softer border, smaller
+ * text and a wider list of suggestions (DESIGN.md: search-input).
  */
 export function SearchBox({
   className,
-  defaultValue = "",
   autoFocus = false,
   variant = "default",
   onSubmitted,
@@ -46,7 +44,7 @@ export function SearchBox({
   const inputRef = useRef<HTMLInputElement>(null)
   const header = variant === "header"
 
-  const [query, setQuery] = useState(defaultValue)
+  const [query, setQuery] = useState("")
   const [open, setOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
   const [indexWanted, setIndexWanted] = useState(false)

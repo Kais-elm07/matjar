@@ -228,8 +228,7 @@ export function localImage(src: string) {
 }
 
 /**
- * A square image with rounded corners. If the image is missing, a square in the light surface color shows the logo,
- * as in product cards without images.
+ * A square image with rounded corners. If the image is missing, the logo shows on a square in the surface color.
  */
 export async function roundedImage(
   file: string | null,

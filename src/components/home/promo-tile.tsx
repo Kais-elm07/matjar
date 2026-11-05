@@ -9,15 +9,10 @@ import { cn } from "@/lib/utils"
 interface PromoTileProps {
   banner: ProductBanner
   className?: string
-  sizes?: string
 }
 
-/** A product image tile in the deals grid: the photo fills it, with the badge, title and price at its bottom. */
-export function PromoTile({
-  banner,
-  className,
-  sizes = "(min-width: 768px) 30vw, 50vw",
-}: PromoTileProps) {
+/** A product image tile in the promo grid: the photo fills it, with the badge, title and price at its bottom. */
+export function PromoTile({ banner, className }: PromoTileProps) {
   return (
     <Link
       href={banner.href}
@@ -31,7 +26,7 @@ export function PromoTile({
           src={banner.image.src}
           alt=""
           fill
-          sizes={sizes}
+          sizes="(min-width: 768px) 30vw, 50vw"
           className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
         />
       )}

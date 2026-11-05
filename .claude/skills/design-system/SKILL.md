@@ -57,7 +57,7 @@ The values are applied in `src/app/globals.css` as shadcn variables with the sam
 - Only one font (IBM Plex Sans Arabic) in three weights: `font-normal`, `font-medium` and `font-bold`. Don't use `font-semibold` or `font-extrabold`, because the font doesn't have them, and no `tracking-*` on Arabic text, because it breaks the joined letters apart.
 - Prices use the digits 0-9 through `formatPrice`, always in orange (`Price`).
 - Counts use the correct Arabic plural forms through `pluralize` in `src/lib/arabic-plural.ts`.
-- The store is always dark: no light mode and no `.dark` class. Don't write `bg-white`, `text-white` or `bg-black`; use `bg-background`, `text-foreground` and `bg-card`.
+- The store is always dark: no light mode and no `.dark` class. Don't write `bg-white`, `text-white` or `bg-black`; use `bg-background`, `text-foreground` and `bg-card`. The one exception is the 60% black overlay behind dialogs and panels (`bg-black/60` in `ui/dialog` and `ui/sheet`), as DESIGN.md says.
 - Orange (`variant="cta"`) is for one prominent action in each area, the default button (transparent with a white border) for the second action, and `variant="outline"` for alternative actions. On photos, also use a `cta` button.
 - Text on orange is always dark (`text-primary-foreground`), never white or orange. No large orange backgrounds other than the announcement bar and the footer bar.
 - Red is for errors and sold-out items only.
@@ -81,8 +81,8 @@ The values are applied in `src/app/globals.css` as shadcn variables with the sam
 
 - `ProductCard`, `ProductGrid` and `ProductRail` in `src/components/product`: the dark product card with the round cart button, its grid and its horizontal row. Their data has the type `ProductCardData`, and the search index uses `SearchCardData` (the card plus the search text).
 - The home page sections in `src/components/home`, each one a separate component: `TrustStrip`, `WhyUs`, `PromoGrid`, `NewArrivals`, `TrendingTabs`, `DealsRail`, `CategoryRail`, `Testimonials` and `ContactSection`. The page itself only puts them in order.
-- `Carousel` and `SectionHeading` in `src/components/shared`: a swiped row with round scroll buttons, and a section heading with an orange "View all" link and an optional description.
-- `PromoTile`, `DiscountCard`, `SpotlightCard` and `WideBanner` in `src/components/home`, one file each: the photo deal tiles, the discount card, the category cards and the wide banner. Their shared dark gradient over photos is `IMAGE_SHADE` in `banner-styles.ts`.
+- `Carousel` and `SectionHeading` in `src/components/shared`: a swiped row with round scroll buttons, and a section heading with an optional orange "View all" link.
+- `PromoTile`, `DiscountCard`, `SpotlightCard` and `WideBanner` in `src/components/home`, one file each: the photo tiles of the promo grid, the discount card, the category spotlight cards and the wide banner. Their shared dark gradient over photos is `IMAGE_SHADE` in `banner-styles.ts`.
 - `HeroSlider` in `src/components/home`: the full-width hero, with centered text over a darkening layer and a gradient.
 - `ContactCards` in `src/components/content`: the contact cards with orange circles, for the home page and the "Contact us" page.
 - `useAddToCart` and `QuantityStepper` in `src/components/cart`: adding to the cart while opening its panel, and the quantity selector.

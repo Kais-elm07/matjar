@@ -11,7 +11,7 @@ interface DiscountCardProps {
   className?: string
 }
 
-/** Discount card beside the deal tiles: the highest real discount and a "تسوّق العروض" (Shop the deals) button. */
+/** Discount card beside the promo tiles: the highest real discount and a "تسوّق العروض" (Shop the deals) button. */
 export function DiscountCard({
   headingId,
   maxDiscount,

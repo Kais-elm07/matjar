@@ -1,12 +1,12 @@
 export type SortValue =
   "relevance" | "popular" | "newest" | "price-asc" | "price-desc"
 
-export interface SortOption {
+interface SortOption {
   value: SortValue
   label: string
 }
 
-export const SORT_OPTIONS: readonly SortOption[] = [
+const SORT_OPTIONS: readonly SortOption[] = [
   { value: "relevance", label: "الأكثر صلة" },
   { value: "popular", label: "الأكثر مبيعاً" },
   { value: "newest", label: "الأحدث" },
@@ -20,7 +20,7 @@ export function isSortValue(value: string): value is SortValue {
 }
 
 /** The default sort: most relevant when searching, best selling otherwise. */
-export function defaultSort(q: string): SortValue {
+function defaultSort(q: string): SortValue {
   return q ? "relevance" : "popular"
 }
 
@@ -43,7 +43,7 @@ export type ListingParams = {
   page: number
 }
 
-export type RawSearchParams = Record<string, string | string[] | undefined>
+type RawSearchParams = Record<string, string | string[] | undefined>
 
 const first = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value

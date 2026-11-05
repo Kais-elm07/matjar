@@ -181,7 +181,10 @@ export type ProductCardData = {
 /** A card in the search index (search-index.json): the card plus normalized text for Arabic search. */
 export type SearchCardData = ProductCardData & { searchText: string }
 
-/** A product promo card after it is linked to the product's data. */
+/** The card of a deal with a real end date, for "عروض لفترة محدودة" (Limited-time deals) and its countdown. */
+export type DealCard = ProductCardData & { saleEndsAt: string }
+
+/** A product banner (a hero slide, a promo tile or the wide banner) after it is linked to the product's data. */
 export type ProductBanner = {
   href: string
   title: string

@@ -12,6 +12,8 @@ import { formatPrice } from "@/lib/money"
 /**
  * Static pages from text files in src/content/pages: each .md file is a page,
  * and the file name is its URL (about.md → /pages/about). Read at build time only.
+ * The pages are read and checked when this module is first imported, so a broken page or menu link
+ * stops the build with an Arabic message.
  */
 
 const DIRECTORY = path.join(process.cwd(), "src", "content", "pages")
@@ -25,7 +27,7 @@ const frontMatterSchema = z.object({
   order: z.coerce.number().int().default(100),
 })
 
-export type ContentPage = z.infer<typeof frontMatterSchema> & {
+type ContentPage = z.infer<typeof frontMatterSchema> & {
   slug: string
   body: string
 }
@@ -97,9 +99,14 @@ function loadPages() {
 
   // Every /pages/... link in the settings needs a matching file, so a visitor never reaches a page that does not exist
   const slugs = new Set(pages.map((page) => page.slug))
+  const { announcement } = siteConfig
   const links = [
+    ...siteConfig.shopNav,
     ...siteConfig.helpNav,
     ...siteConfig.footerNav.flatMap((group) => group.links),
+    ...(announcement?.href
+      ? [{ title: "شريط الإعلان", href: announcement.href }]
+      : []),
   ]
   for (const link of links) {
     const slug = link.href.match(/^\/pages\/([\w-]+)/)?.[1]

@@ -3,20 +3,20 @@ export type NavLink = {
   href: string
 }
 
-export type FooterNavGroup = {
+type FooterNavGroup = {
   title: string
   links: NavLink[]
 }
 
 /** Analytics tools without cookies or cross-site tracking. src is optional, for self-hosting the tool. */
-export type AnalyticsConfig =
+type AnalyticsConfig =
   | { provider: "plausible"; domain: string; src?: string }
   | { provider: "umami"; websiteId: string; src?: string }
 
 /** The bar above every page. `href` makes the whole bar a link. */
-export type Announcement = { text: string; href?: string }
+type Announcement = { text: string; href?: string }
 
-export interface SiteConfig {
+interface SiteConfig {
   name: string
   tagline: string
   statement: string
@@ -121,7 +121,7 @@ export const siteConfig: SiteConfig = {
     { title: "العروض", href: "/products?sale=1" },
   ],
 
-  /** Help links in the mobile menu */
+  /** Help links: in the desktop link row after shopNav, and in the mobile menu */
   helpNav: [
     { title: "الشحن والتوصيل", href: "/pages/shipping" },
     { title: "الأسئلة الشائعة", href: "/pages/faq" },

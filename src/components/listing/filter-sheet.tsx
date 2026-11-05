@@ -35,6 +35,7 @@ export function FilterSheet({
         <SheetHeader className="border-b pe-14">
           <SheetTitle className="text-lg font-bold">تصفية النتائج</SheetTitle>
         </SheetHeader>
+        {/* The sheet header already draws a line, so the first section of FilterPanel (a div of sections) drops its own */}
         <div className="overflow-y-auto px-4 pb-4 [&>div>section:first-child]:border-t-0 [&>div>section:first-child]:pt-4">
           {children}
         </div>

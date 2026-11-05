@@ -8,7 +8,7 @@ import type { ProductCardData } from "@/lib/catalog/types"
 import { cn } from "@/lib/utils"
 
 /** Only what the button needs, so the full card data isn't sent with every button on the page. */
-export type QuickAddProduct = Pick<
+type QuickAddProduct = Pick<
   ProductCardData,
   | "slug"
   | "name"
