@@ -14,15 +14,16 @@ import {
 } from "@/lib/guards"
 
 /**
- * Checks for the two JSON files the browser downloads (search-index.json and cart-catalog.json).
- * The build writes them, but a broken deploy or an old cached copy shouldn't break the page.
+ * Checks for the catalog's shapes in data read at runtime: the two JSON files the browser downloads
+ * (search-index.json and cart-catalog.json), and the product parts kept in the saved cart and order.
+ * The general checks they build on are in src/lib/guards.ts.
  */
 
-function isCardImage(value: unknown): value is CardImage {
+export function isCardImage(value: unknown): value is CardImage {
   return isRecord(value) && isString(value.src) && isString(value.alt)
 }
 
-function isVariantOptions(value: unknown): value is VariantOptions {
+export function isVariantOptions(value: unknown): value is VariantOptions {
   return isRecord(value) && Object.values(value).every(isString)
 }
 

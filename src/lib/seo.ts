@@ -2,8 +2,10 @@ import type { Metadata } from "next"
 
 import { siteConfig } from "@/config/site"
 import type { Product } from "@/lib/catalog/types"
+import { toPlainText, type FaqGroup } from "@/lib/content/text-format"
 import { IMAGE_WIDTHS, imageFile } from "@/lib/image-loader"
 import { toSchemaPrice } from "@/lib/money"
+import { productPath } from "@/lib/routes"
 
 /** Share images at 1200×630, generated at build time by the routes in src/app/og. */
 export const shareImages = {
@@ -67,29 +69,14 @@ export function absoluteImageUrl(src: string) {
 
 /** Short plain text from a description, for search result snippets. List items are joined by commas. */
 export function plainDescription(text: string, maxLength = 155) {
-  const plain = text
-    .split(/\n\s*\n/)
-    .map((block) => {
-      const lines = block
-        .split("\n")
-        .map((line) => line.trim())
-        .filter(Boolean)
-      const items = lines.filter((line) => line.startsWith("- "))
-      if (items.length === lines.length) {
-        return `${items.map((line) => line.slice(2)).join("، ")}.`
-      }
-      return lines.join(" ")
-    })
-    .join(" ")
-    .replace(/\s+/g, " ")
-    .trim()
+  const plain = toPlainText(text)
   return plain.length > maxLength
     ? `${plain.slice(0, maxLength - 1).trimEnd()}…`
     : plain
 }
 
 export function productJsonLd(product: Product) {
-  const url = absoluteUrl(`/product/${product.slug}`)
+  const url = absoluteUrl(productPath(product.slug))
   const availability = product.inStock
     ? "https://schema.org/InStock"
     : "https://schema.org/OutOfStock"
@@ -125,16 +112,32 @@ export function productJsonLd(product: Product) {
   }
 }
 
-export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
+/** The FAQPage data that search engines read, with the answers as plain text. */
+export function faqJsonLd(groups: FaqGroup[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: groups.flatMap((group) =>
+      group.items.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: { "@type": "Answer", text: toPlainText(item.answer) },
+      }))
+    ),
+  }
+}
+
+/** The breadcrumb that search engines read, starting with the home page. */
+export function breadcrumbJsonLd(items: { name: string; href: string }[]) {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: [{ name: "الرئيسية", path: "/" }, ...items].map(
+    itemListElement: [{ name: "الرئيسية", href: "/" }, ...items].map(
       (item, index) => ({
         "@type": "ListItem",
         position: index + 1,
         name: item.name,
-        item: absoluteUrl(item.path),
+        item: absoluteUrl(item.href),
       })
     ),
   }

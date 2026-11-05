@@ -3,28 +3,17 @@
 import { useEffect, useState } from "react"
 
 import { isCartCatalog } from "@/lib/catalog/guards"
-import type { CartCatalog } from "@/lib/catalog/types"
 import { useCartStore, type CartNotice } from "@/lib/state/cart"
 import { useCartRestored } from "@/lib/state/hydration"
+import { staticJsonLoader } from "@/lib/static-json"
 
-let request: Promise<CartCatalog> | null = null
-
-/** Loads the published site's prices and stock once per visit. */
-function loadCartCatalog() {
-  // Check the site's copy every time, so old prices do not stay in the browser cache after an update is published
-  request ??= fetch("/cart-catalog.json", { cache: "no-cache" })
-    .then(async (response) => {
-      if (!response.ok) throw new Error(`HTTP ${response.status}`)
-      const catalog: unknown = await response.json()
-      if (!isCartCatalog(catalog)) throw new Error("Invalid cart catalog")
-      return catalog
-    })
-    .catch((error: unknown) => {
-      request = null // Allow a retry next time
-      throw error
-    })
-  return request
-}
+/**
+ * Loads the published site's prices and stock once per visit. no-cache asks the site for its copy every
+ * time, so old prices do not stay in the browser cache after an update is published.
+ */
+const loadCartCatalog = staticJsonLoader("/cart-catalog.json", isCartCatalog, {
+  cache: "no-cache",
+})
 
 /**
  * Syncs the saved cart with the site's current data after it is restored: updates prices and stock,

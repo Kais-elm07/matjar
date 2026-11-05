@@ -5,8 +5,9 @@ import { persist } from "zustand/middleware"
 
 import type { VariantOptions } from "@/lib/catalog/options"
 import type { CardImage, CartCatalog } from "@/lib/catalog/types"
+import { isCardImage, isVariantOptions } from "@/lib/catalog/guards"
 import { optionsKey } from "@/lib/catalog/variant-key"
-import { isRecord } from "@/lib/guards"
+import { isFiniteNumber, isNullOr, isRecord, isString } from "@/lib/guards"
 import { safeStorage } from "@/lib/state/storage"
 
 /** Maximum quantity of a single variant in the cart, even if the stock is larger. */
@@ -52,34 +53,19 @@ export function lineLimit(stock: number) {
 
 /** A well-formed saved line. Others are ignored so old or hand-edited data cannot break the cart. */
 function isCartLine(value: unknown): value is CartLine {
-  if (!isRecord(value)) return false
-  const {
-    sku,
-    slug,
-    name,
-    image,
-    options,
-    price,
-    compareAtPrice,
-    stock,
-    quantity,
-  } = value
   return (
-    typeof sku === "string" &&
-    typeof slug === "string" &&
-    typeof name === "string" &&
-    (image === null ||
-      (isRecord(image) &&
-        typeof image.src === "string" &&
-        typeof image.alt === "string")) &&
-    isRecord(options) &&
-    Object.values(options).every((option) => typeof option === "string") &&
-    Number.isFinite(price) &&
-    (compareAtPrice === null || Number.isFinite(compareAtPrice)) &&
-    Number.isInteger(stock) &&
-    typeof quantity === "number" &&
-    Number.isInteger(quantity) &&
-    quantity > 0
+    isRecord(value) &&
+    isString(value.sku) &&
+    isString(value.slug) &&
+    isString(value.name) &&
+    isNullOr(value.image, isCardImage) &&
+    isVariantOptions(value.options) &&
+    isFiniteNumber(value.price) &&
+    isNullOr(value.compareAtPrice, isFiniteNumber) &&
+    Number.isInteger(value.stock) &&
+    isFiniteNumber(value.quantity) &&
+    Number.isInteger(value.quantity) &&
+    value.quantity > 0
   )
 }
 

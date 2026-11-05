@@ -59,7 +59,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
       <ul
         ref={listRef}
         onScroll={onScroll}
-        className="flex snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto overscroll-x-contain [&::-webkit-scrollbar]:hidden"
+        className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain"
       >
         {slides.map((slide, index) => (
           <li

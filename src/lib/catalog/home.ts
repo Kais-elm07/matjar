@@ -14,6 +14,7 @@ import type {
   ProductBannerInput,
 } from "@/lib/catalog/types"
 import { discountPercent } from "@/lib/money"
+import { categoryPath, productPath } from "@/lib/routes"
 
 /** Number of products in each row of the home page */
 const RAIL_LIMIT = 8
@@ -77,7 +78,7 @@ function toProductBanner(input: ProductBannerInput): ProductBanner {
   }
   const discount = discountPercent(product.price, product.compareAtPrice)
   return {
-    href: `/product/${product.slug}`,
+    href: productPath(product.slug),
     title: input.title,
     text: input.text ?? null,
     tag: input.tag ?? (discount ? `خصم ${discount}%` : null),
@@ -96,7 +97,7 @@ function toCategoryBanner(input: CategoryBannerInput): CategoryBanner {
     )
   }
   return {
-    href: `/category/${category.slug}`,
+    href: categoryPath(category.slug),
     title: input.title,
     text: input.text ?? null,
     image: category.image,

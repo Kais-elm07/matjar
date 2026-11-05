@@ -14,6 +14,7 @@ import {
   getChildCategories,
   getProductCards,
 } from "@/lib/catalog/catalog"
+import { categoryPath, categoryTrail } from "@/lib/routes"
 import { breadcrumbJsonLd, openGraph, shareImages } from "@/lib/seo"
 
 // Every category page is prepared at build time, and any other URL shows the 404 page
@@ -36,11 +37,11 @@ export async function generateMetadata({
   return {
     title: category.name,
     description,
-    alternates: { canonical: `/category/${category.slug}/` },
+    alternates: { canonical: categoryPath(category.slug) },
     openGraph: openGraph({
       title: category.name,
       description,
-      path: `/category/${category.slug}/`,
+      path: categoryPath(category.slug),
       image: shareImages.category(category.slug),
     }),
   }
@@ -55,14 +56,11 @@ export default async function CategoryPage({
 
   const products = getProductCards(category.slug)
   const children = getChildCategories(category)
-  const parents = category.path.slice(0, -1).map((link) => ({
-    name: link.name,
-    href: `/category/${link.slug}`,
-  }))
+  const trail = categoryTrail(category.path)
 
   return (
     <div className="page-container py-5 md:py-8">
-      <Breadcrumbs items={[...parents, { name: category.name }]} />
+      <Breadcrumbs items={[...trail.slice(0, -1), { name: category.name }]} />
 
       <header className="mb-6 space-y-2">
         <h1 className="text-2xl font-bold md:text-3xl">{category.name}</h1>
@@ -76,13 +74,13 @@ export default async function CategoryPage({
       {children.length > 0 && (
         <nav
           aria-label="الفئات الفرعية"
-          className="-mx-4 mb-8 [scrollbar-width:none] overflow-x-auto px-4 pb-1"
+          className="-mx-4 mb-8 no-scrollbar overflow-x-auto px-4 pb-1"
         >
           <ul className="flex gap-3">
             {children.map((child) => (
               <li key={child.slug} className="shrink-0">
                 <Link
-                  href={`/category/${child.slug}`}
+                  href={categoryPath(child.slug)}
                   className="flex items-center gap-3 rounded-full border bg-card py-1.5 ps-1.5 pe-4 text-sm font-medium transition-colors hover:border-primary hover:text-primary"
                 >
                   {child.image && (
@@ -109,14 +107,7 @@ export default async function CategoryPage({
 
       <ListingView products={products} />
 
-      <JsonLd
-        data={breadcrumbJsonLd(
-          category.path.map((link) => ({
-            name: link.name,
-            path: `/category/${link.slug}`,
-          }))
-        )}
-      />
+      <JsonLd data={breadcrumbJsonLd(trail)} />
     </div>
   )
 }

@@ -9,6 +9,7 @@ import { ArrowRightIcon, SearchIcon } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formatPrice } from "@/lib/money"
 import { placeholderIds } from "@/lib/placeholders"
+import { productPath } from "@/lib/routes"
 import { searchCards } from "@/lib/search/search-cards"
 import { useSearchIndex } from "@/lib/search/use-search-index"
 import { cn } from "@/lib/utils"
@@ -74,7 +75,7 @@ export function SearchBox({
   function submit(event: React.FormEvent) {
     event.preventDefault()
     const selected = results[activeIndex]
-    if (selected) router.push(`/product/${selected.slug}`)
+    if (selected) router.push(productPath(selected.slug))
     else if (trimmed) router.push(searchHref(trimmed))
     else return
     finish()
@@ -195,7 +196,7 @@ export function SearchBox({
                   aria-selected={index === activeIndex}
                 >
                   <Link
-                    href={`/product/${product.slug}`}
+                    href={productPath(product.slug)}
                     tabIndex={-1}
                     onClick={finish}
                     className={cn(

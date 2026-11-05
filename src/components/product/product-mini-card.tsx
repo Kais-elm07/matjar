@@ -3,6 +3,7 @@ import Link from "next/link"
 
 import { Price } from "@/components/product/price"
 import type { ProductCardData } from "@/lib/catalog/types"
+import { productPath } from "@/lib/routes"
 
 interface ProductMiniCardProps {
   product: ProductCardData
@@ -34,7 +35,7 @@ export function ProductMiniCard({ product }: ProductMiniCardProps) {
         )}
         <h3 className="line-clamp-2 text-sm leading-6 font-medium">
           <Link
-            href={`/product/${product.slug}`}
+            href={productPath(product.slug)}
             className="outline-none after:absolute after:inset-0 after:rounded-xl focus-visible:after:ring-3 focus-visible:after:ring-ring/50"
           >
             {product.name}

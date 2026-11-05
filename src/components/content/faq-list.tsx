@@ -1,43 +1,7 @@
 import { ChevronDownIcon } from "lucide-react"
 
 import { RichText } from "@/components/content/rich-text"
-
-/** `line` is where the question or group starts in the page text (from 1), and is its React key. */
-export type FaqItem = { question: string; answer: string; line: number }
-
-export type FaqGroup = {
-  title: string | null
-  items: FaqItem[]
-  line: number
-}
-
-/**
- * Splits the FAQ page text: "## " is a group title, "### " is a question, and the text under it is its answer.
- */
-export function parseFaq(body: string): FaqGroup[] {
-  const groups: FaqGroup[] = []
-  let group: FaqGroup | null = null
-  let item: FaqItem | null = null
-
-  for (const [position, text] of body.split("\n").entries()) {
-    const line = position + 1
-    if (text.startsWith("## ")) {
-      group = { title: text.slice(3).trim(), items: [], line }
-      groups.push(group)
-      item = null
-    } else if (text.startsWith("### ")) {
-      if (!group) {
-        group = { title: null, items: [], line }
-        groups.push(group)
-      }
-      item = { question: text.slice(4).trim(), answer: "", line }
-      group.items.push(item)
-    } else if (item) {
-      item.answer += `${text}\n`
-    }
-  }
-  return groups.filter((entry) => entry.items.length > 0)
-}
+import type { FaqGroup } from "@/lib/content/text-format"
 
 interface FaqListProps {
   groups: FaqGroup[]
@@ -68,13 +32,4 @@ export function FaqList({ groups }: FaqListProps) {
       ))}
     </div>
   )
-}
-
-/** The answer text without formatting, for the FAQPage data that search engines read. */
-export function plainAnswer(answer: string) {
-  return answer
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-    .replace(/\*\*/g, "")
-    .replace(/\s+/g, " ")
-    .trim()
 }

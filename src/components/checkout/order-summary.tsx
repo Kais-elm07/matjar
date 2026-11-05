@@ -7,8 +7,9 @@ import { ChevronDownIcon } from "lucide-react"
 
 import { CouponField } from "@/components/checkout/coupon-field"
 import { PIECE_FORMS, pluralize } from "@/lib/arabic-plural"
+import { formatOptions } from "@/lib/catalog/options"
 import type { CheckoutConfig, Coupon, OrderTotals } from "@/lib/checkout/types"
-import { formatPrice } from "@/lib/money"
+import { formatPrice, formatShipping } from "@/lib/money"
 import type { CartLine } from "@/lib/state/cart"
 import { cn } from "@/lib/utils"
 
@@ -95,9 +96,7 @@ export function OrderSummary({
                 </span>
                 {Object.keys(line.options).length > 0 && (
                   <span className="block text-xs text-muted-foreground">
-                    {Object.entries(line.options)
-                      .map(([name, value]) => `${name}: ${value}`)
-                      .join("، ")}
+                    {formatOptions(line.options)}
                   </span>
                 )}
               </span>
@@ -144,9 +143,7 @@ export function OrderSummary({
             >
               {totals.shipping === null
                 ? "اختر المدينة"
-                : totals.shipping === 0
-                  ? "مجاناً"
-                  : formatPrice(totals.shipping)}
+                : formatShipping(totals.shipping)}
             </dd>
           </div>
         </dl>

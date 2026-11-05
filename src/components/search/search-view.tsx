@@ -10,6 +10,7 @@ import { SearchBox } from "@/components/search/search-box"
 import { EmptyState } from "@/components/shared/empty-state"
 import { Button } from "@/components/ui/button"
 import type { CategoryOption } from "@/lib/catalog/types"
+import { categoryPath } from "@/lib/routes"
 import { useSearchIndex } from "@/lib/search/use-search-index"
 
 interface SearchViewProps {
@@ -36,7 +37,7 @@ export function SearchView({ categories }: SearchViewProps) {
             .map((category) => (
               <li key={category.slug}>
                 <Link
-                  href={`/category/${category.slug}`}
+                  href={categoryPath(category.slug)}
                   className="inline-flex h-11 items-center rounded-full border px-4 text-sm transition-colors hover:border-primary hover:text-primary"
                 >
                   {category.name}

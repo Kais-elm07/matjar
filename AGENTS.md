@@ -14,7 +14,7 @@ Before any work on the interface, read `DESIGN.md` at the project root and follo
 
 ## Code rules
 
-- No `any`, no type assertions (`as`, including `as const`) and no non-null assertions (`!`). Use a type annotation, `satisfies`, or a type guard from `src/lib/guards.ts`. Data read at runtime (the JSON files the browser downloads, browser storage) is checked with a guard before it is used. ESLint enforces these rules.
+- No `any`, no type assertions (`as`, including `as const`) and no non-null assertions (`!`). Use a type annotation, `satisfies`, or a type guard from `src/lib/guards.ts` (general checks) or `src/lib/catalog/guards.ts` (the catalog's shapes). Data read at runtime (the JSON files the browser downloads, browser storage) is checked with a guard before it is used. ESLint enforces these rules.
 - List keys come from the data (a slug, SKU or id), never from the position in the array. Loading placeholders take their keys from `placeholderIds()` in `src/lib/placeholders.ts`.
 - One component per file, named after it in kebab-case (`PromoTile` in `promo-tile.tsx`). The exception is the compound components in `src/components/ui` (Dialog, Sheet, Tabs, Breadcrumb, NativeSelect), whose parts only work together. Shared class strings go in a styles file such as `product-styles.ts`.
 - Every component that takes props has a `<Component>Props` interface right above it. When the props are a union, which an interface can't express, it is a type alias with the same name (`ListingViewProps`). Route files use Next.js's generated `PageProps<"/route">` and `LayoutProps<"/route">` types.

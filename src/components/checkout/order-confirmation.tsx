@@ -9,8 +9,9 @@ import { EmptyState } from "@/components/shared/empty-state"
 import { buttonVariants } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { PIECE_FORMS, pluralize } from "@/lib/arabic-plural"
+import { formatOptions } from "@/lib/catalog/options"
 import { useLastOrder } from "@/lib/checkout/last-order"
-import { formatPrice } from "@/lib/money"
+import { formatPrice, formatShipping } from "@/lib/money"
 
 /** Confirmation page for the demo order: the order number, delivery, amounts and products. */
 export function OrderConfirmation() {
@@ -113,7 +114,7 @@ export function OrderConfirmation() {
             )}
             <OrderDetailRow
               label="الشحن"
-              value={totals.shipping ? formatPrice(totals.shipping) : "مجاناً"}
+              value={formatShipping(totals.shipping ?? 0)}
             />
             <OrderDetailRow
               label="الإجمالي عند الاستلام"
@@ -148,12 +149,9 @@ export function OrderConfirmation() {
               <span className="min-w-0 flex-1 text-sm">
                 <span className="line-clamp-1 font-medium">{line.name}</span>
                 <span className="block text-xs text-muted-foreground">
-                  {[
-                    ...Object.entries(line.options).map(
-                      ([name, value]) => `${name}: ${value}`
-                    ),
-                    `الكمية: ${line.quantity}`,
-                  ].join("، ")}
+                  {[formatOptions(line.options), `الكمية: ${line.quantity}`]
+                    .filter(Boolean)
+                    .join("، ")}
                 </span>
               </span>
               <span className="text-sm font-bold">

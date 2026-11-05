@@ -7,7 +7,6 @@ import {
   useCartStore,
   type CartLine,
 } from "@/lib/state/cart"
-import { useWishlistStore } from "@/lib/state/wishlist"
 
 type NewLine = Omit<CartLine, "quantity">
 
@@ -35,11 +34,9 @@ const charger = line({
 })
 
 const cart = () => useCartStore.getState()
-const wishlist = () => useWishlistStore.getState()
 
 beforeEach(() => {
   useCartStore.setState({ lines: [] })
-  useWishlistStore.setState({ slugs: [] })
 })
 
 describe("adding to the cart", () => {
@@ -130,12 +127,48 @@ describe("syncing the cart with the site data", () => {
   })
 })
 
-describe("wishlist", () => {
-  it("adds and removes, newest first", () => {
-    expect(wishlist().toggle("watch")).toBe(true)
-    expect(wishlist().toggle("shirt")).toBe(true)
-    expect(wishlist().slugs).toEqual(["shirt", "watch"])
-    expect(wishlist().toggle("watch")).toBe(false)
-    expect(wishlist().slugs).toEqual(["shirt"])
+describe("protecting the cart from invalid values", () => {
+  it("ignores adding an invalid quantity and setting the quantity to a non-numeric value", () => {
+    expect(cart().add(shirt, 0)).toBe(0)
+    expect(cart().add(shirt, -2)).toBe(0)
+    expect(cart().add(shirt, 1.5)).toBe(0)
+    expect(cart().lines).toEqual([])
+
+    cart().add(shirt, 2)
+    cart().setQuantity(shirt.sku, Number.NaN)
+    expect(cart().lines[0].quantity).toBe(2)
+  })
+})
+
+describe("syncing the cart after products change", () => {
+  const whiteShirt = line({
+    sku: "SHIRT-01",
+    name: "قميص قطني كلاسيكي",
+    options: { المقاس: "M", اللون: "أبيض" },
+    price: 12900,
+  })
+  const entry = {
+    price: 12900,
+    compareAtPrice: null,
+    stock: 5,
+    options: "اللون=أبيض|المقاس=M",
+  }
+
+  it("removes a line whose SKU now points to other options", () => {
+    cart().add(whiteShirt, 1)
+    const notices = cart().sync({
+      [whiteShirt.sku]: { ...entry, options: "اللون=أزرق|المقاس=S" },
+    })
+    expect(notices).toEqual([
+      { sku: whiteShirt.sku, name: whiteShirt.name, kind: "removed" },
+    ])
+    expect(cart().lines).toEqual([])
+  })
+
+  it("does not rewrite the cart if nothing has changed", () => {
+    cart().add(whiteShirt, 1)
+    const before = cart().lines
+    expect(cart().sync({ [whiteShirt.sku]: entry })).toEqual([])
+    expect(cart().lines).toBe(before)
   })
 })

@@ -97,7 +97,7 @@ Each page is a text file in `src/content/pages`, and the file name is its URL: `
 - **Text formatting:** a blank line between paragraphs, `## ` for a heading, `### ` for a subheading (a question on the FAQ page), `- ` for a bullet, `1. ` for a numbered step, `**text**` for bold, and `[link text](/pages/contact)` for links.
 - **Values that update automatically:** `{store}` for the store name, `{email}`, `{phone}`, `{freeShipping}` for the free shipping threshold, and `{analytics}` for the privacy page's sentence about analytics.
 - **Contact details:** in `src/config/site.ts` under `contact`. The current values are deliberately invalid placeholders: all-zero numbers and an address on the reserved `example.com` domain. Put your real details there, and leave any field empty (`""`) to hide its card. The floating WhatsApp button only appears when a number is set.
-- **Announcement bar:** `announcement` in the same file, or `null` to hide it.
+- **Announcement bar:** `announcement` in the same file, or `null` to hide it. Its text can use the same values as the pages, such as `{freeShipping}`.
 - Every `/pages/...` link in the site menus must have a matching file, otherwise the build stops with a message naming the missing link.
 
 ## Share images
@@ -208,8 +208,12 @@ src/lib/
   search/                      Arabic search: normalizing text, matching products, loading the search index
   state/                       what the browser remembers: the cart, the wishlist and open panels (Zustand stores)
   checkout/                    shipping, coupons, totals, the checkout form rules, building and keeping the demo order
-  content/                     reading and checking the static pages
+  content/                     the static pages: reading and checking them, their text format, and the values
+                               such as {store} that fill them
   og/                          share image layout and drawing
+  routes.ts                    the addresses of the product, category and static pages
+  zod.ts                       Zod, set up once (Arabic messages, no eval): import z from here
+  static-json.ts               loads a JSON file the build writes, once per visit, and checks its shape
   money.ts                     prices in halalas, and formatting them
   dates.ts                     today's date and deal end times in the store's time zone
   arabic-plural.ts             Arabic plural forms for counts
@@ -285,7 +289,7 @@ The site is built once (`pnpm build`) into plain files. Most of the work happens
 ## Quality
 
 - Before every Git commit the code is formatted and linted automatically (Husky and lint-staged), and `DESIGN.md` is linted when it changes. Any ESLint warning blocks the commit.
-- ESLint also rejects `any`, type assertions (`as`), non-null assertions (`!`) and array positions used as list keys. Data the code reads at runtime is checked with the type guards in `src/lib/guards.ts` instead of being assumed.
+- ESLint also rejects `any`, type assertions (`as`), non-null assertions (`!`) and array positions used as list keys. Data the code reads at runtime is checked with the type guards in `src/lib/guards.ts` and `src/lib/catalog/guards.ts` instead of being assumed, and Zod is imported from `src/lib/zod.ts`, where it is set up once.
 - Each component lives in its own file, named after it, with a `<Component>Props` interface for its props. Only the compound components in `src/components/ui` (such as a dialog and its parts) share a file.
 - Code comments, test names, CI step names and commit messages are in English. The interface, the product data and the messages the store owner reads stay in Arabic.
 - Claude follows Vercel's React guides for performance and component structure: the skills `vercel-react-best-practices` and `vercel-composition-patterns` in `.claude/skills`, copied unchanged from [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) (MIT).

@@ -12,6 +12,7 @@ import {
   getProducts,
   getRelatedProducts,
 } from "@/lib/catalog/catalog"
+import { categoryTrail, productPath } from "@/lib/routes"
 import {
   breadcrumbJsonLd,
   openGraph,
@@ -38,11 +39,11 @@ export async function generateMetadata({
   return {
     title: product.name,
     description,
-    alternates: { canonical: `/product/${product.slug}/` },
+    alternates: { canonical: productPath(product.slug) },
     openGraph: openGraph({
       title: product.name,
       description,
-      path: `/product/${product.slug}/`,
+      path: productPath(product.slug),
       image: shareImages.product(product.slug),
     }),
   }
@@ -56,10 +57,7 @@ export default async function ProductPage({
   if (!product) notFound()
 
   const related = getRelatedProducts(product)
-  const trail = product.categoryPath.map((link) => ({
-    name: link.name,
-    href: `/category/${link.slug}`,
-  }))
+  const trail = categoryTrail(product.categoryPath)
 
   return (
     // The info tabs and the related products are rendered only when they come near the screen
@@ -100,11 +98,8 @@ export default async function ProductPage({
       <JsonLd data={productJsonLd(product)} />
       <JsonLd
         data={breadcrumbJsonLd([
-          ...product.categoryPath.map((link) => ({
-            name: link.name,
-            path: `/category/${link.slug}`,
-          })),
-          { name: product.name, path: `/product/${product.slug}` },
+          ...trail,
+          { name: product.name, href: productPath(product.slug) },
         ])}
       />
     </div>

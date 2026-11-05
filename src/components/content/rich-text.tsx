@@ -1,79 +1,13 @@
 import { InlineText } from "@/components/content/inline-text"
+import { parseBlocks } from "@/lib/content/text-format"
 import { cn } from "@/lib/utils"
-
-/** `line` is where the block or item starts in the source text (from 1), and is its React key. */
-type ListItem = { text: string; line: number }
-
-type Block =
-  | { type: "heading"; level: 2 | 3; text: string; line: number }
-  | { type: "paragraph"; text: string; line: number }
-  | { type: "list"; ordered: boolean; items: ListItem[]; line: number }
-
-const ORDERED_ITEM = /^\d+[.)]\s+/
-
-/**
- * Turns plain text into paragraphs, headings and lists:
- * "## " heading, "### " subheading, "- " bullet, "1. " numbered step,
- * and a blank line separates paragraphs.
- */
-export function parseBlocks(text: string): Block[] {
-  const blocks: Block[] = []
-  let paragraph: string[] = []
-  let paragraphLine = 0
-  const flush = () => {
-    if (paragraph.length) {
-      blocks.push({
-        type: "paragraph",
-        text: paragraph.join(" "),
-        line: paragraphLine,
-      })
-    }
-    paragraph = []
-  }
-  for (const [position, raw] of text.split("\n").entries()) {
-    const line = position + 1
-    const content = raw.trim()
-    if (!content) {
-      flush()
-      continue
-    }
-    const ordered = ORDERED_ITEM.test(content)
-    if (content.startsWith("## ") || content.startsWith("### ")) {
-      flush()
-      const level = content.startsWith("### ") ? 3 : 2
-      blocks.push({
-        type: "heading",
-        level,
-        text: content.slice(level + 1),
-        line,
-      })
-    } else if (content.startsWith("- ") || ordered) {
-      flush()
-      const item = {
-        text: ordered ? content.replace(ORDERED_ITEM, "") : content.slice(2),
-        line,
-      }
-      const last = blocks.at(-1)
-      if (last?.type === "list" && last.ordered === ordered) {
-        last.items.push(item)
-      } else {
-        blocks.push({ type: "list", ordered, items: [item], line })
-      }
-    } else {
-      if (paragraph.length === 0) paragraphLine = line
-      paragraph.push(content)
-    }
-  }
-  flush()
-  return blocks
-}
 
 interface RichTextProps {
   text: string
   className?: string
 }
 
-/** Formatted text for product descriptions and static pages, without HTML, so no code gets injected. */
+/** Formatted text for product descriptions and static pages, in the format of src/lib/content/text-format.ts. */
 export function RichText({ text, className }: RichTextProps) {
   return (
     <div className={cn("space-y-3 leading-8 text-foreground/90", className)}>

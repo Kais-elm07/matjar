@@ -34,7 +34,23 @@ const eslintConfig = defineConfig([
       ],
       // One component per file
       "react/no-multi-comp": "error",
+      // Zod is set up once in src/lib/zod.ts (Arabic messages, no eval), so every rule imports it from there
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "zod",
+              message: "Import z from @/lib/zod, where Zod is set up.",
+            },
+          ],
+        },
+      ],
     },
+  },
+  {
+    files: ["src/lib/zod.ts"],
+    rules: { "no-restricted-imports": "off" },
   },
   {
     // Compound components keep their parts together (a dialog with its trigger, content and title)

@@ -3,7 +3,7 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
-import { isRecord } from "@/lib/guards"
+import { isRecord, isString } from "@/lib/guards"
 import { safeStorage } from "@/lib/state/storage"
 
 type WishlistState = {
@@ -46,13 +46,7 @@ export const useWishlistStore = create<WishlistState>()(
         return {
           ...current,
           slugs: Array.isArray(slugs)
-            ? [
-                ...new Set(
-                  slugs.filter(
-                    (slug): slug is string => typeof slug === "string"
-                  )
-                ),
-              ]
+            ? [...new Set(slugs.filter(isString))]
             : [],
         }
       },

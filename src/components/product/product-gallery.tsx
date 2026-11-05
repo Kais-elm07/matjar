@@ -81,7 +81,7 @@ export function ProductGallery({
       <div className="relative lg:min-w-0 lg:flex-1">
         <div
           ref={trackRef}
-          className="flex snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto overscroll-x-contain rounded-xl border bg-muted [&::-webkit-scrollbar]:hidden"
+          className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain rounded-xl border bg-muted"
         >
           {images.map((image, index) => (
             <div
@@ -132,7 +132,7 @@ export function ProductGallery({
       </div>
 
       {images.length > 1 && (
-        <ul className="flex [scrollbar-width:none] gap-2 overflow-x-auto pb-1 lg:order-first lg:max-h-[34rem] lg:flex-col lg:overflow-x-visible lg:overflow-y-auto lg:pb-0">
+        <ul className="no-scrollbar flex gap-2 overflow-x-auto pb-1 lg:order-first lg:max-h-[34rem] lg:flex-col lg:overflow-x-visible lg:overflow-y-auto lg:pb-0">
           {images.map((image, index) => (
             <li key={image.src} className="shrink-0">
               <button

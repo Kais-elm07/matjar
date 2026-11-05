@@ -1,19 +1,16 @@
 import "server-only"
 
-import { z } from "zod"
-
 import { coupons as couponData } from "@/data/coupons"
 import { shipping as shippingData } from "@/data/shipping"
 import type { CheckoutConfig } from "@/lib/checkout/types"
 import { toMinorUnits } from "@/lib/money"
+import { z } from "@/lib/zod"
 
 /**
  * Checkout settings, validated at build time: shipping and coupons.
  * Any error in the two files stops the build with an Arabic message, and the result is passed to the checkout page.
  * The files are read and checked when this module is first imported.
  */
-
-z.config(z.locales.ar())
 
 const amount = z.number().min(0, { error: "المبلغ لا يمكن أن يكون سالباً" })
 

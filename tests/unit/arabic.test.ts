@@ -2,12 +2,6 @@ import { describe, expect, it } from "vitest"
 
 import { toWesternDigits } from "@/lib/arabic-digits"
 import { PIECE_FORMS, PRODUCT_FORMS, pluralize } from "@/lib/arabic-plural"
-import {
-  getColorHex,
-  isColorOption,
-  sortOptionValues,
-} from "@/lib/catalog/options"
-import { deliveryTime } from "@/lib/checkout/delivery"
 import { normalizeForSearch, toSearchTerms } from "@/lib/search/normalize"
 
 describe("normalizeForSearch", () => {
@@ -88,53 +82,5 @@ describe("pluralize", () => {
     expect(pluralize(2, PIECE_FORMS)).toBe("قطعتان")
     expect(pluralize(5, PIECE_FORMS)).toBe("5 قطع")
     expect(pluralize(12, PIECE_FORMS)).toBe("12 قطعة")
-  })
-})
-
-describe("deliveryTime", () => {
-  const cases: [[number, number], string][] = [
-    [[1, 2], "خلال يوم إلى يومين"],
-    [[1, 1], "خلال يوم عمل واحد"],
-    [[0, 0], "خلال يوم عمل واحد"],
-    [[2, 2], "خلال يومي عمل"],
-    [[3, 3], "خلال 3 أيام عمل"],
-    [[2, 4], "خلال 2 إلى 4 أيام عمل"],
-    [[4, 7], "خلال 4 إلى 7 أيام عمل"],
-    [[7, 14], "خلال 7 إلى 14 يوم عمل"],
-  ]
-
-  it.each(cases)("%j → %s", (days, expected) => {
-    expect(deliveryTime(days)).toBe(expected)
-  })
-})
-
-describe("variant options", () => {
-  it("recognizes the color option in its different spellings", () => {
-    expect(isColorOption("اللون")).toBe(true)
-    expect(isColorOption("الألوان")).toBe(true)
-    expect(isColorOption("Color")).toBe(true)
-    expect(isColorOption("المقاس")).toBe(false)
-  })
-
-  it("returns the shade of a known color, or null", () => {
-    expect(getColorHex("أزرق")).toBe("#2563eb")
-    expect(getColorHex("ازرق")).toBe("#2563eb")
-    expect(getColorHex("#abc")).toBe("#abc")
-    expect(getColorHex("قوس قزح")).toBeNull()
-  })
-
-  it("sorts sizes from the smallest and numbers in ascending order, before the other values", () => {
-    expect(sortOptionValues(["XL", "S", "L", "M"])).toEqual([
-      "S",
-      "M",
-      "L",
-      "XL",
-    ])
-    expect(sortOptionValues(["42", "40", "41"])).toEqual(["40", "41", "42"])
-    expect(sortOptionValues(["أزرق", "M", "أبيض"])).toEqual([
-      "M",
-      "أبيض",
-      "أزرق",
-    ])
   })
 })

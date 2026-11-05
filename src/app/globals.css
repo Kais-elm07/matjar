@@ -47,7 +47,7 @@
   /* Orange: primary buttons, prices, counters, badges and the active tab. Text on it is dark */
   --primary: #ffa629;
   --primary-foreground: #111111;
-  /* The raised surface (surface-muted in DESIGN.md): the search field, image boxes, icon circles, scroll buttons and skeletons */
+  /* The light surface (surface-muted in DESIGN.md): the search field, image boxes, icon circles, scroll buttons and skeletons */
   --muted: #2a2a2e;
   --muted-foreground: #a1a1a6;
   /* Light red for errors and sold out, yellow for the "بقي عدد قليل" (only a few left) notice, green for "متوفر" (in stock), and WhatsApp green for its floating button */

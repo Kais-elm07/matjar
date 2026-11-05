@@ -19,6 +19,7 @@ import { optionsKey } from "@/lib/catalog/variant-key"
 import { getCheckoutConfig } from "@/lib/checkout/config"
 import { storeToday } from "@/lib/dates"
 import { discountPercent, toMinorUnits } from "@/lib/money"
+import { productPath } from "@/lib/routes"
 
 /** Checks on the current store data: they fail if a product or category is added in a way that breaks the site. */
 describe("actual store data", () => {
@@ -83,7 +84,9 @@ describe("actual store data", () => {
       ...promos,
       ...(wideBanner ? [wideBanner] : []),
     ]) {
-      const slug = banner.href.replace("/product/", "")
+      // The address is /product/<slug>/
+      const slug = banner.href.split("/")[2]
+      expect(banner.href).toBe(productPath(slug))
       expect(getProduct(slug), banner.href).toBeDefined()
     }
   })

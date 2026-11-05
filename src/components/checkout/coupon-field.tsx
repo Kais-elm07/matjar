@@ -121,7 +121,7 @@ export function CouponField({
           placeholder="WELCOME10"
           aria-invalid={Boolean(error)}
           aria-describedby={error ? "coupon-error" : undefined}
-          className="h-11 bg-background px-3 text-end text-base uppercase md:text-base"
+          className="text-end uppercase"
         />
         <Button type="button" variant="default" size="xl" onClick={apply}>
           تطبيق

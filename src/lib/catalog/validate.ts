@@ -1,5 +1,3 @@
-import type { z } from "zod"
-
 import { siteConfig } from "@/config/site"
 import { isColorOption } from "@/lib/catalog/options"
 import {
@@ -11,6 +9,13 @@ import {
 import { optionsKey } from "@/lib/catalog/variant-key"
 import { UTC_OFFSET_PATTERN } from "@/lib/dates"
 import { isRecord } from "@/lib/guards"
+import type { z } from "@/lib/zod"
+
+/**
+ * Checks the categories and products files together, beyond the rules for each field in schema.ts,
+ * and gathers every problem into one Arabic message that points the store owner to the product and
+ * the field. Any problem stops the build, so a store with broken data is never published.
+ */
 
 /** The field path as the store owner understands it: variants[2].price (counting from 1, not 0). */
 function fieldPath(path: PropertyKey[]) {
@@ -24,72 +29,58 @@ function fieldPath(path: PropertyKey[]) {
     .join("")
 }
 
-/**
- * Validates the categories and products files together, and gathers every error into one Arabic message
- * that points the store owner to the product and the field. Any error stops the build, so a store with broken data is never published.
- */
-export function validateCatalogData(
-  categoryData: unknown[],
-  productData: unknown[]
+/** The items of a data file that follow the schema, and a message for every problem in the others. */
+function parseList<T>(
+  schema: z.ZodType<T>,
+  items: unknown[],
+  label: (item: unknown, index: number) => string
 ) {
+  const parsed: T[] = []
   const problems: string[] = []
+  items.forEach((item, index) => {
+    const result = schema.safeParse(item)
+    if (result.success) {
+      parsed.push(result.data)
+      return
+    }
+    for (const issue of result.error.issues) {
+      problems.push(
+        `${label(item, index)}، الحقل ${fieldPath(issue.path)}: ${issue.message}`
+      )
+    }
+  })
+  return { parsed, problems }
+}
 
-  function parseList<T>(
-    schema: z.ZodType<T>,
-    items: unknown[],
-    label: (item: unknown, index: number) => string
-  ) {
-    const parsed: T[] = []
-    items.forEach((item, index) => {
-      const result = schema.safeParse(item)
-      if (result.success) {
-        parsed.push(result.data)
-        return
-      }
-      for (const issue of result.error.issues) {
-        problems.push(
-          `${label(item, index)}، الحقل ${fieldPath(issue.path)}: ${issue.message}`
-        )
-      }
-    })
-    return parsed
-  }
+const slugOf = (item: unknown, index: number) =>
+  isRecord(item) && typeof item.slug === "string"
+    ? item.slug
+    : `رقم ${index + 1}`
 
-  const slugOf = (item: unknown, index: number) =>
-    isRecord(item) && typeof item.slug === "string"
-      ? item.slug
-      : `رقم ${index + 1}`
+/** The store's time zone in src/config/site.ts, which decides the day a deal ends. */
+function checkSiteSettings() {
+  return UTC_OFFSET_PATTERN.test(siteConfig.utcOffset)
+    ? []
+    : [
+        `فرق التوقيت utcOffset في src/config/site.ts يجب أن يكون بصيغة +03:00، والمكتوب "${siteConfig.utcOffset}".`,
+      ]
+}
 
-  const categories = parseList<ParsedCategory>(
-    categorySchema,
-    categoryData,
-    (item, i) => `الفئة "${slugOf(item, i)}"`
-  )
-  const products = parseList<ParsedProduct>(
-    productSchema,
-    productData,
-    (item, i) => `المنتج "${slugOf(item, i)}"`
-  )
-
-  if (!UTC_OFFSET_PATTERN.test(siteConfig.utcOffset)) {
-    problems.push(
-      `فرق التوقيت utcOffset في src/config/site.ts يجب أن يكون بصيغة +03:00، والمكتوب "${siteConfig.utcOffset}".`
-    )
-  }
-
-  // Checks that link the categories to each other
-  const categorySlugs = new Set<string>()
+/** Categories that repeat a slug, name a parent that does not exist, or are their own parent. */
+function checkCategories(categories: ParsedCategory[]) {
+  const problems: string[] = []
+  const slugs = new Set<string>()
   for (const category of categories) {
-    if (categorySlugs.has(category.slug)) {
+    if (slugs.has(category.slug)) {
       problems.push(`رابط الفئة "${category.slug}" مكرر.`)
     }
-    categorySlugs.add(category.slug)
+    slugs.add(category.slug)
   }
 
   const parents = new Map(categories.map((c) => [c.slug, c.parent]))
   for (const category of categories) {
     if (!category.parent) continue
-    if (!categorySlugs.has(category.parent)) {
+    if (!slugs.has(category.parent)) {
       problems.push(
         `الفئة "${category.slug}": الفئة الأم "${category.parent}" غير موجودة.`
       )
@@ -107,82 +98,121 @@ export function validateCatalogData(
       current = parents.get(current)
     }
   }
+  return problems
+}
 
-  // Checks that link the products to the categories and to each other
-  const productSlugs = new Set<string>()
-  const skus = new Map<string, string>()
-  for (const product of products) {
-    const where = `المنتج "${product.slug}"`
-    if (productSlugs.has(product.slug)) {
-      problems.push(`رابط المنتج "${product.slug}" مكرر.`)
-    }
-    productSlugs.add(product.slug)
+/**
+ * One product's variants, image colors and deal end date. `skus` holds every SKU seen so far with
+ * its product's slug, so a SKU used by two products is caught.
+ */
+function checkProduct(product: ParsedProduct, skus: Map<string, string>) {
+  const problems: string[] = []
+  const where = `المنتج "${product.slug}"`
 
-    if (!categorySlugs.has(product.category)) {
-      problems.push(`${where}: الفئة "${product.category}" غير موجودة.`)
-    }
-
-    const optionNames = Object.keys(product.variants[0].options)
-      .sort()
-      .join("|")
-    const combinations = new Set<string>()
-    for (const variant of product.variants) {
-      const owner = skus.get(variant.sku)
-      if (owner) {
-        problems.push(
-          `${where}: رمز المتغير "${variant.sku}" مستخدم أيضاً في "${owner}".`
-        )
-      }
-      skus.set(variant.sku, product.slug)
-      if (Object.keys(variant.options).sort().join("|") !== optionNames) {
-        problems.push(
-          `${where}: المتغير "${variant.sku}" له أسماء خيارات مختلفة عن باقي المتغيرات.`
-        )
-      }
-      // Two variants with the same options: the second can never be chosen
-      const combination = optionsKey(variant.options)
-      if (combinations.has(combination)) {
-        problems.push(
-          `${where}: المتغير "${variant.sku}" يكرر خيارات متغير آخر (${Object.values(variant.options).join(" / ") || "دون خيارات"}).`
-        )
-      }
-      combinations.add(combination)
-    }
-
-    const colorName = Object.keys(product.variants[0].options).find(
-      isColorOption
-    )
-    const colorValues = new Set(
-      product.variants.map((v) => (colorName ? v.options[colorName] : ""))
-    )
-    for (const image of product.images) {
-      if (!image.color) continue
-      if (!colorName) {
-        problems.push(
-          `${where}: للصورة لون "${image.color}" لكن المنتج ليس له خيار لون.`
-        )
-      } else if (!colorValues.has(image.color)) {
-        problems.push(
-          `${where}: لون الصورة "${image.color}" غير موجود في ألوان المتغيرات.`
-        )
-      }
-    }
-
-    if (
-      product.saleEndsAt &&
-      !product.variants.some((variant) => variant.compareAtPrice !== undefined)
-    ) {
+  const optionNames = Object.keys(product.variants[0].options).sort().join("|")
+  const combinations = new Set<string>()
+  for (const variant of product.variants) {
+    const owner = skus.get(variant.sku)
+    if (owner) {
       problems.push(
-        `${where}: تاريخ نهاية العرض يحتاج سعراً قبل الخصم في متغير واحد على الأقل.`
+        `${where}: رمز المتغير "${variant.sku}" مستخدم أيضاً في "${owner}".`
+      )
+    }
+    skus.set(variant.sku, product.slug)
+    if (Object.keys(variant.options).sort().join("|") !== optionNames) {
+      problems.push(
+        `${where}: المتغير "${variant.sku}" له أسماء خيارات مختلفة عن باقي المتغيرات.`
+      )
+    }
+    // Two variants with the same options: the second can never be chosen
+    const combination = optionsKey(variant.options)
+    if (combinations.has(combination)) {
+      problems.push(
+        `${where}: المتغير "${variant.sku}" يكرر خيارات متغير آخر (${Object.values(variant.options).join(" / ") || "دون خيارات"}).`
+      )
+    }
+    combinations.add(combination)
+  }
+
+  const colorName = Object.keys(product.variants[0].options).find(isColorOption)
+  const colorValues = new Set(
+    product.variants.map((v) => (colorName ? v.options[colorName] : ""))
+  )
+  for (const image of product.images) {
+    if (!image.color) continue
+    if (!colorName) {
+      problems.push(
+        `${where}: للصورة لون "${image.color}" لكن المنتج ليس له خيار لون.`
+      )
+    } else if (!colorValues.has(image.color)) {
+      problems.push(
+        `${where}: لون الصورة "${image.color}" غير موجود في ألوان المتغيرات.`
       )
     }
   }
 
+  if (
+    product.saleEndsAt &&
+    !product.variants.some((variant) => variant.compareAtPrice !== undefined)
+  ) {
+    problems.push(
+      `${where}: تاريخ نهاية العرض يحتاج سعراً قبل الخصم في متغير واحد على الأقل.`
+    )
+  }
+  return problems
+}
+
+/** Products that repeat a slug or name a category that does not exist, then each product's own checks. */
+function checkProducts(products: ParsedProduct[], categorySlugs: Set<string>) {
+  const problems: string[] = []
+  const slugs = new Set<string>()
+  const skus = new Map<string, string>()
+  for (const product of products) {
+    if (slugs.has(product.slug)) {
+      problems.push(`رابط المنتج "${product.slug}" مكرر.`)
+    }
+    slugs.add(product.slug)
+    if (!categorySlugs.has(product.category)) {
+      problems.push(
+        `المنتج "${product.slug}": الفئة "${product.category}" غير موجودة.`
+      )
+    }
+    problems.push(...checkProduct(product, skus))
+  }
+  return problems
+}
+
+/** Validates the categories and products files together, and returns their parsed data. */
+export function validateCatalogData(
+  categoryData: unknown[],
+  productData: unknown[]
+) {
+  const categories = parseList<ParsedCategory>(
+    categorySchema,
+    categoryData,
+    (item, i) => `الفئة "${slugOf(item, i)}"`
+  )
+  const products = parseList<ParsedProduct>(
+    productSchema,
+    productData,
+    (item, i) => `المنتج "${slugOf(item, i)}"`
+  )
+  const categorySlugs = new Set(
+    categories.parsed.map((category) => category.slug)
+  )
+
+  const problems = [
+    ...categories.problems,
+    ...products.problems,
+    ...checkSiteSettings(),
+    ...checkCategories(categories.parsed),
+    ...checkProducts(products.parsed, categorySlugs),
+  ]
   if (problems.length > 0) {
     throw new Error(
       `ملفات بيانات المتجر فيها ${problems.length} مشكلة يجب إصلاحها:\n- ${problems.join("\n- ")}`
     )
   }
 
-  return { categories, products }
+  return { categories: categories.parsed, products: products.parsed }
 }

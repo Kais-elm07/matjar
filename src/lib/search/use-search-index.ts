@@ -4,24 +4,10 @@ import { useCallback, useEffect, useState } from "react"
 
 import { isSearchIndex } from "@/lib/catalog/guards"
 import type { SearchCardData } from "@/lib/catalog/types"
-
-let request: Promise<SearchCardData[]> | null = null
+import { staticJsonLoader } from "@/lib/static-json"
 
 /** Loads the search index only once and shares it between all search boxes on the page. */
-function loadSearchIndex() {
-  request ??= fetch("/search-index.json")
-    .then(async (response) => {
-      if (!response.ok) throw new Error(`HTTP ${response.status}`)
-      const index: unknown = await response.json()
-      if (!isSearchIndex(index)) throw new Error("Invalid search index")
-      return index
-    })
-    .catch((error: unknown) => {
-      request = null // Allow a retry
-      throw error
-    })
-  return request
-}
+const loadSearchIndex = staticJsonLoader("/search-index.json", isSearchIndex)
 
 type IndexState = { data: SearchCardData[] | null; error: boolean }
 

@@ -17,7 +17,6 @@ import { CartNotices } from "@/components/cart/cart-notices"
 import { CheckoutField } from "@/components/checkout/checkout-field"
 import { CheckoutSection } from "@/components/checkout/checkout-section"
 import { CheckoutSkeleton } from "@/components/checkout/checkout-skeleton"
-import { CHECKOUT_INPUT } from "@/components/checkout/checkout-styles"
 import { OrderSummary } from "@/components/checkout/order-summary"
 import { ShippingOption } from "@/components/checkout/shipping-option"
 import { EmptyState } from "@/components/shared/empty-state"
@@ -43,7 +42,6 @@ import { formatPrice } from "@/lib/money"
 import { cartSubtotal, useCartStore } from "@/lib/state/cart"
 import { useCartSync } from "@/lib/state/cart-sync"
 import { useCartRestored } from "@/lib/state/hydration"
-import { cn } from "@/lib/utils"
 
 interface CheckoutViewProps {
   config: CheckoutConfig
@@ -186,11 +184,7 @@ export function CheckoutView({ config }: CheckoutViewProps) {
               error={errors.fullName?.message}
               className="sm:col-span-2"
             >
-              <Input
-                autoComplete="name"
-                className={CHECKOUT_INPUT}
-                {...field("fullName")}
-              />
+              <Input autoComplete="name" {...field("fullName")} />
             </CheckoutField>
             <CheckoutField
               id="phone"
@@ -204,7 +198,7 @@ export function CheckoutView({ config }: CheckoutViewProps) {
                 autoComplete="tel"
                 dir="ltr"
                 placeholder="05xxxxxxxx"
-                className={cn(CHECKOUT_INPUT, "text-end")}
+                className="text-end"
                 {...field("phone", { hint: true })}
               />
             </CheckoutField>
@@ -219,7 +213,7 @@ export function CheckoutView({ config }: CheckoutViewProps) {
                 inputMode="email"
                 autoComplete="email"
                 dir="ltr"
-                className={cn(CHECKOUT_INPUT, "text-end")}
+                className="text-end"
                 {...field("email")}
               />
             </CheckoutField>
@@ -235,7 +229,7 @@ export function CheckoutView({ config }: CheckoutViewProps) {
             >
               <NativeSelect
                 autoComplete="address-level2"
-                className="w-full [&_select]:h-11 [&_select]:bg-background [&_select]:text-base"
+                className="w-full"
                 {...field("city", {
                   // Express delivery is available in certain cities, so elsewhere the choice goes back to standard
                   onChange: (event) => {
@@ -259,11 +253,7 @@ export function CheckoutView({ config }: CheckoutViewProps) {
               label="الحي"
               error={errors.district?.message}
             >
-              <Input
-                autoComplete="address-level3"
-                className={CHECKOUT_INPUT}
-                {...field("district")}
-              />
+              <Input autoComplete="address-level3" {...field("district")} />
             </CheckoutField>
             <CheckoutField
               id="street"
@@ -271,11 +261,7 @@ export function CheckoutView({ config }: CheckoutViewProps) {
               error={errors.street?.message}
               className="sm:col-span-2"
             >
-              <Input
-                autoComplete="street-address"
-                className={CHECKOUT_INPUT}
-                {...field("street")}
-              />
+              <Input autoComplete="street-address" {...field("street")} />
             </CheckoutField>
             <CheckoutField
               id="notes"
@@ -287,7 +273,6 @@ export function CheckoutView({ config }: CheckoutViewProps) {
               <Textarea
                 rows={3}
                 placeholder="مثال: الدور الثاني، بجانب المسجد"
-                className="bg-background px-3 text-base md:text-base"
                 {...field("notes")}
               />
             </CheckoutField>

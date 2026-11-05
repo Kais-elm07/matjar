@@ -1,54 +1,42 @@
 import Link from "next/link"
 
-const INLINE = /(\*\*[^*]+\*\*|\[[^\]]+\]\([^)\s]+\))/g
-const LINK = /^\[([^\]]+)\]\(([^)\s]+)\)$/
+import { parseInline } from "@/lib/content/text-format"
 
-/** The text split into plain text, bold and links, each with where it starts in the line. */
-function inlineParts(text: string) {
-  const parts: { text: string; offset: number }[] = []
-  let offset = 0
-  for (const part of text.split(INLINE)) {
-    if (part) parts.push({ text: part, offset })
-    offset += part.length
-  }
-  return parts
-}
+const LINK_CLASS =
+  "rounded-sm font-medium text-primary underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
 
 interface InlineTextProps {
   text: string
 }
 
-/** Inline formatting: **bold text** and [link text](/pages/contact). */
+/** Inline formatting: **bold text** and [link text](/pages/contact), parsed in src/lib/content/text-format.ts. */
 export function InlineText({ text }: InlineTextProps) {
-  return inlineParts(text).map(({ text: part, offset }) => {
-    if (part.startsWith("**") && part.endsWith("**")) {
+  return parseInline(text).map((part) => {
+    if (part.type === "bold") {
       return (
-        <strong key={offset} className="font-bold text-foreground">
-          {part.slice(2, -2)}
+        <strong key={part.offset} className="font-bold text-foreground">
+          {part.text}
         </strong>
       )
     }
-    const link = part.match(LINK)
-    if (link) {
-      const [, label, href] = link
-      const className =
-        "rounded-sm font-medium text-primary underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-      return href.startsWith("/") ? (
-        <Link key={offset} href={href} className={className}>
-          {label}
+    if (part.type === "link") {
+      // Links inside the store stay in the same tab, and outside links open in a new one
+      return part.href.startsWith("/") ? (
+        <Link key={part.offset} href={part.href} className={LINK_CLASS}>
+          {part.text}
         </Link>
       ) : (
         <a
-          key={offset}
-          href={href}
+          key={part.offset}
+          href={part.href}
           target="_blank"
           rel="noopener noreferrer"
-          className={className}
+          className={LINK_CLASS}
         >
-          {label}
+          {part.text}
         </a>
       )
     }
-    return part
+    return part.text
   })
 }

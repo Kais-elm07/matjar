@@ -91,7 +91,7 @@ function TabsList({ className, ...props }: TabsListProps) {
       data-slot="tabs-list"
       onKeyDown={moveBetweenTabs}
       className={cn(
-        "flex w-fit [scrollbar-width:none] items-center gap-2 overflow-x-auto",
+        "no-scrollbar flex w-fit items-center gap-2 overflow-x-auto",
         className
       )}
       {...props}

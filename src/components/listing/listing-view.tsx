@@ -210,7 +210,7 @@ export function ListingView(props: ListingViewProps) {
                 const sort = event.target.value
                 if (isSortValue(sort)) navigate({ sort })
               }}
-              className="[&_select]:h-11 [&_select]:min-w-32 [&_select]:text-sm"
+              className="[&_select]:min-w-32 [&_select]:text-sm"
             >
               {sortOptionsFor(params.q).map((option) => (
                 <NativeSelectOption key={option.value} value={option.value}>

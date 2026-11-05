@@ -1,14 +1,11 @@
-import { z } from "zod"
-
 import { siteConfig } from "@/config/site"
 import { fitsCurrency } from "@/lib/money"
+import { z } from "@/lib/zod"
 
 /**
  * Rules for the categories and products files in src/data, with an Arabic message for each field.
  * They run at build time only; the checks that link the two files together are in validate.ts.
  */
-
-z.config(z.locales.ar())
 
 const slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
   error:

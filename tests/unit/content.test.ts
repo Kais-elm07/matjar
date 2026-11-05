@@ -1,10 +1,14 @@
 import { describe, expect, it } from "vitest"
 
-import { parseFaq, plainAnswer } from "@/components/content/faq-list"
-import { parseBlocks } from "@/components/content/rich-text"
 import { siteConfig } from "@/config/site"
 import { getProduct } from "@/lib/catalog/catalog"
 import { getContentPage, getContentPages } from "@/lib/content/pages"
+import {
+  parseBlocks,
+  parseFaq,
+  parseInline,
+  toPlainText,
+} from "@/lib/content/text-format"
 import { toSchemaPrice } from "@/lib/money"
 import {
   absoluteImageUrl,
@@ -97,10 +101,32 @@ describe("text formatting", () => {
     ])
   })
 
-  it("strips the formatting from an answer for search engines", () => {
+  it("splits a line into plain text, bold text and links", () => {
+    const line = "راسلنا **الآن** عبر [صفحة التواصل](/pages/contact)."
+    const parts = parseInline(line)
+    expect(parts.map((part) => [part.type, part.text])).toEqual([
+      ["text", "راسلنا "],
+      ["bold", "الآن"],
+      ["text", " عبر "],
+      ["link", "صفحة التواصل"],
+      ["text", "."],
+    ])
+    expect(parts[3]).toMatchObject({ href: "/pages/contact" })
+    // Each part's offset is where it starts in the line, so it can be a React key
+    expect(parts.map((part) => part.offset)).toEqual(
+      ["راسلنا ", "**الآن**", " عبر ", "[صفحة", "."].map((piece) =>
+        line.indexOf(piece)
+      )
+    )
+  })
+
+  it("strips the formatting for search engines", () => {
     expect(
-      plainAnswer("راسلنا **الآن** عبر [صفحة التواصل](/pages/contact).\n")
+      toPlainText("راسلنا **الآن** عبر [صفحة التواصل](/pages/contact).\n")
     ).toBe("راسلنا الآن عبر صفحة التواصل.")
+    expect(toPlainText("## الضمان\n\n1. احتفظ **بالفاتورة**\n2. راسلنا")).toBe(
+      "الضمان احتفظ بالفاتورة، راسلنا."
+    )
   })
 })
 
@@ -130,7 +156,7 @@ describe("search engine and sharing data", () => {
 
   it("starts the breadcrumb with the home page", () => {
     const data = breadcrumbJsonLd([
-      { name: "ملابس", path: "/category/clothing" },
+      { name: "ملابس", href: "/category/clothing" },
     ])
     expect(
       data.itemListElement.map((item) => [item.position, item.name])

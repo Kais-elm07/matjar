@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 
+import { deliveryTime } from "@/lib/checkout/delivery"
 import {
   checkoutSchema,
   normalizePhone,
@@ -309,5 +310,22 @@ describe("buildOrder", () => {
         now,
       })
     ).toBeNull()
+  })
+})
+
+describe("deliveryTime", () => {
+  const cases: [[number, number], string][] = [
+    [[1, 2], "خلال يوم إلى يومين"],
+    [[1, 1], "خلال يوم عمل واحد"],
+    [[0, 0], "خلال يوم عمل واحد"],
+    [[2, 2], "خلال يومي عمل"],
+    [[3, 3], "خلال 3 أيام عمل"],
+    [[2, 4], "خلال 2 إلى 4 أيام عمل"],
+    [[4, 7], "خلال 4 إلى 7 أيام عمل"],
+    [[7, 14], "خلال 7 إلى 14 يوم عمل"],
+  ]
+
+  it.each(cases)("%j → %s", (days, expected) => {
+    expect(deliveryTime(days)).toBe(expected)
   })
 })

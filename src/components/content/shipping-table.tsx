@@ -1,10 +1,12 @@
 import { getCheckoutConfig } from "@/lib/checkout/config"
 import { deliveryTime } from "@/lib/checkout/delivery"
+import { shippingFee } from "@/lib/checkout/totals"
 import { formatPrice } from "@/lib/money"
 
 /** Table of cities with delivery prices and times, from src/data/shipping.ts so it matches the checkout page. */
 export function ShippingTable() {
-  const { cities, express, freeShippingFrom } = getCheckoutConfig()
+  const config = getCheckoutConfig()
+  const { cities, express, freeShippingFrom } = config
 
   return (
     <div className="space-y-3">
@@ -34,14 +36,14 @@ export function ShippingTable() {
                   {city.name}
                 </th>
                 <td className="p-3 font-bold text-primary">
-                  {formatPrice(city.fee)}
+                  {formatPrice(shippingFee(city, "standard", config))}
                 </td>
                 <td className="p-3">{deliveryTime(city.days)}</td>
                 <td className="p-3">
                   {city.express ? (
                     <>
                       <span className="font-bold text-primary">
-                        {formatPrice(city.fee + express.extraFee)}
+                        {formatPrice(shippingFee(city, "express", config))}
                       </span>{" "}
                       <span className="text-muted-foreground">
                         ({express.deliveryTime})

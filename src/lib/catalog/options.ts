@@ -3,6 +3,13 @@ import { normalizeForSearch } from "@/lib/search/normalize"
 /** A variant's option values: { "المقاس": "L", "اللون": "أزرق" } (size L, color blue) */
 export type VariantOptions = Record<string, string>
 
+/** A variant's options as one line of text, such as "المقاس: L، اللون: أزرق" (size: L, color: blue), or "" without options. */
+export function formatOptions(options: VariantOptions) {
+  return Object.entries(options)
+    .map(([name, value]) => `${name}: ${value}`)
+    .join("، ")
+}
+
 export type OptionGroup = {
   name: string
   values: string[]

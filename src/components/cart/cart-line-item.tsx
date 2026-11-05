@@ -6,7 +6,9 @@ import { ImageOffIcon, Trash2Icon } from "lucide-react"
 
 import { QuantityStepper } from "@/components/cart/quantity-stepper"
 import { Button } from "@/components/ui/button"
+import { formatOptions } from "@/lib/catalog/options"
 import { formatPrice } from "@/lib/money"
+import { productPath } from "@/lib/routes"
 import { lineLimit, useCartStore, type CartLine } from "@/lib/state/cart"
 import { cn } from "@/lib/utils"
 
@@ -25,8 +27,8 @@ export function CartLineItem({
 }: CartLineItemProps) {
   const setQuantity = useCartStore((state) => state.setQuantity)
   const remove = useCartStore((state) => state.remove)
-  const href = `/product/${line.slug}`
-  const options = Object.entries(line.options)
+  const href = productPath(line.slug)
+  const options = formatOptions(line.options)
 
   return (
     <li className={cn("flex gap-3 py-4", className)}>
@@ -58,11 +60,7 @@ export function CartLineItem({
         >
           {line.name}
         </Link>
-        {options.length > 0 && (
-          <p className="text-xs text-muted-foreground">
-            {options.map(([name, value]) => `${name}: ${value}`).join("، ")}
-          </p>
-        )}
+        {options && <p className="text-xs text-muted-foreground">{options}</p>}
         <p className="text-sm">
           <span className="font-bold text-primary">
             {formatPrice(line.price * line.quantity)}

@@ -5,6 +5,7 @@ import { ShoppingBagIcon } from "lucide-react"
 
 import { useAddToCart } from "@/components/cart/use-add-to-cart"
 import type { ProductCardData } from "@/lib/catalog/types"
+import { productPath } from "@/lib/routes"
 import { cn } from "@/lib/utils"
 
 /** Only what the button needs, so the full card data isn't sent with every button on the page. */
@@ -44,7 +45,7 @@ export function QuickAddButton({ product, className }: QuickAddButtonProps) {
   if (!quick) {
     return (
       <Link
-        href={`/product/${product.slug}`}
+        href={productPath(product.slug)}
         aria-label={`اختر الخيارات: ${product.name}`}
         className={cn(CIRCLE, className)}
       >

@@ -7,6 +7,11 @@ function groupThousands(value: number) {
   return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
+/** A shipping price as text: "مجاناً" (free) for zero, otherwise the price. */
+export function formatShipping(amountMinor: number) {
+  return amountMinor === 0 ? "مجاناً" : formatPrice(amountMinor)
+}
+
 /**
  * Formats a price from the currency's smallest unit as text such as "1,299.50 ر.س" (SAR).
  * Fixed manual formatting (instead of Intl) so the result is the same on the server and in every browser.

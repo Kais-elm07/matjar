@@ -12,6 +12,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { siteConfig } from "@/config/site"
+import { categoryPath } from "@/lib/routes"
 import { useUiStore } from "@/lib/state/ui"
 
 interface MobileNavSheetProps {
@@ -41,7 +42,7 @@ export function MobileNavSheet({ categories }: MobileNavSheetProps) {
             {categories.map((category) => (
               <li key={category.slug}>
                 <MobileNavLink
-                  href={`/category/${category.slug}`}
+                  href={categoryPath(category.slug)}
                   title={category.name}
                   onNavigate={close}
                 />
@@ -50,7 +51,7 @@ export function MobileNavSheet({ categories }: MobileNavSheetProps) {
                     {category.children.map((child) => (
                       <li key={child.slug}>
                         <MobileNavLink
-                          href={`/category/${child.slug}`}
+                          href={categoryPath(child.slug)}
                           title={child.name}
                           onNavigate={close}
                           className="h-10 text-sm font-normal text-muted-foreground"

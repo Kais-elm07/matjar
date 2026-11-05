@@ -5,6 +5,7 @@ import Link from "next/link"
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react"
 
 import type { NavCategory } from "@/components/layout/nav-types"
+import { categoryPath } from "@/lib/routes"
 import { cn } from "@/lib/utils"
 
 interface CategoryMenuProps {
@@ -101,7 +102,7 @@ export function CategoryMenu({ categories, className }: CategoryMenuProps) {
             {categories.map((category) => (
               <li key={category.slug}>
                 <Link
-                  href={`/category/${category.slug}`}
+                  href={categoryPath(category.slug)}
                   onClick={close}
                   className="rounded-sm font-bold underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
                 >
@@ -112,7 +113,7 @@ export function CategoryMenu({ categories, className }: CategoryMenuProps) {
                     {category.children.map((child) => (
                       <li key={child.slug}>
                         <Link
-                          href={`/category/${child.slug}`}
+                          href={categoryPath(child.slug)}
                           onClick={close}
                           className="rounded-sm text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
                         >

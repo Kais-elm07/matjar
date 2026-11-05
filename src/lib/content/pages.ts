@@ -3,11 +3,9 @@ import "server-only"
 import { readdirSync, readFileSync } from "node:fs"
 import path from "node:path"
 
-import { z } from "zod"
-
 import { siteConfig } from "@/config/site"
-import { getCheckoutConfig } from "@/lib/checkout/config"
-import { formatPrice } from "@/lib/money"
+import { fillPlaceholders } from "@/lib/content/placeholders"
+import { z } from "@/lib/zod"
 
 /**
  * Static pages from text files in src/content/pages: each .md file is a page,
@@ -30,29 +28,6 @@ const frontMatterSchema = z.object({
 type ContentPage = z.infer<typeof frontMatterSchema> & {
   slug: string
   body: string
-}
-
-/** The analytics sentence on the privacy page, based on what is enabled in src/config/site.ts. */
-function analyticsSentence() {
-  const { analytics } = siteConfig
-  if (!analytics) return "لا نستخدم أدوات تحليل ترصد تصفحك."
-  const name = { plausible: "Plausible", umami: "Umami" }[analytics.provider]
-  return `لا نستخدم أدوات تحليل ترصد تصفحك: نكتفي بعدّ الزيارات بأداة ${name}، دون ملفات تعريف ارتباط ودون حفظ ما يحدد هويتك.`
-}
-
-/** Replaces {store}, {email}, {phone}, {freeShipping} and {analytics} with their current settings values. */
-function fillPlaceholders(text: string) {
-  const values: Record<string, string> = {
-    store: siteConfig.name,
-    email: siteConfig.contact.email,
-    phone: siteConfig.contact.phone,
-    freeShipping: formatPrice(getCheckoutConfig().freeShippingFrom),
-    analytics: analyticsSentence(),
-  }
-  return text.replace(
-    /\{(\w+)\}/g,
-    (match, key: string) => values[key] ?? match
-  )
 }
 
 function readPage(fileName: string): ContentPage {

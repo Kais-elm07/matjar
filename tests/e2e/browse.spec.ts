@@ -1,13 +1,14 @@
 import { expect, test } from "@playwright/test"
 
+import { siteConfig } from "../../src/config/site"
 import { getWithRetry, loadProducts, open } from "./helpers"
 
 test("Browsing from the home page to a category, then to a product", async ({
   page,
 }) => {
   await open(page, "/")
-  await expect(page).toHaveTitle(/متجري/)
-  await expect(page.locator("h1")).toContainText("متجري")
+  await expect(page).toHaveTitle(new RegExp(siteConfig.name))
+  await expect(page.locator("h1")).toContainText(siteConfig.name)
 
   const tile = page
     .getByRole("region", { name: "تسوّق حسب الفئة" })

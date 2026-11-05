@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react"
 
-import { formatPrice } from "@/lib/money"
+import { formatShipping } from "@/lib/money"
 import { cn } from "@/lib/utils"
 
 interface ShippingOptionProps extends React.ComponentProps<"input"> {
@@ -42,7 +42,7 @@ export function ShippingOption({
         </span>
       </span>
       <span className="shrink-0 text-sm font-bold text-primary">
-        {price === null ? "" : price === 0 ? "مجاناً" : formatPrice(price)}
+        {price === null ? "" : formatShipping(price)}
       </span>
     </label>
   )

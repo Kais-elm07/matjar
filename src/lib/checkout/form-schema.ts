@@ -1,11 +1,6 @@
-import { z } from "zod"
-
 import { toWesternDigits } from "@/lib/arabic-digits"
 import type { ShippingCity } from "@/lib/checkout/types"
-
-// The published site's content security policy (public/_headers) blocks eval, and Zod tries new Function to speed up validation,
-// so the browser reports a violation even though Zod moves past it. Without that attempt, validation runs in the browser the normal way.
-z.config({ jitless: true })
+import { z } from "@/lib/zod"
 
 /**
  * Mobile number in the form 05xxxxxxxx: accepts +966, 00966, Arabic digits and spaces,

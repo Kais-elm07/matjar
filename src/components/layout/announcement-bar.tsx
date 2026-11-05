@@ -1,18 +1,14 @@
 import Link from "next/link"
 
 import { siteConfig } from "@/config/site"
-import { getCheckoutConfig } from "@/lib/checkout/config"
-import { formatPrice } from "@/lib/money"
+import { fillPlaceholders } from "@/lib/content/placeholders"
 
 /** Orange announcement bar at the top of every page. Its text and link are in src/config/site.ts; hidden if null. */
 export function AnnouncementBar() {
   const { announcement } = siteConfig
   if (!announcement) return null
 
-  const text = announcement.text.replace(
-    "{freeShipping}",
-    formatPrice(getCheckoutConfig().freeShippingFrom)
-  )
+  const text = fillPlaceholders(announcement.text)
 
   return (
     <div className="bg-primary text-primary-foreground">

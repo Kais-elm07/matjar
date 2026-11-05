@@ -96,7 +96,7 @@ export function Carousel({
         ref={listRef}
         aria-label={label}
         onScroll={updateEdges}
-        className="-mx-4 flex snap-x snap-mandatory scroll-px-4 [scrollbar-width:none] gap-3 overflow-x-auto px-4 pb-2 md:mx-0 md:scroll-px-0 md:gap-4 md:px-0 [&::-webkit-scrollbar]:hidden"
+        className="-mx-4 no-scrollbar flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 md:mx-0 md:scroll-px-0 md:gap-4 md:px-0"
       >
         {children}
       </ul>
