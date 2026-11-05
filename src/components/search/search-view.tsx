@@ -12,8 +12,12 @@ import { Button } from "@/components/ui/button"
 import type { CategoryOption } from "@/lib/catalog/types"
 import { useSearchIndex } from "@/lib/catalog/use-search-index"
 
+interface SearchViewProps {
+  categories: CategoryOption[]
+}
+
 /** صفحة نتائج البحث: تقرأ الكلمة من الرابط وتبحث في الفهرس داخل المتصفح. */
-export function SearchView({ categories }: { categories: CategoryOption[] }) {
+export function SearchView({ categories }: SearchViewProps) {
   const searchParams = useSearchParams()
   const query = (searchParams.get("q") ?? "").trim()
   const { data, error, retry } = useSearchIndex(Boolean(query))

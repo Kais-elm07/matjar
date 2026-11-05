@@ -10,18 +10,17 @@ import { StoreRestorer } from "@/components/store/store-restorer"
 import { SearchParamsListener } from "@/lib/catalog/use-listing-search"
 import { cn } from "@/lib/utils"
 
+interface StoreShellProps {
+  children: React.ReactNode
+  mainClassName?: string
+}
+
 /**
  * هيكل كل صفحات المتجر: شريط الإعلان والرأس والتذييل، وشريط الجوال السفلي،
  * وزر واتساب ونافذة السلة، واستعادة السلة والمفضلة من المتصفح.
  * يستخدمه تخطيط المتجر وصفحة 404، فتعمل السلة والعدّادات في كل الصفحات.
  */
-export function StoreShell({
-  children,
-  mainClassName,
-}: {
-  children: React.ReactNode
-  mainClassName?: string
-}) {
+export function StoreShell({ children, mainClassName }: StoreShellProps) {
   return (
     <>
       {/* أول ما يصله زر Tab: يتخطى الإعلان والرأس إلى المحتوى */}

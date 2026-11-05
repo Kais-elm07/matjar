@@ -34,11 +34,11 @@ function useTabs() {
 const tabId = (baseId: string, value: string) => `${baseId}-tab-${value}`
 const panelId = (baseId: string, value: string) => `${baseId}-panel-${value}`
 
-function Tabs({
-  defaultValue,
-  className,
-  ...props
-}: ComponentProps<"div"> & { defaultValue: string }) {
+interface TabsProps extends ComponentProps<"div"> {
+  defaultValue: string
+}
+
+function Tabs({ defaultValue, className, ...props }: TabsProps) {
   const baseId = useId()
   const [value, select] = useState(defaultValue)
 
@@ -81,7 +81,9 @@ function moveBetweenTabs(event: KeyboardEvent<HTMLDivElement>) {
   tabs[target].click()
 }
 
-function TabsList({ className, ...props }: ComponentProps<"div">) {
+interface TabsListProps extends ComponentProps<"div"> {}
+
+function TabsList({ className, ...props }: TabsListProps) {
   return (
     <div
       role="tablist"
@@ -96,11 +98,11 @@ function TabsList({ className, ...props }: ComponentProps<"div">) {
   )
 }
 
-function TabsTrigger({
-  value,
-  className,
-  ...props
-}: ComponentProps<"button"> & { value: string }) {
+interface TabsTriggerProps extends ComponentProps<"button"> {
+  value: string
+}
+
+function TabsTrigger({ value, className, ...props }: TabsTriggerProps) {
   const { baseId, value: active, select } = useTabs()
   const selected = value === active
 
@@ -125,11 +127,11 @@ function TabsTrigger({
   )
 }
 
-function TabsContent({
-  value,
-  className,
-  ...props
-}: ComponentProps<"div"> & { value: string }) {
+interface TabsContentProps extends ComponentProps<"div"> {
+  value: string
+}
+
+function TabsContent({ value, className, ...props }: TabsContentProps) {
   const { baseId, value: active } = useTabs()
 
   return (

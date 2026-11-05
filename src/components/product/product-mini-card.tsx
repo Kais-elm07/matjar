@@ -4,8 +4,12 @@ import Link from "next/link"
 import { Price } from "@/components/product/price"
 import type { ProductCardData } from "@/lib/catalog/types"
 
+interface ProductMiniCardProps {
+  product: ProductCardData
+}
+
 /** بطاقة منتج أفقية صغيرة بلون السطح: الصورة بجانب الاسم والسعر، لقسم "الرائج الآن". */
-export function ProductMiniCard({ product }: { product: ProductCardData }) {
+export function ProductMiniCard({ product }: ProductMiniCardProps) {
   return (
     <article className="group relative flex items-center gap-4 rounded-xl bg-card p-2 transition-colors hover:bg-muted/60">
       <div className="relative size-24 shrink-0 overflow-hidden rounded-lg bg-muted">

@@ -10,17 +10,19 @@ import { formatPrice } from "@/lib/catalog/money"
 import { lineLimit, useCartStore, type CartLine } from "@/lib/store/cart"
 import { cn } from "@/lib/utils"
 
+interface CartLineItemProps {
+  line: CartLine
+  /** يُستدعى عند فتح صفحة المنتج، مثلاً لإغلاق نافذة السلة */
+  onNavigate?: () => void
+  className?: string
+}
+
 /** سطر منتج في السلة: الصورة والاسم والخيارات والسعر، مع الكمية والحذف. */
 export function CartLineItem({
   line,
   onNavigate,
   className,
-}: {
-  line: CartLine
-  /** يُستدعى عند فتح صفحة المنتج، مثلاً لإغلاق نافذة السلة */
-  onNavigate?: () => void
-  className?: string
-}) {
+}: CartLineItemProps) {
   const setQuantity = useCartStore((state) => state.setQuantity)
   const remove = useCartStore((state) => state.remove)
   const href = `/product/${line.slug}`

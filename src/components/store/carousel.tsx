@@ -7,6 +7,18 @@ import { Button } from "@/components/ui/button"
 import { scrollBehavior } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
+interface CarouselProps {
+  /** اسم الصف لقارئات الشاشة، مثل "الأكثر مبيعاً" */
+  label: string
+  children: React.ReactNode
+  /** مكان زرّي التمرير: في رأس القسم بجانب العنوان، أو مخفيان */
+  controls?: "header" | "none"
+  /** العنوان والروابط التي تظهر في رأس القسم */
+  header?: React.ReactNode
+  className?: string
+  listClassName?: string
+}
+
 /**
  * صف يُسحب أفقياً باللمس، مع زرّي تمرير دائريين على الحاسوب.
  * العناصر تُمرَّر كعناصر <li>، وعرض كل عنصر يحدده من يستخدم الصف.
@@ -19,17 +31,7 @@ export function Carousel({
   header,
   className,
   listClassName,
-}: {
-  /** اسم الصف لقارئات الشاشة، مثل "الأكثر مبيعاً" */
-  label: string
-  children: React.ReactNode
-  /** مكان زرّي التمرير: في رأس القسم بجانب العنوان، أو مخفيان */
-  controls?: "header" | "none"
-  /** العنوان والروابط التي تظهر في رأس القسم */
-  header?: React.ReactNode
-  className?: string
-  listClassName?: string
-}) {
+}: CarouselProps) {
   const listRef = useRef<HTMLUListElement>(null)
   const [edges, setEdges] = useState({ atStart: true, atEnd: false })
 

@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   HeartIcon,
@@ -8,17 +7,16 @@ import {
   LayoutGridIcon,
   SearchIcon,
   ShoppingCartIcon,
-  type LucideIcon,
 } from "lucide-react"
 
-import { CountBadge } from "@/components/layout/header-actions"
+import { CountBadge } from "@/components/layout/count-badge"
+import { TabLink } from "@/components/layout/tab-link"
 import { useCartCount } from "@/lib/store/cart"
 import { useUiStore } from "@/lib/store/ui"
 import { useWishlistCount } from "@/lib/store/wishlist"
 import { cn } from "@/lib/utils"
 
-const ITEM =
-  "relative flex h-full flex-col items-center justify-center gap-1 text-[11px] font-bold outline-none focus-visible:bg-muted [&_svg]:size-6"
+import { TAB_BAR_ITEM as ITEM } from "./tab-bar-styles"
 
 /** شريط التنقل الثابت أسفل شاشة الجوال: الرئيسية والفئات والبحث والمفضلة والسلة. */
 export function MobileTabBar() {
@@ -95,34 +93,5 @@ export function MobileTabBar() {
         </li>
       </ul>
     </nav>
-  )
-}
-
-function TabLink({
-  href,
-  icon: Icon,
-  label,
-  count = 0,
-  active,
-}: {
-  href: string
-  icon: LucideIcon
-  label: string
-  count?: number
-  active: boolean
-}) {
-  return (
-    <Link
-      href={href}
-      aria-current={active ? "page" : undefined}
-      aria-label={count > 0 ? `${label} (${count})` : undefined}
-      className={cn(ITEM, active ? "text-primary" : "text-muted-foreground")}
-    >
-      <span className="relative">
-        <Icon aria-hidden />
-        <CountBadge count={count} className="-end-2.5 -top-2" />
-      </span>
-      {label}
-    </Link>
   )
 }

@@ -4,14 +4,13 @@ import { ShoppingBagIcon } from "lucide-react"
 import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
 
-/** الشعار: حقيبة داكنة في مربع برتقالي، ثم اسم المتجر بالأبيض. شكل واحد على كل الأسطح الداكنة. */
-export function Logo({
-  className,
-  onNavigate,
-}: {
+interface LogoProps {
   className?: string
   onNavigate?: () => void
-}) {
+}
+
+/** الشعار: حقيبة داكنة في مربع برتقالي، ثم اسم المتجر بالأبيض. شكل واحد على كل الأسطح الداكنة. */
+export function Logo({ className, onNavigate }: LogoProps) {
   return (
     <Link
       href="/"

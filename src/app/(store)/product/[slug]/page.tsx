@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { ProductDetails } from "@/components/product/product-details"
-import { ProductRail } from "@/components/product/product-grid"
+import { ProductRail } from "@/components/product/product-rail"
 import { ProductTabs } from "@/components/product/product-tabs"
 import { Breadcrumbs } from "@/components/store/breadcrumbs"
 import { JsonLd } from "@/components/store/json-ld"

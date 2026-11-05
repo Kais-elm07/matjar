@@ -1,10 +1,9 @@
 "use client"
 
-import Link from "next/link"
-import { ChevronRightIcon } from "lucide-react"
-
 import { Logo } from "@/components/layout/logo"
 import type { NavCategory } from "@/components/layout/mobile-nav"
+import { NavItem } from "@/components/layout/nav-item"
+import { NavList } from "@/components/layout/nav-list"
 import { Separator } from "@/components/ui/separator"
 import {
   Sheet,
@@ -12,12 +11,15 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
-import { siteConfig, type NavLink } from "@/config/site"
+import { siteConfig } from "@/config/site"
 import { useUiStore } from "@/lib/store/ui"
-import { cn } from "@/lib/utils"
+
+interface MobileNavSheetProps {
+  categories: NavCategory[]
+}
 
 /** محتوى قائمة الجوال: تنزلق من اليمين وتُغلق تلقائياً عند اختيار أي رابط. */
-export function MobileNavSheet({ categories }: { categories: NavCategory[] }) {
+export function MobileNavSheet({ categories }: MobileNavSheetProps) {
   const open = useUiStore((state) => state.menuOpen)
   const setOpen = useUiStore((state) => state.setMenuOpen)
   const close = () => setOpen(false)
@@ -70,59 +72,5 @@ export function MobileNavSheet({ categories }: { categories: NavCategory[] }) {
         </nav>
       </SheetContent>
     </Sheet>
-  )
-}
-
-function NavList({
-  links,
-  onNavigate,
-  itemClassName,
-}: {
-  links: NavLink[]
-  onNavigate: () => void
-  itemClassName?: string
-}) {
-  return (
-    <ul>
-      {links.map((link) => (
-        <li key={link.href}>
-          <NavItem
-            href={link.href}
-            title={link.title}
-            onNavigate={onNavigate}
-            className={itemClassName}
-          />
-        </li>
-      ))}
-    </ul>
-  )
-}
-
-function NavItem({
-  href,
-  title,
-  onNavigate,
-  className,
-}: {
-  href: string
-  title: string
-  onNavigate: () => void
-  className?: string
-}) {
-  return (
-    <Link
-      href={href}
-      onClick={onNavigate}
-      className={cn(
-        "flex h-12 items-center justify-between rounded-lg px-3 text-base font-medium outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50",
-        className
-      )}
-    >
-      {title}
-      <ChevronRightIcon
-        className="size-4 opacity-50 rtl:rotate-180"
-        aria-hidden
-      />
-    </Link>
   )
 }

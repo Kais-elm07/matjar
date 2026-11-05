@@ -3,10 +3,8 @@
 import Link from "next/link"
 import { HeartIcon, WifiOffIcon } from "lucide-react"
 
-import {
-  ProductGrid,
-  ProductGridSkeleton,
-} from "@/components/product/product-grid"
+import { ProductGrid } from "@/components/product/product-grid"
+import { ProductGridSkeleton } from "@/components/product/product-grid-skeleton"
 import { EmptyState } from "@/components/store/empty-state"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { PRODUCT_FORMS, pluralize } from "@/lib/arabic-plural"

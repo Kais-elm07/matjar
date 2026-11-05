@@ -2,7 +2,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { ImageOffIcon } from "lucide-react"
 
-import { DiscountBadge, Price } from "@/components/product/price"
+import { DiscountBadge } from "@/components/product/discount-badge"
+import { Price } from "@/components/product/price"
 import { QuickAddButton } from "@/components/product/quick-add-button"
 import { WishlistButton } from "@/components/product/wishlist-button"
 import type { ProductCardData } from "@/lib/catalog/types"
@@ -12,19 +13,18 @@ import { cn } from "@/lib/utils"
 const IMAGE_SIZES =
   "(min-width: 1280px) 300px, (min-width: 1024px) 24vw, (min-width: 640px) 32vw, 48vw"
 
+interface ProductCardProps {
+  product: ProductCardData
+  /** الصور الظاهرة في أعلى الصفحة تُحمَّل أولاً */
+  priority?: boolean
+}
+
 /**
  * بطاقة المنتج: سطح داكن بزوايا 12 بكسل بلا ظل، وداخله مربع الصورة وعليه شارة الخصم وزر القلب،
  * ثم اسم الفئة بالرمادي والاسم والسعر البرتقالي، وزر السلة الدائري في ركن البطاقة السفلي
  * (DESIGN.md: product-card و card-cart-button).
  */
-export function ProductCard({
-  product,
-  priority = false,
-}: {
-  product: ProductCardData
-  /** الصور الظاهرة في أعلى الصفحة تُحمَّل أولاً */
-  priority?: boolean
-}) {
+export function ProductCard({ product, priority = false }: ProductCardProps) {
   return (
     <article className="group relative flex h-full flex-col rounded-xl bg-card p-2.5 md:p-3">
       <div className="relative aspect-square overflow-hidden rounded-lg bg-muted">

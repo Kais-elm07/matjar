@@ -2,6 +2,14 @@ import type { LucideIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+interface EmptyStateProps {
+  icon: LucideIcon
+  title: string
+  description?: string
+  children?: React.ReactNode
+  className?: string
+}
+
 /** حالة فارغة ودّية: سلة فارغة، لا نتائج بحث، قسم لم يُملأ بعد. */
 export function EmptyState({
   icon: Icon,
@@ -9,13 +17,7 @@ export function EmptyState({
   description,
   children,
   className,
-}: {
-  icon: LucideIcon
-  title: string
-  description?: string
-  children?: React.ReactNode
-  className?: string
-}) {
+}: EmptyStateProps) {
   return (
     <div
       className={cn(

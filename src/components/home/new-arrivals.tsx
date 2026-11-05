@@ -1,12 +1,16 @@
 import Image from "next/image"
 import Link from "next/link"
 
-import { ProductRail } from "@/components/product/product-grid"
+import { ProductRail } from "@/components/product/product-rail"
 import { buttonVariants } from "@/components/ui/button"
 import type { ProductCardData } from "@/lib/catalog/types"
 
+interface NewArrivalsProps {
+  products: ProductCardData[]
+}
+
 /** "وصل حديثاً": لافتة كبيرة بصورة أحدث منتج، ثم صف المنتجات، ثم زر في المنتصف. */
-export function NewArrivals({ products }: { products: ProductCardData[] }) {
+export function NewArrivals({ products }: NewArrivalsProps) {
   if (products.length === 0) return null
   const image = products[0].image
 

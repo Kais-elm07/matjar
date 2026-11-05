@@ -7,8 +7,12 @@ import type { Product } from "@/lib/catalog/types"
 /** تبويبات صفحة المنتج أكبر قليلاً من الشكل الافتراضي */
 const TAB = "h-10 px-5 text-base"
 
+interface ProductTabsProps {
+  product: Product
+}
+
 /** تبويبات المعلومات أسفل صفحة المنتج: الوصف، والمواصفات، والشحن والإرجاع. */
-export function ProductTabs({ product }: { product: Product }) {
+export function ProductTabs({ product }: ProductTabsProps) {
   return (
     <Tabs defaultValue="description" className="gap-6 border-t pt-8">
       <TabsList className="w-full justify-start">

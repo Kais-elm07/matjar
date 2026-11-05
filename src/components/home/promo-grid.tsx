@@ -1,21 +1,21 @@
-import { DiscountCard, PromoTile } from "@/components/home/banners"
+import { DiscountCard } from "@/components/home/discount-card"
+import { PromoTile } from "@/components/home/promo-tile"
 import type { ProductBanner } from "@/lib/catalog/types"
 import { cn } from "@/lib/utils"
 
 const HEADING_ID = "discount-heading"
 
+interface PromoGridProps {
+  promos: ProductBanner[]
+  /** أكبر نسبة خصم حقيقية في المتجر، أو 0 */
+  maxDiscount: number
+}
+
 /**
  * شبكة العروض: مربعا صورة فوق بعضهما ومربع طويل بجانبهما، ثم بطاقة الخصم.
  * بأقل من ثلاث بطاقات تُعرض المربعات في صف واحد بجانب بطاقة الخصم.
  */
-export function PromoGrid({
-  promos,
-  maxDiscount,
-}: {
-  promos: ProductBanner[]
-  /** أكبر نسبة خصم حقيقية في المتجر، أو 0 */
-  maxDiscount: number
-}) {
+export function PromoGrid({ promos, maxDiscount }: PromoGridProps) {
   if (promos.length === 0) return null
   const discount = (className: string) => (
     <DiscountCard

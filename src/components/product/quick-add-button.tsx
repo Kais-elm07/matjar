@@ -26,17 +26,16 @@ export type QuickAddProduct = Pick<
 const CIRCLE =
   "absolute bottom-0 end-0 z-10 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground ring-[6px] ring-background transition-colors outline-none hover:bg-primary/90 focus-visible:ring-foreground [&_svg]:size-5"
 
+interface QuickAddButtonProps {
+  product: QuickAddProduct
+  className?: string
+}
+
 /**
  * زر البطاقة الظاهر دائماً: إضافة مباشرة للسلة للمنتج ذي الخيار الواحد،
  * وفتح صفحة المنتج لاختيار المقاس أو اللون للمنتج متعدد الخيارات. المنتج النافد بلا زر.
  */
-export function QuickAddButton({
-  product,
-  className,
-}: {
-  product: QuickAddProduct
-  className?: string
-}) {
+export function QuickAddButton({ product, className }: QuickAddButtonProps) {
   const addToCart = useAddToCart()
   if (!product.inStock) return null
 

@@ -1,0 +1,75 @@
+import Image from "next/image"
+import Link from "next/link"
+
+import { buttonVariants } from "@/components/ui/button"
+import { formatPrice } from "@/lib/catalog/money"
+import type { ProductBanner } from "@/lib/catalog/types"
+import { cn } from "@/lib/utils"
+
+interface WideBannerProps {
+  banner: ProductBanner
+}
+
+/** لافتة عريضة لمنتج: صورته تملأ اللافتة، والنص في جهة البداية فوق تدرج داكن. */
+export function WideBanner({ banner }: WideBannerProps) {
+  return (
+    <section
+      aria-labelledby="wide-banner-heading"
+      className="relative overflow-hidden rounded-xl border bg-muted"
+    >
+      {banner.image && (
+        <Image
+          src={banner.image.src}
+          alt=""
+          fill
+          sizes="(min-width: 1280px) 1232px, 100vw"
+          className="object-cover"
+        />
+      )}
+      {/* الموقع عربي الاتجاه دائماً: التدرج الداكن من اليمين حيث النص، ويخف نحو الصورة في اليسار */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-l from-background/95 via-background/70 to-background/25"
+      />
+      <div className="relative flex min-h-64 flex-col justify-center gap-3 p-6 md:min-h-80 md:max-w-xl md:p-12">
+        {banner.tag && (
+          <p className="inline-flex self-start rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground">
+            {banner.tag}
+          </p>
+        )}
+        <h2
+          id="wide-banner-heading"
+          className="text-2xl leading-snug font-bold md:text-4xl"
+        >
+          {banner.title}
+        </h2>
+        {banner.text && (
+          <p className="text-base text-foreground/85">{banner.text}</p>
+        )}
+        <p className="flex flex-wrap items-baseline gap-x-2 text-base">
+          {banner.priceVaries ? "يبدأ من" : "بسعر"}
+          <span className="text-2xl font-bold text-primary md:text-3xl">
+            {formatPrice(banner.price)}
+          </span>
+          {banner.compareAtPrice && (
+            <>
+              <span className="sr-only">بدلاً من</span>
+              <del className="text-muted-foreground">
+                {formatPrice(banner.compareAtPrice)}
+              </del>
+            </>
+          )}
+        </p>
+        <Link
+          href={banner.href}
+          className={cn(
+            buttonVariants({ variant: "cta", size: "xl" }),
+            "mt-1 self-start"
+          )}
+        >
+          تسوّق الآن
+        </Link>
+      </div>
+    </section>
+  )
+}

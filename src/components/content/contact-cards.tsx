@@ -21,11 +21,15 @@ type ContactItem = {
   external?: boolean
 }
 
+interface ContactCardsProps {
+  className?: string
+}
+
 /**
  * بطاقات التواصل بلون السطح، لكل وسيلة دائرة بأيقونة برتقالية (DESIGN.md: تواصل معنا).
  * تظهر في الصفحة الرئيسية وصفحة "تواصل معنا". أي حقل فارغ في الإعدادات لا تظهر بطاقته.
  */
-export function ContactCards({ className }: { className?: string }) {
+export function ContactCards({ className }: ContactCardsProps) {
   const { email, phone, whatsapp, hours, address } = siteConfig.contact
   const items: ContactItem[] = []
   if (whatsapp) {

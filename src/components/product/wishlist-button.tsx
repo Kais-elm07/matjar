@@ -8,6 +8,13 @@ import { useIsWishlisted, useWishlistStore } from "@/lib/store/wishlist"
 import { toast } from "@/lib/toast"
 import { cn } from "@/lib/utils"
 
+interface WishlistButtonProps {
+  slug: string
+  name: string
+  variant?: "icon" | "labeled"
+  className?: string
+}
+
 /**
  * زر المفضلة: قلب في دائرة برتقالية فوق صورة البطاقة، أو زر بنص في صفحة المنتج.
  * القلب الممتلئ يعني أن المنتج محفوظ.
@@ -17,12 +24,7 @@ export function WishlistButton({
   name,
   variant = "icon",
   className,
-}: {
-  slug: string
-  name: string
-  variant?: "icon" | "labeled"
-  className?: string
-}) {
+}: WishlistButtonProps) {
   const saved = useIsWishlisted(slug)
   const toggle = useWishlistStore((state) => state.toggle)
   // عدد مرات الإضافة بضغطة: يعيد رسم القلب فينبض، ولا ينبض عند استعادة المفضلة المحفوظة

@@ -5,6 +5,17 @@ import { MinusIcon, PlusIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
+interface QuantityStepperProps {
+  value: number
+  max: number
+  disabled?: boolean
+  size?: "default" | "sm"
+  /** يُقرأ لقارئات الشاشة، مثل "كمية قميص قطني" */
+  label?: string
+  onChange: (value: number) => void
+  className?: string
+}
+
 /** محدد الكمية: زر للزيادة وآخر للإنقاص، مع منع تجاوز الحد. */
 export function QuantityStepper({
   value,
@@ -14,16 +25,7 @@ export function QuantityStepper({
   label = "الكمية",
   onChange,
   className,
-}: {
-  value: number
-  max: number
-  disabled?: boolean
-  size?: "default" | "sm"
-  /** يُقرأ لقارئات الشاشة، مثل "كمية قميص قطني" */
-  label?: string
-  onChange: (value: number) => void
-  className?: string
-}) {
+}: QuantityStepperProps) {
   const buttonSize = size === "sm" ? "icon-lg" : "icon-xl"
   return (
     <div

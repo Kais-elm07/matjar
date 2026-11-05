@@ -17,6 +17,15 @@ const MAX_SUGGESTIONS = 6
 
 const searchHref = (query: string) => `/search/?q=${encodeURIComponent(query)}`
 
+interface SearchBoxProps {
+  className?: string
+  defaultValue?: string
+  autoFocus?: boolean
+  variant?: "default" | "header"
+  /** يُستدعى بعد الانتقال إلى نتيجة أو صفحة النتائج، لإغلاق حقل بحث الجوال مثلاً */
+  onSubmitted?: () => void
+}
+
 /**
  * حقل البحث مع اقتراحات فورية أثناء الكتابة.
  * الأسهم تتنقل بين الاقتراحات، وEnter يفتح الاقتراح أو صفحة النتائج، وEscape يغلق القائمة.
@@ -28,14 +37,7 @@ export function SearchBox({
   autoFocus = false,
   variant = "default",
   onSubmitted,
-}: {
-  className?: string
-  defaultValue?: string
-  autoFocus?: boolean
-  variant?: "default" | "header"
-  /** يُستدعى بعد الانتقال إلى نتيجة أو صفحة النتائج، لإغلاق حقل بحث الجوال مثلاً */
-  onSubmitted?: () => void
-}) {
+}: SearchBoxProps) {
   const router = useRouter()
   const id = useId()
   const listId = `${id}-suggestions`

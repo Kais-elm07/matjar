@@ -5,14 +5,13 @@ import { ShoppingCartIcon } from "lucide-react"
 
 import { CartLineItem } from "@/components/cart/cart-line-item"
 import { CartNotices } from "@/components/cart/cart-notices"
+import { CartSkeleton } from "@/components/cart/cart-skeleton"
 import { EmptyState } from "@/components/store/empty-state"
 import { buttonVariants } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
 import { PIECE_FORMS, pluralize } from "@/lib/arabic-plural"
 import { formatPrice } from "@/lib/catalog/money"
 import { cartSubtotal, useCartCount, useCartStore } from "@/lib/store/cart"
 import { useCartSync } from "@/lib/store/cart-sync"
-import { placeholderIds } from "@/lib/placeholders"
 import { useCartRestored } from "@/lib/store/hydration"
 import { cn } from "@/lib/utils"
 
@@ -108,29 +107,6 @@ export function CartView() {
           متابعة التسوق
         </Link>
       </aside>
-    </div>
-  )
-}
-
-function CartSkeleton() {
-  return (
-    <div
-      className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]"
-      aria-hidden
-    >
-      <div className="space-y-4 rounded-xl border p-4">
-        {placeholderIds("line", 2).map((id) => (
-          <div key={id} className="flex gap-3">
-            <Skeleton className="size-20 rounded-lg" />
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-4 w-2/3" />
-              <Skeleton className="h-3 w-1/3" />
-              <Skeleton className="h-9 w-28 rounded-full" />
-            </div>
-          </div>
-        ))}
-      </div>
-      <Skeleton className="h-64 rounded-xl" />
     </div>
   )
 }

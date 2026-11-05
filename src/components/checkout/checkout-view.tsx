@@ -14,14 +14,12 @@ import {
 import { useForm, useWatch, type FieldPath } from "react-hook-form"
 
 import { CartNotices } from "@/components/cart/cart-notices"
-import {
-  CHECKOUT_INPUT,
-  CheckoutField,
-  CheckoutSection,
-  ShippingOption,
-} from "@/components/checkout/checkout-fields"
+import { CheckoutField } from "@/components/checkout/checkout-field"
+import { CheckoutSection } from "@/components/checkout/checkout-section"
 import { CheckoutSkeleton } from "@/components/checkout/checkout-skeleton"
+import { CHECKOUT_INPUT } from "@/components/checkout/checkout-styles"
 import { OrderSummary } from "@/components/checkout/order-summary"
+import { ShippingOption } from "@/components/checkout/shipping-option"
 import { EmptyState } from "@/components/store/empty-state"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -46,12 +44,16 @@ import { useCartSync } from "@/lib/store/cart-sync"
 import { useCartRestored } from "@/lib/store/hydration"
 import { cn } from "@/lib/utils"
 
+interface CheckoutViewProps {
+  config: CheckoutConfig
+}
+
 /**
  * صفحة إتمام الطلب التجريبي: صفحة واحدة بأربع خطوات، وتحقق فوري برسائل عربية،
  * وملخص بالإجمالي. عند التأكيد يُحفظ الطلب في هذا التبويب فقط وتُفرَّغ السلة،
  * ولا يُرسل شيء لأي جهة.
  */
-export function CheckoutView({ config }: { config: CheckoutConfig }) {
+export function CheckoutView({ config }: CheckoutViewProps) {
   const router = useRouter()
   const restored = useCartRestored()
   const lines = useCartStore((state) => state.lines)

@@ -7,6 +7,14 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import type { ProductImage } from "@/lib/catalog/types"
 
+interface ProductZoomProps {
+  images: ProductImage[]
+  activeIndex: number
+  onActiveIndexChange: (index: number) => void
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
+
 /** نافذة تكبير صور المنتج، مع التنقل بين الصور. */
 export function ProductZoom({
   images,
@@ -14,13 +22,7 @@ export function ProductZoom({
   onActiveIndexChange,
   open,
   onOpenChange,
-}: {
-  images: ProductImage[]
-  activeIndex: number
-  onActiveIndexChange: (index: number) => void
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}) {
+}: ProductZoomProps) {
   const active = images[activeIndex] ?? images[0]
   const showPrevious = () =>
     onActiveIndexChange((activeIndex - 1 + images.length) % images.length)

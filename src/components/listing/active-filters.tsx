@@ -14,16 +14,18 @@ function priceLabel(min: number | null, max: number | null) {
   return `حتى ${format(max ?? 0)}`
 }
 
+interface ActiveFiltersProps {
+  params: ListingParams
+  categories?: CategoryOption[]
+  onChange: (changes: Partial<ListingParams>) => void
+}
+
 /** الفلاتر المفعّلة كأزرار صغيرة فوق النتائج، والنقر على أي منها يزيله. */
 export function ActiveFilters({
   params,
   categories,
   onChange,
-}: {
-  params: ListingParams
-  categories?: CategoryOption[]
-  onChange: (changes: Partial<ListingParams>) => void
-}) {
+}: ActiveFiltersProps) {
   const chips: {
     key: string
     label: string

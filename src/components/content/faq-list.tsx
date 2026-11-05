@@ -39,8 +39,12 @@ export function parseFaq(body: string): FaqGroup[] {
   return groups.filter((entry) => entry.items.length > 0)
 }
 
+interface FaqListProps {
+  groups: FaqGroup[]
+}
+
 /** الأسئلة كقائمة تُفتح وتُطوى، دون JavaScript (عنصر details). */
-export function FaqList({ groups }: { groups: FaqGroup[] }) {
+export function FaqList({ groups }: FaqListProps) {
   return (
     <div className="space-y-8">
       {groups.map((group) => (

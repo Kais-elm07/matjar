@@ -5,14 +5,13 @@ import { Share2Icon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { toast } from "@/lib/toast"
 
-/** مشاركة رابط المنتج: قائمة المشاركة في الجوال، أو نسخ الرابط في الحاسوب. */
-export function ShareButton({
-  title,
-  className,
-}: {
+interface ShareButtonProps {
   title: string
   className?: string
-}) {
+}
+
+/** مشاركة رابط المنتج: قائمة المشاركة في الجوال، أو نسخ الرابط في الحاسوب. */
+export function ShareButton({ title, className }: ShareButtonProps) {
   async function share() {
     const url = window.location.href
     if (navigator.share) {

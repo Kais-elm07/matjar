@@ -1,4 +1,4 @@
-import { ProductGridSkeleton } from "@/components/product/product-grid"
+import { ProductGridSkeleton } from "@/components/product/product-grid-skeleton"
 
 /** تخطيط صفحات القوائم: شريط الفلاتر في جهة البداية على الحاسوب، والنتائج بجانبه. */
 export const LISTING_LAYOUT =

@@ -23,11 +23,15 @@ const MobileNavSheet = dynamic(
   { ssr: false }
 )
 
+interface MobileNavProps {
+  categories: NavCategory[]
+}
+
 /**
  * زر قائمة الجوال في الرأس. القائمة نفسها يُحمَّل كودها بعد ظهور الصفحة أو عند أول ضغطة،
  * وتفتح أيضاً من زر "الفئات" في الشريط السفلي.
  */
-export function MobileNav({ categories }: { categories: NavCategory[] }) {
+export function MobileNav({ categories }: MobileNavProps) {
   const open = useUiStore((state) => state.menuOpen)
   const setOpen = useUiStore((state) => state.setMenuOpen)
   const idle = useIdle()

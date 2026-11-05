@@ -80,7 +80,7 @@ The values are applied in `src/app/globals.css` as shadcn variables with the sam
 - `ProductCard`, `ProductGrid` and `ProductRail` in `src/components/product`: the dark product card with the round cart button, its grid and its horizontal row. Their data has the type `ProductCardData`, and the search index uses `SearchCardData` (the card plus the search text).
 - The home page sections in `src/components/home`, each one a separate component: `TrustStrip`, `WhyUs`, `PromoGrid`, `NewArrivals`, `TrendingTabs`, `DealsRail`, `CategoryRail`, `Testimonials` and `ContactSection`. The page itself only puts them in order.
 - `Carousel` and `SectionHeading` in `src/components/store`: a swiped row with round scroll buttons, and a section heading with an orange "View all" link and an optional description.
-- `PromoTile`, `DiscountCard`, `SpotlightCard` and `WideBanner` in `src/components/home/banners.tsx`: the photo deal tiles, the discount card, the category cards and the wide banner.
+- `PromoTile`, `DiscountCard`, `SpotlightCard` and `WideBanner` in `src/components/home`, one file each: the photo deal tiles, the discount card, the category cards and the wide banner. Their shared dark gradient over photos is `IMAGE_SHADE` in `banner-styles.ts`.
 - `HeroSlider` in `src/components/home`: the full-width hero, with centered text over a darkening layer and a gradient.
 - `ContactCards` in `src/components/content`: the contact cards with orange circles, for the home page and the "Contact us" page.
 - `useAddToCart` and `QuantityStepper` in `src/components/cart`: adding to the cart while opening its panel, and the quantity selector.

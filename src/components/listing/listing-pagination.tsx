@@ -26,6 +26,13 @@ function visiblePages(page: number, pageCount: number) {
   return items
 }
 
+interface ListingPaginationProps {
+  page: number
+  pageCount: number
+  hrefFor: (page: number) => string
+  onNavigate: (page: number) => void
+}
+
 /**
  * ترقيم الصفحات: روابط حقيقية (تعمل مع الفتح في تبويب جديد)،
  * والنقر العادي ينتقل فوراً داخل الصفحة دون إعادة تحميل.
@@ -35,12 +42,7 @@ export function ListingPagination({
   pageCount,
   hrefFor,
   onNavigate,
-}: {
-  page: number
-  pageCount: number
-  hrefFor: (page: number) => string
-  onNavigate: (page: number) => void
-}) {
+}: ListingPaginationProps) {
   if (pageCount <= 1) return null
 
   const handle =

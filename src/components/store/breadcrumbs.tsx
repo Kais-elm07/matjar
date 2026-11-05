@@ -13,14 +13,13 @@ import { cn } from "@/lib/utils"
 
 export type BreadcrumbEntry = { name: string; href?: string }
 
-/** مسار التنقل: الرئيسية ‹ الفئة ‹ الصفحة الحالية. */
-export function Breadcrumbs({
-  items,
-  className,
-}: {
+interface BreadcrumbsProps {
   items: BreadcrumbEntry[]
   className?: string
-}) {
+}
+
+/** مسار التنقل: الرئيسية ‹ الفئة ‹ الصفحة الحالية. */
+export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
   return (
     <Breadcrumb className={cn("mb-5", className)}>
       <BreadcrumbList>

@@ -1,6 +1,14 @@
 import Link from "next/link"
 import { ChevronRightIcon } from "lucide-react"
 
+interface SectionHeadingProps {
+  id: string
+  title: string
+  description?: string
+  href?: string
+  linkLabel?: string
+}
+
 /** عنوان قسم في الصفحة، مع رابط برتقالي "عرض الكل" اختياري بجانبه، ووصف قصير اختياري تحته. */
 export function SectionHeading({
   id,
@@ -8,13 +16,7 @@ export function SectionHeading({
   description,
   href,
   linkLabel = "عرض الكل",
-}: {
-  id: string
-  title: string
-  description?: string
-  href?: string
-  linkLabel?: string
-}) {
+}: SectionHeadingProps) {
   return (
     <div>
       <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1">

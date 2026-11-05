@@ -3,7 +3,9 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-function Label({ className, ...props }: React.ComponentProps<"label">) {
+interface LabelProps extends React.ComponentProps<"label"> {}
+
+function Label({ className, ...props }: LabelProps) {
   return (
     <label
       data-slot="label"

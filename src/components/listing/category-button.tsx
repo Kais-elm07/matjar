@@ -1,0 +1,36 @@
+"use client"
+
+import { cn } from "@/lib/utils"
+
+interface CategoryButtonProps {
+  label: string
+  count?: number
+  active: boolean
+  onClick: () => void
+}
+
+export function CategoryButton({
+  label,
+  count,
+  active,
+  onClick,
+}: CategoryButtonProps) {
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      onClick={onClick}
+      className={cn(
+        "flex min-h-9 w-full items-center justify-between gap-2 rounded-md px-2 text-start text-sm transition-colors hover:bg-muted",
+        active && "bg-primary/10 font-bold text-primary hover:bg-primary/15"
+      )}
+    >
+      {label}
+      {count !== undefined && (
+        <span className="text-xs text-muted-foreground tabular-nums">
+          {count}
+        </span>
+      )}
+    </button>
+  )
+}

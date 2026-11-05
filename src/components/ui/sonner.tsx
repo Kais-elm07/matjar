@@ -1,6 +1,6 @@
 "use client"
 
-import { Toaster as Sonner, type ToasterProps } from "sonner"
+import { Toaster as Sonner, type ToasterProps as SonnerProps } from "sonner"
 import {
   CircleCheckIcon,
   InfoIcon,
@@ -8,6 +8,8 @@ import {
   OctagonXIcon,
   Loader2Icon,
 } from "lucide-react"
+
+interface ToasterProps extends SonnerProps {}
 
 const Toaster = ({ ...props }: ToasterProps) => {
   return (

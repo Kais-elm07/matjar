@@ -17,6 +17,12 @@ const ProductZoom = dynamic(
   { ssr: false }
 )
 
+interface ProductGalleryProps {
+  images: ProductImage[]
+  activeIndex: number
+  onActiveIndexChange: (index: number) => void
+}
+
 /**
  * معرض صور المنتج: يُسحب باللمس، مع صور مصغرة ونافذة تكبير.
  * الصورة الظاهرة يتحكم بها المكوّن الأب، فيمكن نقلها عند اختيار لون.
@@ -25,11 +31,7 @@ export function ProductGallery({
   images,
   activeIndex,
   onActiveIndexChange,
-}: {
-  images: ProductImage[]
-  activeIndex: number
-  onActiveIndexChange: (index: number) => void
-}) {
+}: ProductGalleryProps) {
   const trackRef = useRef<HTMLDivElement>(null)
   const slideRefs = useRef<(HTMLDivElement | null)[]>([])
   const [zoomOpen, setZoomOpen] = useState(false)

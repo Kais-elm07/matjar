@@ -41,20 +41,18 @@ const atBuildTime = () => null
 
 const pad = (value: number) => value.toString().padStart(2, "0")
 
-/**
- * منتج في قسم العروض المحدودة، مع عدّاد تنازلي حقيقي حتى نهاية آخر يوم في العرض
- * (بتوقيت المتجر). يختفي المنتج من القسم عند انتهاء العرض.
- */
-export function DealItem({
-  endsAt,
-  children,
-  className,
-}: {
+interface DealItemProps {
   /** آخر يوم في العرض بصيغة 2026-12-31 */
   endsAt: string
   children: React.ReactNode
   className?: string
-}) {
+}
+
+/**
+ * منتج في قسم العروض المحدودة، مع عدّاد تنازلي حقيقي حتى نهاية آخر يوم في العرض
+ * (بتوقيت المتجر). يختفي المنتج من القسم عند انتهاء العرض.
+ */
+export function DealItem({ endsAt, children, className }: DealItemProps) {
   const now = useSyncExternalStore(subscribe, nowInSeconds, atBuildTime)
   const end = saleEndTime(endsAt) / 1000
 

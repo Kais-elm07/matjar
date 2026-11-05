@@ -1,10 +1,10 @@
 import { StoreShell } from "@/components/layout/store-shell"
 
-/** تخطيط واجهة المتجر: كل الصفحات داخل هيكل المتجر الموحد. */
-export default function StoreLayout({
-  children,
-}: {
+interface StoreLayoutProps {
   children: React.ReactNode
-}) {
+}
+
+/** تخطيط واجهة المتجر: كل الصفحات داخل هيكل المتجر الموحد. */
+export default function StoreLayout({ children }: StoreLayoutProps) {
   return <StoreShell>{children}</StoreShell>
 }

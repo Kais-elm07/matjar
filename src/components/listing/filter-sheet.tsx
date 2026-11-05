@@ -9,6 +9,15 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 
+interface FilterSheetProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  total: number
+  /** زر "مسح الكل"، يظهر فقط عند وجود فلاتر مفعّلة */
+  onClear?: () => void
+  children: React.ReactNode
+}
+
 /** لوحة التصفية على الجوال: تنزلق من الأسفل، وفيها نفس فلاتر الشريط الجانبي. */
 export function FilterSheet({
   open,
@@ -16,14 +25,7 @@ export function FilterSheet({
   total,
   onClear,
   children,
-}: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  total: number
-  /** زر "مسح الكل"، يظهر فقط عند وجود فلاتر مفعّلة */
-  onClear?: () => void
-  children: React.ReactNode
-}) {
+}: FilterSheetProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent

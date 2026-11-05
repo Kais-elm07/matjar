@@ -4,13 +4,13 @@ import Image from "next/image"
 import Link from "next/link"
 import { CircleCheckIcon, InfoIcon, PackageSearchIcon } from "lucide-react"
 
+import { OrderDetailRow } from "@/components/checkout/order-detail-row"
 import { EmptyState } from "@/components/store/empty-state"
 import { buttonVariants } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { PIECE_FORMS, pluralize } from "@/lib/arabic-plural"
 import { formatPrice } from "@/lib/catalog/money"
 import { useLastOrder } from "@/lib/checkout/order"
-import { cn } from "@/lib/utils"
 
 /** صفحة تأكيد الطلب التجريبي: رقم الطلب والتوصيل والمبالغ والمنتجات. */
 export function OrderConfirmation() {
@@ -81,11 +81,11 @@ export function OrderConfirmation() {
             التوصيل
           </h3>
           <dl className="space-y-2 text-sm">
-            <Row label="الاسم" value={order.customer.name} />
-            <Row label="الجوال" value={order.customer.phone} ltr />
-            <Row label="المدينة" value={order.customer.city} />
-            <Row label="العنوان" value={order.customer.address} />
-            <Row
+            <OrderDetailRow label="الاسم" value={order.customer.name} />
+            <OrderDetailRow label="الجوال" value={order.customer.phone} ltr />
+            <OrderDetailRow label="المدينة" value={order.customer.city} />
+            <OrderDetailRow label="العنوان" value={order.customer.address} />
+            <OrderDetailRow
               label="طريقة الشحن"
               value={`${order.shipping.label}، ${order.shipping.days}`}
             />
@@ -100,19 +100,22 @@ export function OrderConfirmation() {
             الدفع عند الاستلام
           </h3>
           <dl className="space-y-2 text-sm">
-            <Row label="المجموع" value={formatPrice(totals.subtotal)} />
+            <OrderDetailRow
+              label="المجموع"
+              value={formatPrice(totals.subtotal)}
+            />
             {totals.discount > 0 && (
-              <Row
+              <OrderDetailRow
                 label={`الخصم (${order.couponCode})`}
                 value={`−${formatPrice(totals.discount)}`}
                 className="text-success"
               />
             )}
-            <Row
+            <OrderDetailRow
               label="الشحن"
               value={totals.shipping ? formatPrice(totals.shipping) : "مجاناً"}
             />
-            <Row
+            <OrderDetailRow
               label="الإجمالي عند الاستلام"
               value={formatPrice(totals.total)}
               className="border-t pt-2 text-base font-bold text-primary"
@@ -175,27 +178,6 @@ export function OrderConfirmation() {
           الصفحة الرئيسية
         </Link>
       </div>
-    </div>
-  )
-}
-
-function Row({
-  label,
-  value,
-  ltr = false,
-  className,
-}: {
-  label: string
-  value: string
-  ltr?: boolean
-  className?: string
-}) {
-  return (
-    <div className={cn("flex justify-between gap-4", className)}>
-      <dt className="shrink-0 text-muted-foreground">{label}</dt>
-      <dd className="text-end">
-        {ltr ? <span dir="ltr">{value}</span> : value}
-      </dd>
     </div>
   )
 }

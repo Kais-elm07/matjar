@@ -7,19 +7,21 @@ import { EmptyState } from "@/components/store/empty-state"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { countActiveFilters, type ListingParams } from "@/lib/catalog/listing"
 
+interface ListingEmptyProps {
+  params: ListingParams
+  search: boolean
+  /** لا توجد منتجات أصلاً، فمسح الفلاتر لن يفيد */
+  ignoreFilters?: boolean
+  onClear: () => void
+}
+
 /** لا توجد نتائج: رسالة تشرح السبب، وزر لما يمكن فعله (مسح الفلاتر أو تصفّح كل المنتجات). */
 export function ListingEmpty({
   params,
   search,
   ignoreFilters = false,
   onClear,
-}: {
-  params: ListingParams
-  search: boolean
-  /** لا توجد منتجات أصلاً، فمسح الفلاتر لن يفيد */
-  ignoreFilters?: boolean
-  onClear: () => void
-}) {
+}: ListingEmptyProps) {
   if (!ignoreFilters && countActiveFilters(params) > 0) {
     return (
       <EmptyState

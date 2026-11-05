@@ -7,19 +7,18 @@ import { ChevronDownIcon, ChevronRightIcon } from "lucide-react"
 import type { NavCategory } from "@/components/layout/mobile-nav"
 import { cn } from "@/lib/utils"
 
+interface CategoryMenuProps {
+  categories: NavCategory[]
+  /** شكل الزر، ليطابق بقية روابط الرأس */
+  className?: string
+}
+
 /**
  * زر "كل الفئات" في صف التنقل على الحاسوب: يفتح لوحة كبيرة بعمود لكل فئة رئيسية
  * وفئاتها الفرعية. يفتح بالنقر أو بمرور الفأرة، ويُغلق بـ Escape أو بالنقر خارجه.
  * مبني كزر إفصاح بسيط دون مكتبة نوافذ عائمة، حتى لا يثقل صفحات الجوال التي لا تعرضه.
  */
-export function CategoryMenu({
-  categories,
-  className,
-}: {
-  categories: NavCategory[]
-  /** شكل الزر، ليطابق بقية روابط الرأس */
-  className?: string
-}) {
+export function CategoryMenu({ categories, className }: CategoryMenuProps) {
   const [open, setOpen] = useState(false)
   const panelId = useId()
   const rootRef = useRef<HTMLDivElement>(null)

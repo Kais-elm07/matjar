@@ -1,6 +1,15 @@
 import { discountPercent, formatPrice } from "@/lib/catalog/money"
 import { cn } from "@/lib/utils"
 
+interface PriceProps {
+  price: number
+  compareAtPrice?: number | null
+  /** Shows "من" before the price, when the variants have different prices */
+  from?: boolean
+  size?: "default" | "lg"
+  className?: string
+}
+
 /** السعر مع السعر قبل الخصم مشطوباً إن وُجد. "من" تظهر عندما تختلف أسعار المتغيرات. */
 export function Price({
   price,
@@ -8,13 +17,7 @@ export function Price({
   from = false,
   size = "default",
   className,
-}: {
-  price: number
-  compareAtPrice?: number | null
-  from?: boolean
-  size?: "default" | "lg"
-  className?: string
-}) {
+}: PriceProps) {
   const discount = discountPercent(price, compareAtPrice)
 
   return (
@@ -50,30 +53,5 @@ export function Price({
         </>
       ) : null}
     </p>
-  )
-}
-
-/** شارة نسبة الخصم، مثل "-20%". */
-export function DiscountBadge({
-  price,
-  compareAtPrice,
-  className,
-}: {
-  price: number
-  compareAtPrice?: number | null
-  className?: string
-}) {
-  const discount = discountPercent(price, compareAtPrice)
-  if (!discount) return null
-  return (
-    <span
-      className={cn(
-        "inline-flex rounded-sm bg-primary px-1.5 py-0.5 text-xs font-bold text-primary-foreground",
-        className
-      )}
-    >
-      <span className="sr-only">خصم </span>
-      <span dir="ltr">-{discount}%</span>
-    </span>
   )
 }

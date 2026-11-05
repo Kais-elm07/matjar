@@ -27,7 +27,19 @@ const eslintConfig = defineConfig([
       ],
       // List keys come from the data (a slug, SKU or id), never from the position in the array
       "react/no-array-index-key": "error",
+      // Every component has a named Props interface, even when it only extends another type
+      "@typescript-eslint/no-empty-object-type": [
+        "error",
+        { allowInterfaces: "with-single-extends" },
+      ],
+      // One component per file
+      "react/no-multi-comp": "error",
     },
+  },
+  {
+    // Compound components keep their parts together (a dialog with its trigger, content and title)
+    files: ["src/components/ui/**"],
+    rules: { "react/no-multi-comp": "off" },
   },
   // يعطّل قواعد التنسيق في ESLint لأن Prettier يتولاها
   prettier,

@@ -45,13 +45,16 @@ const buttonVariants = cva(
   }
 )
 
+interface ButtonProps
+  extends React.ComponentProps<"button">, VariantProps<typeof buttonVariants> {}
+
 function Button({
   className,
   variant = "default",
   size = "default",
   type = "button",
   ...props
-}: React.ComponentProps<"button"> & VariantProps<typeof buttonVariants>) {
+}: ButtonProps) {
   return (
     <button
       data-slot="button"

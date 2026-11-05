@@ -8,31 +8,22 @@ import {
   ShoppingCartIcon,
   TruckIcon,
   ZapIcon,
-  type LucideIcon,
 } from "lucide-react"
 
 import { QuantityStepper } from "@/components/cart/quantity-stepper"
 import { useAddToCart } from "@/components/cart/use-add-to-cart"
-import { DiscountBadge, Price } from "@/components/product/price"
+import { DiscountBadge } from "@/components/product/discount-badge"
+import { Price } from "@/components/product/price"
 import { ProductGallery } from "@/components/product/product-gallery"
 import { ShareButton } from "@/components/product/share-button"
+import { StockStatus } from "@/components/product/stock-status"
+import { TrustItem } from "@/components/product/trust-item"
 import { WishlistButton } from "@/components/product/wishlist-button"
 import { Button } from "@/components/ui/button"
-import { siteConfig } from "@/config/site"
-import { pluralize } from "@/lib/arabic-plural"
 import { getColorHex, type VariantOptions } from "@/lib/catalog/options"
 import type { Product, Variant } from "@/lib/catalog/types"
 import { lineLimit } from "@/lib/store/cart"
 import { cn } from "@/lib/utils"
-
-const LOW_STOCK_FORMS = {
-  zero: "نفد من المخزون",
-  one: "بقيت قطعة واحدة فقط",
-  two: "بقيت قطعتان فقط",
-  few: "بقيت {n} قطع فقط",
-  many: "بقيت {n} قطعة فقط",
-  other: "بقيت {n} قطعة فقط",
-}
 
 type ValueState = "available" | "sold-out" | "unavailable"
 
@@ -48,8 +39,12 @@ export type PurchasableProduct = Pick<
   | "compareAtPrice"
 >
 
+interface ProductDetailsProps {
+  product: PurchasableProduct
+}
+
 /** معرض الصور ولوحة الشراء: اختيار المتغير يغيّر السعر والمخزون وصورة اللون. */
-export function ProductDetails({ product }: { product: PurchasableProduct }) {
+export function ProductDetails({ product }: ProductDetailsProps) {
   const groups = product.optionGroups
   const firstAvailable =
     product.variants.find((variant) => variant.stock > 0) ?? product.variants[0]
@@ -278,29 +273,4 @@ function imageIndexForOptions(
     (image) => image.color === options[colorGroup.name]
   )
   return index >= 0 ? index : current
-}
-
-/** حالة التوفر بنقطة ملونة: أخضر للمتوفر، وكهرماني داكن للكمية القليلة، وأحمر للنفاد. */
-function StockStatus({ stock }: { stock: number }) {
-  const [color, text] =
-    stock === 0
-      ? ["text-destructive", "نفد من المخزون"]
-      : stock <= siteConfig.lowStockThreshold
-        ? ["text-warning", pluralize(stock, LOW_STOCK_FORMS)]
-        : ["text-success", "متوفر"]
-  return (
-    <p className={cn("flex items-center gap-2 text-sm font-bold", color)}>
-      <span aria-hidden className="size-2 rounded-full bg-current" />
-      {text}
-    </p>
-  )
-}
-
-function TrustItem({ icon: Icon, text }: { icon: LucideIcon; text: string }) {
-  return (
-    <li className="flex items-center gap-2">
-      <Icon className="size-4 shrink-0 text-primary" aria-hidden />
-      {text}
-    </li>
-  )
 }

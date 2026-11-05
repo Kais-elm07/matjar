@@ -2,15 +2,15 @@ import { ProductMiniCard } from "@/components/product/product-mini-card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { CategoryLink, ProductCardData } from "@/lib/catalog/types"
 
+interface TrendingTabsProps {
+  groups: { category: CategoryLink; products: ProductCardData[] }[]
+}
+
 /**
  * "الرائج الآن": تبويب لكل فئة رئيسية، فيه أكثر منتجاتها مبيعاً ببطاقات أفقية صغيرة.
  * مكوّن خادم: البطاقات تُبنى مسبقاً في HTML، والتبويبات وحدها تعمل في المتصفح.
  */
-export function TrendingTabs({
-  groups,
-}: {
-  groups: { category: CategoryLink; products: ProductCardData[] }[]
-}) {
+export function TrendingTabs({ groups }: TrendingTabsProps) {
   if (groups.length === 0) return null
 
   return (

@@ -11,12 +11,16 @@ import type { ProductBanner } from "@/lib/catalog/types"
 import { scrollBehavior } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
+interface HeroSliderProps {
+  slides: ProductBanner[]
+}
+
 /**
  * الواجهة الرئيسية بعرض الشاشة: صورة كبيرة فوقها تعتيم بلون الخلفية وتدرج أغمق من الأسفل،
  * والشارة والعنوان والوصف والسعر والزر البرتقالي في منتصفها. أكثر من شريحة تُسحب باللمس،
  * ولها أسهم على الحاسوب ونقاط (النشطة برتقالية)، ولا تتحرك تلقائياً.
  */
-export function HeroSlider({ slides }: { slides: ProductBanner[] }) {
+export function HeroSlider({ slides }: HeroSliderProps) {
   const listRef = useRef<HTMLUListElement>(null)
   const slideRefs = useRef<(HTMLLIElement | null)[]>([])
   const [active, setActive] = useState(0)

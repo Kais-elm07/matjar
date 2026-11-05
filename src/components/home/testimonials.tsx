@@ -6,12 +6,12 @@ import { cn } from "@/lib/utils"
 /** The five stars of a rating, each named by its value. */
 const STARS = [1, 2, 3, 4, 5]
 
-/** آراء العملاء: تظهر فقط عند وجود آراء حقيقية في src/data/testimonials.ts. */
-export function Testimonials({
-  testimonials,
-}: {
+interface TestimonialsProps {
   testimonials: TestimonialInput[]
-}) {
+}
+
+/** آراء العملاء: تظهر فقط عند وجود آراء حقيقية في src/data/testimonials.ts. */
+export function Testimonials({ testimonials }: TestimonialsProps) {
   if (testimonials.length === 0) return null
   return (
     <section aria-labelledby="testimonials-heading">

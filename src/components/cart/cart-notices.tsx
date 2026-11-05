@@ -13,16 +13,18 @@ const MESSAGES: Record<CartNotice["kind"], (name: string) => string> = {
   "price-down": (name) => `انخفض سعر «${name}» منذ أضفته.`,
 }
 
+interface CartNoticesProps {
+  notices: CartNotice[]
+  onDismiss: () => void
+  className?: string
+}
+
 /** تنبيه بما تغيّر في السلة بعد مطابقتها مع بيانات الموقع الحالية. */
 export function CartNotices({
   notices,
   onDismiss,
   className,
-}: {
-  notices: CartNotice[]
-  onDismiss: () => void
-  className?: string
-}) {
+}: CartNoticesProps) {
   if (notices.length === 0) return null
   return (
     <div

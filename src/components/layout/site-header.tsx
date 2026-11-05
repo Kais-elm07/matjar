@@ -4,10 +4,8 @@ import { CategoryMenu } from "@/components/layout/category-menu"
 import { HeaderActions } from "@/components/layout/header-actions"
 import { Logo } from "@/components/layout/logo"
 import { MobileNav, type NavCategory } from "@/components/layout/mobile-nav"
-import {
-  MobileSearchButton,
-  MobileSearchRow,
-} from "@/components/layout/mobile-search"
+import { MobileSearchButton } from "@/components/layout/mobile-search-button"
+import { MobileSearchRow } from "@/components/layout/mobile-search-row"
 import { SearchBox } from "@/components/layout/search-box"
 import { buttonVariants } from "@/components/ui/button"
 import { siteConfig } from "@/config/site"
