@@ -2,3 +2,6 @@
 pnpm-lock.yaml
 AGENTS.md
 PLAN.md
+# Copied as they are from github.com/vercel-labs/agent-skills
+.claude/skills/vercel-react-best-practices/
+.claude/skills/vercel-composition-patterns/
