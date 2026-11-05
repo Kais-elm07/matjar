@@ -4,11 +4,11 @@ import { useLayoutEffect, useSyncExternalStore } from "react"
 import { useSearchParams } from "next/navigation"
 
 /**
- * معاملات الرابط لصفحات القوائم (مثل "?sale=1&sort=newest").
+ * URL parameters for the listing pages (such as "?sale=1&sort=newest").
  *
- * لماذا لا نستخدم useSearchParams مباشرة؟ في الموقع الثابت يجعل useSearchParams القائمة
- * تُرسم في المتصفح فقط، فتختفي المنتجات من ملف HTML وتتأخر الصور.
- * هنا تُجهَّز القائمة وقت البناء دون فلاتر، ثم تُطبَّق فلاتر الرابط فور تحميل الصفحة.
+ * Why not use useSearchParams directly? On a static site, useSearchParams makes the list
+ * render only in the browser, so the products are missing from the HTML file and the images load late.
+ * Here the list is prepared at build time without filters, then the URL filters apply as soon as the page loads.
  */
 
 let current = typeof window === "undefined" ? "" : window.location.search
@@ -27,7 +27,7 @@ function subscribe(listener: () => void) {
   }
 }
 
-/** نص معاملات الرابط الحالي. يكون فارغاً أثناء البناء وأول رسم في المتصفح. */
+/** The current URL's query string. Empty during the build and the first render in the browser. */
 export function useListingSearch() {
   return useSyncExternalStore(
     subscribe,
@@ -36,19 +36,19 @@ export function useListingSearch() {
   )
 }
 
-/** تحديث الرابط دون إعادة تحميل الصفحة، وإبلاغ القوائم فوراً. */
+/** Updates the URL without reloading the page, and notifies the lists at once. */
 export function updateListingUrl(href: string, push = false) {
   window.history[push ? "pushState" : "replaceState"](null, "", href)
   emit(window.location.search)
 }
 
 /**
- * يراقب تغيّر الرابط من أي مصدر: روابط Next.js، وزر الرجوع، وتحديثات الفلاتر.
- * يوضع مرة واحدة في تخطيط المتجر داخل Suspense.
+ * Watches URL changes from any source: Next.js links, the back button, and filter updates.
+ * Placed once in the store layout, inside Suspense.
  */
 export function SearchParamsListener() {
   const value = useSearchParams().toString()
-  // قبل الرسم حتى لا تظهر القائمة دون فلاتر للحظة عند التنقل
+  // Before paint, so the list does not show without filters for a moment during navigation
   useLayoutEffect(() => {
     emit(value ? `?${value}` : "")
   }, [value])

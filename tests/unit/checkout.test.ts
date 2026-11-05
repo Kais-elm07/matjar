@@ -19,7 +19,7 @@ import type {
   ShippingMethod,
 } from "@/lib/checkout/types"
 
-// المبالغ هنا بالهللات كما تحسبها الدوال: 30000 تعني 300 ر.س
+// Amounts here are in halalas, as the functions compute them: 30000 means 300 SAR
 const riyadh: ShippingCity = {
   name: "الرياض",
   fee: 2500,
@@ -78,21 +78,21 @@ function totals(
   return calculateTotals({ subtotal, city, method, coupon, config })
 }
 
-describe("الأرقام والكوبونات", () => {
-  it("يجد الكوبون دون اعتبار لحالة الأحرف والمسافات والأرقام العربية", () => {
+describe("numbers and coupons", () => {
+  it("finds the coupon regardless of letter case, spaces and Arabic-Indic digits", () => {
     expect(findCoupon(config, " welcome10 ")).toBe(WELCOME10)
     expect(findCoupon(config, "WELCOME١٠")).toBe(WELCOME10)
     expect(findCoupon(config, "NOPE")).toBeUndefined()
   })
 
-  it("يرفض الكوبون تحت الحد الأدنى للطلب", () => {
+  it("rejects the coupon below the minimum order", () => {
     expect(couponProblem(SAVE50, 39999)).toBe("minimum")
     expect(couponProblem(SAVE50, 40000)).toBeNull()
   })
 })
 
 describe("calculateTotals", () => {
-  it("لا يحسب الشحن قبل اختيار المدينة", () => {
+  it("does not calculate shipping before a city is chosen", () => {
     expect(totals(20000)).toEqual({
       subtotal: 20000,
       discount: 0,
@@ -102,7 +102,7 @@ describe("calculateTotals", () => {
     })
   })
 
-  it("يضيف سعر المدينة تحت حد الشحن المجاني", () => {
+  it("adds the city's rate below the free shipping threshold", () => {
     expect(totals(20000, { city: riyadh })).toMatchObject({
       shipping: 2500,
       total: 22500,
@@ -110,7 +110,7 @@ describe("calculateTotals", () => {
     })
   })
 
-  it("الشحن العادي مجاني عند بلوغ الحد", () => {
+  it("makes standard shipping free once the threshold is reached", () => {
     expect(totals(30000, { city: riyadh })).toMatchObject({
       shipping: 0,
       total: 30000,
@@ -118,7 +118,7 @@ describe("calculateTotals", () => {
     })
   })
 
-  it("حد الشحن المجاني يُحسب بعد الخصم", () => {
+  it("applies the free shipping threshold after the discount", () => {
     expect(totals(32000, { city: riyadh, coupon: WELCOME10 })).toEqual({
       subtotal: 32000,
       discount: 3200,
@@ -128,14 +128,14 @@ describe("calculateTotals", () => {
     })
   })
 
-  it("الخصم النسبي لا يتجاوز حده الأقصى", () => {
-    // 1,327 ر.س مع WELCOME10 وتوصيل سريع: 1,327 − 100 + 25 + 20 = 1,272 ر.س
+  it("caps a percentage discount at its maximum", () => {
+    // 1,327 SAR with WELCOME10 and express delivery: 1,327 − 100 + 25 + 20 = 1,272 SAR
     expect(
       totals(132700, { city: riyadh, method: "express", coupon: WELCOME10 })
     ).toMatchObject({ discount: 10000, shipping: 4500, total: 127200 })
   })
 
-  it("الخصم الثابت يحتاج الحد الأدنى ولا يتجاوز المجموع", () => {
+  it("requires the minimum for a fixed discount and never discounts more than the subtotal", () => {
     expect(totals(39999, { city: riyadh, coupon: SAVE50 }).discount).toBe(0)
     expect(totals(40000, { city: riyadh, coupon: SAVE50 })).toMatchObject({
       discount: 5000,
@@ -150,7 +150,7 @@ describe("calculateTotals", () => {
     })
   })
 
-  it("كوبون الشحن المجاني يشمل التوصيل السريع", () => {
+  it("applies the free shipping coupon to express delivery too", () => {
     expect(
       totals(10000, { city: riyadh, method: "express", coupon: FREESHIP })
     ).toMatchObject({
@@ -161,7 +161,7 @@ describe("calculateTotals", () => {
     })
   })
 
-  it("التوصيل السريع لا يصبح مجانياً بقيمة الطلب", () => {
+  it("never makes express delivery free because of the order value", () => {
     expect(totals(50000, { city: riyadh, method: "express" })).toMatchObject({
       shipping: 4500,
       total: 54500,
@@ -180,7 +180,7 @@ describe("normalizePhone", () => {
     ["009660501234567", "0501234567"],
     ["٠٥٠١٢٣٤٥٦٧", "0501234567"],
     ["(050) 123-4567", "0501234567"],
-  ])("%s ← %s", (input, expected) => {
+  ])("%s → %s", (input, expected) => {
     expect(normalizePhone(input)).toBe(expected)
   })
 })
@@ -198,7 +198,7 @@ describe("checkoutSchema", () => {
     shippingMethod: "express",
   }
 
-  /** رسالة الخطأ لكل حقل، كما تظهر تحته في النموذج. */
+  /** The error message for each field, as it appears under the field in the form. */
   function errorsFor(input: Record<string, unknown>) {
     const result = schema.safeParse(input)
     if (result.success) return {}
@@ -207,7 +207,7 @@ describe("checkoutSchema", () => {
     )
   }
 
-  it("يقبل نموذجاً صحيحاً ويوحّد رقم الجوال", () => {
+  it("accepts a valid form and normalizes the phone number", () => {
     const result = schema.safeParse(valid)
     expect(result.success).toBe(true)
     expect(result.data).toMatchObject({
@@ -216,7 +216,7 @@ describe("checkoutSchema", () => {
     })
   })
 
-  it("يعرض رسالة عربية تحت كل حقل خاطئ", () => {
+  it("shows an Arabic message under every invalid field", () => {
     expect(
       errorsFor({
         ...valid,
@@ -238,7 +238,7 @@ describe("checkoutSchema", () => {
     })
   })
 
-  it("يرفض التوصيل السريع في مدينة لا يتوفر فيها", () => {
+  it("rejects express delivery in a city that doesn't offer it", () => {
     expect(errorsFor({ ...valid, city: "أبها" })).toEqual({
       shippingMethod: "التوصيل السريع غير متاح في هذه المدينة",
     })
@@ -269,7 +269,7 @@ describe("buildOrder", () => {
   }
   const now = new Date("2026-11-04T10:00:00Z")
 
-  it("يبني الطلب بالمبالغ التي رآها الزائر قبل التأكيد", () => {
+  it("builds the order with the amounts the visitor saw before confirming", () => {
     const order = buildOrder({
       values,
       lines: [line],
@@ -295,7 +295,7 @@ describe("buildOrder", () => {
     )
   })
 
-  it("لا يسجل كوبوناً لم يعد ينطبق، ويرفض مدينة خارج مدن الشحن", () => {
+  it("does not record a coupon that no longer applies, and rejects a city outside the shipping cities", () => {
     expect(
       buildOrder({ values, lines: [line], coupon: SAVE50, config, now })
         ?.couponCode

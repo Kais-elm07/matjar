@@ -6,12 +6,12 @@ import {
   singleVariant,
 } from "@/lib/catalog/define"
 
-/** أدوات كتابة المنتجات في src/data/products.ts كما يستخدمها صاحب المتجر. */
+/** The helpers for writing products in src/data/products.ts, as the store owner uses them. */
 describe("optionMatrix", () => {
   const options = { المقاس: ["S", "M", "L"], اللون: ["أبيض", "أزرق"] }
   const base = { sku: "SHIRT", price: 129, stock: 10 }
 
-  it("يولّد متغيراً لكل تركيبة برموز مرقمة بالترتيب", () => {
+  it("generates a variant for every combination, with SKUs numbered in order", () => {
     const variants = optionMatrix(options, base)
     expect(variants).toHaveLength(6)
     expect(variants.map((variant) => variant.sku)).toEqual([
@@ -25,7 +25,7 @@ describe("optionMatrix", () => {
     expect(variants[1].options).toEqual({ المقاس: "S", اللون: "أزرق" })
   })
 
-  it("تعديل التركيبة الكاملة يتقدم على تعديل القيمة الواحدة", () => {
+  it("gives a full-combination override precedence over a single-value override", () => {
     const variants = optionMatrix(options, base, {
       L: { price: 139 },
       "L/أزرق": { price: 149, stock: 0 },
@@ -41,15 +41,15 @@ describe("optionMatrix", () => {
     expect(find("M", "أبيض")).toMatchObject({ price: 129, stock: 10 })
   })
 
-  it("يوقف البناء عند مفتاح تعديل لا يطابق أي قيمة أو تركيبة", () => {
+  it("stops the build on an override key that matches no value or combination", () => {
     expect(() =>
       optionMatrix(options, base, { XL: { stock: 0 }, "M/ازرق": { stock: 0 } })
     ).toThrow(/مفاتيح تعديل لا تطابق أي قيمة أو تركيبة: XL، M\/ازرق/)
   })
 })
 
-describe("productImages وsingleVariant", () => {
-  it("يرتب مسارات الصور ويربط كل صورة بلونها", () => {
+describe("productImages and singleVariant", () => {
+  it("lists the image paths in order and links each image to its color", () => {
     expect(productImages("watch", 2)).toEqual([
       { src: "/images/products/watch-1" },
       { src: "/images/products/watch-2" },
@@ -60,7 +60,7 @@ describe("productImages وsingleVariant", () => {
     ])
   })
 
-  it("ينشئ متغيراً واحداً لمنتج بلا خيارات", () => {
+  it("creates a single variant for a product without options", () => {
     expect(
       singleVariant({ sku: "WALLET", price: 89, compareAtPrice: 99, stock: 3 })
     ).toEqual([{ sku: "WALLET", price: 89, compareAtPrice: 99, stock: 3 }])

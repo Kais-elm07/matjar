@@ -8,13 +8,13 @@ import type {
   ShippingMethod,
 } from "./types"
 
-/** يبحث عن كوبون برمزه، دون اعتبار لحالة الأحرف أو المسافات. */
+/** Finds a coupon by its code, ignoring letter case and spaces. */
 export function findCoupon(config: CheckoutConfig, code: string) {
   const wanted = toWesternDigits(code).trim().toUpperCase()
   return config.coupons.find((coupon) => coupon.code === wanted)
 }
 
-/** سبب عدم انطباق الكوبون على الطلب، أو null إن كان صالحاً. */
+/** Why the coupon does not apply to the order, or null if it is valid. */
 export function couponProblem(coupon: Coupon, subtotal: number) {
   return subtotal < coupon.minSubtotal ? "minimum" : null
 }
@@ -29,7 +29,7 @@ function couponDiscount(coupon: Coupon | null, subtotal: number) {
   return 0
 }
 
-/** سعر التوصيل للمدينة والطريقة، قبل الشحن المجاني. */
+/** Delivery price for the city and method, before free shipping. */
 export function shippingFee(
   city: ShippingCity,
   method: ShippingMethod,
@@ -39,8 +39,8 @@ export function shippingFee(
 }
 
 /**
- * مبالغ الطلب: المجموع، والخصم، والشحن، والإجمالي.
- * الشحن العادي مجاني فوق الحد المكتوب في الإعدادات، أو بكوبون الشحن المجاني.
+ * The order amounts: subtotal, discount, shipping and total.
+ * Standard shipping is free above the threshold set in the settings, or with a free-shipping coupon.
  */
 export function calculateTotals({
   subtotal,

@@ -1,6 +1,6 @@
 import { ContactCards } from "@/components/content/contact-cards"
 
-/** "تواصل معنا" في نهاية الصفحة الرئيسية: عنوان في المنتصف وبطاقات وسائل التواصل. */
+/** "تواصل معنا" (Contact us) at the end of the home page: a centered heading and the contact channel cards. */
 export function ContactSection() {
   return (
     <section aria-labelledby="contact-heading" className="text-center">

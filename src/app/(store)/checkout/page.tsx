@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-/** إتمام الطلب التجريبي: إعدادات الشحن والكوبونات تُقرأ وقت البناء وتُمرَّر للنموذج. */
+/** The demo checkout: shipping and coupon settings are read at build time and passed to the form. */
 export default function CheckoutPage() {
   return (
     <div className="page-container py-5 md:py-8">

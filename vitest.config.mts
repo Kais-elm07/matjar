@@ -4,12 +4,12 @@ import { defineConfig } from "vitest/config"
 
 const fromRoot = (path: string) => fileURLToPath(new URL(path, import.meta.url))
 
-/** اختبارات الوحدات (pnpm test): دوال الأسعار والبحث والفلاتر والسلة والشحن والبيانات. */
+/** Unit tests (pnpm test): the functions for prices, search, filters, the cart, shipping and the data. */
 export default defineConfig({
   resolve: {
     alias: [
       { find: /^@\//, replacement: fromRoot("./src/") },
-      // server-only يمنع استيراد كود وقت البناء في المتصفح، وفي الاختبارات يكفي ملف فارغ
+      // server-only blocks importing build-time code in the browser; in tests an empty file is enough
       {
         find: "server-only",
         replacement: fromRoot("./tests/unit/support/empty.ts"),

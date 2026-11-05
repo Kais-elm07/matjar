@@ -18,7 +18,7 @@ interface BreadcrumbsProps {
   className?: string
 }
 
-/** مسار التنقل: الرئيسية ‹ الفئة ‹ الصفحة الحالية. */
+/** The breadcrumb trail: Home ‹ category ‹ current page. */
 export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
   return (
     <Breadcrumb className={cn("mb-5", className)}>

@@ -52,9 +52,9 @@ interface SheetContentProps extends SheetPrimitive.Popup.Props {
 }
 
 /**
- * نافذة منزلقة من حافة الشاشة. side جهة فعلية لا منطقية: في هذا المتجر العربي
- * "right" هي جهة البداية (القائمة) و"left" جهة النهاية (السلة)، والإزاحة عند الفتح
- * والإغلاق نحو الحافة نفسها، فلا تُعكس في الاتجاه العربي.
+ * A panel that slides in from the screen edge. `side` is physical, not logical: in this Arabic
+ * store "right" is the start side (the menu) and "left" the end side (the cart), and the offset
+ * on open and close points to that same edge, so it isn't mirrored in the Arabic direction.
  */
 function SheetContent({
   className,

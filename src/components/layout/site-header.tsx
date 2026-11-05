@@ -12,14 +12,15 @@ import { siteConfig } from "@/config/site"
 import { getChildCategories, getRootCategories } from "@/lib/catalog/catalog"
 import { cn } from "@/lib/utils"
 
-/** روابط صف التنقل على الحاسوب: نص فاتح يصبح برتقالياً عند المرور (DESIGN.md: header-link-hover). */
+/** Links in the desktop navigation row: light text that turns orange on hover (DESIGN.md: header-link-hover). */
 const NAV_LINK =
   "inline-flex h-10 items-center rounded-lg px-3 text-sm font-medium whitespace-nowrap text-foreground/85 transition-colors outline-none hover:text-primary focus-visible:ring-3 focus-visible:ring-ring aria-expanded:text-primary"
 
 /**
- * رأس المتجر الداكن الثابت: صف فيه الشعار وحقل بحث عريض في المنتصف والمفضلة والسلة وزر "تسوّق الآن"،
- * وعلى الحاسوب صف ثانٍ بروابط التسوق والمساعدة، و"الفئات" يفتح لوحة بأعمدة.
- * على الجوال: زر القائمة والشعار وزر البحث والسلة في صف واحد.
+ * The dark sticky store header: a row with the logo, a wide search field in the middle, the wishlist,
+ * the cart and the "تسوّق الآن" (Shop now) button, and on desktop a second row with the shopping and
+ * help links, where "الفئات" (Categories) opens a panel with columns.
+ * On mobile: the menu button, the logo, the search button and the cart in a single row.
  */
 export function SiteHeader() {
   const roots = getRootCategories()
@@ -57,7 +58,7 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {/* صف الروابط على الحاسوب. لوحة الفئات الكبيرة تمتد بعرضه، فهو الحاوية النسبية */}
+      {/* The desktop link row. The large categories panel spans its width, so it is the relative container */}
       <nav
         aria-label="التسوق"
         className="relative hidden border-t border-border/60 md:block"

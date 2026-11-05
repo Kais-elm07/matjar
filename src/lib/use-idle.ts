@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react"
 
 /**
- * يصبح true بعد اكتمال تحميل الصفحة وفراغ المتصفح.
- * تستخدمه النوافذ المنبثقة (السلة، والقائمة، وتكبير الصورة، والتصفية) لتحميل كودها
- * بعد ظهور المحتوى لا قبله، فتبقى جاهزة للفتح فوراً دون أن تؤخر الصفحة.
+ * Becomes true once the page has finished loading and the browser is idle.
+ * Pop-ups (the cart, the menu, the image zoom and the filters) use it to load their code
+ * after the content appears, not before, so they are ready to open at once without delaying the page.
  */
 export function useIdle() {
   const [idle, setIdle] = useState(false)
@@ -13,7 +13,7 @@ export function useIdle() {
   useEffect(() => {
     let cancel = () => {}
     const schedule = () => {
-      // Safari لا يدعم requestIdleCallback، فينتظر ثانية ونصفاً بعد التحميل
+      // Safari does not support requestIdleCallback, so wait one and a half seconds after load
       if ("requestIdleCallback" in window) {
         const id = window.requestIdleCallback(() => setIdle(true), {
           timeout: 3000,

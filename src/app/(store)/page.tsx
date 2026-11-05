@@ -30,8 +30,8 @@ export const metadata: Metadata = {
 }
 
 /**
- * الصفحة الرئيسية بترتيب DESIGN.md: الواجهة وشريط الثقة بعرض الشاشة،
- * ثم الأقسام داخل حاوية الصفحة. كل قسم مكوّن مستقل في src/components/home.
+ * The home page in the order of DESIGN.md: the hero and the trust strip at full screen width,
+ * then the sections inside the page container. Each section is its own component in src/components/home.
  */
 export default function HomePage() {
   const { newArrivals, bestSellers, deals, trending, maxDiscount } =

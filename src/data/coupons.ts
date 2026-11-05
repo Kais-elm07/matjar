@@ -1,9 +1,9 @@
 import type { CouponInput } from "@/lib/checkout/types"
 
 /**
- * كوبونات الخصم التجريبية. المبالغ بالريال.
- * تنبيه: في موقع ثابت يستطيع أي زائر رؤية هذه الرموز في كود الصفحة،
- * لذلك هي للعرض فقط وليست لعروض حقيقية سرية.
+ * Demo discount coupons. Amounts are in riyals.
+ * Note: on a static site any visitor can see these codes in the page's code,
+ * so they are for demonstration only, not for real secret offers.
  */
 export const coupons: CouponInput[] = [
   {

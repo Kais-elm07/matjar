@@ -3,17 +3,17 @@ import { expect, test, type Page } from "@playwright/test"
 import { coupons } from "../../src/data/coupons"
 import { isPhone, open, simpleProduct } from "./helpers"
 
-/** أول كوبون نسبي في بيانات المتجر، حتى لا يرتبط الاختبار برمز بعينه. */
+/** The first percentage coupon in the store data, so the test isn't tied to a specific code. */
 const percentCoupon = coupons.find((coupon) => coupon.type === "percent")
 
-/** زر الإضافة في صفحة المنتج، قبل أزرار الإضافة السريعة في المنتجات المقترحة. */
+/** The add button on the product page, before the quick-add buttons in the suggested products. */
 const addToCart = (page: Page) =>
   page
     .getByRole("main")
     .getByRole("button", { name: "أضف للسلة", exact: true })
     .first()
 
-test("الإضافة للسلة وتعديل الكمية والحذف، مع بقاء السلة بعد إعادة التحميل", async ({
+test("Adding to the cart, changing the quantity and removing, with the cart kept after a reload", async ({
   page,
   request,
 }) => {
@@ -40,7 +40,7 @@ test("الإضافة للسلة وتعديل الكمية والحذف، مع ب
   await expect(page.getByText("سلتك فارغة")).toBeVisible()
 })
 
-test("إتمام طلب تجريبي برقم جوال بالأرقام العربية وكوبون خصم", async ({
+test("Placing a demo order with a mobile number in Arabic-Indic digits and a discount coupon", async ({
   page,
   request,
 }) => {
@@ -54,7 +54,7 @@ test("إتمام طلب تجريبي برقم جوال بالأرقام العر
   await expect(page).toHaveURL(/\/checkout\/$/)
   await expect(page.locator("html[data-stores-ready]")).toBeAttached()
 
-  // الإرسال دون تعبئة يعرض رسائل عربية تحت الحقول
+  // Submitting without filling in the fields shows Arabic messages under them
   const confirm = page.getByRole("button", { name: /تأكيد الطلب/ })
   await confirm.click()
   await expect(page.getByText("اكتب اسمك الكامل")).toBeVisible()
@@ -70,13 +70,13 @@ test("إتمام طلب تجريبي برقم جوال بالأرقام العر
     .getByLabel("الشارع ورقم المبنى", { exact: true })
     .fill("شارع الملك فهد 12")
 
-  // ملخص الطلب يُطوى على الجوال، وفيه حقل الكوبون
+  // On phones the order summary is collapsed, and it holds the coupon field
   if (isPhone(page)) {
     await page.getByRole("button", { name: /ملخص الطلب/ }).click()
   }
   if (!percentCoupon)
-    throw new Error("لا يوجد كوبون نسبي في src/data/coupons.ts")
-  // بحروف صغيرة: الرمز يُقبل دون اعتبار لحالة الأحرف
+    throw new Error("No percentage coupon in src/data/coupons.ts")
+  // In lowercase: the code is accepted regardless of letter case
   await page
     .getByLabel("كوبون الخصم", { exact: true })
     .fill(percentCoupon.code.toLowerCase())
@@ -89,19 +89,21 @@ test("إتمام طلب تجريبي برقم جوال بالأرقام العر
   await expect(page).toHaveURL(/\/checkout\/success\/$/)
   await expect(page.getByText(/رقم الطلب/)).toBeVisible()
   await expect(page.getByText(/طلب تجريبي/).first()).toBeVisible()
-  // السلة فرغت بعد التأكيد: زر السلة في الرأس بلا عدّاد
+  // The cart is empty after confirming: the cart button in the header has no counter
   await expect(
     page.getByRole("button", { name: "السلة", exact: true }).first()
   ).toBeVisible()
 })
 
-test("حفظ منتج في المفضلة يظهر في صفحتها ويُزال منها", async ({ page }) => {
+test("A product saved to the wishlist appears on the wishlist page and can be removed from it", async ({
+  page,
+}) => {
   await open(page, "/products/")
   const card = page.getByRole("article").first()
   const name = (await card.getByRole("heading").textContent())?.trim() ?? ""
   await card.getByRole("button", { name: `حفظ ${name} في المفضلة` }).click()
   await expect(page.getByText("أُضيف إلى المفضلة")).toBeVisible()
-  // العدّاد في الرأس على الحاسوب، وفي الشريط السفلي على الجوال؛ getByRole يتجاهل المخفي منهما
+  // The counter is in the header on desktop and in the bottom bar on phones; getByRole ignores the hidden one
   await expect(
     page.getByRole("link", { name: "المفضلة (1)" }).first()
   ).toBeVisible()

@@ -11,10 +11,11 @@ import {
 import { cn } from "@/lib/utils"
 
 /**
- * تبويبات خفيفة بنفس واجهة تبويبات shadcn، دون مكتبة Base UI، لتقليل JavaScript الصفحة.
- * كل اللوحات موجودة في HTML (غير النشطة مخفية بالخاصية hidden)، فتقرؤها محركات البحث.
- * الأسهم تنتقل بين التبويبات بحسب اتجاه الصفحة، وHome وEnd إلى الأول والأخير.
- * الشكل الافتراضي من DESIGN.md: حبوب بحد رمادي، والنشط برتقالي بنص داكن (section-tab-active).
+ * Lightweight tabs with shadcn's tabs API but no Base UI library, to reduce the page's JavaScript.
+ * All panels are in the HTML (inactive ones get the `hidden` attribute), so search engines read them.
+ * Arrow keys move between tabs following the page direction; Home and End go to the first and last.
+ * The default look comes from DESIGN.md: pills with a gray border, and the active one is orange
+ * with dark text (section-tab-active).
  */
 
 type TabsContextValue = {
@@ -53,7 +54,7 @@ function Tabs({ defaultValue, className, ...props }: TabsProps) {
   )
 }
 
-/** الأسهم تنقل التركيز إلى التبويب المجاور وتختاره. */
+/** Arrow keys move focus to the adjacent tab and select it. */
 function moveBetweenTabs(event: KeyboardEvent<HTMLDivElement>) {
   const tabs = [
     ...event.currentTarget.querySelectorAll<HTMLButtonElement>(
@@ -63,7 +64,7 @@ function moveBetweenTabs(event: KeyboardEvent<HTMLDivElement>) {
   const current = tabs.findIndex((tab) => tab === document.activeElement)
   if (current === -1) return
 
-  // في الاتجاه العربي السهم الأيسر يعني التالي
+  // In the Arabic (RTL) direction the left arrow means next
   const rtl = getComputedStyle(event.currentTarget).direction === "rtl"
   const step = { ArrowLeft: rtl ? 1 : -1, ArrowRight: rtl ? -1 : 1 }[event.key]
   const target =
@@ -113,7 +114,7 @@ function TabsTrigger({ value, className, ...props }: TabsTriggerProps) {
       id={tabId(baseId, value)}
       aria-controls={panelId(baseId, value)}
       aria-selected={selected}
-      // التبويب النشط وحده في ترتيب Tab، والبقية بالأسهم
+      // Only the active tab is in the Tab order; the rest are reached with the arrow keys
       tabIndex={selected ? 0 : -1}
       data-slot="tabs-trigger"
       data-active={selected ? "" : undefined}

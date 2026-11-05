@@ -1,9 +1,9 @@
 import type { ShippingInput } from "@/lib/checkout/types"
 
 /**
- * إعدادات الشحن: المدن وسعر التوصيل ومدته، وحد الشحن المجاني. المبالغ بالريال.
- * "مدينة أخرى" تظهر آخر القائمة لأي مدينة غير مذكورة.
- * مؤقتاً مدن السعودية حتى تحديد الدولة (القرار 1 في الخطة).
+ * Shipping settings: the cities, delivery price and time, and the free shipping threshold. Amounts are in riyals.
+ * "مدينة أخرى" (another city) appears at the end of the list for any city not listed.
+ * Saudi cities for now, until the country is decided (decision 1 in the plan).
  */
 export const shipping: ShippingInput = {
   freeShippingFrom: 300,

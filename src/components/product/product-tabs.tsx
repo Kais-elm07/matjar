@@ -4,14 +4,14 @@ import { RichText } from "@/components/store/rich-text"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { Product } from "@/lib/catalog/types"
 
-/** تبويبات صفحة المنتج أكبر قليلاً من الشكل الافتراضي */
+/** Product page tabs are slightly larger than the default look */
 const TAB = "h-10 px-5 text-base"
 
 interface ProductTabsProps {
   product: Product
 }
 
-/** تبويبات المعلومات أسفل صفحة المنتج: الوصف، والمواصفات، والشحن والإرجاع. */
+/** The info tabs at the bottom of the product page: description, specs, and shipping and returns. */
 export function ProductTabs({ product }: ProductTabsProps) {
   return (
     <Tabs defaultValue="description" className="gap-6 border-t pt-8">

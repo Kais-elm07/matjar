@@ -20,7 +20,7 @@ interface ActiveFiltersProps {
   onChange: (changes: Partial<ListingParams>) => void
 }
 
-/** الفلاتر المفعّلة كأزرار صغيرة فوق النتائج، والنقر على أي منها يزيله. */
+/** The active filters as small buttons above the results; clicking one removes it. */
 export function ActiveFilters({
   params,
   categories,

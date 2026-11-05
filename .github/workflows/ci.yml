@@ -1,6 +1,6 @@
-# فحص آلي عند كل Pull Request وكل دفع إلى الفرع الرئيسي:
-# التنسيق، ESLint، الأنواع، وملف التصميم، واختبارات الوحدات، ثم بناء الموقع كاملاً،
-# ثم اختبارات المتصفح على النسخة المبنية بـ Chrome وFirefox وSafari (WebKit).
+# Automatic checks on every pull request and every push to the main branch:
+# formatting, ESLint, types, the design file and unit tests, then a full build of the site,
+# then browser tests on the built site with Chrome, Firefox and Safari (WebKit).
 name: CI
 
 on:
@@ -12,13 +12,13 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-# قراءة المستودع فقط، فلا يستطيع أي خطوة تعديله
+# Read-only access to the repository, so no step can change it
 permissions:
   contents: read
 
 jobs:
   check:
-    name: فحص الكود والبناء
+    name: Check code and build
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # يقرأ إصدار pnpm من packageManager في package.json
+      # Reads the pnpm version from packageManager in package.json
       - uses: pnpm/action-setup@v6
 
       - uses: actions/setup-node@v7
@@ -34,29 +34,29 @@ jobs:
           node-version: 24
           cache: pnpm
 
-      - name: تثبيت الحزم
+      - name: Install packages
         run: pnpm install --frozen-lockfile
 
-      - name: فحص التنسيق (Prettier)
+      - name: Check formatting (Prettier)
         run: pnpm format:check
 
-      - name: فحص الأخطاء (ESLint)
+      - name: Check for errors (ESLint)
         run: pnpm lint
 
-      - name: فحص الأنواع (TypeScript)
+      - name: Check types (TypeScript)
         run: pnpm typecheck
 
-      - name: فحص ملف التصميم (DESIGN.md)
+      - name: Check the design file (DESIGN.md)
         run: pnpm design:lint
 
-      - name: اختبارات الوحدات (Vitest)
+      - name: Unit tests (Vitest)
         run: pnpm test
 
-      - name: بناء الموقع الثابت
+      - name: Build the static site
         run: pnpm build
 
-      # متصفحات الاختبار تُحفظ بين التشغيلات حسب إصدار Playwright، فلا تُنزَّل كل مرة
-      - name: إصدار Playwright
+      # The test browsers are cached between runs by Playwright version, so they aren't downloaded every time
+      - name: Playwright version
         id: playwright
         run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
 
@@ -66,18 +66,18 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
 
-      - name: تثبيت متصفحات الاختبار
+      - name: Install the test browsers
         if: steps.browsers.outputs.cache-hit != 'true'
         run: pnpm exec playwright install --with-deps chromium firefox webkit
 
-      - name: تثبيت مكتبات النظام للمتصفحات المحفوظة
+      - name: Install system libraries for the cached browsers
         if: steps.browsers.outputs.cache-hit == 'true'
         run: pnpm exec playwright install-deps chromium firefox webkit
 
-      - name: اختبارات المتصفح (Playwright)
+      - name: Browser tests (Playwright)
         run: pnpm test:e2e
 
-      - name: حفظ تقرير اختبارات المتصفح عند الفشل
+      - name: Save the browser test report on failure
         if: failure()
         uses: actions/upload-artifact@v7
         with:
@@ -87,7 +87,7 @@ jobs:
             test-results
           retention-days: 7
 
-      - name: حفظ نسخة الموقع الجاهزة
+      - name: Save the built site
         uses: actions/upload-artifact@v7
         with:
           name: site

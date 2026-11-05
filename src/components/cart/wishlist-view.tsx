@@ -14,8 +14,8 @@ import { useWishlistRestored } from "@/lib/store/hydration"
 import { useWishlistStore } from "@/lib/store/wishlist"
 
 /**
- * صفحة المفضلة: بطاقات المنتجات المحفوظة في المتصفح.
- * بيانات البطاقات تأتي من فهرس البحث المنشور، فتظهر بأحدث سعر ومخزون.
+ * The wishlist page: cards for the products saved in the browser.
+ * The card data comes from the published search index, so it shows the latest price and stock.
  */
 export function WishlistView() {
   const restored = useWishlistRestored()
@@ -58,7 +58,7 @@ export function WishlistView() {
   }
 
   const bySlug = new Map(data.map((product) => [product.slug, product]))
-  // منتج حُذف من المتجر بعد حفظه لا يُعرض
+  // A product removed from the store after it was saved is not shown
   const products = slugs
     .map((slug) => bySlug.get(slug))
     .filter((product): product is SearchCardData => Boolean(product))

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "الصفحة غير موجودة",
 }
 
-/** صفحة 404 داخل هيكل المتجر كاملاً، فتعمل السلة والمفضلة والقوائم منها أيضاً. */
+/** The 404 page inside the full store shell, so the cart, wishlist and menus work from it too. */
 export default function NotFound() {
   return (
     <StoreShell mainClassName="flex items-center">

@@ -1,32 +1,32 @@
 import type { OptionGroup, VariantOptions } from "./options"
 
 // ---------------------------------------------------------------------------
-// شكل البيانات كما تُكتب في ملفات src/data (الأسعار بالريال)
+// Shape of the data as written in the src/data files (prices in riyals)
 // ---------------------------------------------------------------------------
 
 export type CategoryInput = {
-  /** الرابط: إنجليزي بأحرف صغيرة وشرطات، مثل "home-kitchen" */
+  /** The URL slug: English, lowercase, with hyphens, such as "home-kitchen" */
   slug: string
   name: string
   description?: string
-  /** مسار الصورة دون امتداد، مثل "/images/categories/clothing" */
+  /** Image path without an extension, such as "/images/categories/clothing" */
   image?: string
-  /** رابط الفئة الأب إن كانت فئة فرعية */
+  /** The parent category's slug, if this is a subcategory */
   parent?: string
 }
 
 export type ProductImageInput = {
-  /** مسار الصورة دون امتداد، مثل "/images/products/classic-cotton-shirt-1" */
+  /** Image path without an extension, such as "/images/products/classic-cotton-shirt-1" */
   src: string
-  /** وصف الصورة لقارئات الشاشة. الافتراضي: اسم المنتج */
+  /** Image description for screen readers. Default: the product name */
   alt?: string
-  /** قيمة اللون التي تخص الصورة، فيُنقل المعرض إليها عند اختيار هذا اللون */
+  /** The color value this image belongs to; the gallery moves to it when that color is chosen */
   color?: string
 }
 
 export type VariantInput = {
   sku: string
-  /** { "المقاس": "L", "اللون": "أزرق" }، أو اتركه فارغاً لمنتج بلا خيارات */
+  /** { "المقاس": "L", "اللون": "أزرق" } (size L, color blue), or leave it empty for a product without options */
   options?: Record<string, string>
   price: number
   compareAtPrice?: number
@@ -34,63 +34,63 @@ export type VariantInput = {
 }
 
 export type ProductInput = {
-  /** الرابط: إنجليزي بأحرف صغيرة وشرطات، مثل "classic-cotton-shirt" */
+  /** The URL slug: English, lowercase, with hyphens, such as "classic-cotton-shirt" */
   slug: string
   name: string
-  /** رابط الفئة (يمكن أن تكون فرعية) */
+  /** The category's slug (it can be a subcategory) */
   category: string
-  /** فقرات يفصلها سطر فارغ، والأسطر التي تبدأ بـ "- " تصبح نقاطاً */
+  /** Paragraphs separated by a blank line; lines that start with "- " become bullet points */
   description: string
   specs?: { label: string; value: string }[]
   images: ProductImageInput[]
   variants: VariantInput[]
-  /** للترتيب حسب "الأكثر مبيعاً": رقم أكبر يعني ظهوراً أعلى */
+  /** For sorting by "الأكثر مبيعاً" (best selling): a higher number means a higher position */
   popularity?: number
-  /** تاريخ الإضافة بصيغة 2026-10-30، للترتيب حسب "الأحدث" */
+  /** Date added, as 2026-10-30, for sorting by "الأحدث" (newest) */
   createdAt: string
   /**
-   * آخر يوم في العرض بصيغة 2026-12-31. يُظهر المنتج في قسم "عروض لفترة محدودة"
-   * مع عدّاد تنازلي حقيقي، ويختفي من القسم بعد هذا التاريخ. يحتاج سعراً قبل الخصم.
-   * بعد انتهائه يعود السعر إلى السعر قبل الخصم عند إعادة بناء الموقع، فأعد البناء بعد انتهاء العرض.
+   * The last day of the sale, as 2026-12-31. Shows the product in the "عروض لفترة محدودة" (limited-time deals) section
+   * with a real countdown, and it leaves the section after this date. Needs a price before discount.
+   * After the sale ends, the price goes back to the price before discount when the site is rebuilt, so rebuild once the sale ends.
    */
   saleEndsAt?: string
-  /** إخفاء المنتج من الموقع دون حذفه من الملف */
+  /** Hide the product from the site without deleting it from the file */
   hidden?: boolean
 }
 
-/** بطاقة عرض لمنتج: تؤخذ صورته وسعره من ملف المنتجات تلقائياً. */
+/** A promo card for a product: its image and price come from the products file automatically. */
 export type ProductBannerInput = {
-  /** رابط المنتج */
+  /** The product's slug */
   product: string
   title: string
   text?: string
-  /** نص الشارة الصغيرة. الافتراضي: نسبة الخصم إن كان على المنتج خصم */
+  /** Text of the small badge. Default: the discount percentage, if the product has a discount */
   tag?: string
 }
 
-/** بطاقة عرض لفئة: تؤخذ صورتها من ملف الفئات. */
+/** A promo card for a category: its image comes from the categories file. */
 export type CategoryBannerInput = {
-  /** رابط الفئة */
+  /** The category's slug */
   category: string
   title: string
   text?: string
 }
 
 export type HomeContentInput = {
-  /** شرائح العرض الرئيسي أعلى الصفحة */
+  /** Slides of the main hero at the top of the page */
   heroSlides: ProductBannerInput[]
-  /** ثلاث بطاقات عروض تحت شريط الثقة */
+  /** Three promo cards under the trust strip */
   promos: ProductBannerInput[]
-  /** بطاقتان للفئات بعد "الأكثر مبيعاً" */
+  /** Two category cards after "الأكثر مبيعاً" (best sellers) */
   spotlights: CategoryBannerInput[]
-  /** بطاقة عريضة قبل آراء العملاء، أو null لإخفائها */
+  /** A wide card before the customer reviews, or null to hide it */
   wideBanner: ProductBannerInput | null
 }
 
-/** رأي عميل حقيقي. لا تضف آراء مختلقة. */
+/** A real customer review. Do not add made-up reviews. */
 export type TestimonialInput = {
   name: string
-  /** صفة العميل أو مدينته، مثل "الرياض" */
+  /** The customer's description or city, such as "الرياض" (Riyadh) */
   role?: string
   rating: 1 | 2 | 3 | 4 | 5
   title: string
@@ -98,12 +98,12 @@ export type TestimonialInput = {
 }
 
 // ---------------------------------------------------------------------------
-// الشكل الموحّد بعد التحقق (الأسعار بأصغر وحدة: هللة)
+// The unified shape after validation (prices in the smallest unit: halala)
 // ---------------------------------------------------------------------------
 
 export type CategoryLink = { slug: string; name: string }
 
-/** فئة في فلتر الفئات: الاسم والرابط والفئة الأم */
+/** A category in the category filter: name, slug and parent category */
 export type CategoryOption = CategoryLink & { parentSlug: string | null }
 
 export type Category = {
@@ -113,9 +113,9 @@ export type Category = {
   image: string | null
   parentSlug: string | null
   childSlugs: string[]
-  /** المسار من الفئة الرئيسية حتى هذه الفئة */
+  /** The path from the top-level category down to this category */
   path: CategoryLink[]
-  /** عدد المنتجات في الفئة وفئاتها الفرعية */
+  /** Number of products in the category and its subcategories */
   productCount: number
 }
 
@@ -142,9 +142,9 @@ export type Product = {
   images: ProductImage[]
   variants: Variant[]
   optionGroups: OptionGroup[]
-  /** أقل سعر بين المتغيرات */
+  /** The lowest price among the variants */
   price: number
-  /** السعر قبل الخصم لأرخص متغير إن وُجد خصم */
+  /** The price before discount of the cheapest variant, if there is a discount */
   compareAtPrice: number | null
   maxPrice: number
   inStock: boolean
@@ -153,10 +153,10 @@ export type Product = {
   saleEndsAt: string | null
 }
 
-/** صورة البطاقة: المسار ووصف قارئات الشاشة فقط. */
+/** The card image: only the path and the screen reader description. */
 export type CardImage = { src: string; alt: string }
 
-/** بيانات بطاقة المنتج: كل ما تحتاجه القوائم والفلاتر والترتيب في المتصفح، ولا شيء غيره. */
+/** Product card data: everything the lists, filters and sorting need in the browser, and nothing else. */
 export type ProductCardData = {
   slug: string
   name: string
@@ -165,23 +165,23 @@ export type ProductCardData = {
   priceVaries: boolean
   inStock: boolean
   image: CardImage | null
-  /** اسم الفئة الأدق، يظهر فوق اسم المنتج في البطاقة */
+  /** The most specific category name, shown above the product name on the card */
   categoryName: string | null
-  /** للمنتجات ذات المتغير الواحد: إضافة مباشرة للسلة من البطاقة */
+  /** For single-variant products: add to the cart directly from the card */
   quickAdd: { sku: string; stock: number } | null
   saleEndsAt: string | null
-  /** مسار الفئة بالروابط، للفلترة حسب الفئة */
+  /** The category path as slugs, for filtering by category */
   categorySlugs: string[]
-  /** خيارات المتغيرات وتوفرها، للفلترة حسب المقاس واللون */
+  /** Variant options and availability, for filtering by size and color */
   variants: { options: VariantOptions; inStock: boolean }[]
   popularity: number
   createdAt: string
 }
 
-/** بطاقة في فهرس البحث (search-index.json): البطاقة مع نص مطبّع للبحث العربي. */
+/** A card in the search index (search-index.json): the card plus normalized text for Arabic search. */
 export type SearchCardData = ProductCardData & { searchText: string }
 
-/** بطاقة عرض لمنتج بعد ربطها ببياناته. */
+/** A product promo card after it is linked to the product's data. */
 export type ProductBanner = {
   href: string
   title: string
@@ -193,7 +193,7 @@ export type ProductBanner = {
   priceVaries: boolean
 }
 
-/** بطاقة عرض لفئة بعد ربطها ببياناتها. */
+/** A category promo card after it is linked to the category's data. */
 export type CategoryBanner = {
   href: string
   title: string
@@ -202,8 +202,8 @@ export type CategoryBanner = {
 }
 
 /**
- * أسعار ومخزون كل متغير حسب رمزه، تقارن به السلة المحفوظة في المتصفح.
- * options مفتاح تركيبة الخيارات (optionsKey)، لكشف رمز صار يدل على خيارات أخرى.
+ * Prices and stock of every variant by SKU, which the cart saved in the browser is compared against.
+ * options is the option combination key (optionsKey), to catch a SKU that now points to other options.
  */
 export type CartCatalog = Record<
   string,

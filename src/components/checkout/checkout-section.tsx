@@ -4,7 +4,7 @@ interface CheckoutSectionProps {
   children: React.ReactNode
 }
 
-/** خطوة مرقمة في نموذج الطلب: دائرة برتقالية بالرقم وعنوان، داخل بطاقة بحد رفيع. */
+/** A numbered step in the order form: an orange circle with the number and a title, in a thin-bordered card. */
 export function CheckoutSection({
   step,
   title,

@@ -9,7 +9,7 @@ interface ProductGridSkeletonProps {
   className?: string
 }
 
-/** هيكل بلون السطح الفاتح بنفس شكل الشبكة أثناء التحميل. */
+/** A skeleton in the light surface color, in the same shape as the grid, while loading. */
 export function ProductGridSkeleton({
   count = 8,
   className,

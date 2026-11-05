@@ -19,7 +19,7 @@ import { cartSubtotal, useCartCount, useCartStore } from "@/lib/store/cart"
 import { useCartSync } from "@/lib/store/cart-sync"
 import { useUiStore } from "@/lib/store/ui"
 
-/** نافذة السلة الجانبية: تنزلق من جهة النهاية عند الإضافة للسلة أو الضغط على أيقونتها. */
+/** The side cart panel: slides in from the end side when an item is added or the cart icon is pressed. */
 export function CartSheet() {
   const open = useUiStore((state) => state.cartOpen)
   const setOpen = useUiStore((state) => state.setCartOpen)

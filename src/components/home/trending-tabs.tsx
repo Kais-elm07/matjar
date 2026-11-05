@@ -7,8 +7,8 @@ interface TrendingTabsProps {
 }
 
 /**
- * "الرائج الآن": تبويب لكل فئة رئيسية، فيه أكثر منتجاتها مبيعاً ببطاقات أفقية صغيرة.
- * مكوّن خادم: البطاقات تُبنى مسبقاً في HTML، والتبويبات وحدها تعمل في المتصفح.
+ * "الرائج الآن" (Trending now): a tab for each main category, with its best sellers as small horizontal cards.
+ * A server component: the cards are prebuilt in the HTML, and only the tabs run in the browser.
  */
 export function TrendingTabs({ groups }: TrendingTabsProps) {
   if (groups.length === 0) return null

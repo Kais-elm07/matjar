@@ -10,7 +10,7 @@ interface WideBannerProps {
   banner: ProductBanner
 }
 
-/** لافتة عريضة لمنتج: صورته تملأ اللافتة، والنص في جهة البداية فوق تدرج داكن. */
+/** A wide product banner: its photo fills the banner, with the text on the start side over a dark gradient. */
 export function WideBanner({ banner }: WideBannerProps) {
   return (
     <section
@@ -26,7 +26,8 @@ export function WideBanner({ banner }: WideBannerProps) {
           className="object-cover"
         />
       )}
-      {/* الموقع عربي الاتجاه دائماً: التدرج الداكن من اليمين حيث النص، ويخف نحو الصورة في اليسار */}
+      {/* The site is always right to left: the dark gradient starts on the right, where the text is,
+          and fades toward the photo on the left */}
       <div
         aria-hidden
         className="absolute inset-0 bg-gradient-to-l from-background/95 via-background/70 to-background/25"

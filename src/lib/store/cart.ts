@@ -10,24 +10,24 @@ import { isRecord } from "@/lib/guards"
 
 import { safeStorage } from "./storage"
 
-/** أقصى كمية من المتغير الواحد في السلة، حتى لو كان المخزون أكبر. */
+/** Maximum quantity of a single variant in the cart, even if the stock is larger. */
 export const MAX_LINE_QUANTITY = 10
 
-/** سطر في السلة: المتغير المختار مع نسخة من بياناته وقت الإضافة، لعرضه فوراً دون تحميل. */
+/** A cart line: the chosen variant with a copy of its data when added, to show it at once without loading. */
 export type CartLine = {
   sku: string
   slug: string
   name: string
   image: CardImage | null
   options: VariantOptions
-  /** السعر بأصغر وحدة (هللة)، ويُحدَّث عند مطابقة السلة مع بيانات الموقع */
+  /** Price in the smallest unit (halala), updated when the cart is synced with the site's data */
   price: number
   compareAtPrice: number | null
   stock: number
   quantity: number
 }
 
-/** ما تغيّر في السلة بعد مطابقتها مع بيانات الموقع المنشورة. */
+/** What changed in the cart after syncing it with the published site's data. */
 export type CartNotice = {
   /** The line's SKU: with `kind`, it tells notices apart */
   sku: string
@@ -37,21 +37,21 @@ export type CartNotice = {
 
 type CartState = {
   lines: CartLine[]
-  /** يضيف الكمية دون تجاوز المخزون، ويعيد عدد القطع التي أُضيفت فعلاً. */
+  /** Adds the quantity without exceeding the stock, and returns the number of pieces actually added. */
   add: (line: Omit<CartLine, "quantity">, quantity: number) => number
   setQuantity: (sku: string, quantity: number) => void
   remove: (sku: string) => void
   clear: () => void
-  /** يطبّق الأسعار والمخزون الحالية على السلة، ويعيد قائمة بما تغيّر. */
+  /** Applies the current prices and stock to the cart, and returns a list of what changed. */
   sync: (catalog: CartCatalog) => CartNotice[]
 }
 
-/** أقصى كمية مسموحة لسطر حسب مخزونه. */
+/** Maximum quantity allowed for a line, given its stock. */
 export function lineLimit(stock: number) {
   return Math.max(0, Math.min(stock, MAX_LINE_QUANTITY))
 }
 
-/** سطر محفوظ سليم الشكل. ما عداه يُتجاهل حتى لا تتعطل السلة ببيانات قديمة أو معدّلة يدوياً. */
+/** A well-formed saved line. Others are ignored so old or hand-edited data cannot break the cart. */
 function isCartLine(value: unknown): value is CartLine {
   if (!isRecord(value)) return false
   const {
@@ -141,7 +141,7 @@ export const useCartStore = create<CartState>()(
         const lines: CartLine[] = []
         for (const line of current) {
           const variant = catalog[line.sku]
-          // رمز حُذف، أو صار يدل على خيارات أخرى بعد تعديل المنتج
+          // A SKU that was deleted, or now points to other options after the product was edited
           const notice = { sku: line.sku, name: line.name }
           if (!variant || variant.options !== optionsKey(line.options)) {
             notices.push({ ...notice, kind: "removed" })
@@ -178,7 +178,7 @@ export const useCartStore = create<CartState>()(
                 }
           )
         }
-        // لا كتابة في التخزين ولا إعادة عرض إن لم يتغير شيء
+        // No storage write and no re-render if nothing changed
         const changed =
           lines.length !== current.length ||
           lines.some((line, index) => line !== current[index])
@@ -188,11 +188,11 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: "matjar-cart",
-      // ارفع الرقم عند تغيير شكل CartLine، وأضف migrate لتحويل السلال المحفوظة
+      // Bump the number when the shape of CartLine changes, and add migrate to convert saved carts
       version: 1,
       storage: safeStorage(),
       partialize: (state) => ({ lines: state.lines }),
-      // المحفوظ يُقبل بعد التحقق من شكله، وأي سطر تالف يُتجاهل
+      // The saved state is accepted after its shape is checked, and any corrupt line is ignored
       merge: (persisted, current) => {
         const lines = isRecord(persisted) ? persisted.lines : undefined
         return {
@@ -200,20 +200,20 @@ export const useCartStore = create<CartState>()(
           lines: Array.isArray(lines) ? lines.filter(isCartLine) : [],
         }
       },
-      // الاستعادة من المتصفح بعد أول عرض فقط، حتى يطابق HTML المبني مسبقاً
+      // Restore from the browser only after the first render, so it matches the prebuilt HTML
       skipHydration: true,
     }
   )
 )
 
-/** عدد القطع في السلة. */
+/** Number of pieces in the cart. */
 export function useCartCount() {
   return useCartStore((state) =>
     state.lines.reduce((sum, line) => sum + line.quantity, 0)
   )
 }
 
-/** مجموع أسعار السلة بأصغر وحدة. */
+/** Sum of the cart's prices in the smallest unit. */
 export function cartSubtotal(lines: CartLine[]) {
   return lines.reduce((sum, line) => sum + line.price * line.quantity, 0)
 }

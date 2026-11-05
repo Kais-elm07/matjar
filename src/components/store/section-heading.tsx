@@ -9,7 +9,10 @@ interface SectionHeadingProps {
   linkLabel?: string
 }
 
-/** عنوان قسم في الصفحة، مع رابط برتقالي "عرض الكل" اختياري بجانبه، ووصف قصير اختياري تحته. */
+/**
+ * A section heading on the page, with an optional orange "عرض الكل" (View all) link beside it
+ * and an optional short description under it.
+ */
 export function SectionHeading({
   id,
   title,

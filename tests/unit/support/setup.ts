@@ -1,6 +1,6 @@
 /**
- * السلة والمفضلة تُحفظان في localStorage، وهو غير متاح في Node.
- * نسخة بسيطة في الذاكرة تكفي لاختبار المتجرين.
+ * The cart and wishlist are saved in localStorage, which isn't available in Node.
+ * A simple in-memory version is enough to test the two stores.
  */
 const items = new Map<string, string>()
 

@@ -2,7 +2,7 @@
 
 import { useRestoreStores } from "@/lib/store/hydration"
 
-/** يستعيد السلة والمفضلة المحفوظتين في المتصفح بعد أول عرض للصفحة. */
+/** Restores the cart and wishlist saved in the browser after the page's first render. */
 export function StoreRestorer() {
   useRestoreStores()
   return null

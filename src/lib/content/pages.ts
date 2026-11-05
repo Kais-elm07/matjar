@@ -10,8 +10,8 @@ import { formatPrice } from "@/lib/catalog/money"
 import { getCheckoutConfig } from "@/lib/checkout/config"
 
 /**
- * الصفحات الثابتة من ملفات نصية في src/content/pages: كل ملف .md صفحة،
- * واسم الملف هو رابطها (about.md ← /pages/about). تُقرأ وقت البناء فقط.
+ * Static pages from text files in src/content/pages: each .md file is a page,
+ * and the file name is its URL (about.md → /pages/about). Read at build time only.
  */
 
 const DIRECTORY = path.join(process.cwd(), "src", "content", "pages")
@@ -19,9 +19,9 @@ const DIRECTORY = path.join(process.cwd(), "src", "content", "pages")
 const frontMatterSchema = z.object({
   title: z.string().trim().min(1, "العنوان title مطلوب"),
   description: z.string().trim().min(1, "الوصف description مطلوب"),
-  /** شكل خاص لبعض الصفحات: بطاقات التواصل، أو جدول الشحن، أو أسئلة قابلة للطي */
+  /** A special layout for some pages: contact cards, a shipping table, or collapsible questions */
   layout: z.enum(["default", "contact", "shipping", "faq"]).default("default"),
-  /** ترتيب الصفحة في قائمة الصفحات الجانبية */
+  /** The page's position in the side list of pages */
   order: z.coerce.number().int().default(100),
 })
 
@@ -30,7 +30,7 @@ export type ContentPage = z.infer<typeof frontMatterSchema> & {
   body: string
 }
 
-/** جملة الإحصاءات في صفحة الخصوصية، بحسب ما فُعّل في src/config/site.ts. */
+/** The analytics sentence on the privacy page, based on what is enabled in src/config/site.ts. */
 function analyticsSentence() {
   const { analytics } = siteConfig
   if (!analytics) return "لا نستخدم أدوات تحليل ترصد تصفحك."
@@ -38,7 +38,7 @@ function analyticsSentence() {
   return `لا نستخدم أدوات تحليل ترصد تصفحك: نكتفي بعدّ الزيارات بأداة ${name}، دون ملفات تعريف ارتباط ودون حفظ ما يحدد هويتك.`
 }
 
-/** يستبدل {store} و{email} و{phone} و{freeShipping} و{analytics} بقيمها الحالية من الإعدادات. */
+/** Replaces {store}, {email}, {phone}, {freeShipping} and {analytics} with their current settings values. */
 function fillPlaceholders(text: string) {
   const values: Record<string, string> = {
     store: siteConfig.name,
@@ -95,7 +95,7 @@ function loadPages() {
     .map(readPage)
     .sort((a, b) => a.order - b.order)
 
-  // كل رابط /pages/... في الإعدادات يجب أن يقابله ملف، حتى لا يصل الزائر لصفحة غير موجودة
+  // Every /pages/... link in the settings needs a matching file, so a visitor never reaches a page that does not exist
   const slugs = new Set(pages.map((page) => page.slug))
   const links = [
     ...siteConfig.helpNav,

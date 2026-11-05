@@ -4,7 +4,7 @@ import { getCategories, getProducts } from "@/lib/catalog/catalog"
 import { getContentPages } from "@/lib/content/pages"
 import { absoluteImageUrl, absoluteUrl } from "@/lib/seo"
 
-// يُولَّد كملف ثابت وقت البناء: out/sitemap.xml
+// Generated as a static file at build time: out/sitemap.xml
 export const dynamic = "force-static"
 
 type SitemapEntry = MetadataRoute.Sitemap[number]

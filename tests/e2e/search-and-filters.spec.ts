@@ -2,21 +2,21 @@ import { expect, test } from "@playwright/test"
 
 import { isPhone, loadProducts, open, priceOf } from "./helpers"
 
-test("البحث يجد المنتج رغم كتابة التاء المربوطة هاءً", async ({
+test("Search finds the product even when taa marbuta (ة) is typed as ه", async ({
   page,
   request,
 }) => {
-  // منتج في اسمه كلمة تنتهي بتاء مربوطة، يُبحث عنه بالهاء كما يكتب كثيرون
+  // A product with a word in its name that ends in taa marbuta, searched for with ه as many people type it
   const product = (await loadProducts(request)).find((card) =>
     card.name.split(" ").some((word) => word.endsWith("ة"))
   )
-  if (!product) throw new Error("لا يوجد منتج في اسمه تاء مربوطة")
+  if (!product) throw new Error("No product has a taa marbuta (ة) in its name")
   const word = product.name.split(" ").find((entry) => entry.endsWith("ة"))
   if (!word) throw new Error("The product name has no word ending in ة")
   const query = `${word.slice(0, -1)}ه`
 
   await open(page, "/")
-  // على الجوال يظهر حقل البحث بعد الضغط على زر البحث في الرأس
+  // On phones the search field appears after tapping the search button in the header
   if (isPhone(page)) {
     await page.getByRole("button", { name: "البحث", exact: true }).click()
   }
@@ -32,12 +32,12 @@ test("البحث يجد المنتج رغم كتابة التاء المربوط
   ).toBeVisible()
 })
 
-test("البحث بلا نتائج يعرض رسالة واضحة", async ({ page }) => {
+test("A search with no results shows a clear message", async ({ page }) => {
   await open(page, `/search/?q=${encodeURIComponent("زرافة")}`)
   await expect(page.getByText(/لم نجد نتائج/)).toBeVisible()
 })
 
-test("فلتر العروض والترتيب بالسعر يحدّثان الرابط والنتائج", async ({
+test("The on-sale filter and sorting by price update the URL and the results", async ({
   page,
 }) => {
   await open(page, "/products/")
@@ -57,7 +57,7 @@ test("فلتر العروض والترتيب بالسعر يحدّثان الر�
     await expect(page).toHaveURL(/sale=1/)
   }
 
-  // كل منتج ظاهر عليه سعر قبل الخصم
+  // Every product shown has a price before the discount
   const cards = page.getByRole("article")
   await expect(cards.first()).toBeVisible()
   for (const card of await cards.all()) {
@@ -70,9 +70,9 @@ test("فلتر العروض والترتيب بالسعر يحدّثان الر�
     .poll(async () => {
       const prices = await cards.locator("[data-slot=price]").allTextContents()
       const numbers = prices.map(priceOf)
-      // كل بطاقة لها سعر مقروء، وإلا لنجح فحص الترتيب دون أن يقارن شيئاً
+      // Every card has a readable price; otherwise the sort check would pass without comparing anything
       if (numbers.length === 0 || numbers.some((price) => !(price > 0))) {
-        return "أسعار غير مقروءة"
+        return "unreadable prices"
       }
       return numbers.every(
         (price, index) => index === 0 || numbers[index - 1] <= price

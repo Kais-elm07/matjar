@@ -15,10 +15,10 @@ import {
   productJsonLd,
 } from "@/lib/seo"
 
-describe("الصفحات الثابتة", () => {
+describe("static pages", () => {
   const pages = getContentPages()
 
-  it("تُقرأ كل الصفحات بعناوينها ووصفها", () => {
+  it("reads every page with its title and description", () => {
     expect(pages.map((page) => page.slug).sort()).toEqual([
       "about",
       "contact",
@@ -34,7 +34,7 @@ describe("الصفحات الثابتة", () => {
     }
   })
 
-  it("لا يبقى أي قالب مثل {store} دون قيمة", () => {
+  it("leaves no placeholder such as {store} without a value", () => {
     for (const page of pages) {
       expect(
         `${page.title} ${page.description} ${page.body}`,
@@ -43,7 +43,7 @@ describe("الصفحات الثابتة", () => {
     }
   })
 
-  it("صفحة الخصوصية تذكر الإحصاءات بحسب الإعدادات", () => {
+  it("mentions analytics on the privacy page according to the settings", () => {
     expect(getContentPage("privacy")?.body).toContain(
       siteConfig.analytics
         ? "نكتفي بعدّ الزيارات"
@@ -51,7 +51,7 @@ describe("الصفحات الثابتة", () => {
     )
   })
 
-  it("أسئلة الصفحة الشائعة تُقرأ بإجاباتها", () => {
+  it("reads the FAQ page questions with their answers", () => {
     const items = parseFaq(getContentPage("faq")?.body ?? "").flatMap(
       (group) => group.items
     )
@@ -62,13 +62,13 @@ describe("الصفحات الثابتة", () => {
     }
   })
 
-  it("الصفحة غير الموجودة لا تُعاد", () => {
+  it("returns nothing for a missing page", () => {
     expect(getContentPage("missing")).toBeUndefined()
   })
 })
 
-describe("تنسيق النصوص", () => {
-  it("يحوّل النص إلى عناوين وفقرات وقوائم", () => {
+describe("text formatting", () => {
+  it("turns text into headings, paragraphs and lists", () => {
     expect(
       parseBlocks(
         "## الشحن\n\nنوصل الطلبات\nإلى كل المدن.\n\n- سريع\n- آمن\n\n1. اطلب\n2. استلم"
@@ -97,15 +97,15 @@ describe("تنسيق النصوص", () => {
     ])
   })
 
-  it("ينظّف الإجابة من التنسيق لمحركات البحث", () => {
+  it("strips the formatting from an answer for search engines", () => {
     expect(
       plainAnswer("راسلنا **الآن** عبر [صفحة التواصل](/pages/contact).\n")
     ).toBe("راسلنا الآن عبر صفحة التواصل.")
   })
 })
 
-describe("بيانات محركات البحث والمشاركة", () => {
-  it("يختصر الوصف ويحوّل النقاط إلى جملة", () => {
+describe("search engine and sharing data", () => {
+  it("shortens the description and turns bullet points into a sentence", () => {
     expect(
       plainDescription(
         "سماعة صغيرة\nبصوت قوي.\n\n- مقاومة للماء\n- 12 ساعة تشغيل"
@@ -116,7 +116,7 @@ describe("بيانات محركات البحث والمشاركة", () => {
     expect(long.endsWith("…")).toBe(true)
   })
 
-  it("يكتب الروابط كاملة، وبشرطة مائلة في نهاية الصفحات", () => {
+  it("writes full URLs, with a trailing slash for pages", () => {
     expect(absoluteUrl("/products")).toBe(`${siteConfig.url}/products/`)
     expect(absoluteUrl("/")).toBe(`${siteConfig.url}/`)
     expect(absoluteUrl("/icon.svg")).toBe(`${siteConfig.url}/icon.svg`)
@@ -128,7 +128,7 @@ describe("بيانات محركات البحث والمشاركة", () => {
     )
   })
 
-  it("مسار التنقل يبدأ بالرئيسية", () => {
+  it("starts the breadcrumb with the home page", () => {
     const data = breadcrumbJsonLd([
       { name: "ملابس", path: "/category/clothing" },
     ])
@@ -140,7 +140,7 @@ describe("بيانات محركات البحث والمشاركة", () => {
     ])
   })
 
-  it("يكتب عرض المنتج بسعر واحد أو بنطاق سعري", () => {
+  it("writes the product offer with a single price or a price range", () => {
     const watch = getProduct("classic-wrist-watch")
     const charger = getProduct("fast-charger-65w")
     expect(watch && charger).toBeTruthy()
@@ -158,7 +158,7 @@ describe("بيانات محركات البحث والمشاركة", () => {
     })
   })
 
-  it("صورة المشاركة بمقاس 1200×630", () => {
+  it("uses a 1200×630 share image", () => {
     expect(
       openGraph({ title: "عنوان", description: "وصف", path: "/products/" })
     ).toMatchObject({

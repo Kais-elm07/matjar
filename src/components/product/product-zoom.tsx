@@ -15,7 +15,7 @@ interface ProductZoomProps {
   onOpenChange: (open: boolean) => void
 }
 
-/** نافذة تكبير صور المنتج، مع التنقل بين الصور. */
+/** The product image zoom dialog, with navigation between the images. */
 export function ProductZoom({
   images,
   activeIndex,

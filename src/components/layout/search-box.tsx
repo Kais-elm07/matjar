@@ -22,14 +22,16 @@ interface SearchBoxProps {
   defaultValue?: string
   autoFocus?: boolean
   variant?: "default" | "header"
-  /** يُستدعى بعد الانتقال إلى نتيجة أو صفحة النتائج، لإغلاق حقل بحث الجوال مثلاً */
+  /** Called after going to a result or the results page, for example to close the mobile search field */
   onSubmitted?: () => void
 }
 
 /**
- * حقل البحث مع اقتراحات فورية أثناء الكتابة.
- * الأسهم تتنقل بين الاقتراحات، وEnter يفتح الاقتراح أو صفحة النتائج، وEscape يغلق القائمة.
- * variant="header": حبة أقصر بلون السطح الفاتح تملأ منتصف الرأس على الحاسوب (DESIGN.md: search-input).
+ * The search field, with instant suggestions while typing.
+ * The arrow keys move between suggestions, Enter opens the suggestion or the results page,
+ * and Escape closes the list.
+ * variant="header": a shorter pill in the light surface color that fills the middle of the
+ * header on desktop (DESIGN.md: search-input).
  */
 export function SearchBox({
   className,
@@ -150,7 +152,7 @@ export function SearchBox({
 
       {showPanel && (
         <div
-          // منع فقدان التركيز عند النقر على اقتراح
+          // Prevent losing focus when a suggestion is clicked
           onMouseDown={(event) => event.preventDefault()}
           className={cn(
             "absolute top-full z-50 mt-2 overflow-hidden rounded-xl border bg-popover text-popover-foreground shadow-lg",
@@ -162,7 +164,7 @@ export function SearchBox({
               تعذّر تحميل الاقتراحات. اضغط Enter للبحث.
             </p>
           ) : !index ? (
-            // هياكل بشكل الاقتراحات أثناء تحميل فهرس البحث، بدل مؤشر دوران
+            // Skeletons shaped like the suggestions while the search index loads, instead of a spinner
             <div role="status" className="space-y-1 py-2">
               <span className="sr-only">جارٍ البحث...</span>
               {placeholderIds("suggestion", 3).map((id) => (

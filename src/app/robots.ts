@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next"
 
 import { absoluteUrl } from "@/lib/seo"
 
-// يُولَّد كملف ثابت وقت البناء: out/robots.txt
+// Generated as a static file at build time: out/robots.txt
 export const dynamic = "force-static"
 
 export default function robots(): MetadataRoute.Robots {
@@ -11,7 +11,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // صفحات خاصة بكل زائر أو بلا محتوى ثابت، فلا فائدة من أرشفتها
+        // Pages specific to each visitor or without static content, so there is no point indexing them
         disallow: ["/search/", "/cart/", "/checkout/", "/wishlist/"],
       },
     ],

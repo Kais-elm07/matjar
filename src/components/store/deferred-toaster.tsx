@@ -6,8 +6,8 @@ import { Toaster } from "@/components/ui/sonner"
 import { markToasterMounted } from "@/lib/toast"
 
 /**
- * مكوّن الرسائل نفسه. تأثيرات المكوّنات الداخلية تسبق الخارجية،
- * فحين يبلّغ هذا المكوّن بظهوره يكون Toaster قد اشترك في الرسائل.
+ * The toast component itself. Inner components' effects run before outer ones,
+ * so when this component reports that it mounted, `Toaster` has already subscribed to the toasts.
  */
 export function DeferredToaster() {
   useEffect(() => markToasterMounted(), [])

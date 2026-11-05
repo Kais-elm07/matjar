@@ -1,41 +1,41 @@
 // ---------------------------------------------------------------------------
-// شكل الإعدادات كما تُكتب في src/data/shipping.ts وsrc/data/coupons.ts (المبالغ بالريال)
+// Shape of the settings as written in src/data/shipping.ts and src/data/coupons.ts (amounts in riyals)
 // ---------------------------------------------------------------------------
 
 export type ShippingCityInput = {
   name: string
-  /** سعر التوصيل العادي بالريال */
+  /** Standard delivery price in riyals */
   fee: number
-  /** مدة التوصيل العادي بأيام العمل: [الأقل، الأكثر] */
+  /** Standard delivery time in working days: [min, max] */
   days: [number, number]
-  /** هل يتوفر التوصيل السريع في هذه المدينة؟ */
+  /** Whether express delivery is available in this city */
   express?: boolean
 }
 
 export type ShippingInput = {
-  /** الشحن العادي مجاني عندما يصل مجموع الطلب بعد الخصم إلى هذا المبلغ */
+  /** Standard shipping is free when the order subtotal after discount reaches this amount */
   freeShippingFrom: number
   cities: ShippingCityInput[]
-  /** التوصيل السريع: مبلغ يُضاف إلى سعر التوصيل العادي */
+  /** Express delivery: an amount added to the standard delivery price */
   express: { extraFee: number; label: string }
 }
 
 export type CouponInput = {
-  /** الرمز بأحرف إنجليزية كبيرة وأرقام، مثل WELCOME10 */
+  /** The code in uppercase English letters and digits, such as WELCOME10 */
   code: string
-  /** percent: نسبة مئوية، fixed: مبلغ ثابت بالريال، free-shipping: شحن مجاني */
+  /** percent: a percentage, fixed: a fixed amount in riyals, free-shipping: free shipping */
   type: "percent" | "fixed" | "free-shipping"
-  /** النسبة أو المبلغ. لا يُكتب للشحن المجاني */
+  /** The percentage or the amount. Not written for free shipping */
   value?: number
-  /** أقل مجموع للطلب بالريال حتى يعمل الكوبون */
+  /** Minimum order subtotal in riyals for the coupon to work */
   minSubtotal?: number
-  /** أقصى خصم بالريال للكوبونات النسبية */
+  /** Maximum discount in riyals for percentage coupons */
   maxDiscount?: number
   description: string
 }
 
 // ---------------------------------------------------------------------------
-// الشكل الموحّد بعد التحقق (المبالغ بأصغر وحدة: هللة)
+// The unified shape after validation (amounts in the smallest unit: halala)
 // ---------------------------------------------------------------------------
 
 export type ShippingCity = {
@@ -48,7 +48,7 @@ export type ShippingCity = {
 export type Coupon = {
   code: string
   type: CouponInput["type"]
-  /** النسبة المئوية، أو المبلغ بأصغر وحدة */
+  /** The percentage, or the amount in the smallest unit */
   value: number
   minSubtotal: number
   maxDiscount: number | null
@@ -67,9 +67,9 @@ export type ShippingMethod = "standard" | "express"
 export type OrderTotals = {
   subtotal: number
   discount: number
-  /** null: لم تُختر المدينة بعد */
+  /** null: no city chosen yet */
   shipping: number | null
   total: number
-  /** المبلغ الناقص للحصول على شحن مجاني، أو null إن لم يعد ذلك ممكناً أو كان مجانياً */
+  /** Amount left to reach free shipping, or null if that is no longer possible or it is already free */
   freeShippingRemaining: number | null
 }

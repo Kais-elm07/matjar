@@ -7,7 +7,7 @@ interface DiscountBadgeProps {
   className?: string
 }
 
-/** شارة نسبة الخصم، مثل "-20%". */
+/** The discount percentage badge, such as "-20%". */
 export function DiscountBadge({
   price,
   compareAtPrice,

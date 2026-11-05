@@ -16,8 +16,8 @@ interface WishlistButtonProps {
 }
 
 /**
- * زر المفضلة: قلب في دائرة برتقالية فوق صورة البطاقة، أو زر بنص في صفحة المنتج.
- * القلب الممتلئ يعني أن المنتج محفوظ.
+ * Wishlist button: a heart in an orange circle on the card image, or a text button on the product page.
+ * A filled heart means the product is saved.
  */
 export function WishlistButton({
   slug,
@@ -27,7 +27,7 @@ export function WishlistButton({
 }: WishlistButtonProps) {
   const saved = useIsWishlisted(slug)
   const toggle = useWishlistStore((state) => state.toggle)
-  // عدد مرات الإضافة بضغطة: يعيد رسم القلب فينبض، ولا ينبض عند استعادة المفضلة المحفوظة
+  // Number of adds by click: redraws the heart so it pulses, but not when the saved wishlist is restored
   const [pops, setPops] = useState(0)
 
   function onClick() {
@@ -72,7 +72,7 @@ export function WishlistButton({
       aria-label={`حفظ ${name} في المفضلة`}
       onClick={onClick}
       className={cn(
-        // مساحة لمس 44 بكسل، والدائرة الظاهرة أصغر منها
+        // A 44px touch area, with the visible circle smaller than it
         "group/heart relative z-10 flex size-11 items-center justify-center rounded-full outline-none",
         className
       )}

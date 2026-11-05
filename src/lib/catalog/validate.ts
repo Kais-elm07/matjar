@@ -13,7 +13,7 @@ import {
 } from "./schema"
 import { optionsKey } from "./variant-key"
 
-/** مسار الحقل كما يفهمه صاحب المتجر: variants[2].price (العدّ من 1 لا من 0). */
+/** The field path as the store owner understands it: variants[2].price (counting from 1, not 0). */
 function fieldPath(path: PropertyKey[]) {
   if (path.length === 0) return "البيانات"
   return path
@@ -26,8 +26,8 @@ function fieldPath(path: PropertyKey[]) {
 }
 
 /**
- * يتحقق من ملفي الفئات والمنتجات معاً، ويجمع كل الأخطاء في رسالة عربية واحدة
- * تدل صاحب المتجر على المنتج والحقل. أي خطأ يوقف البناء، فلا يُنشر متجر ببيانات معطوبة.
+ * Validates the categories and products files together, and gathers every error into one Arabic message
+ * that points the store owner to the product and the field. Any error stops the build, so a store with broken data is never published.
  */
 export function validateCatalogData(
   categoryData: unknown[],
@@ -78,7 +78,7 @@ export function validateCatalogData(
     )
   }
 
-  // فحوص تربط الفئات ببعضها
+  // Checks that link the categories to each other
   const categorySlugs = new Set<string>()
   for (const category of categories) {
     if (categorySlugs.has(category.slug)) {
@@ -96,7 +96,7 @@ export function validateCatalogData(
       )
       continue
     }
-    // منع الحلقات: فئة أم لنفسها بشكل مباشر أو غير مباشر
+    // Prevent cycles: a category that is its own parent, directly or indirectly
     const seen = new Set([category.slug])
     let current: string | undefined = category.parent
     while (current) {
@@ -109,7 +109,7 @@ export function validateCatalogData(
     }
   }
 
-  // فحوص تربط المنتجات بالفئات وببعضها
+  // Checks that link the products to the categories and to each other
   const productSlugs = new Set<string>()
   const skus = new Map<string, string>()
   for (const product of products) {
@@ -140,7 +140,7 @@ export function validateCatalogData(
           `${where}: المتغير "${variant.sku}" له أسماء خيارات مختلفة عن باقي المتغيرات.`
         )
       }
-      // متغيران بالخيارات نفسها: الثاني لا يمكن اختياره أبداً
+      // Two variants with the same options: the second can never be chosen
       const combination = optionsKey(variant.options)
       if (combinations.has(combination)) {
         problems.push(

@@ -12,12 +12,12 @@ import { cn } from "@/lib/utils"
 
 interface CartLineItemProps {
   line: CartLine
-  /** يُستدعى عند فتح صفحة المنتج، مثلاً لإغلاق نافذة السلة */
+  /** Called when the product page is opened, for example to close the cart panel */
   onNavigate?: () => void
   className?: string
 }
 
-/** سطر منتج في السلة: الصورة والاسم والخيارات والسعر، مع الكمية والحذف. */
+/** A product line in the cart: image, name, options and price, with quantity and removal. */
 export function CartLineItem({
   line,
   onNavigate,

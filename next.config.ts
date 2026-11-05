@@ -1,17 +1,17 @@
 import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  // موقع ثابت بالكامل: الأمر pnpm build ينشئ مجلد out/ يُرفع على أي استضافة
+  // A fully static site: pnpm build creates an out/ folder that can be uploaded to any host
   output: "export",
-  // كل صفحة في مجلد خاص بها (/products/index.html) حتى تعمل على كل الاستضافات
+  // Each page gets its own folder (/products/index.html) so it works on every host
   trailingSlash: true,
   images: {
-    // الصور تُجهَّز مسبقاً بثلاثة أحجام (pnpm images)، والمحمّل يختار الحجم المناسب للشاشة.
-    // الأحجام نفسها في IMAGE_WIDTHS (src/lib/image-loader.ts) وscripts/images.mjs.
+    // Images are prepared in advance in three sizes (pnpm images), and the loader picks the right size for the screen.
+    // The same sizes are in IMAGE_WIDTHS (src/lib/image-loader.ts) and scripts/images.mjs.
     loader: "custom",
     loaderFile: "./src/lib/image-loader.ts",
     deviceSizes: [400, 800, 1200],
-    // لا أحجام أصغر: المحمّل يعيدها كلها إلى ملف 400، فتتكرر في كل صورة وتثقل الصفحة دون فائدة
+    // No smaller sizes: the loader maps them all to the 400 file, so they would repeat in every image and make the page heavier for nothing
     imageSizes: [],
   },
   turbopack: {

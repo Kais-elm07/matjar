@@ -28,8 +28,8 @@ interface MobileNavProps {
 }
 
 /**
- * زر قائمة الجوال في الرأس. القائمة نفسها يُحمَّل كودها بعد ظهور الصفحة أو عند أول ضغطة،
- * وتفتح أيضاً من زر "الفئات" في الشريط السفلي.
+ * The mobile menu button in the header. The menu's own code loads after the page appears or on
+ * the first tap, and the menu also opens from the "الفئات" (Categories) button in the bottom bar.
  */
 export function MobileNav({ categories }: MobileNavProps) {
   const open = useUiStore((state) => state.menuOpen)

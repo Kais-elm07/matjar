@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-/** صفحة التأكيد: تعرض الطلب التجريبي المحفوظ في هذا التبويب. */
+/** The confirmation page: shows the demo order saved in this tab. */
 export default function CheckoutSuccessPage() {
   return (
     <div className="page-container py-8 md:py-12">

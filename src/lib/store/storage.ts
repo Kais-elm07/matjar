@@ -3,17 +3,17 @@ import type { PersistStorage } from "zustand/middleware"
 import { isFiniteNumber, isRecord } from "@/lib/guards"
 
 /**
- * تخزين السلة والمفضلة في المتصفح بأمان.
+ * Safe browser storage for the cart and wishlist.
  *
- * بعض المتصفحات تمنع localStorage (حظر ملفات تعريف الارتباط، وبعض المتصفحات داخل التطبيقات،
- * والتصفح الخاص في نسخ قديمة)، فيرمي أي وصول إليه خطأً. ومحفوظ تالف (نص ليس JSON) يوقف الاستعادة.
- * هذا التخزين لا يرمي أي خطأ: يرجع إلى نسخة في الذاكرة تكفي للزيارة الحالية،
- * ويحذف المحفوظ التالف بدل أن تبقى الصفحة على هيكل التحميل.
+ * Some browsers block localStorage (blocked cookies, some in-app browsers,
+ * and private browsing in older versions), so any access to it throws. A corrupt save (text that is not JSON) stops the restore.
+ * This storage never throws: it falls back to an in-memory copy that is enough for the current visit,
+ * and deletes a corrupt save instead of leaving the page on the loading skeleton.
  */
 
 const memory = new Map<string, string>()
 
-/** localStorage إن كان متاحاً وقابلاً للكتابة، وإلا null. يُفحص مرة واحدة. */
+/** localStorage if it is available and writable, otherwise null. Checked once. */
 let local: Storage | null | undefined
 
 function browserStorage() {
@@ -34,7 +34,7 @@ function read(name: string) {
     const storage = browserStorage()
     if (storage) return storage.getItem(name)
   } catch {
-    // يُكمل بالنسخة في الذاكرة
+    // Continue with the in-memory copy
   }
   return memory.get(name) ?? null
 }
@@ -44,8 +44,8 @@ function write(name: string, value: string) {
   try {
     browserStorage()?.setItem(name, value)
   } catch {
-    // امتلأ التخزين أو مُنع أثناء الزيارة: تكمل الزيارة من النسخة في الذاكرة،
-    // حتى لا تُقرأ لاحقاً نسخة أقدم بقيت في التخزين
+    // Storage filled up or was blocked during the visit: the visit continues from the in-memory copy,
+    // so an older copy left in storage is not read later
     local = null
   }
 }
@@ -55,7 +55,7 @@ function remove(name: string) {
   try {
     browserStorage()?.removeItem(name)
   } catch {
-    // لا شيء آخر يمكن فعله
+    // Nothing else can be done
   }
 }
 
@@ -89,7 +89,7 @@ export function safeStorage(): PersistStorage<unknown> {
   }
 }
 
-/** للاختبارات فقط: يعيد فحص توفر localStorage من جديد. */
+/** For tests only: checks again whether localStorage is available. */
 export function resetStorageProbe() {
   local = undefined
   memory.clear()

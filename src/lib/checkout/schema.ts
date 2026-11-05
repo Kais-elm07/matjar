@@ -4,14 +4,14 @@ import { toWesternDigits } from "@/lib/catalog/arabic"
 
 import type { ShippingCity } from "./types"
 
-// سياسة المحتوى في الموقع المنشور (public/_headers) تمنع eval، وZod يجرّب new Function لتسريع التحقق
-// فيبلّغ المتصفح عن مخالفة حتى لو تجاوزها. بلا هذه المحاولة يعمل التحقق في المتصفح بالطريقة العادية.
+// The published site's content security policy (public/_headers) blocks eval, and Zod tries new Function to speed up validation,
+// so the browser reports a violation even though Zod moves past it. Without that attempt, validation runs in the browser the normal way.
 z.config({ jitless: true })
 
 /**
- * رقم الجوال بصيغة 05xxxxxxxx: يقبل +966 و00966 والأرقام العربية والمسافات،
- * ومن يكتب الصفر بعد مفتاح الدولة (+966 05...).
- * مؤقتاً صيغة السعودية حتى تحديد الدولة (القرار 1 في الخطة).
+ * Mobile number in the form 05xxxxxxxx: accepts +966, 00966, Arabic digits and spaces,
+ * and people who type the zero after the country code (+966 05...).
+ * The Saudi format for now, until the country is decided (decision 1 in the plan).
  */
 export function normalizePhone(value: string) {
   const digits = toWesternDigits(value).replace(/[\s()-]/g, "")
@@ -26,7 +26,7 @@ export function normalizePhone(value: string) {
 
 const isEmail = (value: string) => z.email().safeParse(value).success
 
-/** قواعد حقول نموذج الطلب، برسائل عربية تظهر تحت كل حقل. */
+/** Rules for the order form fields, with Arabic messages shown under each field. */
 export function checkoutSchema(cities: ShippingCity[]) {
   return z
     .object({

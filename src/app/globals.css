@@ -7,7 +7,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  /* خط IBM Plex Sans Arabic: العربي أولاً ثم اللاتيني للأرقام والحروف الإنجليزية (يُحمّلان في src/app/layout.tsx) */
+  /* IBM Plex Sans Arabic: the Arabic font first, then the Latin one for digits and English letters (both loaded in src/app/layout.tsx) */
   --font-sans:
     var(--font-arabic), var(--font-latin), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-sans);
@@ -43,7 +43,7 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  /* الزوايا بقيم rounded في DESIGN.md نفسها: 4 و6 و8 و12 و16 بكسل */
+  /* Corner radii with the same rounded values as DESIGN.md: 4, 6, 8, 12 and 16 pixels */
   --radius-sm: 0.25rem;
   --radius-md: 0.375rem;
   --radius-lg: var(--radius);
@@ -54,30 +54,30 @@
 }
 
 /*
- * ألوان هوية "ليل دافئ" (خلفية داكنة بثلاث درجات، ونص أبيض، وبرتقالي واحد للأفعال والأسعار)،
- * بنفس قيم hex في DESIGN.md. المتجر داكن دائماً، فلا وضع فاتح ولا صنف .dark.
- * لتغيير الهوية: عدّل DESIGN.md أولاً وافحصه بالأمر pnpm design:lint، ثم انسخ القيم هنا.
+ * Colors of the "ليل دافئ" (warm night) identity (a dark background in three shades, white text, and one orange for actions and prices),
+ * with the same hex values as DESIGN.md. The store is always dark, so there is no light mode and no .dark class.
+ * To change the identity: edit DESIGN.md first and check it with the pnpm design:lint command, then copy the values here.
  */
 :root {
-  /* الخلفية الداكنة والنص الأبيض */
+  /* The dark background and the white text */
   --background: #121214;
   --foreground: #ffffff;
-  /* السطح: الرأس والتذييل وبطاقات المنتجات والنوافذ والرسائل */
+  /* The surface: header, footer, product cards, pop-ups and messages */
   --card: #1c1c1f;
   --card-foreground: #ffffff;
   --popover: #1c1c1f;
   --popover-foreground: #ffffff;
-  /* البرتقالي: الأزرار الرئيسية والأسعار والعدّادات والشارات والتبويب النشط. النص فوقه داكن */
+  /* Orange: primary buttons, prices, counters, badges and the active tab. Text on it is dark */
   --primary: #ffa629;
   --primary-foreground: #111111;
-  /* السطح الفاتح: حقل البحث ومربعات الصور ودوائر الأيقونات وأزرار التمرير والهياكل */
+  /* The light surface: the search field, image boxes, icon circles, scroll buttons and skeletons */
   --secondary: #2a2a2e;
   --secondary-foreground: #ffffff;
   --muted: #2a2a2e;
   --muted-foreground: #a1a1a6;
   --accent: #2a2a2e;
   --accent-foreground: #ffffff;
-  /* الأحمر الفاتح للأخطاء والنفاد، والأصفر لتنبيه "بقي عدد قليل"، والأخضر لـ "متوفر"، وأخضر واتساب لزره العائم */
+  /* Light red for errors and sold out, yellow for the "بقي عدد قليل" (only a few left) notice, green for "متوفر" (in stock), and WhatsApp green for its floating button */
   --destructive: #f87171;
   --warning: #fbbf24;
   --success: #4ade80;
@@ -90,7 +90,7 @@
   --chart-3: #a1a1a6;
   --chart-4: #4ade80;
   --chart-5: #333338;
-  /* زوايا الأزرار والحقول ومربعات الصور 8 بكسل، والبطاقات 12 (rounded-xl)، والشارات 4 */
+  /* Corners: 8 pixels for buttons, fields and image boxes, 12 for cards (rounded-xl), and 4 for badges */
   --radius: 0.5rem;
   --sidebar: #1c1c1f;
   --sidebar-foreground: #ffffff;
@@ -108,7 +108,7 @@
   }
   html {
     @apply font-sans;
-    /* الحقول وأشرطة التمرير وقوائم الاختيار الأصلية تأخذ ألوان النظام الداكنة */
+    /* Native fields, scrollbars and select menus take the system's dark colors */
     color-scheme: dark;
   }
   body {
@@ -124,7 +124,7 @@
   }
 }
 
-/* حاوية الصفحة: عرض أقصى موحد مع هامش جانبي 16 بكسل على الجوال */
+/* Page container: one shared max width, with a 16-pixel side margin on mobile */
 @utility page-container {
   margin-inline: auto;
   width: 100%;
@@ -136,7 +136,7 @@
   }
 }
 
-/* من طلب تقليل الحركة من إعدادات جهازه: لا انزلاق ولا تكبير ولا تمرير ناعم */
+/* For visitors who turned on reduced motion in their device settings: no sliding, no zooming and no smooth scrolling */
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,
@@ -148,7 +148,7 @@
   }
 }
 
-/* الأسئلة الشائعة تُفتح بانسياب في المتصفحات الداعمة، وفوراً في غيرها */
+/* FAQ answers open smoothly in browsers that support it, and instantly in others */
 @media (prefers-reduced-motion: no-preference) {
   .faq-item {
     interpolate-size: allow-keywords;

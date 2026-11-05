@@ -12,7 +12,7 @@ export type FaqGroup = {
 }
 
 /**
- * يقسم نص صفحة الأسئلة: "## " عنوان مجموعة، و"### " سؤال، وما تحته إجابته.
+ * Splits the FAQ page text: "## " is a group title, "### " is a question, and the text under it is its answer.
  */
 export function parseFaq(body: string): FaqGroup[] {
   const groups: FaqGroup[] = []
@@ -43,7 +43,7 @@ interface FaqListProps {
   groups: FaqGroup[]
 }
 
-/** الأسئلة كقائمة تُفتح وتُطوى، دون JavaScript (عنصر details). */
+/** The questions as a list that expands and collapses without JavaScript (the details element). */
 export function FaqList({ groups }: FaqListProps) {
   return (
     <div className="space-y-8">
@@ -70,7 +70,7 @@ export function FaqList({ groups }: FaqListProps) {
   )
 }
 
-/** نص الإجابة دون تنسيق، لبيانات FAQPage التي تقرؤها محركات البحث. */
+/** The answer text without formatting, for the FAQPage data that search engines read. */
 export function plainAnswer(answer: string) {
   return answer
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")

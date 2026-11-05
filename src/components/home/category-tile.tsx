@@ -8,7 +8,7 @@ interface CategoryTileProps {
   category: Category
 }
 
-/** مربع فئة مصوّر بنسبة 4:5، واسم الفئة وعدد منتجاتها فوق تدرج داكن (DESIGN.md: category-tile). */
+/** A 4:5 category photo tile, with its name and product count over a dark gradient (DESIGN.md: category-tile). */
 export function CategoryTile({ category }: CategoryTileProps) {
   return (
     <Link

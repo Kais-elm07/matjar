@@ -2,7 +2,10 @@
 
 import { useListingSearch } from "@/lib/catalog/use-listing-search"
 
-/** عنوان صفحة المنتجات حسب الرابط: "العروض" أو "وصل حديثاً" أو "كل المنتجات". */
+/**
+ * The products page title, based on the URL: "العروض" (Offers), "وصل حديثاً" (New arrivals)
+ * or "كل المنتجات" (All products).
+ */
 export function ProductsHeading() {
   const params = new URLSearchParams(useListingSearch())
   const title =

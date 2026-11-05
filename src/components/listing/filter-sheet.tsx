@@ -13,12 +13,12 @@ interface FilterSheetProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   total: number
-  /** زر "مسح الكل"، يظهر فقط عند وجود فلاتر مفعّلة */
+  /** The "مسح الكل" (Clear all) button, shown only when filters are active */
   onClear?: () => void
   children: React.ReactNode
 }
 
-/** لوحة التصفية على الجوال: تنزلق من الأسفل، وفيها نفس فلاتر الشريط الجانبي. */
+/** The mobile filter panel: slides up from the bottom, with the same filters as the sidebar. */
 export function FilterSheet({
   open,
   onOpenChange,

@@ -14,7 +14,7 @@ const DeferredToaster = dynamic(
   { ssr: false }
 )
 
-/** رسائل التنبيه القصيرة: يُحمَّل كودها بعد ظهور الصفحة، أو مع أول رسالة إن سبقت ذلك. */
+/** Short toast messages: their code loads after the page appears, or with the first toast if sooner. */
 export function LazyToaster() {
   const idle = useIdle()
   const requested = useSyncExternalStore(

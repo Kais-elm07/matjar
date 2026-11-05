@@ -14,9 +14,9 @@ import type {
   ProductBannerInput,
 } from "./types"
 
-/** عدد المنتجات في كل صف من صفوف الصفحة الرئيسية */
+/** Number of products in each row of the home page */
 const RAIL_LIMIT = 8
-/** عدد المنتجات في كل تبويب من "الرائج الآن" */
+/** Number of products in each tab of "الرائج الآن" (trending now) */
 const TRENDING_LIMIT = 6
 
 function buildSections() {
@@ -25,20 +25,20 @@ function buildSections() {
   return {
     newArrivals: byNewest.slice(0, RAIL_LIMIT).map(toProductCard),
     bestSellers: byPopularity.slice(0, RAIL_LIMIT).map(toProductCard),
-    /** عروض لها تاريخ نهاية، الأقرب انتهاءً أولاً. العروض المنتهية أُزيلت وقت البناء */
+    /** Sales with an end date, ending soonest first. Ended sales were removed at build time */
     deals: onSale
       .filter((product) => product.saleEndsAt !== null)
       .sort((a, b) => (a.saleEndsAt ?? "").localeCompare(b.saleEndsAt ?? ""))
       .slice(0, RAIL_LIMIT)
       .map(toProductCard),
-    /** أكبر خصم حقيقي بين كل المنتجات المخفضة، لبطاقة "خصومات تصل إلى" */
+    /** The largest real discount among all discounted products, for the "خصومات تصل إلى" (discounts up to) card */
     maxDiscount: Math.max(
       0,
       ...onSale.map(
         (product) => discountPercent(product.price, product.compareAtPrice) ?? 0
       )
     ),
-    /** الأكثر مبيعاً في كل فئة رئيسية، لتبويبات "الرائج الآن" */
+    /** Best sellers in each top-level category, for the "الرائج الآن" (trending now) tabs */
     trending: getRootCategories()
       .map((category) => ({
         category: { slug: category.slug, name: category.name },
@@ -53,7 +53,7 @@ function buildSections() {
 
 let sections: ReturnType<typeof buildSections> | undefined
 
-/** أقسام المنتجات في الصفحة الرئيسية، تُحسب مرة واحدة وقت البناء. */
+/** The product sections of the home page, computed once at build time. */
 export function getHomeSections() {
   sections ??= buildSections()
   return sections
@@ -108,7 +108,7 @@ function buildContent() {
 
 let content: ReturnType<typeof buildContent> | undefined
 
-/** الشرائح وبطاقات العروض في الصفحة الرئيسية، مربوطة ببيانات المنتجات والفئات. */
+/** The slides and promo cards on the home page, linked to the product and category data. */
 export function getHomeContent() {
   content ??= buildContent()
   return content

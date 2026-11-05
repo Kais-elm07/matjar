@@ -1,6 +1,6 @@
 import { normalizeForSearch } from "./arabic"
 
-/** قيم خيارات المتغير: { "المقاس": "L", "اللون": "أزرق" } */
+/** A variant's option values: { "المقاس": "L", "اللون": "أزرق" } (size L, color blue) */
 export type VariantOptions = Record<string, string>
 
 export type OptionGroup = {
@@ -19,7 +19,7 @@ export function isColorOption(name: string) {
   return COLOR_OPTION_NAMES.has(normalizeForSearch(name))
 }
 
-/** درجات الألوان الشائعة لعرضها كدوائر ملونة. أضف ألوانك هنا. */
+/** Common color shades, shown as colored circles. Add your colors here. */
 const COLOR_SWATCHES: Record<string, string> = Object.fromEntries(
   Object.entries({
     أحمر: "#dc2626",
@@ -61,7 +61,7 @@ const COLOR_SWATCHES: Record<string, string> = Object.fromEntries(
   }).map(([name, hex]) => [normalizeForSearch(name), hex])
 )
 
-/** لون الدائرة لقيمة مثل "أزرق" أو "#2563eb"، أو null إن لم يكن اللون معروفاً. */
+/** The circle color for a value such as "أزرق" (blue) or "#2563eb", or null if the color is unknown. */
 export function getColorHex(value: string) {
   const trimmed = value.trim()
   if (/^#[0-9a-f]{3,8}$/i.test(trimmed)) return trimmed
@@ -91,7 +91,7 @@ function sizeRank(value: string) {
   return Number.isFinite(number) ? 100 + number : null
 }
 
-/** ترتيب منطقي للقيم: المقاسات من الأصغر، والأرقام تصاعدياً، والباقي أبجدياً. */
+/** A logical order for values: sizes from smallest, numbers ascending, and the rest alphabetically. */
 export function sortOptionValues(values: string[]) {
   return [...values].sort((a, b) => {
     const rankA = sizeRank(a)
@@ -103,7 +103,7 @@ export function sortOptionValues(values: string[]) {
   })
 }
 
-/** مجموعات الخيارات بترتيب ظهورها في المتغيرات، كما رتّبها صاحب المتجر. */
+/** Option groups in the order they appear in the variants, as the store owner ordered them. */
 export function getOptionGroups(
   variants: { options: VariantOptions }[]
 ): OptionGroup[] {

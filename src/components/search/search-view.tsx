@@ -16,7 +16,7 @@ interface SearchViewProps {
   categories: CategoryOption[]
 }
 
-/** صفحة نتائج البحث: تقرأ الكلمة من الرابط وتبحث في الفهرس داخل المتصفح. */
+/** The search results page: reads the term from the URL and searches the index in the browser. */
 export function SearchView({ categories }: SearchViewProps) {
   const searchParams = useSearchParams()
   const query = (searchParams.get("q") ?? "").trim()

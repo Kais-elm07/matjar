@@ -16,7 +16,7 @@ import {
 } from "@/lib/catalog/catalog"
 import { breadcrumbJsonLd, openGraph, shareImages } from "@/lib/seo"
 
-// كل صفحات الفئات تُجهَّز وقت البناء، وأي رابط آخر يعرض صفحة 404
+// Every category page is prepared at build time, and any other URL shows the 404 page
 export const dynamicParams = false
 
 export function generateStaticParams() {

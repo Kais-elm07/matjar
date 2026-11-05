@@ -31,7 +31,7 @@ const DAY_FORMS: PluralForms = {
   other: "{n} يوم",
 }
 
-/** ساعة تتحدث كل ثانية في المتصفح، وقيمتها null أثناء البناء وأول عرض. */
+/** A clock that updates every second in the browser, and is null during the build and the first render. */
 function subscribe(onChange: () => void) {
   const timer = setInterval(onChange, 1000)
   return () => clearInterval(timer)
@@ -42,15 +42,15 @@ const atBuildTime = () => null
 const pad = (value: number) => value.toString().padStart(2, "0")
 
 interface DealItemProps {
-  /** آخر يوم في العرض بصيغة 2026-12-31 */
+  /** The last day of the deal, in the format 2026-12-31 */
   endsAt: string
   children: React.ReactNode
   className?: string
 }
 
 /**
- * منتج في قسم العروض المحدودة، مع عدّاد تنازلي حقيقي حتى نهاية آخر يوم في العرض
- * (بتوقيت المتجر). يختفي المنتج من القسم عند انتهاء العرض.
+ * A product in the limited-time deals section, with a real countdown to the end of the deal's last day
+ * (in the store's time zone). The product leaves the section when the deal ends.
  */
 export function DealItem({ endsAt, children, className }: DealItemProps) {
   const now = useSyncExternalStore(subscribe, nowInSeconds, atBuildTime)

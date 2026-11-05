@@ -49,9 +49,9 @@ interface CheckoutViewProps {
 }
 
 /**
- * صفحة إتمام الطلب التجريبي: صفحة واحدة بأربع خطوات، وتحقق فوري برسائل عربية،
- * وملخص بالإجمالي. عند التأكيد يُحفظ الطلب في هذا التبويب فقط وتُفرَّغ السلة،
- * ولا يُرسل شيء لأي جهة.
+ * The demo checkout page: a single page with four steps, instant validation with Arabic messages,
+ * and a summary with the total. On confirmation the order is saved in this tab only, the cart is
+ * emptied, and nothing is sent to anyone.
  */
 export function CheckoutView({ config }: CheckoutViewProps) {
   const router = useRouter()
@@ -126,7 +126,7 @@ export function CheckoutView({ config }: CheckoutViewProps) {
     )
   }
 
-  /** خصائص الحقل: التسجيل في النموذج وربط رسالة الخطأ أو التلميح به. */
+  /** Field props: registers the field with the form and links its error message or hint to it. */
   function field(
     name: FieldPath<CheckoutInput>,
     {
@@ -236,7 +236,7 @@ export function CheckoutView({ config }: CheckoutViewProps) {
                 autoComplete="address-level2"
                 className="w-full [&_select]:h-11 [&_select]:bg-background [&_select]:text-base"
                 {...field("city", {
-                  // التوصيل السريع متاح في مدن محددة، فيعود الاختيار للعادي في غيرها
+                  // Express delivery is available in certain cities, so elsewhere the choice goes back to standard
                   onChange: (event) => {
                     const next = config.cities.find(
                       (item) => item.name === event.target.value

@@ -3,7 +3,7 @@
 import { SearchBox } from "@/components/layout/search-box"
 import { useUiStore } from "@/lib/store/ui"
 
-/** سطر البحث تحت الرأس على الجوال، يظهر عند الضغط على زر البحث. */
+/** The search row under the header on mobile, shown when the search button is pressed. */
 export function MobileSearchRow() {
   const open = useUiStore((state) => state.searchOpen)
   const setOpen = useUiStore((state) => state.setSearchOpen)

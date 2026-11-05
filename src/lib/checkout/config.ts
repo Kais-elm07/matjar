@@ -9,8 +9,8 @@ import { toMinorUnits } from "@/lib/catalog/money"
 import type { CheckoutConfig } from "./types"
 
 /**
- * إعدادات إتمام الطلب بعد التحقق منها وقت البناء: الشحن والكوبونات.
- * أي خطأ في الملفين يوقف البناء برسالة عربية، والنتيجة تُمرَّر لصفحة الطلب.
+ * Checkout settings, validated at build time: shipping and coupons.
+ * Any error in the two files stops the build with an Arabic message, and the result is passed to the checkout page.
  */
 
 z.config(z.locales.ar())

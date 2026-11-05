@@ -12,7 +12,7 @@ import type { CheckoutValues } from "./schema"
 import { calculateTotals, couponProblem } from "./totals"
 import type { CheckoutConfig, Coupon, OrderTotals } from "./types"
 
-/** الطلب التجريبي كما تعرضه صفحة التأكيد. لا يُرسل لأي جهة. */
+/** The demo order as the confirmation page shows it. It is not sent anywhere. */
 export type PlacedOrder = {
   number: string
   placedAt: string
@@ -30,10 +30,10 @@ export type PlacedOrder = {
   totals: OrderTotals
 }
 
-// sessionStorage: يبقى الطلب لعرض صفحة التأكيد فقط، ويُمحى عند إغلاق التبويب
+// sessionStorage: the order stays only to show the confirmation page, and is cleared when the tab closes
 const KEY = "matjar-last-order"
 
-/** رقم طلب تجريبي فريد تقريباً بتاريخ جهاز الزائر، مثل 261031-4827. */
+/** A nearly unique demo order number from the date on the visitor's device, such as 261031-4827. */
 function createOrderNumber(date = new Date()) {
   const pad = (value: number) => value.toString().padStart(2, "0")
   const stamp = `${pad(date.getFullYear() % 100)}${pad(date.getMonth() + 1)}${pad(date.getDate())}`
@@ -42,8 +42,8 @@ function createOrderNumber(date = new Date()) {
 }
 
 /**
- * الطلب التجريبي من قيم النموذج والسلة، بالمبالغ نفسها التي رآها الزائر قبل التأكيد.
- * null إن لم تكن المدينة ضمن مدن الشحن (لا يحدث بعد التحقق من النموذج).
+ * The demo order from the form values and the cart, with the same amounts the visitor saw before confirming.
+ * null if the city is not among the shipping cities (this does not happen after the form is validated).
  */
 export function buildOrder({
   values,
@@ -74,7 +74,7 @@ export function buildOrder({
       values.shippingMethod === "express"
         ? { label: "توصيل سريع", days: config.express.label }
         : { label: "توصيل عادي", days: deliveryTime(city.days) },
-    // كوبون لم يعد ينطبق (المجموع تحت حده) لا يُسجَّل في الطلب
+    // A coupon that no longer applies (subtotal below its minimum) is not recorded in the order
     couponCode: coupon && !couponProblem(coupon, subtotal) ? coupon.code : null,
     lines: lines.map(({ sku, name, options, quantity, price, image }) => ({
       sku,
@@ -98,7 +98,7 @@ export function saveLastOrder(order: PlacedOrder) {
   try {
     sessionStorage.setItem(KEY, JSON.stringify(order))
   } catch {
-    // التخزين ممنوع في بعض أوضاع التصفح الخاص، فتعرض الصفحة رسالة عامة
+    // Storage is blocked in some private browsing modes, so the page shows a general message
   }
 }
 
@@ -110,7 +110,7 @@ const readRaw = () => {
   }
 }
 
-/** طلب محفوظ بالشكل الذي تعرضه صفحة التأكيد. ما عداه يُعامل كأن لا طلب. */
+/** A saved order in the shape the confirmation page shows. Anything else is treated as no order. */
 function isPlacedOrder(value: unknown): value is PlacedOrder {
   return (
     isRecord(value) &&
@@ -126,8 +126,8 @@ function isPlacedOrder(value: unknown): value is PlacedOrder {
 }
 
 /**
- * آخر طلب تجريبي في هذا التبويب: "pending" أثناء البناء وأول عرض،
- * ثم الطلب، أو null إن لم يوجد طلب حديث.
+ * The last demo order in this tab: "pending" during the build and the first render,
+ * then the order, or null if there is no recent order.
  */
 export function useLastOrder(): PlacedOrder | null | "pending" {
   const raw = useSyncExternalStore(

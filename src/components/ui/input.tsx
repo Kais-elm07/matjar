@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 
 interface InputProps extends React.ComponentProps<"input"> {}
 
-/** حقل نص أصلي من المتصفح بشكل المتجر. */
+/** A native browser text field with the store's look. */
 function Input({ className, type, ...props }: InputProps) {
   return (
     <input

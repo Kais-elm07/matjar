@@ -18,8 +18,9 @@ interface CouponFieldProps {
 }
 
 /**
- * حقل الكوبون: يتحقق من الرمز وحد الطلب، ويعرض الخصم المطبّق مع زر لإزالته.
- * إن نزل المجموع بعد التطبيق تحت حد الكوبون يبقى ظاهراً مع تنبيه بأنه لم يعد ينطبق.
+ * Coupon field: checks the code and the order minimum, and shows the applied discount
+ * with a button to remove it. If the subtotal drops below the coupon's minimum after it
+ * is applied, the coupon stays visible with a notice that it no longer applies.
  */
 export function CouponField({
   coupon,
@@ -108,7 +109,7 @@ export function CouponField({
             setError(null)
           }}
           onKeyDown={(event) => {
-            // Enter يطبّق الكوبون بدل إرسال نموذج الطلب
+            // Enter applies the coupon instead of submitting the order form
             if (event.key === "Enter") {
               event.preventDefault()
               apply()

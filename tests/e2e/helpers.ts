@@ -3,15 +3,15 @@ import { expect, type APIRequestContext, type Page } from "@playwright/test"
 import type { SearchCardData } from "../../src/lib/catalog/types"
 
 /**
- * يفتح الصفحة وينتظر حتى تصبح تفاعلية وتُستعاد السلة والمفضلة،
- * فلا يضغط الاختبار زراً قبل أن يعمل (العلامة في src/lib/store/hydration.ts).
+ * Opens the page and waits until it is interactive and the cart and wishlist are restored,
+ * so the test never clicks a button before it works (the marker is in src/lib/store/hydration.ts).
  */
 export async function open(page: Page, path: string) {
   await page.goto(path)
   await expect(page.locator("html[data-stores-ready]")).toBeAttached()
 }
 
-/** منتجات الموقع من فهرس البحث المنشور، حتى لا ترتبط الاختبارات بمنتج بعينه. */
+/** The site's products from the published search index, so the tests aren't tied to a specific product. */
 export async function loadProducts(
   request: APIRequestContext
 ): Promise<SearchCardData[]> {
@@ -20,7 +20,7 @@ export async function loadProducts(
   return response.json()
 }
 
-/** منتج متوفر بمتغير واحد، يُضاف للسلة بضغطة، ويكفي مخزونه للكمية المطلوبة. */
+/** An in-stock product with a single variant, added to the cart in one click, with enough stock for the requested quantity. */
 export async function simpleProduct(
   request: APIRequestContext,
   { minStock = 2, minPrice = 0 } = {}
@@ -32,19 +32,20 @@ export async function simpleProduct(
       card.quickAdd.stock >= minStock &&
       card.price >= minPrice
   )
-  if (!product) throw new Error("لا يوجد منتج متوفر بمتغير واحد في البيانات")
+  if (!product)
+    throw new Error("No in-stock product with a single variant in the data")
   return product
 }
 
-/** هل الجهاز جوال؟ على الجوال تُفتح التصفية وملخص الطلب بضغطة. */
+/** Is the device a phone? On phones, the filters and the order summary open with a tap. */
 export const isPhone = (page: Page) =>
   (page.viewportSize()?.width ?? 1280) < 768
 
-/** الأرقام في نص مثل "1,299 ر.س" */
+/** The number in a text such as "1,299 ر.س" (1,299 SAR) */
 export const priceOf = (text: string) =>
   Number(text.replace(/[^\d.]/g, "").replace(/\.$/, ""))
 
-/** طلب HTTP يعيد المحاولة عند انقطاع الاتصال العابر بخادم المعاينة المحلي (ECONNRESET). */
+/** An HTTP request that retries when the connection to the local preview server drops briefly (ECONNRESET). */
 export async function getWithRetry(
   request: APIRequestContext,
   url: string,

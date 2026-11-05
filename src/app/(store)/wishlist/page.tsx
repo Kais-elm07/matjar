@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 }
 
 /**
- * صفحة المفضلة: المنتجات المحفوظة في متصفح الزائر.
- * الارتفاع الأدنى يثبّت التذييل مكانه حين يحل المحتوى محل هيكل التحميل.
+ * The wishlist page: the products saved in the visitor's browser.
+ * The minimum height keeps the footer in place when the content replaces the loading skeleton.
  */
 export default function WishlistPage() {
   return (

@@ -5,25 +5,25 @@ import { defineConfig, devices } from "@playwright/test"
 const PORT = 3200
 const isCI = Boolean(process.env.CI)
 
-// على جهاز التطوير يُستخدم Chrome المثبت بدل تنزيل Chromium،
-// وفي GitHub Actions تُنزَّل المتصفحات الثلاثة بالأمر playwright install
+// On the development machine the installed Chrome is used instead of downloading Chromium,
+// and in GitHub Actions the three browsers are downloaded with playwright install
 const chrome = isCI ? {} : { channel: "chrome" }
 
-// Firefox يعمل دائماً في GitHub Actions، ومحلياً عند الطلب: E2E_FIREFOX=1 pnpm test:e2e،
-// لأن نسخة Playwright الحالية منه لا تبدأ على بعض أجهزة Windows (لا يجد مكتبة mozglue)
+// Firefox always runs in GitHub Actions, and locally on request: E2E_FIREFOX=1 pnpm test:e2e,
+// because Playwright's current build of it doesn't start on some Windows machines (it can't find the mozglue library)
 const withFirefox = isCI || Boolean(process.env.E2E_FIREFOX)
 
-// الاختبارات تعمل على النسخة المبنية، فبدونها تفشل كلها بأخطاء 404 مربكة
+// The tests run against the built site; without it, they all fail with confusing 404 errors
 if (!existsSync("out/index.html")) {
   throw new Error(
-    "لا توجد نسخة مبنية في out/. شغّل pnpm build أولاً ثم pnpm test:e2e."
+    "No build found in out/. Run pnpm build first, then pnpm test:e2e."
   )
 }
 
 /**
- * اختبارات المتصفح (pnpm test:e2e) على النسخة الثابتة في out/ كما ستُنشر،
- * فشغّل pnpm build قبلها. أربعة أجهزة: حاسوب بـ Chrome وFirefox،
- * وجوال Android بمحرك Chrome (مثل Samsung Internet)، وiPhone بمحرك Safari.
+ * Browser tests (pnpm test:e2e) on the static build in out/, as it will be published,
+ * so run pnpm build before them. Four devices: a desktop with Chrome and Firefox,
+ * an Android phone with the Chrome engine (like Samsung Internet), and an iPhone with the Safari engine.
  */
 export default defineConfig({
   testDir: "tests/e2e",
@@ -34,7 +34,7 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:${PORT}`,
     locale: "ar-SA",
-    // التتبع عند إعادة المحاولة فقط، ولقطة شاشة عند الفشل، فيبقى التقرير خفيفاً
+    // A trace only on a retry and a screenshot on failure, so the report stays light
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },

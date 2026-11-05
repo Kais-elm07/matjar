@@ -1,5 +1,5 @@
-# سكربتات البناء التي يُسمح للحزم بتشغيلها أثناء التثبيت (pnpm يرفض أي سكربت غير مذكور هنا).
-# false = تجاهل السكربت دون إيقاف التثبيت. الحزمتان تعملان بملفات جاهزة دون سكربت.
+# Build scripts that packages may run during install (pnpm refuses any script not listed here).
+# false = skip the script without stopping the install. Both packages work with prebuilt files and need no script.
 allowBuilds:
   sharp: false
   unrs-resolver: false

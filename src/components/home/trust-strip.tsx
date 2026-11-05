@@ -29,7 +29,7 @@ const ITEMS: { icon: LucideIcon; title: string; description: string }[] = [
   },
 ]
 
-/** شريط الثقة بعرض الشاشة تحت الواجهة: حقائق الشراء الأربع (DESIGN.md: trust-strip). */
+/** The full-width trust strip under the hero: the four purchase facts (DESIGN.md: trust-strip). */
 export function TrustStrip() {
   return (
     <section aria-label="لماذا تتسوق معنا" className="border-y bg-card">

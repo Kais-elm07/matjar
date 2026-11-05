@@ -23,7 +23,7 @@ const ITEMS: { icon: LucideIcon; title: string; description: string }[] = [
   },
 ]
 
-/** "لماذا تختارنا؟": عنوان في المنتصف وثلاث ميزات في دوائر (DESIGN.md: feature-circle). */
+/** "لماذا تختارنا؟" (Why choose us?): a centered heading and three features in circles (DESIGN.md: feature-circle). */
 export function WhyUs() {
   return (
     <section aria-labelledby="why-heading" className="text-center">

@@ -5,8 +5,8 @@ import { siteConfig } from "@/config/site"
 import { fitsCurrency } from "./money"
 
 /**
- * قواعد ملفي الفئات والمنتجات في src/data، برسائل عربية لكل حقل.
- * تعمل وقت البناء فقط، والتحقق الذي يربط الملفين ببعضهما في validate.ts.
+ * Rules for the categories and products files in src/data, with an Arabic message for each field.
+ * They run at build time only; the checks that link the two files together are in validate.ts.
  */
 
 z.config(z.locales.ar())
@@ -26,7 +26,7 @@ const text = z.string().trim().min(1, { error: "لا يمكن أن يكون فا
 
 const DATE_FORMAT = /^\d{4}-\d{2}-\d{2}$/
 
-/** يوم موجود في التقويم (2026-02-30 مرفوض). خطأ الصيغة يُبلَّغ عنه وحده. */
+/** A day that exists in the calendar (2026-02-30 is rejected). A format error is reported on its own. */
 function isRealDate(value: string) {
   if (!DATE_FORMAT.test(value)) return true
   const date = new Date(`${value}T00:00:00Z`)

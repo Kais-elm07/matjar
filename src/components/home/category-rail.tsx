@@ -7,7 +7,7 @@ interface CategoryRailProps {
   categories: Category[]
 }
 
-/** "تسوّق حسب الفئة": صف مربعات الفئات يُسحب أفقياً. */
+/** "تسوّق حسب الفئة" (Shop by category): a row of category tiles swiped horizontally. */
 export function CategoryRail({ categories }: CategoryRailProps) {
   if (categories.length === 0) return null
   return (

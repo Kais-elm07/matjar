@@ -20,12 +20,12 @@ import { discountPercent, toMinorUnits } from "@/lib/catalog/money"
 import { optionsKey } from "@/lib/catalog/variant-key"
 import { getCheckoutConfig } from "@/lib/checkout/config"
 
-/** فحوص على بيانات المتجر الحالية: تفشل إن أُضيف منتج أو فئة بشكل يكسر الموقع. */
-describe("بيانات المتجر الفعلية", () => {
+/** Checks on the current store data: they fail if a product or category is added in a way that breaks the site. */
+describe("actual store data", () => {
   const products = getProducts()
   const categories = getCategories()
 
-  it("روابط المنتجات ورموز المتغيرات فريدة", () => {
+  it("has unique product slugs and variant SKUs", () => {
     const skus = products.flatMap((product) =>
       product.variants.map((variant) => variant.sku)
     )
@@ -35,7 +35,7 @@ describe("بيانات المتجر الفعلية", () => {
     expect(new Set(skus).size).toBe(skus.length)
   })
 
-  it("لكل منتج صورة وسعر صحيح وفئة موجودة", () => {
+  it("has an image, a valid price and an existing category for every product", () => {
     const categorySlugs = new Set(categories.map((category) => category.slug))
     for (const product of products) {
       expect(product.images.length, product.slug).toBeGreaterThan(0)
@@ -53,7 +53,7 @@ describe("بيانات المتجر الفعلية", () => {
     }
   })
 
-  it("عدد منتجات كل فئة يشمل فئاتها الفرعية", () => {
+  it("includes subcategories in each category's product count", () => {
     for (const category of categories) {
       expect(getProductCards(category.slug), category.slug).toHaveLength(
         category.productCount
@@ -61,7 +61,7 @@ describe("بيانات المتجر الفعلية", () => {
     }
   })
 
-  it("فهرس البحث وأسعار السلة يغطيان كل المنتجات والمتغيرات", () => {
+  it("covers every product and variant in the search index and the cart prices", () => {
     const cartCatalog = getCartCatalog()
     expect(getSearchIndex()).toHaveLength(products.length)
     for (const product of products) {
@@ -76,7 +76,7 @@ describe("بيانات المتجر الفعلية", () => {
     }
   })
 
-  it("بطاقات الصفحة الرئيسية تشير إلى منتجات موجودة", () => {
+  it("points the home page cards to existing products", () => {
     const { heroSlides, promos, wideBanner } = getHomeContent()
     for (const banner of [
       ...heroSlides,
@@ -88,7 +88,7 @@ describe("بيانات المتجر الفعلية", () => {
     }
   })
 
-  it("العروض المنتهية أُعيدت لسعرها وقت البناء، والمقترحات لا تكرر المنتج نفسه", () => {
+  it("resets expired sales to their regular price at build time, and suggestions never repeat the product itself", () => {
     const today = storeToday()
     for (const product of products) {
       if (product.saleEndsAt === null) continue
@@ -97,7 +97,7 @@ describe("بيانات المتجر الفعلية", () => {
     }
     const { deals, maxDiscount } = getHomeSections()
     expect(deals.every((deal) => deal.saleEndsAt !== null)).toBe(true)
-    // "خصومات تصل إلى" تساوي أكبر خصم بين كل المنتجات المخفضة
+    // "خصومات تصل إلى" ("discounts up to") equals the largest discount among all discounted products
     expect(maxDiscount).toBe(
       Math.max(
         0,
@@ -115,7 +115,7 @@ describe("بيانات المتجر الفعلية", () => {
     }
   })
 
-  it("لكل صورة في البيانات ملف أصلي في assets/images", () => {
+  it("has a source file in assets/images for every image in the data", () => {
     const extensions = [".jpg", ".jpeg", ".png", ".webp", ".avif", ".svg"]
     const hasSource = (src: string) =>
       extensions.some((extension) =>
@@ -133,12 +133,12 @@ describe("بيانات المتجر الفعلية", () => {
     }
   })
 
-  it("بطاقات القوائم لا تحمل نصوص البحث، وفهرس البحث يحملها", () => {
+  it("keeps the search text out of the listing cards and in the search index", () => {
     expect(getProductCards()[0]).not.toHaveProperty("searchText")
     expect(getSearchIndex()[0].searchText.length).toBeGreaterThan(0)
   })
 
-  it("إعدادات الشحن والكوبونات تُحوَّل إلى هللات", () => {
+  it("converts the shipping and coupon settings to halalas", () => {
     const config = getCheckoutConfig()
     expect(config.freeShippingFrom).toBe(
       toMinorUnits(shipping.freeShippingFrom)

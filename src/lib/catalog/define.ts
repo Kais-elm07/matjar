@@ -1,11 +1,11 @@
 import type { ProductImageInput, VariantInput } from "./types"
 
 /**
- * صور المنتج بالترتيب: slug-1، slug-2، ...
- * مرّر عدد الصور، أو قائمة بلون كل صورة (null لصورة لا تخص لوناً بعينه).
+ * Product images in order: slug-1, slug-2, ...
+ * Pass the number of images, or a list with the color of each image (null for an image that belongs to no particular color).
  *
  * productImages("classic-cotton-shirt", ["أبيض", "أزرق"])
- * يعني: /images/products/classic-cotton-shirt-1 (أبيض) و ...-2 (أزرق)
+ * means: /images/products/classic-cotton-shirt-1 (أبيض, white) and ...-2 (أزرق, blue)
  */
 export function productImages(
   slug: string,
@@ -20,9 +20,9 @@ export function productImages(
 
 type VariantBase = {
   /**
-   * بادئة رمز المنتج، تُضاف لها أرقام تلقائياً: SHIRT-01، SHIRT-02...
-   * الأرقام تتبع ترتيب القيم، فإعادة ترتيبها بعد النشر تغيّر الرموز،
-   * والسلة المحفوظة تحذف عندها السطر الذي تغيّرت خياراته بدل أن تخلطه بمتغير آخر.
+   * The product SKU prefix; numbers are added to it automatically: SHIRT-01, SHIRT-02...
+   * The numbers follow the order of the values, so reordering them after publishing changes the SKUs,
+   * and the saved cart then removes the line whose options changed instead of mixing it up with another variant.
    */
   sku: string
   price: number
@@ -33,16 +33,16 @@ type VariantBase = {
 type VariantOverride = Partial<Omit<VariantInput, "sku" | "options">>
 
 /**
- * يولّد متغيراً لكل تركيبة من الخيارات، بدل كتابتها يدوياً.
+ * Generates a variant for every combination of options, instead of writing them by hand.
  *
  * optionMatrix(
- *   { المقاس: ["S", "M", "L"], اللون: ["أبيض", "أزرق"] },
+ *   { المقاس: ["S", "M", "L"], اللون: ["أبيض", "أزرق"] }, // size; color: white, blue
  *   { sku: "SHIRT", price: 129, stock: 10 },
- *   // تعديلات اختيارية: لقيمة واحدة ("L") أو لتركيبة كاملة ("L/أزرق")
+ *   // Optional overrides: for a single value ("L") or for a full combination ("L/أزرق")
  *   { L: { price: 139 }, "S/أزرق": { stock: 0 } }
  * )
- * ينتج 6 متغيرات. التعديل على التركيبة الكاملة يتقدم على تعديل القيمة الواحدة،
- * ومفتاح تعديل لا يطابق أي قيمة أو تركيبة (خطأ إملائي مثلاً) يوقف البناء برسالة واضحة.
+ * produces 6 variants. An override for the full combination takes precedence over a single-value override,
+ * and an override key that matches no value or combination (a typo, for example) stops the build with a clear message.
  */
 export function optionMatrix(
   options: Record<string, string[]>,
@@ -86,7 +86,7 @@ export function optionMatrix(
   })
 }
 
-/** متغير واحد لمنتج بلا خيارات (مقاس أو لون). */
+/** A single variant for a product without options (size or color). */
 export function singleVariant(base: VariantBase): VariantInput[] {
   return [
     {

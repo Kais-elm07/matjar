@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 }
 
 /**
- * صفحة السلة: محتواها من متصفح الزائر، فتُبنى فارغة وتُملأ بعد التحميل.
- * الارتفاع الأدنى يثبّت التذييل مكانه حين يحل المحتوى محل هيكل التحميل.
+ * The cart page: its content comes from the visitor's browser, so it is built empty and filled after loading.
+ * The minimum height keeps the footer in place when the content replaces the loading skeleton.
  */
 export default function CartPage() {
   return (

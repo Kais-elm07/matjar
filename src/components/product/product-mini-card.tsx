@@ -8,7 +8,10 @@ interface ProductMiniCardProps {
   product: ProductCardData
 }
 
-/** بطاقة منتج أفقية صغيرة بلون السطح: الصورة بجانب الاسم والسعر، لقسم "الرائج الآن". */
+/**
+ * A small horizontal product card in the surface color: the image beside the name and price,
+ * for the "الرائج الآن" (Trending now) section.
+ */
 export function ProductMiniCard({ product }: ProductMiniCardProps) {
   return (
     <article className="group relative flex items-center gap-4 rounded-xl bg-card p-2 transition-colors hover:bg-muted/60">

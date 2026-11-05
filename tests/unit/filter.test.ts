@@ -90,16 +90,16 @@ const params = (changes: Partial<ListingParams> = {}): ListingParams => ({
 const slugs = (list: { slug: string }[]) => list.map((item) => item.slug)
 
 describe("searchCards", () => {
-  it("يجد المنتج رغم اختلاف كتابة التاء المربوطة", () => {
+  it("finds the product even when taa marbuta is spelled differently", () => {
     expect(slugs(searchCards(cards, "ساعه"))).toEqual(["watch"])
     expect(slugs(searchCards(cards, "سماعات لاسلكيه"))).toEqual(["earbuds"])
   })
 
-  it("يشترط وجود كل كلمات البحث", () => {
+  it("requires every search word to be present", () => {
     expect(searchCards(cards, "قميص فضي")).toEqual([])
   })
 
-  it("يقدّم ما يبدأ اسمه بالبحث، ثم الأكثر مبيعاً", () => {
+  it("ranks names that start with the search first, then the best sellers", () => {
     const hanger = card({
       slug: "hanger",
       name: "علاقة قميص خشبية",
@@ -117,13 +117,13 @@ describe("searchCards", () => {
     expect(slugs(searchCards(cards, "كلاسيكي"))).toEqual(["watch", "shirt"])
   })
 
-  it("لا يعيد شيئاً لبحث فارغ", () => {
+  it("returns nothing for an empty search", () => {
     expect(searchCards(cards, "   ")).toEqual([])
   })
 })
 
 describe("filterCards", () => {
-  it("يفلتر حسب الفئة بما فيها الفئات الفرعية", () => {
+  it("filters by category, including its subcategories", () => {
     expect(slugs(filterCards(cards, params({ category: "clothing" })))).toEqual(
       ["shirt"]
     )
@@ -132,13 +132,13 @@ describe("filterCards", () => {
     ])
   })
 
-  it("يفلتر حسب نطاق السعر بالريال", () => {
+  it("filters by a price range in riyals", () => {
     expect(
       slugs(filterCards(cards, params({ minPrice: 120, maxPrice: 400 })))
     ).toEqual(["shirt", "earbuds"])
   })
 
-  it("يفلتر المتوفر فقط والعروض فقط", () => {
+  it("filters in-stock only and on-sale only", () => {
     expect(slugs(filterCards(cards, params({ inStock: true })))).toEqual([
       "shirt",
       "watch",
@@ -150,7 +150,7 @@ describe("filterCards", () => {
     ])
   })
 
-  it("يشترط أن يحقق متغير واحد كل الخيارات المختارة معاً", () => {
+  it("requires a single variant to match all the chosen options together", () => {
     expect(
       slugs(filterCards(cards, params({ options: { اللون: ["أزرق"] } })))
     ).toEqual(["shirt"])
@@ -162,7 +162,7 @@ describe("filterCards", () => {
     ).toEqual([])
   })
 
-  it("مع المتوفر فقط يُستبعد الخيار النافد", () => {
+  it("excludes a sold-out option when in-stock only is on", () => {
     expect(
       filterCards(
         cards,
@@ -173,7 +173,7 @@ describe("filterCards", () => {
 })
 
 describe("sortCards", () => {
-  it("يرتب حسب السعر والأحدث والأكثر مبيعاً", () => {
+  it("sorts by price, newest and best selling", () => {
     expect(slugs(sortCards(cards, "price-asc"))).toEqual([
       "beard-kit",
       "shirt",
@@ -200,7 +200,7 @@ describe("sortCards", () => {
     ])
   })
 
-  it("يُبقي ترتيب البحث مع الأكثر صلة ولا يغيّر القائمة الأصلية", () => {
+  it("keeps the search order for relevance and does not change the original list", () => {
     const original = [...cards]
     expect(sortCards(cards, "relevance")).toEqual(cards)
     sortCards(cards, "price-asc")
@@ -211,7 +211,7 @@ describe("sortCards", () => {
 describe("paginate", () => {
   const numbers = Array.from({ length: 25 }, (_, index) => index + 1)
 
-  it("يقسم القائمة إلى صفحات", () => {
+  it("splits the list into pages", () => {
     expect(paginate(numbers, 2, 10)).toEqual({
       items: numbers.slice(10, 20),
       page: 2,
@@ -220,7 +220,7 @@ describe("paginate", () => {
     })
   })
 
-  it("يحصر رقم الصفحة بين الأولى والأخيرة", () => {
+  it("keeps the page number between the first page and the last", () => {
     expect(paginate(numbers, 9, 10)).toMatchObject({
       page: 3,
       items: [21, 22, 23, 24, 25],
@@ -236,7 +236,7 @@ describe("paginate", () => {
 })
 
 describe("computeFacets", () => {
-  it("يحسب نطاق السعر وعدد المنتجات في كل فئة", () => {
+  it("computes the price range and the number of products in each category", () => {
     const facets = computeFacets(cards)
     expect(facets.priceRange).toEqual({ min: 119, max: 449 })
     expect(facets.categoryCounts).toMatchObject({
@@ -248,7 +248,7 @@ describe("computeFacets", () => {
     })
   })
 
-  it("يجمع قيم الخيارات ويضع الألوان في النهاية بدرجاتها", () => {
+  it("collects the option values and puts colors last, with their shades", () => {
     const { options } = computeFacets(cards)
     expect(options.map((option) => option.name)).toEqual(["المقاس", "اللون"])
     expect(options[0].values.map((entry) => entry.value)).toEqual(["M", "L"])
@@ -260,7 +260,7 @@ describe("computeFacets", () => {
     })
   })
 
-  it("لا قيم لقائمة فارغة", () => {
+  it("returns no values for an empty list", () => {
     expect(computeFacets([])).toEqual({
       priceRange: null,
       options: [],
@@ -269,7 +269,7 @@ describe("computeFacets", () => {
   })
 })
 
-describe("البحث في منتجات المتجر الفعلية", () => {
+describe("searching the actual store products", () => {
   const all = getSearchIndex()
 
   it.each([
@@ -277,7 +277,7 @@ describe("البحث في منتجات المتجر الفعلية", () => {
     ["القميص", "classic-cotton-shirt"],
     ["شاحن ٦٥", "fast-charger-65w"],
     ["عطر", "oud-perfume"],
-  ])("«%s» يجد %s", (query, slug) => {
+  ])("'%s' finds %s", (query, slug) => {
     expect(slugs(searchCards(all, query))).toContain(slug)
   })
 })

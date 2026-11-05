@@ -1,2 +1,2 @@
-// بديل فارغ لحزمة server-only داخل الاختبارات (انظر vitest.config.ts)
+// An empty stand-in for the server-only package in tests (see vitest.config.mts)
 export {}

@@ -5,11 +5,11 @@ import { getColorHex, isColorOption, sortOptionValues } from "./options"
 import type { ProductCardData, SearchCardData } from "./types"
 
 /**
- * البحث والفلترة والترتيب داخل المتصفح.
- * دوال بسيطة بلا حالة، تعمل على بطاقات المنتجات فقط.
+ * Search, filtering and sorting in the browser.
+ * Simple stateless functions that work on product cards only.
  */
 
-/** نتائج البحث مرتبة حسب الصلة: التطابق في الاسم أولاً، ثم الأكثر مبيعاً. */
+/** Search results sorted by relevance: matches in the name first, then best sellers. */
 export function searchCards<T extends SearchCardData>(
   cards: T[],
   query: string
@@ -39,7 +39,7 @@ function matchesOptions(
 ) {
   const entries = Object.entries(selected).filter(([, values]) => values.length)
   if (entries.length === 0) return true
-  // متغير واحد يجب أن يحقق كل الخيارات المختارة معاً (مثلاً: مقاس M باللون الأزرق)
+  // A single variant must match all the chosen options together (for example: size M in blue)
   return card.variants.some(
     (variant) =>
       (!inStockOnly || variant.inStock) &&
@@ -49,7 +49,7 @@ function matchesOptions(
   )
 }
 
-/** تطبيق الفلاتر (دون البحث والترتيب). */
+/** Applies the filters (without search and sorting). */
 export function filterCards<T extends ProductCardData>(
   cards: T[],
   params: ListingParams
@@ -68,7 +68,7 @@ export function filterCards<T extends ProductCardData>(
   )
 }
 
-/** الترتيب. "الأكثر صلة" يُبقي ترتيب نتائج البحث كما هو. */
+/** Sorting. "الأكثر صلة" (most relevant) keeps the search results in their order. */
 export function sortCards<T extends ProductCardData>(
   cards: T[],
   sort: SortValue
@@ -106,14 +106,14 @@ export type OptionFacet = {
 }
 
 export type Facets = {
-  /** نطاق الأسعار بالوحدة الكبرى (ريال)، مقرّب لأعداد صحيحة */
+  /** The price range in the major unit (riyal), rounded to whole numbers */
   priceRange: { min: number; max: number } | null
   options: OptionFacet[]
-  /** عدد المنتجات في كل فئة (بما فيها الفئات الأم) */
+  /** Number of products in each category (parent categories included) */
   categoryCounts: Record<string, number>
 }
 
-/** قيم الفلاتر المتاحة من مجموعة منتجات: نطاق السعر، والخيارات، والفئات. */
+/** The filter values available for a set of products: price range, options and categories. */
 export function computeFacets(cards: ProductCardData[]): Facets {
   if (cards.length === 0) {
     return { priceRange: null, options: [], categoryCounts: {} }
@@ -157,7 +157,7 @@ export function computeFacets(cards: ProductCardData[]): Facets {
       min: Math.floor(toMajorUnits(Math.min(...prices))),
       max: Math.ceil(toMajorUnits(Math.max(...prices))),
     },
-    // الألوان في النهاية لأن المقاسات أهم في الاختيار عادةً
+    // Colors go last because sizes usually matter more when choosing
     options: options.sort((a, b) => Number(a.isColor) - Number(b.isColor)),
     categoryCounts,
   }

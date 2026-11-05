@@ -9,7 +9,7 @@ interface LogoProps {
   onNavigate?: () => void
 }
 
-/** الشعار: حقيبة داكنة في مربع برتقالي، ثم اسم المتجر بالأبيض. شكل واحد على كل الأسطح الداكنة. */
+/** The logo: a dark bag in an orange square, then the store name in white. The same look on every dark surface. */
 export function Logo({ className, onNavigate }: LogoProps) {
   return (
     <Link

@@ -2,11 +2,11 @@
 
 import { create } from "zustand"
 
-/** حالة النوافذ المشتركة بين الرأس وشريط الجوال السفلي وأزرار الإضافة للسلة. */
+/** State of the pop-ups shared by the header, the mobile bottom bar and the add-to-cart buttons. */
 type UiState = {
   cartOpen: boolean
   menuOpen: boolean
-  /** حقل البحث تحت الرأس على الجوال */
+  /** The search field under the header on mobile */
   searchOpen: boolean
   setCartOpen: (open: boolean) => void
   setMenuOpen: (open: boolean) => void

@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * يحمّل الصور التجريبية الحقيقية المذكورة في assets/images/sources.json من Pexels
- * إلى assets/images/products و assets/images/categories، ثم يكفي pnpm images لتجهيزها.
+ * Downloads the real demo photos listed in assets/images/sources.json from Pexels
+ * into assets/images/products and assets/images/categories; after that, pnpm images is enough to prepare them.
  *
- *   node scripts/fetch-demo-photos.mjs            يحمّل الناقص فقط
- *   node scripts/fetch-demo-photos.mjs --force    يعيد تحميل الكل
+ *   node scripts/fetch-demo-photos.mjs            downloads only the missing photos
+ *   node scripts/fetch-demo-photos.mjs --force    downloads all of them again
  *
- * الصور مرخصة من Pexels للاستخدام الحر دون نسب، وهي للعرض حتى تُستبدل بصور منتجاتك.
+ * The photos are licensed by Pexels for free use without attribution, and they are for display until they are replaced with photos of your products.
  */
 import { existsSync } from "node:fs"
 import { mkdir, readFile, writeFile } from "node:fs/promises"
@@ -16,7 +16,7 @@ const ROOT = process.cwd()
 const force = process.argv.includes("--force")
 const SOURCES_FILE = path.join(ROOT, "assets", "images", "sources.json")
 
-/** قائمة الصور: اسم الملف دون امتداد ورقم الصورة في Pexels، للمنتجات والفئات. */
+/** The photo list: the file name without an extension and the photo's ID on Pexels, for products and categories. */
 async function readSources() {
   let sources
   try {

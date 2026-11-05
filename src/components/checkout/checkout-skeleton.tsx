@@ -1,7 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton"
 import { placeholderIds } from "@/lib/placeholders"
 
-/** هيكل صفحة الطلب حتى تُستعاد السلة من المتصفح، بنفس تخطيط النموذج والملخص. */
+/** Checkout page skeleton until the cart is restored from the browser, matching the form and summary layout. */
 export function CheckoutSkeleton() {
   return (
     <div

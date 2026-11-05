@@ -1,4 +1,4 @@
-# ملفات مولّدة أو مُدارة بأدوات أخرى (Prettier يتجاهل أيضاً كل ما في .gitignore)
+# Generated files or files managed by other tools (Prettier also ignores everything in .gitignore)
 pnpm-lock.yaml
 AGENTS.md
 PLAN.md

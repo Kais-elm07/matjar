@@ -12,8 +12,9 @@ type Block =
 const ORDERED_ITEM = /^\d+[.)]\s+/
 
 /**
- * تحويل نص بسيط إلى فقرات وعناوين وقوائم:
- * "## " عنوان، و"### " عنوان فرعي، و"- " نقطة، و"1. " خطوة مرقمة، والسطر الفارغ يفصل الفقرات.
+ * Turns plain text into paragraphs, headings and lists:
+ * "## " heading, "### " subheading, "- " bullet, "1. " numbered step,
+ * and a blank line separates paragraphs.
  */
 export function parseBlocks(text: string): Block[] {
   const blocks: Block[] = []
@@ -72,7 +73,7 @@ interface RichTextProps {
   className?: string
 }
 
-/** نص منسق لأوصاف المنتجات والصفحات الثابتة، دون HTML حتى لا يُحقن أي كود. */
+/** Formatted text for product descriptions and static pages, without HTML, so no code gets injected. */
 export function RichText({ text, className }: RichTextProps) {
   return (
     <div className={cn("space-y-3 leading-8 text-foreground/90", className)}>

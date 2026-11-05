@@ -12,7 +12,7 @@ import { PIECE_FORMS, pluralize } from "@/lib/arabic-plural"
 import { formatPrice } from "@/lib/catalog/money"
 import { useLastOrder } from "@/lib/checkout/order"
 
-/** صفحة تأكيد الطلب التجريبي: رقم الطلب والتوصيل والمبالغ والمنتجات. */
+/** Confirmation page for the demo order: the order number, delivery, amounts and products. */
 export function OrderConfirmation() {
   const order = useLastOrder()
 

@@ -2,7 +2,7 @@ import { formatPrice } from "@/lib/catalog/money"
 import { getCheckoutConfig } from "@/lib/checkout/config"
 import { deliveryTime } from "@/lib/checkout/delivery"
 
-/** جدول المدن وأسعار التوصيل ومدته، مأخوذ من src/data/shipping.ts فيبقى مطابقاً لصفحة الطلب. */
+/** Table of cities with delivery prices and times, from src/data/shipping.ts so it matches the checkout page. */
 export function ShippingTable() {
   const { cities, express, freeShippingFrom } = getCheckoutConfig()
 

@@ -42,13 +42,13 @@ yarn-error.log*
 next-env.d.ts
 
 
-# إعدادات Claude Code الشخصية
+# Personal Claude Code settings
 .claude/settings.local.json
 
-# صور WebP المعالجة: تُولَّد تلقائياً بالأمر pnpm images
+# Processed WebP images: generated automatically by pnpm images
 /public/images/
 
-# نتائج اختبارات Playwright
+# Playwright test results
 /playwright-report/
 /test-results/
 /blob-report/

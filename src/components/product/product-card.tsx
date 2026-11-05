@@ -9,20 +9,21 @@ import { WishlistButton } from "@/components/product/wishlist-button"
 import type { ProductCardData } from "@/lib/catalog/types"
 import { cn } from "@/lib/utils"
 
-/** عرض الصورة حسب الشاشة: عمودان على الجوال، و3 على الأجهزة اللوحية، و4 على الحاسوب. */
+/** Image width by screen size: two columns on mobile, 3 on tablets and 4 on desktop. */
 const IMAGE_SIZES =
   "(min-width: 1280px) 300px, (min-width: 1024px) 24vw, (min-width: 640px) 32vw, 48vw"
 
 interface ProductCardProps {
   product: ProductCardData
-  /** الصور الظاهرة في أعلى الصفحة تُحمَّل أولاً */
+  /** Images visible at the top of the page load first */
   priority?: boolean
 }
 
 /**
- * بطاقة المنتج: سطح داكن بزوايا 12 بكسل بلا ظل، وداخله مربع الصورة وعليه شارة الخصم وزر القلب،
- * ثم اسم الفئة بالرمادي والاسم والسعر البرتقالي، وزر السلة الدائري في ركن البطاقة السفلي
- * (DESIGN.md: product-card و card-cart-button).
+ * Product card: a dark surface with 12px corners and no shadow, holding the image square with the
+ * discount badge and heart button on it, then the category name in gray, the name and the orange
+ * price, and the round cart button in the card's bottom corner
+ * (DESIGN.md: product-card and card-cart-button).
  */
 export function ProductCard({ product, priority = false }: ProductCardProps) {
   return (
@@ -64,7 +65,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
         )}
       </div>
 
-      {/* مساحة في جهة النهاية لزر السلة الدائري */}
+      {/* Space on the end side for the round cart button */}
       <div className="mt-3 flex flex-1 flex-col gap-1 pe-12">
         {product.categoryName && (
           <p className="text-xs text-muted-foreground">
@@ -72,7 +73,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
           </p>
         )}
         <h3 className="line-clamp-2 text-sm leading-6 font-bold">
-          {/* الرابط يغطي البطاقة كلها لتسهيل اللمس */}
+          {/* The link covers the whole card for easier tapping */}
           <Link
             href={`/product/${product.slug}`}
             className="outline-none after:absolute after:inset-0 after:rounded-xl focus-visible:after:ring-3 focus-visible:after:ring-ring/50 focus-visible:after:ring-inset"
@@ -88,7 +89,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
         />
       </div>
 
-      {/* بيانات الزر وحدها، فلا تتكرر بيانات البطاقة كاملة في الصفحة لكل زر */}
+      {/* Only the button's data, so the full card data isn't repeated in the page for each button */}
       <QuickAddButton
         product={{
           slug: product.slug,

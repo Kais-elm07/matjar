@@ -10,7 +10,7 @@ interface ShareButtonProps {
   className?: string
 }
 
-/** مشاركة رابط المنتج: قائمة المشاركة في الجوال، أو نسخ الرابط في الحاسوب. */
+/** Shares the product link: through the share menu on mobile, or by copying the link on desktop. */
 export function ShareButton({ title, className }: ShareButtonProps) {
   async function share() {
     const url = window.location.href
@@ -18,7 +18,7 @@ export function ShareButton({ title, className }: ShareButtonProps) {
       try {
         await navigator.share({ title, url })
       } catch {
-        // أغلق الزائر قائمة المشاركة دون اختيار
+        // The visitor closed the share menu without choosing
       }
       return
     }

@@ -3,9 +3,9 @@
 import type { ExternalToast } from "sonner"
 
 /**
- * رسائل التنبيه القصيرة دون تحميل مكتبتها (sonner) مع الصفحة.
- * أول رسالة تطلب مكوّن الرسائل المؤجل (src/components/store/lazy-toaster.tsx) وتنتظر ظهوره،
- * لأن sonner لا يعرض الرسائل التي سبقت ظهور مكوّنه.
+ * Short notification messages (toasts) without loading their library (sonner) with the page.
+ * The first message requests the deferred toaster (src/components/store/lazy-toaster.tsx) and waits for it to mount,
+ * because sonner does not show messages sent before its component mounted.
  */
 
 let requested = false
@@ -15,7 +15,7 @@ const mounted = new Promise<void>((resolve) => {
   resolveMounted = resolve
 })
 
-/** هل طلبت رسالةٌ مكوّن الرسائل قبل موعد تحميله */
+/** Whether a message requested the toaster before its scheduled load */
 export const toasterRequest = {
   subscribe(listener: () => void) {
     listeners.add(listener)
@@ -26,7 +26,7 @@ export const toasterRequest = {
   get: () => requested,
 }
 
-/** يستدعيه مكوّن الرسائل بعد ظهوره واشتراكه في الرسائل */
+/** Called by the toaster once it has mounted and subscribed to messages */
 export function markToasterMounted() {
   resolveMounted()
 }

@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
- * تصحيح ملفات التحميل المسبق بعد البناء على Windows.
+ * Fixes the prefetch files after a build on Windows.
  *
- * Next.js 16.4 يكتب ملفات التنقل السريع (مثل __next.!KHN0b3JlKQ.category.$d$slug.__PAGE__.txt)
- * على Windows داخل مجلدات متداخلة بدل اسم واحد تفصله نقاط، لأن مسارات Windows تستخدم "\".
- * المتصفح يطلبها بالاسم الصحيح فيحصل على 404 ويعيد تحميل الصفحة كاملة بدلاً منها.
- * هذا السكربت يعيد تسمية الملفات كما يتوقعها المتصفح. على Linux لا يجد شيئاً فلا يغيّر شيئاً.
+ * Next.js 16.4 writes the fast navigation files (such as __next.!KHN0b3JlKQ.category.$d$slug.__PAGE__.txt)
+ * on Windows into nested folders instead of a single name separated by dots, because Windows paths use "\".
+ * The browser requests them by the correct name, gets a 404 and reloads the whole page instead.
+ * This script renames the files the way the browser expects them. On Linux it finds nothing, so it changes nothing.
  */
 import { existsSync } from "node:fs"
 import { readdir, rename, rm } from "node:fs/promises"
@@ -20,7 +20,7 @@ async function filesIn(dir) {
     .map((entry) => path.join(entry.parentPath, entry.name))
 }
 
-/** يحوّل مجلد __next.X/a/b/c.txt إلى ملف __next.X.a.b.c.txt بجانبه. */
+/** Turns the folder __next.X/a/b/c.txt into the file __next.X.a.b.c.txt next to it. */
 async function flatten(segmentDir) {
   let moved = 0
   for (const file of await filesIn(segmentDir)) {

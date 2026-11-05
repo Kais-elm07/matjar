@@ -1,7 +1,7 @@
-# إعدادات Netlify: يبني الموقع الثابت وينشر مجلد out.
-# الترويسات في public/_headers، وصفحة 404 تؤخذ من out/404.html تلقائياً.
-# رابط الموقع الحقيقي (NEXT_PUBLIC_SITE_URL) يُضبط من لوحة Netlify:
-# Site configuration → Environment variables، حتى لا يُكتب النطاق في الكود.
+# Netlify settings: builds the static site and publishes the out folder.
+# The headers are in public/_headers, and the 404 page is taken from out/404.html automatically.
+# The real site URL (NEXT_PUBLIC_SITE_URL) is set in the Netlify dashboard:
+# Site configuration → Environment variables, so the domain isn't written in the code.
 
 [build]
   command = "pnpm build"

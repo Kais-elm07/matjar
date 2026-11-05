@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 /**
- * خطوط المتجر.
+ * The store's fonts.
  *
- *   pnpm fonts   يصغّر ملفات الخط الأصلية في assets/fonts إلى ملفات أخف داخل src/fonts،
- *                تحوي فقط الحروف التي يحتاجها المتجر. الملفات الناتجة تُحفظ في Git لأن البناء يحتاجها:
- *                WOFF2 لصفحات الموقع، وTTF بنفس الحروف لرسم النص في صور المشاركة.
+ *   pnpm fonts   shrinks the original font files in assets/fonts into lighter files in src/fonts
+ *                that contain only the characters the store needs. The output files are kept in Git because the build needs them:
+ *                WOFF2 for the site's pages, and TTF with the same characters for drawing text in the share images.
  *
- * القواعد:
- *   - الملف الذي يحوي اسمه "-arabic-" يحتفظ بالحروف العربية والتشكيل وعلامات الترقيم العربية.
- *   - الملف الذي يحوي اسمه "-latin-" يحتفظ بالأرقام 0-9 والحروف الإنجليزية وعلامات الترقيم الأساسية.
- *   - أي ملف آخر، مثل ترخيص الخط، يُنسخ كما هو.
- *   - تُحذف تعليمات التلميح (hinting) كما في خطوط Google المتغيرة، لأن الشاشات الحديثة لا تحتاجها.
+ * Rules:
+ *   - A file whose name contains "-arabic-" keeps the Arabic letters, the diacritics and Arabic punctuation.
+ *   - A file whose name contains "-latin-" keeps the digits 0-9, English letters and basic punctuation.
+ *   - Any other file, such as the font license, is copied as it is.
+ *   - Hinting instructions are removed, as in Google's variable fonts, because modern screens don't need them.
  *
- * النتيجة: حجم الخط بأوزانه الثلاثة 66 كيلوبايت بدل 190، فتظهر الصفحة أسرع على الجوال.
- * لإضافة حروف لغة أخرى: أضف نطاقها إلى القائمة المناسبة في CHARACTERS ثم شغّل pnpm fonts.
+ * Result: the font in its three weights is 66 KB instead of 190, so the page appears faster on phones.
+ * To add the letters of another language: add its range to the matching list in CHARACTERS, then run pnpm fonts.
  */
 import {
   copyFile,
@@ -36,41 +36,41 @@ const range = (from, to) =>
 
 const CHARACTERS = {
   arabic: [
-    // المسافة والمسافة غير القابلة للكسر
+    // Space and non-breaking space
     0x20,
     0xa0,
-    // ، ؛ ؟
+    // ، ؛ ؟ (Arabic comma, semicolon and question mark)
     0x60c,
     0x61b,
     0x61f,
-    // الحروف من ء إلى غ
+    // The letters from ء to غ
     ...range(0x621, 0x63a),
-    // التطويل، والحروف من ف إلى ي، والتشكيل والهمزة فوق الحرف وتحته
+    // Tatweel, the letters from ف to ي, the diacritics, and hamza above and below a letter
     ...range(0x640, 0x655),
-    // الأرقام الهندية ٠-٩ وعلامات ٪ ٫ ٬
+    // Arabic-Indic digits ٠-٩ and the signs ٪ ٫ ٬
     ...range(0x660, 0x66d),
-    // الألف الخنجرية وألف الوصل
+    // Superscript (dagger) alef and alef wasla
     0x670,
     0x671,
-    // پ چ ژ ک گ ی: تظهر أحياناً في الأسماء المعرّبة
+    // پ چ ژ ک گ ی: these sometimes appear in Arabized names
     0x67e,
     0x686,
     0x698,
     0x6a9,
     0x6af,
     0x6cc,
-    // محارف التحكم في وصل الحروف واتجاه النص
+    // Control characters for letter joining and text direction
     ...range(0x200c, 0x200f),
-    // الشرطة القصيرة، والأقواس المزخرفة ﴾ ﴿
+    // Hyphen, and the ornate parentheses ﴾ ﴿
     0x2010,
     0x2011,
     0xfd3e,
     0xfd3f,
   ],
   latin: [
-    // الأرقام والحروف الإنجليزية وعلامات الترقيم الأساسية
+    // Digits, English letters and basic punctuation
     ...range(0x20, 0x7e),
-    // مسافة غير قابلة للكسر، © « ° · » ×
+    // Non-breaking space, © « ° · » ×
     0xa0,
     0xa9,
     0xab,
@@ -78,7 +78,7 @@ const CHARACTERS = {
     0xb7,
     0xbb,
     0xd7,
-    // الشرطات وعلامات التنصيص والنقطة والنقاط الثلاث وعلامة الطرح
+    // Dashes, quotation marks, the bullet, the ellipsis and the minus sign
     0x2013,
     0x2014,
     0x2018,
@@ -91,8 +91,8 @@ const CHARACTERS = {
   ],
 }
 
-// أسماء ملفات Fontsource بصيغة <الخط>-<المجموعة>-<الوزن>-<النمط>.woff2،
-// واسم الخط نفسه قد يحوي "arabic"، فتُقرأ المجموعة من موضعها قبل الوزن.
+// Fontsource file names have the form <font>-<subset>-<weight>-<style>.woff2,
+// and the font name itself may contain "arabic", so the subset is read from its position before the weight.
 function parseFileName(fileName) {
   const match = fileName.match(/-([a-z]+)-(\d{3})-(normal|italic)\.woff2$/)
   if (!match || !(match[1] in CHARACTERS)) return undefined
@@ -106,13 +106,13 @@ function parseFileName(fileName) {
 const kilobytes = (bytes) => `${(bytes / 1024).toFixed(1)}KB`
 
 // ---------------------------------------------------------------------------
-// ملفات TTF لصور المشاركة
+// TTF files for the share images
 // ---------------------------------------------------------------------------
-// أداة رسم النص في صور المشاركة (Pango داخل sharp) لا تقرأ WOFF2، فتُحفظ نسخة TTF بنفس الحروف.
-// ملفا الحروف العربية واللاتينية يحملان في الأصل اسم العائلة نفسه، فتختار الأداة بينهما
-// حسب ترتيب تحميلهما، وقد ترسم الأرقام بخط آخر. لذلك يأخذ ملف كل مجموعة اسم عائلة مستقلاً
-// (مثل "IBM Plex Sans Arabic Latin")، وتطلب src/lib/og/render.ts العائلتين بالترتيب.
-// ويُكتب الوزن في الاسمين 16 و17 حتى يُختار الوزن 500 باسمه.
+// The tool that draws text in the share images (Pango inside sharp) can't read WOFF2, so a TTF copy with the same characters is saved.
+// The Arabic and Latin files originally carry the same family name, so the tool chooses between them
+// by the order they were loaded in, and may draw the digits in another font. So each subset's file gets its own family name
+// (such as "IBM Plex Sans Arabic Latin"), and src/lib/og/render.ts asks for the two families in order.
+// The weight is also written in name IDs 16 and 17, so that weight 500 is chosen by its name.
 
 const FAMILY_SUFFIX = { arabic: "", latin: " Latin" }
 
@@ -150,7 +150,7 @@ function readTables(font) {
   return tables
 }
 
-/** أسماء الخط بترميز Windows (UTF-16)، مفتاحها رقم الاسم. */
+/** The font's names in the Windows encoding (UTF-16), keyed by name ID. */
 function readNames(table) {
   const names = new Map()
   const storage = table.readUInt16BE(4)
@@ -190,7 +190,7 @@ function buildNameTable(names) {
   return Buffer.concat([header, ...strings])
 }
 
-/** يعيد تجميع ملف الخط من جداوله، مع حساب المواقع ومجاميع التحقق من جديد. */
+/** Rebuilds the font file from its tables, computing the offsets and checksums again. */
 function buildFont(font, tables) {
   const tags = [...tables.keys()].sort()
   const directory = Buffer.alloc(12 + tags.length * 16)

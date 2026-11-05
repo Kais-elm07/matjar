@@ -12,7 +12,7 @@ import { getContentPage, getContentPages } from "@/lib/content/pages"
 import { breadcrumbJsonLd, openGraph } from "@/lib/seo"
 import { cn } from "@/lib/utils"
 
-// كل الصفحات تُجهَّز وقت البناء من ملفات src/content/pages، وأي رابط آخر يعرض صفحة 404
+// Every page is prepared at build time from the src/content/pages files, and any other URL shows the 404 page
 export const dynamicParams = false
 
 export function generateStaticParams() {
@@ -37,7 +37,7 @@ export async function generateMetadata({
   }
 }
 
-/** صفحة ثابتة: من نحن، تواصل معنا، الشحن، الإرجاع، الخصوصية، الشروط، الأسئلة الشائعة. */
+/** A static page: about us, contact us, shipping, returns, privacy, terms, FAQ. */
 export default async function ContentPageRoute({
   params,
 }: PageProps<"/pages/[slug]">) {

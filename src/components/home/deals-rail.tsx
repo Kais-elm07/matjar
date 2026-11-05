@@ -9,7 +9,7 @@ interface DealsRailProps {
   products: ProductCardData[]
 }
 
-/** "عروض لفترة محدودة": منتجات لها تاريخ نهاية حقيقي، فوق كل منها عدّاد تنازلي. */
+/** "عروض لفترة محدودة" (Limited-time deals): products with a real end date, each with a countdown above it. */
 export function DealsRail({ products }: DealsRailProps) {
   if (products.length === 0) return null
   return (

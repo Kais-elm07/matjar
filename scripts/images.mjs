@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 /**
- * صور المتجر.
+ * The store's images.
  *
- *   pnpm images        يحوّل الصور الأصلية في assets/images إلى WebP بعرض 400 و800 و1200 بكسل
- *                      داخل public/images. يعمل تلقائياً قبل pnpm dev وpnpm build،
- *                      ويتخطى الصور التي لم تتغير منذ آخر تشغيل.
- *   pnpm images:demo   يرسم صوراً تجريبية (SVG) للمنتجات والفئات التي ليست لها صورة حقيقية، ثم يعالجها.
- *   pnpm images:photos يحمّل صور Pexels المذكورة في assets/images/sources.json (scripts/fetch-demo-photos.mjs).
+ *   pnpm images        converts the original images in assets/images to WebP at widths of 400, 800 and 1200 pixels
+ *                      in public/images. It runs automatically before pnpm dev and pnpm build,
+ *                      and skips the images that haven't changed since the last run.
+ *   pnpm images:demo   draws demo images (SVG) for the products and categories that have no real photo, then processes them.
+ *   pnpm images:photos downloads the Pexels photos listed in assets/images/sources.json (scripts/fetch-demo-photos.mjs).
  *
- * طريقة إضافة صورة منتج حقيقية:
- *   1. ضع الصورة في assets/images/products/ باسم مثل classic-cotton-shirt-1.jpg
- *   2. اكتب في ملف البيانات المسار دون امتداد: /images/products/classic-cotton-shirt-1
+ * How to add a real product photo:
+ *   1. Put the photo in assets/images/products/ with a name such as classic-cotton-shirt-1.jpg
+ *   2. In the data file, write the path without the extension: /images/products/classic-cotton-shirt-1
  *
- * ملاحظة: مجلد public/images يُولَّد تلقائياً، فلا تضع فيه صوراً يدوياً.
+ * Note: the public/images folder is generated automatically, so don't put images in it by hand.
  */
 import { existsSync } from "node:fs"
 import { mkdir, readdir, rm, stat, writeFile } from "node:fs/promises"
@@ -65,7 +65,7 @@ async function convert(sourceFile, outputs) {
   await Promise.all(
     outputs.map(({ width, file }) =>
       sharp(sourceFile)
-        .rotate() // تصحيح اتجاه صور الجوال تلقائياً
+        .rotate() // Fix the orientation of phone photos automatically
         .resize({ width, withoutEnlargement: true })
         .webp({ quality: 80, effort: 5 })
         .toFile(file)
@@ -108,7 +108,7 @@ async function processImages() {
     }
   }
 
-  // حذف النسخ التي حُذفت صورها الأصلية
+  // Delete the copies whose original images were deleted
   let removed = 0
   for (const file of await listFiles(OUTPUT_DIR)) {
     if (OUTPUT_PATTERN.test(file) && !expected.has(file)) {
@@ -123,7 +123,7 @@ async function processImages() {
 }
 
 // ---------------------------------------------------------------------------
-// الصور التجريبية: رسومات SVG بخلفية متدرجة وأيقونة من Lucide بلون المنتج
+// Demo images: SVG drawings with a gradient background and a Lucide icon in the product's color
 // ---------------------------------------------------------------------------
 
 const COLORS = {
@@ -142,7 +142,7 @@ const COLORS = {
   ذهبي: "#c9a227",
 }
 
-/** الفئات: لون الفئة وأيقونتها. */
+/** Categories: the category's color and its icon. */
 const DEMO_CATEGORIES = [
   ["clothing", "shirt", "#0f766e"],
   ["men", "shirt", "#0369a1"],
@@ -155,7 +155,7 @@ const DEMO_CATEGORIES = [
   ["bags-accessories", "backpack", "#334155"],
 ]
 
-/** المنتجات: الأيقونة، ثم صورة لكل لون (اسم لون أو درجة hex). alt = لقطة ثانية بتكوين مختلف. */
+/** Products: the icon, then one image per color (a color name or a hex shade). alt = a second shot with a different composition. */
 const DEMO_PRODUCTS = [
   ["classic-cotton-shirt", "shirt", ["أبيض", "أزرق", "أبيض:alt"]],
   ["lightweight-sneakers", "footprints", ["أسود", "رمادي"]],
@@ -199,8 +199,8 @@ function luminance(hex) {
 }
 
 /**
- * رسم الأيقونة من ملفات lucide-react الداخلية. مسار الملفات ليس واجهة رسمية للمكتبة،
- * فإن تغيّر بعد تحديثها يتوقف رسم الصور البديلة فقط (pnpm images:demo)، لا بناء الموقع.
+ * Draws the icon from the internal files of lucide-react. The file path isn't an official API of the library,
+ * so if it changes after an update, only drawing the placeholder images stops (pnpm images:demo), not the site build.
  */
 async function iconMarkup(name) {
   const { __iconData } = await import(`lucide-react/dist/esm/icons/${name}.mjs`)
@@ -215,7 +215,7 @@ async function iconMarkup(name) {
     .join("")
 }
 
-/** صورة منتج: خلفية فاتحة بلون المنتج وأيقونة داكنة منه. */
+/** A product image: a light background in the product's color and an icon in a dark shade of it. */
 function productSvg(icon, base, alternate) {
   const isLight = luminance(base) > 0.75
   const tint = isLight ? "#e2e8f0" : base
@@ -247,7 +247,7 @@ function productSvg(icon, base, alternate) {
 </svg>`
 }
 
-/** صورة فئة: خلفية بلون الفئة وأيقونة بيضاء. */
+/** A category image: a background in the category's color and a white icon. */
 function categorySvg(icon, color) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
   <defs>
@@ -265,7 +265,7 @@ function categorySvg(icon, color) {
 
 const ICONS = new Map()
 
-/** صورة حقيقية بالاسم نفسه (jpg أو png أو webp أو avif) تغني عن الرسم التجريبي. */
+/** A real photo with the same name (jpg, png, webp or avif) replaces the demo drawing. */
 const hasPhoto = (dir, name) =>
   [".jpg", ".jpeg", ".png", ".webp", ".avif"].some((ext) =>
     existsSync(path.join(dir, `${name}${ext}`))

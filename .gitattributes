@@ -1,7 +1,7 @@
-# توحيد نهايات الأسطر (LF) على كل الأنظمة، حتى يتوافق فحص Prettier على Windows
+# Use the same line endings (LF) on every system, so the Prettier check passes on Windows
 * text=auto eol=lf
 
-# ملفات ثنائية
+# Binary files
 *.woff2 binary
 *.ttf binary
 *.ico binary

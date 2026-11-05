@@ -3,8 +3,8 @@ import { MessageCircleIcon } from "lucide-react"
 import { whatsappHref } from "@/lib/contact"
 
 /**
- * زر واتساب العائم في زاوية الشاشة من جهة النهاية، فوق شريط الجوال السفلي.
- * يظهر فقط عند ضبط رقم واتساب في src/config/site.ts.
+ * The floating WhatsApp button in the screen corner on the end side, above the mobile bottom bar.
+ * Shown only when a WhatsApp number is set in src/config/site.ts.
  */
 export function WhatsAppButton() {
   const href = whatsappHref()

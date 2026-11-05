@@ -6,14 +6,14 @@ import {
 import type { ProductInput } from "@/lib/catalog/types"
 
 /**
- * منتجات المتجر.
+ * The store's products.
  *
- * - الأسعار بالريال (مثل 129 أو 99.5).
- * - الصور: ضع الصور الأصلية في assets/images/products باسم slug-1 وslug-2 ...
- * - المتغيرات: optionMatrix تولّد كل تركيبات المقاس واللون تلقائياً.
- * - أي خطأ (رابط مكرر، فئة غير موجودة، سعر غير صحيح) يوقف البناء برسالة توضّح مكانه.
+ * - Prices are in riyals (such as 129 or 99.5).
+ * - Images: put the original images in assets/images/products, named slug-1, slug-2 ...
+ * - Variants: optionMatrix generates every size and color combination automatically.
+ * - Any error (a duplicate slug, a missing category, an invalid price) stops the build with a message that shows where it is.
  *
- * البيانات الحالية تجريبية: استبدلها بمنتجات متجرك.
+ * The current data is demo data: replace it with your store's products.
  */
 export const products: ProductInput[] = [
   {

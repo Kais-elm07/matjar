@@ -7,7 +7,7 @@ import type { SearchCardData } from "./types"
 
 let request: Promise<SearchCardData[]> | null = null
 
-/** تحميل فهرس البحث مرة واحدة فقط ومشاركته بين كل صناديق البحث في الصفحة. */
+/** Loads the search index only once and shares it between all search boxes on the page. */
 function loadSearchIndex() {
   request ??= fetch("/search-index.json")
     .then(async (response) => {
@@ -17,7 +17,7 @@ function loadSearchIndex() {
       return index
     })
     .catch((error: unknown) => {
-      request = null // السماح بإعادة المحاولة
+      request = null // Allow a retry
       throw error
     })
   return request
@@ -25,7 +25,7 @@ function loadSearchIndex() {
 
 type IndexState = { data: SearchCardData[] | null; error: boolean }
 
-/** فهرس البحث. يبدأ التحميل فقط عند enabled، مثلاً عند التركيز على حقل البحث. */
+/** The search index. Loading starts only when enabled, for example when the search field gets focus. */
 export function useSearchIndex(enabled = true) {
   const [state, setState] = useState<IndexState>({ data: null, error: false })
   const [attempt, setAttempt] = useState(0)

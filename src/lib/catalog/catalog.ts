@@ -6,9 +6,9 @@ import type { CartCatalog, Category, CategoryOption, Product } from "./types"
 import { optionsKey } from "./variant-key"
 
 /**
- * طبقة البيانات الوحيدة في الموقع: كل الصفحات تقرأ الفئات والمنتجات من هنا.
- * تعمل وقت البناء فقط، وعند إضافة خادم لاحقاً يكفي استبدال مصدر البيانات في build.ts.
- * محتوى الصفحة الرئيسية في home.ts.
+ * The site's only data layer: every page reads categories and products from here.
+ * It runs at build time only; if a server is added later, replacing the data source in build.ts is enough.
+ * The home page content is in home.ts.
  */
 
 export function getCategories() {
@@ -29,7 +29,7 @@ export function getChildCategories(category: Category) {
     .filter((child): child is Category => Boolean(child))
 }
 
-/** الفئات بأسمائها وفئاتها الأم، لعرض فلتر الفئات في صفحتي كل المنتجات والبحث. */
+/** Categories with their names and parents, for the category filter on the all-products and search pages. */
 export function getCategoryOptions(): CategoryOption[] {
   return catalog.categories.map(({ slug, name, parentSlug }) => ({
     slug,
@@ -49,7 +49,7 @@ export function getProduct(slug: string) {
 const inCategory = (slug: string | undefined) => (product: Product) =>
   product.categoryPath.some((link) => link.slug === slug)
 
-/** بطاقات منتجات فئة معينة وفئاتها الفرعية، أو كل المنتجات. */
+/** Product cards for a given category and its subcategories, or for all products. */
 export function getProductCards(categorySlug?: string) {
   const products = categorySlug
     ? catalog.products.filter(inCategory(categorySlug))
@@ -57,7 +57,7 @@ export function getProductCards(categorySlug?: string) {
   return products.map(toProductCard)
 }
 
-/** منتجات مشابهة: من نفس الفئة أولاً، ثم من نفس الفئة الرئيسية، ثم الأكثر مبيعاً. */
+/** Related products: from the same category first, then the same top-level category, then the best sellers. */
 export function getRelatedProducts(product: Product, limit = 8) {
   const picked = new Set([product.slug])
   const related: Product[] = []
@@ -79,8 +79,8 @@ export function getRelatedProducts(product: Product, limit = 8) {
 }
 
 /**
- * أسعار ومخزون كل متغير حسب رمزه، لمطابقة السلة المحفوظة في المتصفح مع بيانات الموقع.
- * مفتاح الخيارات يكشف متغيراً تغيّرت خياراته وبقي رمزه (بعد إعادة ترتيب المقاسات مثلاً).
+ * Prices and stock of every variant by SKU, to sync the cart saved in the browser with the site's data.
+ * The options key catches a variant whose options changed while its SKU stayed the same (after reordering sizes, for example).
  */
 export function getCartCatalog(): CartCatalog {
   return Object.fromEntries(
@@ -98,7 +98,7 @@ export function getCartCatalog(): CartCatalog {
   )
 }
 
-/** فهرس البحث: بطاقات كل المنتجات بنصوص البحث، يُنشر كملف JSON يُحمَّل عند أول بحث. */
+/** The search index: every product card with its search text, published as a JSON file loaded on the first search. */
 export function getSearchIndex() {
   return catalog.products.map(toSearchCard)
 }

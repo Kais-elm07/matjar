@@ -41,7 +41,7 @@ const eslintConfig = defineConfig([
     files: ["src/components/ui/**"],
     rules: { "react/no-multi-comp": "off" },
   },
-  // يعطّل قواعد التنسيق في ESLint لأن Prettier يتولاها
+  // Turns off the formatting rules in ESLint, because Prettier handles them
   prettier,
   globalIgnores([
     ".next/**",

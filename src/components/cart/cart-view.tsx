@@ -15,7 +15,7 @@ import { useCartSync } from "@/lib/store/cart-sync"
 import { useCartRestored } from "@/lib/store/hydration"
 import { cn } from "@/lib/utils"
 
-/** صفحة السلة: المنتجات مع الكمية والحذف، وملخص المبالغ، وحالة فارغة. */
+/** The cart page: the products with quantity and removal, a summary of the amounts, and an empty state. */
 export function CartView() {
   const restored = useCartRestored()
   const lines = useCartStore((state) => state.lines)

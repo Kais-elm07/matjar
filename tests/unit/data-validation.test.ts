@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 /**
- * التحقق من ملفات البيانات وقت البناء: نستبدل ملفات src/data بنسخ فيها أخطاء،
- * ونتأكد أن البناء يتوقف برسالة عربية تدل صاحب المتجر على كل خطأ.
+ * Build-time validation of the data files: we replace the src/data files with copies that contain errors,
+ * and check that the build stops with an Arabic message that points the store owner to every error.
  */
 
 const validProduct = {
@@ -14,7 +14,7 @@ const validProduct = {
   createdAt: "2026-10-01",
 }
 
-/** رسالة الخطأ عند تحميل الوحدة، أو نص فارغ إن حُمّلت دون خطأ. */
+/** The error message when the module loads, or an empty string if it loads without an error. */
 const errorOf = (load: Promise<unknown>) =>
   load.then(
     () => "",
@@ -32,8 +32,8 @@ afterEach(() => {
   vi.doUnmock("@/data/coupons")
 })
 
-describe("ملفات المنتجات والفئات", () => {
-  it("يجمع كل أخطاء المنتجات في رسالة عربية واحدة", async () => {
+describe("product and category files", () => {
+  it("collects all product errors in one Arabic message", async () => {
     vi.doMock("@/data/categories", () => ({
       categories: [{ slug: "men", name: "رجالي" }],
     }))
@@ -68,7 +68,7 @@ describe("ملفات المنتجات والفئات", () => {
     )
   })
 
-  it("يكتشف الفئة الأم المفقودة والتسلسل الدائري", async () => {
+  it("detects a missing parent category and a circular hierarchy", async () => {
     vi.doMock("@/data/categories", () => ({
       categories: [
         { slug: "men", name: "رجالي" },
@@ -84,7 +84,7 @@ describe("ملفات المنتجات والفئات", () => {
     expect(message).toContain('الفئة "a": تسلسل الفئات الأم دائري.')
   })
 
-  it("يرفض التواريخ غير الموجودة والأسعار بكسور زائدة والمتغيرات المكررة", async () => {
+  it("rejects nonexistent dates, prices with extra decimal places and duplicate variants", async () => {
     vi.doMock("@/data/categories", () => ({
       categories: [{ slug: "men", name: "رجالي" }],
     }))
@@ -120,7 +120,7 @@ describe("ملفات المنتجات والفئات", () => {
     expect(message).toContain(`للصورة لون "أزرق" لكن المنتج ليس له خيار لون`)
   })
 
-  it("يعيد منتج العرض المنتهي إلى سعره قبل الخصم", async () => {
+  it("resets a product whose sale has ended to its price before the discount", async () => {
     vi.doMock("@/data/categories", () => ({
       categories: [{ slug: "men", name: "رجالي" }],
     }))
@@ -141,7 +141,7 @@ describe("ملفات المنتجات والفئات", () => {
     expect(product.saleEndsAt).toBeNull()
   })
 
-  it("يقبل بيانات صحيحة", async () => {
+  it("accepts valid data", async () => {
     vi.doMock("@/data/categories", () => ({
       categories: [{ slug: "men", name: "رجالي" }],
     }))
@@ -154,8 +154,8 @@ describe("ملفات المنتجات والفئات", () => {
   })
 })
 
-describe("ملفا الشحن والكوبونات", () => {
-  it("يرفض مدينة مكررة", async () => {
+describe("shipping and coupon files", () => {
+  it("rejects a duplicate city", async () => {
     vi.doMock("@/data/shipping", () => ({
       shipping: {
         freeShippingFrom: 300,
@@ -172,7 +172,7 @@ describe("ملفا الشحن والكوبونات", () => {
     expect(message).toContain('المدينة "الرياض" مكررة.')
   })
 
-  it("يرفض رمز كوبون بأحرف صغيرة ونسبة خصم فوق 100", async () => {
+  it("rejects a lowercase coupon code and a discount percentage above 100", async () => {
     vi.doMock("@/data/coupons", () => ({
       coupons: [
         { code: "big", type: "fixed", value: 50, description: "خصم" },
@@ -186,7 +186,7 @@ describe("ملفا الشحن والكوبونات", () => {
     expect(message).toContain("النسبة لا تتجاوز 100")
   })
 
-  it("يرفض حقولاً لا تنطبق على نوع الكوبون", async () => {
+  it("rejects fields that don't apply to the coupon type", async () => {
     vi.doMock("@/data/coupons", () => ({
       coupons: [
         {

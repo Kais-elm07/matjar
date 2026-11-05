@@ -9,7 +9,10 @@ interface NewArrivalsProps {
   products: ProductCardData[]
 }
 
-/** "وصل حديثاً": لافتة كبيرة بصورة أحدث منتج، ثم صف المنتجات، ثم زر في المنتصف. */
+/**
+ * "وصل حديثاً" (New arrivals): a large banner with the newest product's photo, then the
+ * product row, then a centered button.
+ */
 export function NewArrivals({ products }: NewArrivalsProps) {
   if (products.length === 0) return null
   const image = products[0].image

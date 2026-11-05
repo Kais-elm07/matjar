@@ -15,9 +15,9 @@ import type { Category, CategoryLink, Product, Variant } from "./types"
 import { validateCatalogData } from "./validate"
 
 /**
- * يبني الكتالوج مرة واحدة وقت البناء من ملفات src/data بعد التحقق منها:
- * الأسعار بأصغر وحدة، ومسار كل فئة، وعدد منتجاتها، وقوائم مرتبة جاهزة.
- * لا يصل هذا الملف ولا ملفات البيانات الكاملة إلى متصفح الزائر.
+ * Builds the catalog once at build time from the src/data files, after validating them:
+ * prices in the smallest unit, each category's path and product count, and ready-sorted lists.
+ * Neither this file nor the full data files reach the visitor's browser.
  */
 
 const byPopularity = (a: Product, b: Product) => b.popularity - a.popularity
@@ -29,8 +29,8 @@ function toProduct(
   pathOf: (slug: string) => CategoryLink[],
   today: string
 ): Product {
-  // عرض انتهى قبل يوم البناء: يعود كل متغير إلى سعره قبل الخصم.
-  // لذلك يُعاد بناء الموقع بعد انتهاء أي عرض حتى تتحدث أسعاره.
+  // A sale that ended before the build day: every variant goes back to its price before discount.
+  // That is why the site is rebuilt after any sale ends, so its prices update.
   const expired = input.saleEndsAt !== undefined && input.saleEndsAt < today
 
   const variants: Variant[] = input.variants.map((variant) => {
@@ -66,7 +66,7 @@ function toProduct(
     variants,
     optionGroups: getOptionGroups(variants),
     price: cheapest.price,
-    // خصم يقل عن 1% لا يُعرض كخصم
+    // A discount under 1% is not shown as a discount
     compareAtPrice: discountPercent(cheapest.price, cheapest.compareAtPrice)
       ? cheapest.compareAtPrice
       : null,
@@ -91,7 +91,7 @@ function toCategories(
       category.slug,
     ])
   }
-  // المنتج يُحسب في فئته وكل فئاتها الأم
+  // A product counts in its category and in all of that category's parents
   const counts = new Map<string, number>()
   for (const product of products) {
     for (const link of product.categoryPath) {
@@ -111,7 +111,7 @@ function toCategories(
   }))
 }
 
-/** في البناء النهائي: كل صورة في البيانات يجب أن تكون مجهزة في public/images. */
+/** In the production build, every image in the data must be prepared in public/images. */
 function assertImagesExist(products: Product[], categories: Category[]) {
   if (process.env.NODE_ENV !== "production") return
   const missing: string[] = []
@@ -165,9 +165,9 @@ function buildCatalog() {
     categoryBySlug: new Map(categories.map((c) => [c.slug, c])),
     products,
     productBySlug: new Map(products.map((p) => [p.slug, p])),
-    /** المنتجات من الأكثر مبيعاً، تُرتب مرة واحدة لكل الصفحات */
+    /** Products from best selling down, sorted once for all pages */
     byPopularity: [...products].sort(byPopularity),
-    /** المنتجات من الأحدث */
+    /** Products from newest */
     byNewest: [...products].sort(byNewest),
   }
 }

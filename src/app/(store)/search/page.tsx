@@ -8,7 +8,7 @@ import { getCategoryOptions } from "@/lib/catalog/catalog"
 
 export const metadata: Metadata = {
   title: "البحث",
-  // صفحات نتائج البحث لا تُفهرس في محركات البحث، لكن روابطها تُتبع
+  // Search result pages are not indexed by search engines, but their links are followed
   robots: { index: false, follow: true },
 }
 

@@ -14,7 +14,7 @@ interface ToasterProps extends SonnerProps {}
 const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
-      // هوية المتجر داكنة، فالرسائل داكنة بألوان السطح
+      // The store's identity is dark, so the toasts are dark, in the surface colors
       theme="dark"
       dir="rtl"
       position="top-center"

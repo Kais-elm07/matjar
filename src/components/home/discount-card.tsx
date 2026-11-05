@@ -4,14 +4,14 @@ import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 interface DiscountCardProps {
-  /** معرّف العنوان، يربطه القسم المحيط به عبر aria-labelledby */
+  /** The heading's id, which the surrounding section links to through aria-labelledby */
   headingId: string
-  /** أكبر نسبة خصم بين المنتجات المخفضة، أو 0 إن لم توجد عروض */
+  /** The largest discount percentage among discounted products, or 0 if there are no deals */
   maxDiscount: number
   className?: string
 }
 
-/** بطاقة الخصم بجانب مربعات العروض: نسبة الخصم الحقيقية القصوى وزر "تسوّق العروض". */
+/** Discount card beside the deal tiles: the highest real discount and a "تسوّق العروض" (Shop the deals) button. */
 export function DiscountCard({
   headingId,
   maxDiscount,

@@ -10,7 +10,10 @@ interface PriceProps {
   className?: string
 }
 
-/** السعر مع السعر قبل الخصم مشطوباً إن وُجد. "من" تظهر عندما تختلف أسعار المتغيرات. */
+/**
+ * The price, with the pre-discount price struck through if there is one.
+ * "من" (from) shows when the variants have different prices.
+ */
 export function Price({
   price,
   compareAtPrice,

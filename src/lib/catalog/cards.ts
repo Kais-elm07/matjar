@@ -2,9 +2,9 @@ import { normalizeForSearch } from "./arabic"
 import type { Product, ProductCardData, SearchCardData } from "./types"
 
 /**
- * بيانات البطاقات التي تصل إلى المتصفح: أصغر ما يكفي للعرض والفلترة،
- * فلا تُرسل أوصاف المنتجات ومواصفاتها مع كل بطاقة.
- * تُحسب مرة واحدة لكل منتج وتُعاد في كل الصفحات.
+ * Card data that reaches the browser: the least that is enough for display and filtering,
+ * so product descriptions and specs are not sent with every card.
+ * Computed once per product and reused on every page.
  */
 
 const cards = new WeakMap<Product, ProductCardData>()
@@ -42,7 +42,7 @@ export function toProductCard(product: Product): ProductCardData {
   return card
 }
 
-/** بطاقة فهرس البحث: البطاقة مع نص مطبّع يجمع الاسم والفئات والخيارات والمواصفات. */
+/** A search index card: the card plus normalized text combining the name, categories, options and specs. */
 export function toSearchCard(product: Product): SearchCardData {
   const cached = searchCards.get(product)
   if (cached) return cached

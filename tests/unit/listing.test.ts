@@ -17,7 +17,7 @@ const withParams = (changes: Partial<ListingParams>): ListingParams => ({
 })
 
 describe("parseListingParams", () => {
-  it("يعطي القيم الافتراضية لرابط بلا معاملات", () => {
+  it("returns the default values for a URL without parameters", () => {
     expect(defaults).toEqual({
       q: "",
       category: null,
@@ -31,7 +31,7 @@ describe("parseListingParams", () => {
     })
   })
 
-  it("يقرأ البحث والفلاتر من الرابط", () => {
+  it("reads the search and the filters from the URL", () => {
     const params = parseListingParams({
       q: "  قميص  ",
       category: "men",
@@ -56,7 +56,7 @@ describe("parseListingParams", () => {
     })
   })
 
-  it("يتجاهل القيم غير الصالحة بدل إظهار خطأ", () => {
+  it("ignores invalid values instead of showing an error", () => {
     const params = parseListingParams({
       category: "Men!",
       min: "-5",
@@ -75,14 +75,14 @@ describe("parseListingParams", () => {
     })
   })
 
-  it("يبدّل حدّي السعر إن جاء الأقل أكبر من الأعلى", () => {
+  it("swaps the price bounds if the minimum is greater than the maximum", () => {
     expect(parseListingParams({ min: "300", max: "50" })).toMatchObject({
       minPrice: 50,
       maxPrice: 300,
     })
   })
 
-  it("يجمع قيم الخيار الواحد دون تكرار ويتجاهل الصيغ الناقصة", () => {
+  it("collects the values of one option without duplicates and ignores incomplete entries", () => {
     const params = parseListingParams({
       o: [
         "اللون:أزرق",
@@ -96,7 +96,7 @@ describe("parseListingParams", () => {
     expect(params.options).toEqual({ اللون: ["أزرق", "أحمر"] })
   })
 
-  it("لا يرتب حسب الصلة إلا مع البحث", () => {
+  it("sorts by relevance only when there is a search", () => {
     expect(parseListingParams({ sort: "relevance" }).sort).toBe("popular")
     expect(parseListingParams({ q: "ساعة" }).sort).toBe("relevance")
     expect(sortOptionsFor("").map((option) => option.value)).not.toContain(
@@ -108,8 +108,8 @@ describe("parseListingParams", () => {
   })
 })
 
-describe("روابط القوائم", () => {
-  it("يحذف القيم الافتراضية فيبقى الرابط قصيراً", () => {
+describe("listing URLs", () => {
+  it("drops the default values so the URL stays short", () => {
     expect(listingHref("/products/", defaults)).toBe("/products/")
     expect(listingHref("/products/", defaults, { onSale: true })).toBe(
       "/products/?sale=1"
@@ -119,7 +119,7 @@ describe("روابط القوائم", () => {
     )
   })
 
-  it("يعيد إلى الصفحة الأولى عند تغيير أي فلتر", () => {
+  it("goes back to the first page when any filter changes", () => {
     const onPage3 = withParams({ page: 3 })
     expect(listingHref("/products/", onPage3, { inStock: true })).toBe(
       "/products/?stock=1"
@@ -129,7 +129,7 @@ describe("روابط القوائم", () => {
     )
   })
 
-  it("يحافظ على البحث والخيارات العربية ذهاباً وإياباً", () => {
+  it("keeps the search and the Arabic options intact in a round trip", () => {
     const params = withParams({
       q: "قميص",
       options: { اللون: ["أزرق", "أبيض"] },
@@ -139,7 +139,7 @@ describe("روابط القوائم", () => {
     expect(parseListingParams(fromURLSearchParams(search))).toEqual(params)
   })
 
-  it("يعدّ الفلاتر المفعّلة لزر التصفية", () => {
+  it("counts the active filters for the filter button", () => {
     expect(countActiveFilters(defaults)).toBe(0)
     expect(
       countActiveFilters(

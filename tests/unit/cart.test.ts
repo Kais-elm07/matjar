@@ -42,35 +42,35 @@ beforeEach(() => {
   useWishlistStore.setState({ slugs: [] })
 })
 
-describe("الإضافة إلى السلة", () => {
-  it("يضيف الكمية ويعيد عدد القطع المضافة فعلاً حسب المخزون", () => {
+describe("adding to the cart", () => {
+  it("adds the quantity and returns the number of pieces actually added, given the stock", () => {
     expect(cart().add(shirt, 2)).toBe(2)
     expect(cart().add(shirt, 5)).toBe(1)
     expect(cart().add(shirt, 1)).toBe(0)
     expect(cart().lines).toEqual([{ ...shirt, quantity: 3 }])
   })
 
-  it(`لا يتجاوز ${MAX_LINE_QUANTITY} قطع من المتغير الواحد`, () => {
+  it(`does not go over ${MAX_LINE_QUANTITY} pieces of a single variant`, () => {
     expect(cart().add(charger, 15)).toBe(MAX_LINE_QUANTITY)
     expect(lineLimit(50)).toBe(MAX_LINE_QUANTITY)
     expect(lineLimit(3)).toBe(3)
     expect(lineLimit(0)).toBe(0)
   })
 
-  it("لا يضيف منتجاً نفد مخزونه", () => {
+  it("does not add a sold-out product", () => {
     expect(cart().add({ ...shirt, stock: 0 }, 1)).toBe(0)
     expect(cart().lines).toEqual([])
   })
 
-  it("يحدّث بيانات السطر عند إضافته مرة أخرى", () => {
+  it("updates the line's data when it is added again", () => {
     cart().add(shirt, 1)
     cart().add({ ...shirt, price: 11900 }, 1)
     expect(cart().lines).toEqual([{ ...shirt, price: 11900, quantity: 2 }])
   })
 })
 
-describe("تعديل السلة", () => {
-  it("يحصر الكمية بين قطعة واحدة والمخزون", () => {
+describe("editing the cart", () => {
+  it("keeps the quantity between one piece and the stock", () => {
     cart().add(shirt, 1)
     cart().setQuantity("SHIRT-M", 0)
     expect(cart().lines[0].quantity).toBe(1)
@@ -78,7 +78,7 @@ describe("تعديل السلة", () => {
     expect(cart().lines[0].quantity).toBe(3)
   })
 
-  it("يحذف السطر ويفرغ السلة", () => {
+  it("removes a line and empties the cart", () => {
     cart().add(shirt, 1)
     cart().add(charger, 1)
     cart().remove("SHIRT-M")
@@ -87,15 +87,15 @@ describe("تعديل السلة", () => {
     expect(cart().lines).toEqual([])
   })
 
-  it("يجمع أسعار السلة بالهللات", () => {
+  it("adds up the cart prices in halalas", () => {
     cart().add(shirt, 2)
     cart().add(charger, 1)
     expect(cartSubtotal(cart().lines)).toBe(2 * 12900 + 14900)
   })
 })
 
-describe("مطابقة السلة مع بيانات الموقع", () => {
-  it("تطبق الأسعار والمخزون الحالية وتبلغ بكل تغيير", () => {
+describe("syncing the cart with the site data", () => {
+  it("applies the current prices and stock and reports every change", () => {
     const wallet = line({ sku: "WALLET", name: "محفظة جلدية" })
     const speaker = line({ sku: "SPEAKER", name: "سماعة بلوتوث محمولة" })
     const lamp = line({ sku: "LAMP", name: "مصباح طاولة خشبي", price: 15900 })
@@ -105,7 +105,7 @@ describe("مطابقة السلة مع بيانات الموقع", () => {
     cart().add(speaker, 1)
     cart().add(lamp, 1)
 
-    // الأسطر هنا بلا خيارات، فمفتاح خياراتها نص فارغ
+    // The lines here have no options, so their options key is an empty string
     const notices = cart().sync({
       "SHIRT-M": { price: 12900, compareAtPrice: null, stock: 1, options: "" },
       CHARGER: { price: 15900, compareAtPrice: null, stock: 50, options: "" },
@@ -130,8 +130,8 @@ describe("مطابقة السلة مع بيانات الموقع", () => {
   })
 })
 
-describe("المفضلة", () => {
-  it("تضيف وتزيل، والأحدث أولاً", () => {
+describe("wishlist", () => {
+  it("adds and removes, newest first", () => {
     expect(wishlist().toggle("watch")).toBe(true)
     expect(wishlist().toggle("shirt")).toBe(true)
     expect(wishlist().slugs).toEqual(["shirt", "watch"])

@@ -1,13 +1,13 @@
 import { ProductGridSkeleton } from "@/components/product/product-grid-skeleton"
 
-/** تخطيط صفحات القوائم: شريط الفلاتر في جهة البداية على الحاسوب، والنتائج بجانبه. */
+/** Listing page layout: the filter bar on the start side on desktop, and the results beside it. */
 export const LISTING_LAYOUT =
   "lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8"
 
-/** شبكة النتائج نفسها في كل القوائم */
+/** The same results grid in every listing */
 export const LISTING_GRID = "lg:grid-cols-3 xl:grid-cols-4"
 
-/** هيكل صفحة القائمة أثناء تحميل النتائج (البحث مثلاً)، بمكان شريط الفلاتر نفسه. */
+/** Listing page skeleton while results load (search, for example), keeping the filter bar's space. */
 export function ListingSkeleton() {
   return (
     <div className={LISTING_LAYOUT} aria-hidden>

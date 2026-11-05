@@ -14,12 +14,12 @@ import {
 import { deliveryTime } from "@/lib/checkout/delivery"
 
 describe("normalizeForSearch", () => {
-  it("يزيل التشكيل والتطويل", () => {
+  it("removes diacritics and tatweel", () => {
     expect(normalizeForSearch("أَحْمَر")).toBe("احمر")
     expect(normalizeForSearch("مـتـجـر")).toBe("متجر")
   })
 
-  it("يوحّد أشكال الألف والياء والتاء المربوطة والهمزات", () => {
+  it("unifies the forms of alef, yaa, taa marbuta and hamza", () => {
     expect(normalizeForSearch("إبريق")).toBe("ابريق")
     expect(normalizeForSearch("آلة")).toBe("اله")
     expect(normalizeForSearch("مستشفى")).toBe("مستشفي")
@@ -27,7 +27,7 @@ describe("normalizeForSearch", () => {
     expect(normalizeForSearch("شاطئ")).toBe("شاطي")
   })
 
-  it("يحوّل الأرقام العربية ويصغّر الحروف الإنجليزية ويستبدل الرموز بمسافات", () => {
+  it("converts Arabic-Indic digits, lowercases English letters and replaces symbols with spaces", () => {
     expect(normalizeForSearch("شاحن ٦٥ واط")).toBe("شاحن 65 واط")
     expect(normalizeForSearch("USB-C")).toBe("usb c")
     expect(normalizeForSearch("  قميص،  أزرق!  ")).toBe("قميص ازرق")
@@ -35,36 +35,36 @@ describe("normalizeForSearch", () => {
 })
 
 describe("toSearchTerms", () => {
-  it("يحذف ال التعريف من الكلمات الطويلة", () => {
+  it("removes the definite article (ال) from long words", () => {
     expect(toSearchTerms("القميص الأزرق")).toEqual(["قميص", "ازرق"])
   })
 
-  it("يُبقي الكلمات القصيرة التي تبدأ بـ ال كما هي", () => {
+  it("keeps short words that start with ال as they are", () => {
     expect(toSearchTerms("الم")).toEqual(["الم"])
   })
 
-  it("يحذف التكرار ويكتفي بست كلمات", () => {
+  it("removes duplicates and keeps at most six words", () => {
     expect(toSearchTerms("ساعة ساعه")).toEqual(["ساعه"])
     expect(toSearchTerms("أ ب ت ث ج ح خ د")).toHaveLength(6)
   })
 
-  it("يعيد قائمة فارغة لنص بلا حروف", () => {
+  it("returns an empty list for text without letters", () => {
     expect(toSearchTerms("  ؟!  ")).toEqual([])
   })
 })
 
-describe("حروف لوحات المفاتيح المختلفة", () => {
-  it("يوحّد الياء والكاف الفارسيتين مع العربيتين", () => {
+describe("letters from different keyboard layouts", () => {
+  it("unifies the Persian yaa and kaf with the Arabic ones", () => {
     expect(normalizeForSearch("کیس")).toBe(normalizeForSearch("كيس"))
     expect(normalizeForSearch("ساعی")).toBe("ساعي")
   })
 
-  it("يحوّل أشكال العرض المنسوخة من ملفات PDF إلى الحروف العادية", () => {
-    // "ﻗﻤﻴﺺ" بأشكال العرض العربية
+  it("converts presentation forms copied from PDF files to regular letters", () => {
+    // "ﻗﻤﻴﺺ" in Arabic presentation forms
     expect(normalizeForSearch("ﻗﻤﻴﺺ")).toBe("قميص")
   })
 
-  it("يحوّل الأرقام العربية والفارسية إلى 0-9", () => {
+  it("converts Arabic-Indic and Persian digits to 0-9", () => {
     expect(toWesternDigits("٠٥٠١٢٣٤٥٦٧")).toBe("0501234567")
     expect(toWesternDigits("۰۵۰۱")).toBe("0501")
     expect(toWesternDigits("رقم 12")).toBe("رقم 12")
@@ -82,11 +82,11 @@ describe("pluralize", () => {
     [99, "99 منتجاً"],
     [100, "100 منتج"],
     [103, "103 منتجات"],
-  ])("%i ← %s", (count, expected) => {
+  ])("%i → %s", (count, expected) => {
     expect(pluralize(count, PRODUCT_FORMS)).toBe(expected)
   })
 
-  it("يصرّف القطع كذلك", () => {
+  it("inflects pieces the same way", () => {
     expect(pluralize(1, PIECE_FORMS)).toBe("قطعة واحدة")
     expect(pluralize(2, PIECE_FORMS)).toBe("قطعتان")
     expect(pluralize(5, PIECE_FORMS)).toBe("5 قطع")
@@ -106,27 +106,27 @@ describe("deliveryTime", () => {
     [[7, 14], "خلال 7 إلى 14 يوم عمل"],
   ]
 
-  it.each(cases)("%j ← %s", (days, expected) => {
+  it.each(cases)("%j → %s", (days, expected) => {
     expect(deliveryTime(days)).toBe(expected)
   })
 })
 
-describe("خيارات المتغيرات", () => {
-  it("يتعرف على خيار اللون بأشكال كتابته", () => {
+describe("variant options", () => {
+  it("recognizes the color option in its different spellings", () => {
     expect(isColorOption("اللون")).toBe(true)
     expect(isColorOption("الألوان")).toBe(true)
     expect(isColorOption("Color")).toBe(true)
     expect(isColorOption("المقاس")).toBe(false)
   })
 
-  it("يعطي درجة اللون المعروف أو null", () => {
+  it("returns the shade of a known color, or null", () => {
     expect(getColorHex("أزرق")).toBe("#2563eb")
     expect(getColorHex("ازرق")).toBe("#2563eb")
     expect(getColorHex("#abc")).toBe("#abc")
     expect(getColorHex("قوس قزح")).toBeNull()
   })
 
-  it("يرتب المقاسات من الأصغر والأرقام تصاعدياً قبل بقية القيم", () => {
+  it("sorts sizes from the smallest and numbers in ascending order, before the other values", () => {
     expect(sortOptionValues(["XL", "S", "L", "M"])).toEqual([
       "S",
       "M",

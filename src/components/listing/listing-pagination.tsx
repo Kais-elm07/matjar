@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 /** A page link, or a gap ("…") after the page `after`. */
 type PageItem = { type: "page"; page: number } | { type: "gap"; after: number }
 
-/** أرقام الصفحات المعروضة: الأولى والأخيرة وما حول الحالية، مع فواصل. */
+/** The page numbers shown: the first, the last and those around the current one, with gaps. */
 function visiblePages(page: number, pageCount: number) {
   const pages = new Set([1, pageCount, page - 1, page, page + 1])
   const sorted = [...pages]
@@ -34,8 +34,8 @@ interface ListingPaginationProps {
 }
 
 /**
- * ترقيم الصفحات: روابط حقيقية (تعمل مع الفتح في تبويب جديد)،
- * والنقر العادي ينتقل فوراً داخل الصفحة دون إعادة تحميل.
+ * Pagination: real links (so opening in a new tab works),
+ * and a normal click moves instantly within the page without a reload.
  */
 export function ListingPagination({
   page,

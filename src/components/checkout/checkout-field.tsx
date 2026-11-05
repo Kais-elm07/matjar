@@ -11,7 +11,7 @@ interface CheckoutFieldProps {
   children: React.ReactNode
 }
 
-/** حقل بتسمية فوقه، ورسالة الخطأ أو التلميح تحته. */
+/** A field with its label above it and the error message or hint below it. */
 export function CheckoutField({
   id,
   label,

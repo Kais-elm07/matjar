@@ -19,23 +19,23 @@ export function isSortValue(value: string): value is SortValue {
   return SORT_OPTIONS.some((option) => option.value === value)
 }
 
-/** الترتيب الافتراضي: الأكثر صلة عند البحث، والأكثر مبيعاً في غير ذلك. */
+/** The default sort: most relevant when searching, best selling otherwise. */
 export function defaultSort(q: string): SortValue {
   return q ? "relevance" : "popular"
 }
 
-/** خيارات الترتيب المعروضة: "الأكثر صلة" يظهر فقط مع البحث. */
+/** The sort options shown: "الأكثر صلة" (most relevant) appears only with a search. */
 export function sortOptionsFor(q: string) {
   return SORT_OPTIONS.filter((option) => q || option.value !== "relevance")
 }
 
-/** معاملات صفحات القوائم كما تُقرأ من الرابط. الأسعار هنا بالوحدة الكبرى (ريال). */
+/** Listing page parameters as read from the URL. Prices here are in the major unit (riyal). */
 export type ListingParams = {
   q: string
   category: string | null
   minPrice: number | null
   maxPrice: number | null
-  /** الخيارات المختارة: { "المقاس": ["M", "L"], "اللون": ["أزرق"] } */
+  /** The chosen options: { "المقاس": ["M", "L"], "اللون": ["أزرق"] } (size M or L, color blue) */
   options: Record<string, string[]>
   inStock: boolean
   onSale: boolean
@@ -51,7 +51,7 @@ const first = (value: string | string[] | undefined) =>
 const all = (value: string | string[] | undefined) =>
   value === undefined ? [] : Array.isArray(value) ? value : [value]
 
-/** سعر صحيح غير سالب، أو null لأي قيمة أخرى. */
+/** A non-negative whole-number price, or null for any other value. */
 function parsePrice(value: string | undefined) {
   if (!value) return null
   const number = Number(value)
@@ -60,15 +60,15 @@ function parsePrice(value: string | undefined) {
     : null
 }
 
-/** رقم صفحة صحيح من 1 إلى 1000، وإلا فالصفحة الأولى. */
+/** A whole page number from 1 to 1000, otherwise the first page. */
 function parsePage(value: string | undefined) {
   const number = Number(value)
   return Number.isInteger(number) && number >= 1 && number <= 1000 ? number : 1
 }
 
 /**
- * قراءة معاملات الرابط بأمان: أي قيمة غير صالحة تُستبدل بالقيمة الافتراضية بدل إظهار خطأ.
- * الخيارات تأتي بصيغة o=الاسم:القيمة ويمكن تكرارها.
+ * Reads the URL parameters safely: any invalid value is replaced with the default instead of showing an error.
+ * Options come as o=name:value and can repeat.
  */
 export function parseListingParams(
   searchParams: RawSearchParams
@@ -111,7 +111,7 @@ export function parseListingParams(
   }
 }
 
-/** تحويل URLSearchParams إلى كائن يقبل القيم المتكررة (مثل o). */
+/** Converts URLSearchParams to an object that accepts repeated values (such as o). */
 export function fromURLSearchParams(search: URLSearchParams): RawSearchParams {
   const raw: RawSearchParams = {}
   for (const key of new Set(search.keys())) {
@@ -121,7 +121,7 @@ export function fromURLSearchParams(search: URLSearchParams): RawSearchParams {
   return raw
 }
 
-/** بناء معاملات الرابط من الحالة، مع حذف القيم الافتراضية حتى يبقى الرابط قصيراً. */
+/** Builds the URL parameters from the state, leaving out default values so the URL stays short. */
 export function toSearchParams(params: ListingParams) {
   const search = new URLSearchParams()
   if (params.q) search.set("q", params.q)
@@ -138,7 +138,7 @@ export function toSearchParams(params: ListingParams) {
   return search
 }
 
-/** رابط القائمة بعد تعديل بعض المعاملات. أي تعديل غير رقم الصفحة يعيد إلى الصفحة الأولى. */
+/** The listing URL after some parameters change. Any change but the page number returns to page one. */
 export function listingHref(
   pathname: string,
   params: ListingParams,
@@ -149,7 +149,7 @@ export function listingHref(
   return query ? `${pathname}?${query}` : pathname
 }
 
-/** عدد الفلاتر المفعّلة، لعرضه على زر التصفية في الجوال. */
+/** Number of active filters, shown on the filter button on mobile. */
 export function countActiveFilters(params: ListingParams) {
   return (
     (params.category ? 1 : 0) +
@@ -163,7 +163,7 @@ export function countActiveFilters(params: ListingParams) {
   )
 }
 
-/** القيم التي تمسح كل الفلاتر مع إبقاء البحث والترتيب. */
+/** Values that clear all filters while keeping the search and the sort. */
 export const CLEARED_FILTERS = {
   category: null,
   minPrice: null,

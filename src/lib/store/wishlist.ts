@@ -8,9 +8,9 @@ import { isRecord } from "@/lib/guards"
 import { safeStorage } from "./storage"
 
 type WishlistState = {
-  /** روابط المنتجات المحفوظة، الأحدث أولاً */
+  /** Slugs of the saved products, newest first */
   slugs: string[]
-  /** يضيف المنتج أو يزيله، ويعيد true إن أصبح في المفضلة. */
+  /** Adds or removes the product, and returns true if it is now in the wishlist. */
   toggle: (slug: string) => boolean
   remove: (slug: string) => void
 }
@@ -41,7 +41,7 @@ export const useWishlistStore = create<WishlistState>()(
       version: 1,
       storage: safeStorage(),
       partialize: (state) => ({ slugs: state.slugs }),
-      // المحفوظ يُقبل بعد التحقق من شكله: روابط نصية دون تكرار
+      // The saved state is accepted after its shape is checked: string slugs without duplicates
       merge: (persisted, current) => {
         const slugs = isRecord(persisted) ? persisted.slugs : undefined
         return {

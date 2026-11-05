@@ -10,13 +10,13 @@ interface QuantityStepperProps {
   max: number
   disabled?: boolean
   size?: "default" | "sm"
-  /** يُقرأ لقارئات الشاشة، مثل "كمية قميص قطني" */
+  /** Read out by screen readers, such as "كمية قميص قطني" (Cotton shirt quantity) */
   label?: string
   onChange: (value: number) => void
   className?: string
 }
 
-/** محدد الكمية: زر للزيادة وآخر للإنقاص، مع منع تجاوز الحد. */
+/** Quantity selector: one button to increase and another to decrease, without going past the limit. */
 export function QuantityStepper({
   value,
   max,

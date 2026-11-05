@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils"
 
 import { TAB_BAR_ITEM as ITEM } from "./tab-bar-styles"
 
-/** شريط التنقل الثابت أسفل شاشة الجوال: الرئيسية والفئات والبحث والمفضلة والسلة. */
+/** The fixed navigation bar at the bottom of the phone screen: Home, Categories, Search, Wishlist and Cart. */
 export function MobileTabBar() {
   const pathname = usePathname()
   const cartCount = useCartCount()

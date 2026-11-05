@@ -4,7 +4,7 @@ import { siteConfig } from "@/config/site"
 import { formatPrice } from "@/lib/catalog/money"
 import { getCheckoutConfig } from "@/lib/checkout/config"
 
-/** شريط الإعلان البرتقالي أعلى كل الصفحات. نصه ورابطه في src/config/site.ts، ويختفي إن كان null. */
+/** Orange announcement bar at the top of every page. Its text and link are in src/config/site.ts; hidden if null. */
 export function AnnouncementBar() {
   const { announcement } = siteConfig
   if (!announcement) return null

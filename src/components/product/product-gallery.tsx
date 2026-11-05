@@ -10,7 +10,7 @@ import { scrollBehavior } from "@/lib/motion"
 import { useIdle } from "@/lib/use-idle"
 import { cn } from "@/lib/utils"
 
-// نافذة التكبير يُحمَّل كودها بعد ظهور الصفحة، أو عند أول ضغطة على الصورة
+// The zoom dialog's code loads after the page appears, or on the first click on the image
 const ProductZoom = dynamic(
   () =>
     import("@/components/product/product-zoom").then((mod) => mod.ProductZoom),
@@ -24,8 +24,8 @@ interface ProductGalleryProps {
 }
 
 /**
- * معرض صور المنتج: يُسحب باللمس، مع صور مصغرة ونافذة تكبير.
- * الصورة الظاهرة يتحكم بها المكوّن الأب، فيمكن نقلها عند اختيار لون.
+ * The product image gallery: swipeable by touch, with thumbnails and a zoom dialog.
+ * The visible image is controlled by the parent component, so it can be moved when a color is chosen.
  */
 export function ProductGallery({
   images,
@@ -37,15 +37,15 @@ export function ProductGallery({
   const [zoomOpen, setZoomOpen] = useState(false)
   const idle = useIdle()
 
-  // معرفة الصورة الظاهرة بعد توقف السحب لا أثناءه: التمرير الناعم إلى صورة بعيدة
-  // يمر بالصور التي بينهما، ولو عُدّت كل منها "الحالية" لتوقف التمرير عند أولها
+  // Find the visible image after the swipe stops, not during it: a smooth scroll to a far image
+  // passes the ones in between, and counting each as "current" would stop the scroll at the first
   useEffect(() => {
     const track = trackRef.current
     if (!track) return
     let timer: ReturnType<typeof setTimeout> | undefined
     function settle() {
       if (!track) return
-      // في الاتجاه العربي تكون قيمة التمرير سالبة، فنأخذ قيمتها المطلقة
+      // In the Arabic (RTL) direction the scroll value is negative, so take its absolute value
       const index = Math.round(Math.abs(track.scrollLeft) / track.clientWidth)
       onActiveIndexChange(Math.min(index, images.length - 1))
     }
@@ -60,7 +60,7 @@ export function ProductGallery({
     }
   }, [images.length, onActiveIndexChange])
 
-  // الانتقال للصورة المطلوبة عند اختيار صورة مصغرة أو لون
+  // Scroll to the requested image when a thumbnail or a color is chosen
   useEffect(() => {
     const track = trackRef.current
     const slide = slideRefs.current[activeIndex]
@@ -76,7 +76,7 @@ export function ProductGallery({
   }, [activeIndex])
 
   return (
-    // على الحاسوب: الصور المصغرة عمودياً بجانب الصورة الكبيرة من جهة البداية
+    // On desktop: the thumbnails run vertically beside the large image, on the start side
     <div className="space-y-3 lg:flex lg:items-start lg:gap-3 lg:space-y-0">
       <div className="relative lg:min-w-0 lg:flex-1">
         <div

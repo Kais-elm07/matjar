@@ -2,13 +2,13 @@ import { expect, test } from "@playwright/test"
 
 import { open } from "./helpers"
 
-test.describe("على الجوال", () => {
+test.describe("On mobile", () => {
   test.skip(
     ({ isMobile }) => !isMobile,
-    "قائمة الجوال والشريط السفلي يظهران على الجوال فقط"
+    "The mobile menu and the bottom bar only appear on phones"
   )
 
-  test("قائمة الجوال تفتح من الرأس وتنقل إلى صفحة ثم تُغلق", async ({
+  test("The mobile menu opens from the header, goes to a page, then closes", async ({
     page,
   }) => {
     await open(page, "/")
@@ -21,7 +21,9 @@ test.describe("على الجوال", () => {
     await expect(menu).toBeHidden()
   })
 
-  test("الشريط السفلي يفتح القائمة ونافذة السلة", async ({ page }) => {
+  test("The bottom bar opens the menu and the cart drawer", async ({
+    page,
+  }) => {
     await open(page, "/")
     const bar = page.getByRole("navigation", { name: "التنقل السريع" })
 

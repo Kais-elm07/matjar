@@ -10,7 +10,7 @@ interface ProductRailProps {
   header?: React.ReactNode
 }
 
-/** صف منتجات يُسحب أفقياً، مع زرّي تمرير في رأسه على الحاسوب. */
+/** A product row that swipes horizontally, with two scroll buttons in its header on desktop. */
 export function ProductRail({ products, label, header }: ProductRailProps) {
   return (
     <Carousel label={label} header={header}>

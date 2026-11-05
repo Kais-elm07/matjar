@@ -16,9 +16,10 @@ interface HeroSliderProps {
 }
 
 /**
- * الواجهة الرئيسية بعرض الشاشة: صورة كبيرة فوقها تعتيم بلون الخلفية وتدرج أغمق من الأسفل،
- * والشارة والعنوان والوصف والسعر والزر البرتقالي في منتصفها. أكثر من شريحة تُسحب باللمس،
- * ولها أسهم على الحاسوب ونقاط (النشطة برتقالية)، ولا تتحرك تلقائياً.
+ * The full-width hero: a large photo under a darkening layer in the background color and a darker
+ * gradient from the bottom, with the badge, headline, description, price and orange button in its
+ * middle. Multiple slides are swiped by touch, with arrows on desktop and dots (the active one
+ * orange), and they do not move automatically.
  */
 export function HeroSlider({ slides }: HeroSliderProps) {
   const listRef = useRef<HTMLUListElement>(null)
@@ -28,11 +29,11 @@ export function HeroSlider({ slides }: HeroSliderProps) {
   function onScroll() {
     const list = listRef.current
     if (!list) return
-    // في الاتجاه العربي تكون قيمة التمرير سالبة، فنأخذ قيمتها المطلقة
+    // In the Arabic (right-to-left) direction the scroll value is negative, so we take its absolute value
     setActive(Math.round(Math.abs(list.scrollLeft) / list.clientWidth))
   }
 
-  /** ينقل الشرائح وحدها إلى الشريحة المطلوبة، دون تحريك الصفحة رأسياً. */
+  /** Scrolls only the slides to the requested slide, without moving the page vertically. */
   function show(index: number) {
     const count = slides.length
     const list = listRef.current
@@ -77,7 +78,8 @@ export function HeroSlider({ slides }: HeroSliderProps) {
                   className="object-cover"
                 />
               )}
-              {/* تعتيم موحد يضمن قراءة النص الأبيض، وتدرج يذيب أسفل الصورة في خلفية الصفحة */}
+              {/* Even darkening keeps the white text readable, and a gradient blends the bottom
+                  of the photo into the page background */}
               <div aria-hidden className="absolute inset-0 bg-background/45" />
               <div
                 aria-hidden

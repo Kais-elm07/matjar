@@ -27,7 +27,10 @@ import { cn } from "@/lib/utils"
 
 type ValueState = "available" | "sold-out" | "unavailable"
 
-/** ما تحتاجه لوحة الشراء فقط، فلا يُرسل الوصف والمواصفات مرة ثانية مع كود الصفحة. */
+/**
+ * Only what the purchase panel needs, so the description and specs aren't sent
+ * a second time with the page code.
+ */
 export type PurchasableProduct = Pick<
   Product,
   | "slug"
@@ -43,7 +46,7 @@ interface ProductDetailsProps {
   product: PurchasableProduct
 }
 
-/** معرض الصور ولوحة الشراء: اختيار المتغير يغيّر السعر والمخزون وصورة اللون. */
+/** Image gallery and purchase panel: picking a variant changes the price, stock and color image. */
 export function ProductDetails({ product }: ProductDetailsProps) {
   const groups = product.optionGroups
   const firstAvailable =
@@ -93,7 +96,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
       )
     )
     if (!exact) {
-      // التركيبة غير موجودة: نختار أقرب متغير بهذه القيمة (المتوفر أولاً)
+      // The combination doesn't exist: pick the closest variant with this value (in stock first)
       const fallback =
         product.variants.find(
           (c) => c.options[groupName] === value && c.stock > 0
@@ -105,7 +108,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
     setImageIndex((current) => imageIndexForOptions(product, next, current))
   }
 
-  /** يضيف المتغير المختار بالكمية المختارة، ويعيد عدد القطع المضافة. */
+  /** Adds the selected variant in the selected quantity and returns the number of items added. */
   function add(openCart: boolean) {
     if (!variant || stock === 0) return 0
     const image = product.images[imageIndex] ?? product.images[0]
@@ -125,7 +128,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
     )
   }
 
-  /** "اشترِ الآن": يضيف للسلة وينتقل إليها مباشرة. */
+  /** "اشترِ الآن" (Buy now): adds to the cart and goes straight to it. */
   function buyNow() {
     if (add(false) > 0) router.push("/cart")
   }
@@ -261,7 +264,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
   )
 }
 
-/** صورة اللون المختار إن وُجدت، وإلا تبقى الصورة الحالية. */
+/** The selected color's image if there is one; otherwise the current image stays. */
 function imageIndexForOptions(
   product: PurchasableProduct,
   options: VariantOptions,

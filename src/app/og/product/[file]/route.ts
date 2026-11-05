@@ -2,7 +2,7 @@ import { getProduct, getProducts } from "@/lib/catalog/catalog"
 import { productCard } from "@/lib/og/cards"
 import { jpegResponse } from "@/lib/og/render"
 
-// صورة مشاركة لكل منتج تُولَّد وقت البناء: out/og/product/<slug>.jpg
+// A share image for each product, generated at build time: out/og/product/<slug>.jpg
 export const dynamic = "force-static"
 export const dynamicParams = false
 

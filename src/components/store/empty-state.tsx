@@ -10,7 +10,7 @@ interface EmptyStateProps {
   className?: string
 }
 
-/** حالة فارغة ودّية: سلة فارغة، لا نتائج بحث، قسم لم يُملأ بعد. */
+/** A friendly empty state: an empty cart, no search results, a section not filled yet. */
 export function EmptyState({
   icon: Icon,
   title,

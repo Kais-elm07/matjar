@@ -18,13 +18,13 @@ import sharp, { type OverlayOptions, type Sharp } from "sharp"
 import { IMAGE_WIDTHS, imageFile } from "@/lib/image-loader"
 
 /**
- * أدوات رسم صور المشاركة (Open Graph) وقت البناء: نص عربي بخط المتجر، وصور بزوايا دائرية، وشارات.
- * الرسم بمكتبة sharp، والنص عبر Pango بداخلها، فيتصل الحرف العربي ويُرتب السطر من اليمين.
+ * Build-time tools that draw the share images (Open Graph): Arabic text in the store's font, images with rounded corners, and badges.
+ * Drawing uses the sharp library, and text goes through the Pango inside it, so Arabic letters join and each line runs from the right.
  */
 
 export const OG_SIZE = { width: 1200, height: 630 }
 
-/** ألوان DESIGN.md المستخدمة في صور المشاركة: خلفية داكنة ونص أبيض وبرتقالي للسعر والشارات */
+/** DESIGN.md colors used in the share images: a dark background, white text, and orange for the price and badges */
 export const OG_COLORS = {
   background: "#121214",
   surface: "#2a2a2e",
@@ -36,8 +36,8 @@ export const OG_COLORS = {
 
 const ROOT = process.cwd()
 const FONT_DIR = path.join(ROOT, "src", "fonts", "ibm-plex-sans-arabic")
-// العائلتان كما يسمّيهما الأمر pnpm fonts: ملف الأرقام والحروف الإنجليزية أولاً ثم العربية،
-// فيأخذ كل حرف شكله من الملف الذي يحويه
+// The two families as the pnpm fonts command names them: the digits and English letters file first, then the Arabic one,
+// so each character takes its shape from the file that contains it
 const FONT_FAMILIES = "IBM Plex Sans Arabic Latin,IBM Plex Sans Arabic"
 type Weight = 400 | 500 | 700
 
@@ -47,10 +47,10 @@ const WEIGHT_NAMES: Record<Weight, string> = {
   700: "Bold",
 }
 
-// مكتبة الخطوط داخل sharp لا تحتمل رسم نص وقراءة SVG في الوقت نفسه من خيطين،
-// وكان البناء ينهار أحياناً بخطأ في الذاكرة. لذلك تعمل sharp بخيط واحد،
-// وتمر كل عمليات الرسم في طابور واحد على مستوى العملية كلها (globalThis)،
-// لأن كل مسار من مسارات الصور قد يحمل نسخته الخاصة من هذا الملف.
+// The font library inside sharp cannot handle drawing text and reading SVG at the same time from two threads,
+// and the build sometimes crashed with a memory error. So sharp runs on one thread,
+// and every drawing operation goes through one queue for the whole process (globalThis),
+// because each image route may load its own copy of this file.
 sharp.concurrency(1)
 
 /** What this file keeps on globalThis, shared by every copy of it in the process. */
@@ -61,7 +61,7 @@ interface SharedRenderState {
 
 const shared: typeof globalThis & SharedRenderState = globalThis
 
-/** ينفّذ عمليات الرسم واحدة تلو الأخرى. لا تُستدعى من داخل مهمة في الطابور، وإلا انتظرت نفسها. */
+/** Runs drawing operations one at a time. Never call it from a queued task, or it waits on itself. */
 function serial<T>(task: () => Promise<T>): Promise<T> {
   const result = (shared.matjarOgQueue ?? Promise.resolve()).then(task)
   shared.matjarOgQueue = result.catch(() => undefined)
@@ -71,9 +71,9 @@ function serial<T>(task: () => Promise<T>): Promise<T> {
 const toPng = (image: Sharp) => serial(() => image.png().toBuffer())
 
 /**
- * يسجّل ملفات الخط عند أداة رسم النص مرة واحدة في كل عملية.
- * تُنسخ الملفات أولاً إلى مجلد مؤقت مساره بحروف إنجليزية،
- * لأن مكتبة الخطوط في Windows لا تقرأ المسارات العربية مثل مجلد المشروع.
+ * Registers the font files with the text renderer once per process.
+ * The files are first copied to a temporary folder whose path uses English letters,
+ * because the font library on Windows cannot read Arabic paths such as the project folder.
  */
 function prepareFonts() {
   shared.matjarOgFonts ??= (async () => {
@@ -99,14 +99,14 @@ function prepareFonts() {
     for (const [index, name] of names.entries()) {
       const file = path.join(dir, name)
       if (!existsSync(file)) {
-        // كتابة ثم إعادة تسمية، لأن عمليات البناء المتوازية قد تكتب الملف نفسه في الوقت نفسه
+        // Write, then rename, because parallel build processes may write the same file at the same time
         const temporary = `${file}.${process.pid}.tmp`
         await writeFile(temporary, contents[index])
         await rename(temporary, file).catch(() =>
           rm(temporary, { force: true })
         )
       }
-      // أداة الرسم تضيف ملف الخط إلى مكتبتها عند أول نص يُرسم به
+      // The renderer adds the font file to its library on the first text drawn with it
       await toPng(
         sharp({ text: { text: "x", font: "sans 12", fontfile: file } })
       )
@@ -121,9 +121,9 @@ type TextOptions = {
   size: number
   weight?: Weight
   color: string
-  /** أقصى عرض للسطر قبل الانتقال إلى سطر جديد */
+  /** Maximum line width before wrapping to a new line */
   width?: number
-  /** أقصى عدد للأسطر، وما يزيد يُختصر بثلاث نقاط */
+  /** Maximum number of lines; anything longer is cut short with an ellipsis */
   maxLines?: number
   strikethrough?: boolean
 }
@@ -140,8 +140,8 @@ async function renderText(
   const { data, info } = await serial(() =>
     sharp({
       text: {
-        // علامة الاتجاه (RLM) تجعل الفقرة عربية الاتجاه حتى لو بدأت برقم أو حرف إنجليزي،
-        // ومعها تعني "left" المحاذاة إلى اليمين، لأن Pango يعكس المحاذاة في الفقرات العربية
+        // The direction mark (RLM) makes the paragraph right-to-left even if it starts with a digit or an English letter,
+        // and with it "left" means right alignment, because Pango mirrors the alignment in Arabic paragraphs
         text: `\u200f<span ${style}>${escapeMarkup(value)}</span>`,
         font: [FONT_FAMILIES, WEIGHT_NAMES[weight], size]
           .filter(Boolean)
@@ -159,7 +159,7 @@ async function renderText(
   return { input: data, width: info.width, height: info.height }
 }
 
-/** المسافة بين سطرين متتاليين بالمقاس والوزن نفسيهما. */
+/** The distance between two consecutive lines at the same size and weight. */
 const lineSpacings = new Map<string, Promise<number>>()
 function lineSpacing(size: number, weight: Weight) {
   const key = `${size}-${weight}`
@@ -175,13 +175,13 @@ function lineSpacing(size: number, weight: Weight) {
   return spacing
 }
 
-/** نص بخط المتجر، مصفوف من اليمين. */
+/** Text in the store's font, aligned from the right. */
 export async function text(value: string, options: TextOptions) {
   let layer = await renderText(value, options)
   if (!options.maxLines) return layer
 
-  // الصورة تُقص على حدود الحروف المرسومة لا على ارتفاع السطر الكامل،
-  // فارتفاع n سطر يقع تقريباً بين n - 1 وn من المسافة بين الأسطر
+  // The image is trimmed to the edges of the drawn letters, not to the full line height,
+  // so the height of n lines falls roughly between n - 1 and n times the line spacing
   const spacing = await lineSpacing(options.size, options.weight ?? 400)
   const limit = (options.maxLines + 0.15) * spacing
   const words = value.split(/\s+/)
@@ -199,7 +199,7 @@ export type PillOptions = TextOptions & {
   paddingY: number
 }
 
-/** نص داخل كبسولة، مثل شارة الخصم. border يرسم إطاراً بدل التعبئة. */
+/** Text inside a pill, such as the discount badge. border draws an outline instead of a fill. */
 export async function pill(
   value: string,
   { background, border, paddingX, paddingY, ...options }: PillOptions
@@ -219,7 +219,7 @@ export async function pill(
   return { input, width, height }
 }
 
-/** ملف الصورة على القرص لمسار من ملفات البيانات، مثل /images/products/x-1، أو null. */
+/** The image file on disk for a path from the data files, such as /images/products/x-1, or null. */
 export function localImage(src: string) {
   if (/^https?:\/\//.test(src)) return null
   const largest = IMAGE_WIDTHS[IMAGE_WIDTHS.length - 1]
@@ -228,8 +228,8 @@ export function localImage(src: string) {
 }
 
 /**
- * صورة مربعة بزوايا دائرية. إن لم تتوفر الصورة يظهر مربع بلون السطح الفاتح عليه الشعار،
- * كما في بطاقات المنتجات بلا صور.
+ * A square image with rounded corners. If the image is missing, a square in the light surface color shows the logo,
+ * as in product cards without images.
  */
 export async function roundedImage(
   file: string | null,
@@ -257,14 +257,14 @@ export async function roundedImage(
   return { input, width: size, height: size }
 }
 
-/** شعار المتجر (حقيبة داكنة في مربع برتقالي) من ملف أيقونة الموقع src/app/icon.svg. */
+/** The store logo (a dark bag in an orange square) from the site icon file src/app/icon.svg. */
 export async function logoMark(size: number) {
   const svg = await readFile(path.join(ROOT, "src", "app", "icon.svg"))
-  // الأيقونة مرسومة على مربع 32 بكسل، فتُكبَّر الكثافة لترسم بالمقاس المطلوب بوضوح
+  // The icon is drawn on a 32-pixel square, so the density is scaled up to draw it sharply at the requested size
   return toPng(sharp(svg, { density: (72 * size) / 32 }).resize(size, size))
 }
 
-/** يجمع الطبقات على خلفية داكنة بمقاس 1200×630، ويحفظها JPEG خفيفاً تقبله كل المنصات. */
+/** Combines the layers on a dark 1200×630 background and saves a light JPEG that every platform accepts. */
 export function renderCard(layers: OverlayOptions[]) {
   return serial(() =>
     sharp({

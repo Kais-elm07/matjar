@@ -3,8 +3,8 @@ interface JsonLdProps {
 }
 
 /**
- * بيانات منظمة لمحركات البحث (JSON-LD).
- * استبدال "<" يمنع إغلاق وسم script من داخل النص.
+ * Structured data for search engines (JSON-LD).
+ * Replacing "<" prevents the script tag from being closed from inside the text.
  */
 export function JsonLd({ data }: JsonLdProps) {
   return (

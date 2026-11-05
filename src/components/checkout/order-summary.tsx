@@ -22,8 +22,9 @@ interface OrderSummaryProps {
 }
 
 /**
- * ملخص الطلب: المنتجات، والكوبون، والمبالغ.
- * على الجوال يُطوى في سطر واحد بالإجمالي وزر لفتحه، وعلى الحاسوب يظهر كاملاً بجانب النموذج.
+ * Order summary: the products, the coupon and the amounts.
+ * On mobile it collapses into one line with the total and a button to open it,
+ * and on desktop it shows in full beside the form.
  */
 export function OrderSummary({
   lines,
@@ -41,7 +42,7 @@ export function OrderSummary({
       aria-labelledby="order-summary-heading"
       className={cn("rounded-xl border bg-card", className)}
     >
-      {/* زر الطي على الجوال يغطي السطر كله لتسهيل اللمس، ويختفي على الحاسوب */}
+      {/* On mobile the collapse button covers the whole row for easier tapping; it is hidden on desktop */}
       <div className="relative flex items-center justify-between gap-3 p-4">
         <h2 id="order-summary-heading" className="text-lg font-bold">
           ملخص الطلب

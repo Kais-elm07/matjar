@@ -5,21 +5,21 @@ import { shipping } from "../../src/data/shipping"
 import { formatPrice, toMinorUnits } from "../../src/lib/catalog/money"
 import { isPhone, loadProducts, open, simpleProduct } from "./helpers"
 
-test("اختيار خيارات المنتج ثم إضافته للسلة بالخيارات نفسها", async ({
+test("Choosing product options, then adding the product to the cart with the same options", async ({
   page,
   request,
 }) => {
   const product = (await loadProducts(request)).find(
     (card) => card.inStock && card.quickAdd === null
   )
-  if (!product) throw new Error("لا يوجد منتج متوفر بأكثر من خيار")
+  if (!product) throw new Error("No in-stock product with more than one option")
   await open(page, `/product/${product.slug}/`)
 
   const main = page.getByRole("main")
   const groups = main.locator("fieldset")
   await expect(groups.first()).toBeVisible()
 
-  // اختيار قيمة أخرى متوفرة في المجموعة الأولى إن وُجدت
+  // Pick another available value in the first group, if there is one
   const other = groups
     .first()
     .getByRole("button", { pressed: false })
@@ -42,7 +42,7 @@ test("اختيار خيارات المنتج ثم إضافته للسلة بال
   }
 })
 
-test("كوبون خاطئ يُرفض، والتوصيل السريع يضيف رسومه", async ({
+test("A wrong coupon is rejected, and express delivery adds its fee", async ({
   page,
   request,
 }) => {
@@ -70,11 +70,12 @@ test("كوبون خاطئ يُرفض، والتوصيل السريع يضيف ر
   await expect(page.getByText("رمز الكوبون غير صحيح")).toBeVisible()
 
   const city = shipping.cities.find((item) => item.express)
-  if (!city) throw new Error("لا توجد مدينة بتوصيل سريع في بيانات الشحن")
+  if (!city)
+    throw new Error("No city with express delivery in the shipping data")
   await page.getByLabel("المدينة", { exact: true }).selectOption(city.name)
   await page.getByText("توصيل سريع", { exact: true }).click()
 
-  // رسوم السريع = سعر المدينة + الإضافة، إلا إن كان الطلب مؤهلاً للشحن المجاني بكوبون
+  // Express fee = the city's rate + the surcharge, unless the order qualifies for free shipping with a coupon
   const fee = formatPrice(toMinorUnits(city.fee + shipping.express.extraFee))
   await expect(page.getByRole("radio", { name: /توصيل سريع/ })).toBeChecked()
   await expect(

@@ -19,7 +19,7 @@ interface CartNoticesProps {
   className?: string
 }
 
-/** تنبيه بما تغيّر في السلة بعد مطابقتها مع بيانات الموقع الحالية. */
+/** A notice of what changed in the cart after matching it against the site's current data. */
 export function CartNotices({
   notices,
   onDismiss,

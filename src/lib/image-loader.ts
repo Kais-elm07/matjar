@@ -1,11 +1,11 @@
 /**
- * محمّل الصور للموقع الثابت (لا يوجد خادم يغيّر أحجام الصور).
+ * Image loader for the static site (there is no server to resize images).
  *
- * الصور المحلية تُجهَّز مسبقاً بثلاثة أحجام بالأمر pnpm images، وهنا نختار أصغر حجم يكفي الشاشة.
- * المسار في البيانات يُكتب دون امتداد:
- *   /images/products/shirt-1  يصبح  /images/products/shirt-1-800.webp
- * الروابط الكاملة (https://...) والمسارات التي لها امتداد تُستخدم كما هي.
- * الأحجام نفسها في scripts/images.mjs (WIDTHS) وnext.config.ts (deviceSizes).
+ * Local images are prepared ahead of time in three sizes by the pnpm images command; here we pick the smallest size that fits the screen.
+ * The path in the data is written without an extension:
+ *   /images/products/shirt-1  becomes  /images/products/shirt-1-800.webp
+ * Full URLs (https://...) and paths that have an extension are used as they are.
+ * The same sizes are in scripts/images.mjs (WIDTHS) and next.config.ts (deviceSizes).
  */
 export const IMAGE_WIDTHS: readonly [400, 800, 1200] = [400, 800, 1200]
 
@@ -13,8 +13,8 @@ const isExternal = (src: string) => /^https?:\/\//.test(src)
 const hasExtension = (src: string) => /\.[a-z0-9]{2,5}(\?.*)?$/i.test(src)
 
 /**
- * مسار ملف الصورة المجهز بأصغر عرض يكفي: /images/products/shirt-1 بعرض 700 يصبح ...-800.webp.
- * يستخدمه المحمّل وصور المشاركة وفحص الصور وقت البناء.
+ * Path of the prepared image file with the smallest width that fits: /images/products/shirt-1 at width 700 becomes ...-800.webp.
+ * Used by the loader, the share images and the build-time image check.
  */
 export function imageFile(src: string, width: number) {
   if (isExternal(src) || hasExtension(src)) return src
@@ -33,7 +33,7 @@ type ImageLoaderParams = {
 export default function imageLoader({ src, width }: ImageLoaderParams) {
   if (src.startsWith("data:")) return src
   if (isExternal(src) || hasExtension(src)) {
-    // إضافة العرض للرابط فقط حتى يعرف Next.js أن المحمّل يراعي الحجم
+    // Add the width to the URL only so Next.js knows the loader takes the size into account
     return `${src}${src.includes("?") ? "&" : "?"}w=${width}`
   }
   return imageFile(src, width)

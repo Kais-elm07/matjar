@@ -2,7 +2,7 @@
 
 import { useCallback, useSyncExternalStore } from "react"
 
-/** هل تطابق الشاشة استعلام CSS، مثل "(min-width: 64rem)". في HTML المولّد مسبقاً تكون false. */
+/** Whether the screen matches a CSS query such as "(min-width: 64rem)". False in prerendered HTML. */
 export function useMediaQuery(query: string) {
   const subscribe = useCallback(
     (onChange: () => void) => {

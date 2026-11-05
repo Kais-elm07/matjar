@@ -5,7 +5,7 @@ import { toSchemaPrice } from "@/lib/catalog/money"
 import type { Product } from "@/lib/catalog/types"
 import { IMAGE_WIDTHS, imageFile } from "@/lib/image-loader"
 
-/** صور المشاركة بمقاس 1200×630، تولّدها مسارات src/app/og وقت البناء. */
+/** Share images at 1200×630, generated at build time by the routes in src/app/og. */
 export const shareImages = {
   site: "/og/site.jpg",
   product: (slug: string) => `/og/product/${slug}.jpg`,
@@ -13,9 +13,9 @@ export const shareImages = {
 }
 
 /**
- * بيانات المشاركة على مواقع التواصل (Open Graph).
- * Next.js يستبدل openGraph كاملاً في كل صفحة تعرّفه، فيكرر هذا المساعد الحقول المشتركة.
- * دون path ترث الصفحة الصورة العامة دون رابط خاص، كما في السلة والبحث.
+ * Social media sharing data (Open Graph).
+ * Next.js replaces openGraph entirely in every page that defines it, so this helper repeats the shared fields.
+ * Without path, the page inherits the general image and has no URL of its own, as in the cart and search.
  */
 export function openGraph({
   title,
@@ -50,8 +50,8 @@ export function openGraph({
 }
 
 /**
- * رابط كامل لصفحة داخل الموقع، مع الشرطة المائلة في النهاية كما في الموقع المنشور.
- * الملفات (مثل icon.svg) تبقى دون شرطة.
+ * Full URL of a page on the site, with the trailing slash as on the published site.
+ * Files (such as icon.svg) stay without a slash.
  */
 export function absoluteUrl(path: string) {
   const isFile = /\.[a-z0-9]+$/i.test(path)
@@ -59,13 +59,13 @@ export function absoluteUrl(path: string) {
   return `${siteConfig.url}${normalized}`
 }
 
-/** رابط كامل لأكبر نسخة من الصورة، لصور المشاركة والبيانات المنظمة. */
+/** Full URL of the largest copy of an image, for share images and structured data. */
 export function absoluteImageUrl(src: string) {
   if (/^https?:\/\//.test(src)) return src
   return `${siteConfig.url}${imageFile(src, IMAGE_WIDTHS[IMAGE_WIDTHS.length - 1])}`
 }
 
-/** نص عادي مختصر من الوصف، لوصف الصفحة في نتائج البحث. نقاط القوائم تُفصل بفواصل. */
+/** Short plain text from a description, for search result snippets. List items are joined by commas. */
 export function plainDescription(text: string, maxLength = 155) {
   const plain = text
     .split(/\n\s*\n/)

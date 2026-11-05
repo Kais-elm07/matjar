@@ -18,7 +18,7 @@ interface MobileNavSheetProps {
   categories: NavCategory[]
 }
 
-/** محتوى قائمة الجوال: تنزلق من اليمين وتُغلق تلقائياً عند اختيار أي رابط. */
+/** The mobile menu content: it slides in from the right and closes automatically when any link is chosen. */
 export function MobileNavSheet({ categories }: MobileNavSheetProps) {
   const open = useUiStore((state) => state.menuOpen)
   const setOpen = useUiStore((state) => state.setMenuOpen)

@@ -13,7 +13,7 @@ interface PromoTileProps {
   sizes?: string
 }
 
-/** مربع صورة لمنتج في شبكة العروض: الصورة تملؤه، وفي أسفله الشارة والعنوان والسعر. */
+/** A product image tile in the deals grid: the photo fills it, with the badge, title and price at its bottom. */
 export function PromoTile({
   banner,
   className,

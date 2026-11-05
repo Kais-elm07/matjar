@@ -12,7 +12,7 @@ interface ShippingOptionProps extends React.ComponentProps<"input"> {
   disabled?: boolean
 }
 
-/** خيار شحن كبطاقة قابلة للنقر، والمختار بحد برتقالي. */
+/** A shipping option as a clickable card; the selected one has an orange border. */
 export function ShippingOption({
   icon: Icon,
   title,

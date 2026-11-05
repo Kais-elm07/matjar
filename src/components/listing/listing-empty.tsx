@@ -10,12 +10,15 @@ import { countActiveFilters, type ListingParams } from "@/lib/catalog/listing"
 interface ListingEmptyProps {
   params: ListingParams
   search: boolean
-  /** لا توجد منتجات أصلاً، فمسح الفلاتر لن يفيد */
+  /** There are no products at all, so clearing the filters won't help */
   ignoreFilters?: boolean
   onClear: () => void
 }
 
-/** لا توجد نتائج: رسالة تشرح السبب، وزر لما يمكن فعله (مسح الفلاتر أو تصفّح كل المنتجات). */
+/**
+ * No results: a message that explains why, and a button for what can be done
+ * (clear the filters or browse all products).
+ */
 export function ListingEmpty({
   params,
   search,

@@ -9,14 +9,15 @@ import { cn } from "@/lib/utils"
 
 interface CategoryMenuProps {
   categories: NavCategory[]
-  /** شكل الزر، ليطابق بقية روابط الرأس */
+  /** The button's styling, to match the other header links */
   className?: string
 }
 
 /**
- * زر "كل الفئات" في صف التنقل على الحاسوب: يفتح لوحة كبيرة بعمود لكل فئة رئيسية
- * وفئاتها الفرعية. يفتح بالنقر أو بمرور الفأرة، ويُغلق بـ Escape أو بالنقر خارجه.
- * مبني كزر إفصاح بسيط دون مكتبة نوافذ عائمة، حتى لا يثقل صفحات الجوال التي لا تعرضه.
+ * The "الفئات" (Categories) button in the desktop navigation row: opens a large panel with a
+ * column for each main category and its subcategories. It opens on click or mouse hover, and closes
+ * with Escape or a click outside it. Built as a simple disclosure button without a popover library,
+ * so it doesn't weigh down the mobile pages, which don't show it.
  */
 export function CategoryMenu({ categories, className }: CategoryMenuProps) {
   const [open, setOpen] = useState(false)
@@ -25,7 +26,7 @@ export function CategoryMenu({ categories, className }: CategoryMenuProps) {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const hoverTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
 
-  // إلغاء فتح أو إغلاق مؤجل إن اختفت القائمة قبله
+  // Cancel a delayed open or close if the menu disappears before it runs
   useEffect(() => () => clearTimeout(hoverTimer.current), [])
 
   useEffect(() => {
@@ -49,7 +50,7 @@ export function CategoryMenu({ categories, className }: CategoryMenuProps) {
     }
   }, [open])
 
-  // فتح بمرور الفأرة مع تأخير بسيط، حتى لا تنفتح اللوحة عند المرور العابر
+  // Open on mouse hover after a short delay, so the panel doesn't open on a passing hover
   function hoverTo(next: boolean) {
     clearTimeout(hoverTimer.current)
     hoverTimer.current = setTimeout(() => setOpen(next), next ? 120 : 200)
@@ -64,7 +65,7 @@ export function CategoryMenu({ categories, className }: CategoryMenuProps) {
       onPointerLeave={(event) =>
         event.pointerType === "mouse" && hoverTo(false)
       }
-      // خروج التركيز من الزر واللوحة (بزر Tab مثلاً) يغلق اللوحة
+      // Focus leaving the button and the panel (with the Tab key, for example) closes the panel
       onBlur={(event) => {
         const next = event.relatedTarget
         if (next instanceof Node && rootRef.current?.contains(next)) return
@@ -92,7 +93,7 @@ export function CategoryMenu({ categories, className }: CategoryMenuProps) {
       <div
         id={panelId}
         hidden={!open}
-        // اللوحة تمتد بعرض الرأس كله (الرأس هو الحاوية النسبية)، بنص داكن مهما كان لون الرأس
+        // The panel spans the full width of the desktop link row, whose <nav> is the relative container
         className="absolute inset-x-0 top-full z-50 border-b bg-popover text-popover-foreground shadow-lg"
       >
         <div className="page-container py-6">

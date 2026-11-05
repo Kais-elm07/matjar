@@ -13,7 +13,7 @@ const THUMBS = [
 ]
 
 interface SliderProps extends SliderPrimitive.Root.Props<SliderRange> {
-  /** اسم كل مقبض لقارئات الشاشة، مثل "أقل سعر" و"أعلى سعر" */
+  /** Each thumb's screen reader name, such as "أقل سعر" (Min price) and "أعلى سعر" (Max price) */
   getThumbLabel?: (index: number) => string
 }
 

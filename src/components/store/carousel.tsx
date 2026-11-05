@@ -8,21 +8,21 @@ import { scrollBehavior } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
 interface CarouselProps {
-  /** اسم الصف لقارئات الشاشة، مثل "الأكثر مبيعاً" */
+  /** The row's name for screen readers, such as "الأكثر مبيعاً" (Best sellers) */
   label: string
   children: React.ReactNode
-  /** مكان زرّي التمرير: في رأس القسم بجانب العنوان، أو مخفيان */
+  /** Where the two scroll buttons go: in the section header beside the title, or hidden */
   controls?: "header" | "none"
-  /** العنوان والروابط التي تظهر في رأس القسم */
+  /** The title and links shown in the section header */
   header?: React.ReactNode
   className?: string
   listClassName?: string
 }
 
 /**
- * صف يُسحب أفقياً باللمس، مع زرّي تمرير دائريين على الحاسوب.
- * العناصر تُمرَّر كعناصر <li>، وعرض كل عنصر يحدده من يستخدم الصف.
- * يعمل بـ CSS (scroll-snap) دون مكتبة شرائح، فلا يثقل الصفحة.
+ * A row that swipes horizontally by touch, with two round scroll buttons on desktop.
+ * Items are passed as <li> elements, and whoever uses the row sets each item's width.
+ * It works with CSS (scroll-snap) and no slider library, so it doesn't weigh down the page.
  */
 export function Carousel({
   label,
@@ -38,7 +38,7 @@ export function Carousel({
   const updateEdges = useCallback(() => {
     const list = listRef.current
     if (!list) return
-    // في الاتجاه العربي تبدأ قيمة التمرير من الصفر وتصبح سالبة نحو النهاية
+    // In the Arabic (RTL) direction the scroll value starts at zero and turns negative toward the end
     const scrolled = Math.abs(list.scrollLeft)
     const max = list.scrollWidth - list.clientWidth
     setEdges({ atStart: scrolled <= 4, atEnd: scrolled >= max - 4 })

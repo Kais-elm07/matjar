@@ -16,27 +16,27 @@ interface StoreShellProps {
 }
 
 /**
- * هيكل كل صفحات المتجر: شريط الإعلان والرأس والتذييل، وشريط الجوال السفلي،
- * وزر واتساب ونافذة السلة، واستعادة السلة والمفضلة من المتصفح.
- * يستخدمه تخطيط المتجر وصفحة 404، فتعمل السلة والعدّادات في كل الصفحات.
+ * The shell of every store page: the announcement bar, header and footer, the mobile bottom bar,
+ * the WhatsApp button and the cart panel, and restoring the cart and wishlist from the browser.
+ * Used by the store layout and the 404 page, so the cart and counters work on every page.
  */
 export function StoreShell({ children, mainClassName }: StoreShellProps) {
   return (
     <>
-      {/* أول ما يصله زر Tab: يتخطى الإعلان والرأس إلى المحتوى */}
+      {/* The first thing the Tab key reaches: skips the announcement and header to the content */}
       <a
         href="#main-content"
         className="sr-only rounded-lg bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:start-4 focus:top-3 focus:z-50"
       >
         انتقل إلى المحتوى
       </a>
-      {/* خارج الرأس الثابت، فيختفي عند التمرير */}
+      {/* Outside the sticky header, so it disappears on scroll */}
       <AnnouncementBar />
       <SiteHeader />
       <main id="main-content" className={cn("flex-1", mainClassName)}>
         {children}
       </main>
-      {/* مساحة لشريط الجوال السفلي الثابت حتى لا يغطي التذييل */}
+      {/* Room for the fixed mobile bottom bar, so it doesn't cover the footer */}
       <div className="pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
         <SiteFooter />
       </div>
@@ -44,7 +44,7 @@ export function StoreShell({ children, mainClassName }: StoreShellProps) {
       <WhatsAppButton />
       <LazyCartSheet />
       <StoreRestorer />
-      {/* يبلغ صفحات القوائم بتغيّر الرابط (الفلاتر والترتيب) */}
+      {/* Tells listing pages when the URL changes (filters and sorting) */}
       <Suspense fallback={null}>
         <SearchParamsListener />
       </Suspense>

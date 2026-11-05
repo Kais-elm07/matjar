@@ -20,7 +20,7 @@ import {
   shareImages,
 } from "@/lib/seo"
 
-// كل صفحات المنتجات تُجهَّز وقت البناء، وأي رابط آخر يعرض صفحة 404
+// Every product page is prepared at build time, and any other URL shows the 404 page
 export const dynamicParams = false
 
 export function generateStaticParams() {

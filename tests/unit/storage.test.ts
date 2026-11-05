@@ -5,8 +5,8 @@ import { resetStorageProbe, safeStorage } from "@/lib/store/storage"
 import { useWishlistStore } from "@/lib/store/wishlist"
 
 /**
- * حفظ السلة والمفضلة في المتصفح: محفوظ تالف أو تخزين ممنوع لا يجب أن يعطّل الموقع،
- * وسلة قديمة لا تُطبَّق عليها بيانات متغير تغيّرت خياراته.
+ * Saving the cart and wishlist in the browser: a corrupt save or blocked storage must not break the site,
+ * and an old cart must not get the data of a variant whose options have changed.
  */
 
 const shirt: CartLine = {
@@ -35,7 +35,7 @@ afterEach(() => {
 })
 
 describe("safeStorage", () => {
-  it("يحفظ ويقرأ القيمة كما هي", () => {
+  it("saves and reads the value as it is", () => {
     const storage = safeStorage()
     storage.setItem("test", { state: { lines: [shirt] }, version: 1 })
     expect(storage.getItem("test")).toEqual({
@@ -44,7 +44,7 @@ describe("safeStorage", () => {
     })
   })
 
-  it("يحذف المحفوظ التالف بدل أن يرمي خطأ", () => {
+  it("removes a corrupt save instead of throwing", () => {
     localStorage.setItem("test", "{not json")
     expect(safeStorage().getItem("test")).toBeNull()
     expect(localStorage.getItem("test")).toBeNull()
@@ -56,7 +56,7 @@ describe("safeStorage", () => {
     expect(localStorage.getItem("test")).toBeNull()
   })
 
-  it("يعمل من الذاكرة حين يمنع المتصفح التخزين", () => {
+  it("works from memory when the browser blocks storage", () => {
     vi.spyOn(localStorage, "setItem").mockImplementation(() => {
       throw new DOMException("blocked", "SecurityError")
     })
@@ -69,8 +69,8 @@ describe("safeStorage", () => {
   })
 })
 
-describe("استعادة السلة والمفضلة", () => {
-  it("تستعيد الأسطر السليمة وتتجاهل التالفة", async () => {
+describe("restoring the cart and wishlist", () => {
+  it("restores the valid lines and ignores the corrupt ones", async () => {
     localStorage.setItem(
       "matjar-cart",
       JSON.stringify({
@@ -90,14 +90,14 @@ describe("استعادة السلة والمفضلة", () => {
     expect(cart().lines).toEqual([shirt])
   })
 
-  it("تكتمل الاستعادة بسلة فارغة حين يكون المحفوظ تالفاً", async () => {
+  it("finishes restoring with an empty cart when the save is corrupt", async () => {
     localStorage.setItem("matjar-cart", "تالف")
     await useCartStore.persist.rehydrate()
     expect(useCartStore.persist.hasHydrated()).toBe(true)
     expect(cart().lines).toEqual([])
   })
 
-  it("تقبل من المفضلة الروابط النصية فقط دون تكرار", async () => {
+  it("accepts only string slugs in the wishlist, without duplicates", async () => {
     localStorage.setItem(
       "matjar-wishlist",
       JSON.stringify({
@@ -110,8 +110,8 @@ describe("استعادة السلة والمفضلة", () => {
   })
 })
 
-describe("حماية السلة من القيم الخاطئة", () => {
-  it("تتجاهل الإضافة بكمية غير صحيحة وتعديل الكمية بقيمة غير رقمية", () => {
+describe("protecting the cart from invalid values", () => {
+  it("ignores adding an invalid quantity and setting the quantity to a non-numeric value", () => {
     expect(cart().add(shirt, 0)).toBe(0)
     expect(cart().add(shirt, -2)).toBe(0)
     expect(cart().add(shirt, 1.5)).toBe(0)
@@ -123,7 +123,7 @@ describe("حماية السلة من القيم الخاطئة", () => {
   })
 })
 
-describe("مطابقة السلة بعد تعديل المنتجات", () => {
+describe("syncing the cart after products change", () => {
   const entry = {
     price: 12900,
     compareAtPrice: null,
@@ -131,7 +131,7 @@ describe("مطابقة السلة بعد تعديل المنتجات", () => {
     options: "اللون=أبيض|المقاس=M",
   }
 
-  it("تحذف سطراً صار رمزه يدل على خيارات أخرى", () => {
+  it("removes a line whose SKU now points to other options", () => {
     cart().add(shirt, 1)
     const notices = cart().sync({
       [shirt.sku]: { ...entry, options: "اللون=أزرق|المقاس=S" },
@@ -142,7 +142,7 @@ describe("مطابقة السلة بعد تعديل المنتجات", () => {
     expect(cart().lines).toEqual([])
   })
 
-  it("لا تعيد كتابة السلة إن لم يتغير شيء", () => {
+  it("does not rewrite the cart if nothing has changed", () => {
     cart().add(shirt, 1)
     const before = cart().lines
     expect(cart().sync({ [shirt.sku]: entry })).toEqual([])

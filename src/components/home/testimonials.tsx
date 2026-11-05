@@ -10,7 +10,7 @@ interface TestimonialsProps {
   testimonials: TestimonialInput[]
 }
 
-/** آراء العملاء: تظهر فقط عند وجود آراء حقيقية في src/data/testimonials.ts. */
+/** Customer reviews: shown only when there are real reviews in src/data/testimonials.ts. */
 export function Testimonials({ testimonials }: TestimonialsProps) {
   if (testimonials.length === 0) return null
   return (

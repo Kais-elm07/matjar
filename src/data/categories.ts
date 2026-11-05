@@ -1,10 +1,10 @@
 import type { CategoryInput } from "@/lib/catalog/types"
 
 /**
- * فئات المتجر. ترتيبها هنا هو ترتيب ظهورها في الموقع.
- * الفئة الفرعية تذكر رابط فئتها الأم في parent.
+ * The store's categories. Their order here is the order they appear on the site.
+ * A subcategory gives its parent category's slug in parent.
  *
- * البيانات الحالية تجريبية: استبدلها بفئات متجرك.
+ * The current data is demo data: replace it with your store's categories.
  */
 export const categories: CategoryInput[] = [
   {

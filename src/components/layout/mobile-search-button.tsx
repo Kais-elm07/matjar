@@ -11,7 +11,7 @@ interface MobileSearchButtonProps {
   className?: string
 }
 
-/** زر البحث في رأس الجوال: يفتح حقل البحث في سطر تحت الرأس ويغلقه. */
+/** The search button in the mobile header: opens and closes the search field in a row under the header. */
 export function MobileSearchButton({ className }: MobileSearchButtonProps) {
   const open = useUiStore((state) => state.searchOpen)
   const setOpen = useUiStore((state) => state.setSearchOpen)

@@ -48,13 +48,13 @@ import { useIdle } from "@/lib/use-idle"
 import { useMediaQuery } from "@/lib/use-media-query"
 import { cn } from "@/lib/utils"
 
-// لوحة الفلاتر تُرسم في الشريط الجانبي على الحاسوب فقط، وعلى الجوال داخل نافذة "تصفية"،
-// فلا يُحمَّل كودها على الجوال إلا بعد ظهور الصفحة
+// The filter panel renders in the sidebar on desktop only, and on mobile inside the
+// "تصفية" (Filter) sheet, so on mobile its code loads only after the page appears
 const loadFilterPanel = () =>
   import("@/components/listing/filter-panel").then((mod) => mod.FilterPanel)
 const FilterPanel = dynamic(loadFilterPanel, { ssr: false })
 
-// نافذة التصفية للجوال وحده: يُحمَّل كودها بعد ظهور الصفحة، أو عند أول ضغطة على "تصفية"
+// The mobile-only filter sheet: its code loads after the page appears, or on the first tap on "تصفية"
 const FilterSheet = dynamic(
   () =>
     import("@/components/listing/filter-sheet").then((mod) => mod.FilterSheet),
@@ -62,31 +62,31 @@ const FilterSheet = dynamic(
 )
 
 type ListingViewProps = {
-  /** تمرير الفئات يُظهر فلتر الفئات (صفحتا كل المنتجات والبحث) */
+  /** Passing categories shows the category filter (the all-products and search pages) */
   categories?: CategoryOption[]
 } & (
   | { products: ProductCardData[]; search?: false }
-  /** وضع البحث: يطبّق كلمة البحث q ويرتب النتائج حسب الصلة، فيحتاج نصوص البحث */
+  /** Search mode: applies the search term `q` and sorts by relevance, so it needs the search texts */
   | { products: SearchCardData[]; search: true }
 )
 
 /**
- * قائمة منتجات بفلاتر وترتيب وترقيم، كلها تعمل في المتصفح فوراً.
- * حالة الفلاتر محفوظة في الرابط، فيمكن مشاركته أو الرجوع إليه.
+ * A product listing with filters, sorting and pagination, all working instantly in the browser.
+ * The filter state is kept in the URL, so it can be shared or returned to.
  */
 export function ListingView(props: ListingViewProps) {
   const { categories } = props
   const search = props.search === true
   const searchString = useListingSearch()
   const rawPathname = usePathname()
-  // الشرطة المائلة في النهاية كما في الموقع المنشور، حتى تتطابق الروابط وقت البناء وفي المتصفح
+  // A trailing slash, as on the published site, so links match at build time and in the browser
   const pathname = rawPathname.endsWith("/") ? rawPathname : `${rawPathname}/`
   const sortId = useId()
   const [filtersOpen, setFiltersOpen] = useState(false)
   const idle = useIdle()
   const isDesktop = useMediaQuery("(min-width: 64rem)")
 
-  // تجهيز لوحة الفلاتر مسبقاً حتى تظهر فوراً عند فتح نافذة التصفية
+  // Preload the filter panel so it appears instantly when the filter sheet opens
   useEffect(() => {
     if (idle) void loadFilterPanel()
   }, [idle])
@@ -105,7 +105,7 @@ export function ListingView(props: ListingViewProps) {
     [props.search, props.products, query]
   )
   const scopeFacets = useMemo(() => computeFacets(scope), [scope])
-  // قيم الفلاتر داخل الفئة المختارة، وبدونها تكفي قيم النطاق كله
+  // Filter values within the selected category; without one, the whole scope's values are enough
   const facets = useMemo(() => {
     const category = params.category
     if (!category) return scopeFacets
@@ -125,7 +125,7 @@ export function ListingView(props: ListingViewProps) {
 
   const activeCount = countActiveFilters(params)
 
-  /** تحديث الرابط دون إعادة تحميل الصفحة. */
+  /** Updates the URL without reloading the page. */
   const navigate = useCallback(
     (changes: Partial<ListingParams>, push = false) => {
       updateListingUrl(listingHref(pathname, params, changes), push)
@@ -140,7 +140,7 @@ export function ListingView(props: ListingViewProps) {
       ?.scrollIntoView({ behavior: scrollBehavior(), block: "start" })
   }
 
-  // لا شيء لفلترته (بحث بلا نتائج أو فئة فارغة): رسالة واضحة فقط دون أدوات التصفية
+  // Nothing to filter (no search results or an empty category): just a clear message, no filter tools
   if (scope.length === 0) {
     return (
       <ListingEmpty

@@ -22,19 +22,19 @@ import {
 } from "@/lib/og/render"
 
 /**
- * تصاميم صور المشاركة: الصورة على اليسار، والنص في عمود على اليمين فوق خلفية داكنة.
- * الألوان والخط من DESIGN.md، والمقاس 1200×630 الذي تعرضه كل منصات التواصل كاملاً.
+ * Share image designs: the image on the left, and the text in a column on the right, over a dark background.
+ * Colors and font come from DESIGN.md, and the size is 1200×630, which every social platform shows in full.
  */
 
 const MARGIN = 48
-/** الصورة مربعة بارتفاع البطاقة ناقص الهامشين */
+/** The image is a square as tall as the card minus the two margins */
 const IMAGE_SIZE = OG_SIZE.height - MARGIN * 2
 const RADIUS = 18
-/** الحافة اليمنى لعمود النص وأعلاه وأسفله */
+/** The right edge, top and bottom of the text column */
 const RIGHT = OG_SIZE.width - 64
 const TOP = 64
 const BOTTOM = OG_SIZE.height - 64
-/** عمود النص يبدأ بعد الصورة بمسافة 56 */
+/** The text column starts after the image, with a gap of 56 */
 const COLUMN_LEFT = MARGIN + IMAGE_SIZE + 56
 const COLUMN = RIGHT - COLUMN_LEFT
 
@@ -46,7 +46,7 @@ const atRight = (layer: Layer, top: number, right = RIGHT): Placed => ({
   top: Math.round(top),
 })
 
-/** الشعار واسم المتجر أعلى العمود */
+/** The logo and the store name at the top of the column */
 async function brandRow(markSize = 56, nameSize = 36) {
   const [mark, name] = await Promise.all([
     logoMark(markSize),
@@ -65,7 +65,7 @@ async function brandRow(markSize = 56, nameSize = 36) {
   }
 }
 
-/** حقائق المتجر في أسفل العمود: الدفع عند الاستلام وحد الشحن المجاني، كل منهما في سطر. */
+/** Store facts at the bottom of the column: cash on delivery and the free shipping threshold, one per line. */
 async function storeFacts() {
   const options = {
     size: 26,
@@ -86,7 +86,7 @@ async function storeFacts() {
     }),
   ])
   const gap = 14
-  // في سطر واحد إن اتسع العمود، وإلا فوق بعضهما
+  // On one line if the column is wide enough, otherwise one above the other
   if (payment.width + gap + shipping.width <= COLUMN) {
     const top = BOTTOM - Math.max(payment.height, shipping.height)
     return {
@@ -107,7 +107,10 @@ async function storeFacts() {
   }
 }
 
-/** الصورة العامة: الرئيسية وكل صفحة ليس لها صورة خاصة. أربعة منتجات من فئات مختلفة. */
+/**
+ * The general image: the home page and every page without its own image.
+ * Four products from different categories.
+ */
 export async function siteCard() {
   const products = getHomeSections()
     .trending.map((group) => group.products[0])
@@ -144,7 +147,7 @@ export async function siteCard() {
   const taglineTop = brand.bottom + 40
 
   return renderCard([
-    // الترتيب من اليمين كما يُقرأ: الأول أعلى اليمين
+    // Ordered from the right, as it is read: the first is at the top right
     ...photos.map((photo, index) => ({
       input: photo.input,
       left: MARGIN + (1 - (index % 2)) * (cell + gap),
@@ -207,7 +210,7 @@ export async function productCard(product: Product) {
   })
   layers.push(atRight(name, top))
 
-  // السعر في أسفل العمود، وبجانبه السعر قبل الخصم أو تنبيه نفاد الكمية
+  // The price at the bottom of the column, next to it the price before discount or the sold-out notice
   const varies = product.maxPrice !== product.price
   const price = await text(
     `${varies ? "من " : ""}${formatPrice(product.price)}`,
@@ -239,7 +242,7 @@ export async function productCard(product: Product) {
       : null
   if (aside) {
     const right = RIGHT - price.width - 24
-    // بجانب السعر إن اتسع العمود، وإلا فوقه
+    // Next to the price if the column is wide enough, otherwise above it
     layers.push(
       right - aside.width >= COLUMN_LEFT
         ? atRight(aside, priceTop + (price.height - aside.height) / 2, right)
@@ -260,7 +263,7 @@ export async function categoryCard(category: Category) {
     brandRow(),
     storeFacts(),
   ])
-  // الفئة الفرعية تُعرَّف باسم الفئة الأم، والرئيسية بكلمة "قسم"
+  // A subcategory is labeled with its parent category's name, and a top-level one with the word "قسم" (section)
   const parent = category.path.at(-2)?.name ?? "قسم"
   const [eyebrow, name, count] = await Promise.all([
     text(parent, {

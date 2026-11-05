@@ -7,8 +7,8 @@ import { useUiStore } from "@/lib/store/ui"
 import { toast } from "@/lib/toast"
 
 /**
- * إضافة للسلة مع تأكيد فوري: تفتح نافذة السلة عند النجاح،
- * وتنبّه الزائر إن لم يتسع المخزون للكمية المطلوبة.
+ * Adds to the cart with instant confirmation: opens the cart panel on success,
+ * and warns the visitor when there is not enough stock for the requested quantity.
  */
 export function useAddToCart() {
   const add = useCartStore((state) => state.add)

@@ -22,4 +22,4 @@ Before any work on the interface, read `DESIGN.md` at the project root and follo
 
 ## Language
 
-The project documentation (`README.md`, `PLAN.md`, `DESIGN.md`, `DEPLOYMENT.md`, `USER-TESTING.md` and the design skill) is written in English. The storefront stays in Arabic: interface text, product and category data, the static pages in `src/content/pages`, and validation and error messages.
+The project documentation (`README.md`, `PLAN.md`, `DESIGN.md`, `DEPLOYMENT.md`, `USER-TESTING.md` and the design skill), code comments, test names, CI step names and commit messages are written in English. A comment that refers to interface text quotes it in Arabic with its English meaning, such as "تصفية" (Filter). The storefront stays in Arabic: interface text, product and category data, the static pages in `src/content/pages`, and the validation and error messages the store owner reads, including the output of the scripts in `scripts/`.

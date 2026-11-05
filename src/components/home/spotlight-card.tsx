@@ -11,7 +11,7 @@ interface SpotlightCardProps {
   banner: CategoryBanner
 }
 
-/** بطاقة فئة مصوّرة: صورة الفئة تملأ البطاقة، والعنوان والوصف والزر فوق تدرج داكن. */
+/** A category photo card: the category photo fills it, with the title, description and button over a dark gradient. */
 export function SpotlightCard({ banner }: SpotlightCardProps) {
   return (
     <Link

@@ -18,14 +18,14 @@ import type { FilterChange } from "./filter-types"
 interface FilterPanelProps {
   params: ListingParams
   facets: Facets
-  /** يظهر فلتر الفئات فقط عند تمرير الفئات (صفحتا كل المنتجات والبحث) */
+  /** The category filter shows only when categories are passed (the all-products and search pages) */
   categories?: CategoryOption[]
   categoryCounts?: Record<string, number>
   onChange: FilterChange
   showHeading?: boolean
 }
 
-/** لوحة الفلاتر: نفسها في الشريط الجانبي على الحاسوب وفي النافذة السفلية على الجوال. */
+/** The filter panel: the same one in the sidebar on desktop and in the bottom sheet on mobile. */
 export function FilterPanel({
   params,
   facets,
@@ -65,7 +65,7 @@ export function FilterPanel({
 
       {range && range.min < range.max && (
         <PriceFilter
-          // إعادة التهيئة فقط عند تغيّر نطاق الأسعار (مثلاً عند تغيير الفئة)
+          // Reset only when the price range changes (for example, when the category changes)
           key={`${range.min}-${range.max}`}
           range={range}
           minPrice={params.minPrice}

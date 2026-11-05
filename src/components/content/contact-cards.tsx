@@ -16,7 +16,7 @@ type ContactItem = {
   label: string
   value: string
   href?: string | null
-  /** للبريد والأرقام: تُعرض من اليسار لليمين */
+  /** For email and numbers: shown left to right */
   ltr?: boolean
   external?: boolean
 }
@@ -26,8 +26,9 @@ interface ContactCardsProps {
 }
 
 /**
- * بطاقات التواصل بلون السطح، لكل وسيلة دائرة بأيقونة برتقالية (DESIGN.md: تواصل معنا).
- * تظهر في الصفحة الرئيسية وصفحة "تواصل معنا". أي حقل فارغ في الإعدادات لا تظهر بطاقته.
+ * Surface-colored contact cards, each channel with a circle holding an orange icon (DESIGN.md: Contact us).
+ * They appear on the home page and the "تواصل معنا" (Contact us) page.
+ * A field left empty in the settings gets no card.
  */
 export function ContactCards({ className }: ContactCardsProps) {
   const { email, phone, whatsapp, hours, address } = siteConfig.contact

@@ -5,7 +5,7 @@ interface CountBadgeProps {
   className?: string
 }
 
-/** عدّاد برتقالي صغير بحلقة بلون السطح فوق الأيقونة (DESIGN.md: counter-badge). */
+/** A small orange counter with a surface-colored ring, over the icon (DESIGN.md: counter-badge). */
 export function CountBadge({ count, className }: CountBadgeProps) {
   if (count <= 0) return null
   return (

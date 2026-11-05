@@ -2,7 +2,9 @@ import { expect, test } from "@playwright/test"
 
 import { getWithRetry, loadProducts, open } from "./helpers"
 
-test("التصفح من الرئيسية إلى قسم ثم إلى منتج", async ({ page }) => {
+test("Browsing from the home page to a category, then to a product", async ({
+  page,
+}) => {
   await open(page, "/")
   await expect(page).toHaveTitle(/متجري/)
   await expect(page.locator("h1")).toContainText("متجري")
@@ -27,7 +29,7 @@ test("التصفح من الرئيسية إلى قسم ثم إلى منتج", as
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(name)
 })
 
-test("الرابط غير الموجود يعرض صفحة 404 بالعربية", async ({ page }) => {
+test("An unknown URL shows a 404 page in Arabic", async ({ page }) => {
   const response = await page.goto("/no-such-page/")
   expect(response?.status()).toBe(404)
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
@@ -37,7 +39,7 @@ test("الرابط غير الموجود يعرض صفحة 404 بالعربية"
   await expect(page).toHaveURL(/\/$/)
 })
 
-test("الأسئلة الشائعة تُفتح بالضغط على السؤال", async ({ page }) => {
+test("FAQ items open when the question is clicked", async ({ page }) => {
   await open(page, "/pages/faq/")
   const question = page.locator("details.faq-item").first()
   await expect(question).not.toHaveAttribute("open")
@@ -45,7 +47,7 @@ test("الأسئلة الشائعة تُفتح بالضغط على السؤال"
   await expect(question).toHaveAttribute("open", "")
 })
 
-test("لكل منتج صورة مشاركة بصيغة JPEG", async ({ page, request }) => {
+test("Every product has a JPEG share image", async ({ page, request }) => {
   const [product] = await loadProducts(request)
   await page.goto(`/product/${product.slug}/`)
   const image = await page

@@ -18,7 +18,7 @@ interface InlineTextProps {
   text: string
 }
 
-/** تنسيق داخل السطر: **نص عريض** و[نص الرابط](/pages/contact). */
+/** Inline formatting: **bold text** and [link text](/pages/contact). */
 export function InlineText({ text }: InlineTextProps) {
   return inlineParts(text).map(({ text: part, offset }) => {
     if (part.startsWith("**") && part.endsWith("**")) {

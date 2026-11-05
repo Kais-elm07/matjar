@@ -1,7 +1,7 @@
 /**
- * مفتاح ثابت لتركيبة خيارات المتغير، مثل "اللون=أزرق|المقاس=M"، لا يتأثر بترتيب الحقول.
- * يقارن بين متغيرين أو بين نسختين من البيانات (السلة المحفوظة والموقع المنشور).
- * في ملف مستقل صغير لأن السلة تحتاجه في كل صفحة، دون جداول الألوان والمقاسات في options.ts.
+ * A stable key for a variant's option combination, such as "اللون=أزرق|المقاس=M" (color=blue|size=M), unaffected by field order.
+ * Compares two variants or two copies of the data (the saved cart and the published site).
+ * In its own small file because the cart needs it on every page, without the color and size tables in options.ts.
  */
 export function optionsKey(options: Record<string, string>) {
   return Object.keys(options)

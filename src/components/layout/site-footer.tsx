@@ -6,8 +6,9 @@ import { buttonVariants } from "@/components/ui/button"
 import { siteConfig } from "@/config/site"
 
 /**
- * التذييل الداكن بعرض الشاشة: الشعار وجملة المتجر وزر "تواصل معنا" في جهة البداية،
- * وأعمدة الروابط في جهة النهاية، ثم سطر الحقوق، وينتهي بشريط برتقالي (DESIGN.md: footer-bar).
+ * The dark full-width footer: the logo, the store statement and the "تواصل معنا" (Contact us)
+ * button on the start side, the link columns on the end side, then the copyright line, and it
+ * ends in an orange bar (DESIGN.md: footer-bar).
  */
 export function SiteFooter() {
   return (

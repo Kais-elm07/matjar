@@ -10,9 +10,9 @@ import { useCartRestored } from "./hydration"
 
 let request: Promise<CartCatalog> | null = null
 
-/** تحميل أسعار ومخزون الموقع المنشور مرة واحدة في كل زيارة. */
+/** Loads the published site's prices and stock once per visit. */
 function loadCartCatalog() {
-  // التحقق من نسخة الموقع في كل مرة، فلا تبقى أسعار قديمة في ذاكرة المتصفح بعد نشر تحديث
+  // Check the site's copy every time, so old prices do not stay in the browser cache after an update is published
   request ??= fetch("/cart-catalog.json", { cache: "no-cache" })
     .then(async (response) => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
@@ -21,15 +21,15 @@ function loadCartCatalog() {
       return catalog
     })
     .catch((error: unknown) => {
-      request = null // السماح بإعادة المحاولة في المرة القادمة
+      request = null // Allow a retry next time
       throw error
     })
   return request
 }
 
 /**
- * يطابق السلة المحفوظة مع بيانات الموقع الحالية بعد استعادتها: يحدّث الأسعار والمخزون،
- * ويحذف ما نفد أو حُذف، ويعيد قائمة بالتغييرات لعرضها للزائر.
+ * Syncs the saved cart with the site's current data after it is restored: updates prices and stock,
+ * removes what sold out or was deleted, and returns a list of the changes to show the visitor.
  */
 export function useCartSync(enabled = true) {
   const restored = useCartRestored()
@@ -44,7 +44,7 @@ export function useCartSync(enabled = true) {
         const changes = useCartStore.getState().sync(catalog)
         if (changes.length > 0) setNotices(changes)
       },
-      () => {} // دون اتصال تبقى السلة كما حُفظت
+      () => {} // Offline, the cart stays as it was saved
     )
     return () => {
       active = false

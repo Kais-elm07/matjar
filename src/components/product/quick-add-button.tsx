@@ -7,7 +7,7 @@ import { useAddToCart } from "@/components/cart/use-add-to-cart"
 import type { ProductCardData } from "@/lib/catalog/types"
 import { cn } from "@/lib/utils"
 
-/** ما يحتاجه الزر فقط، حتى لا تُرسل بيانات البطاقة كاملة مع كل زر في الصفحة. */
+/** Only what the button needs, so the full card data isn't sent with every button on the page. */
 export type QuickAddProduct = Pick<
   ProductCardData,
   | "slug"
@@ -20,8 +20,9 @@ export type QuickAddProduct = Pick<
 >
 
 /**
- * زر دائري برتقالي في ركن البطاقة السفلي من جهة النهاية، محاط بحلقة بلون الخلفية
- * فتبدو البطاقة مقطوعة حوله (DESIGN.md: card-cart-button). حلقة التركيز بيضاء لتظهر فوق البرتقالي.
+ * A round orange button in the card's bottom corner on the end side, ringed in the background
+ * color so the card looks cut out around it (DESIGN.md: card-cart-button). The focus ring is
+ * white so it shows on the orange.
  */
 const CIRCLE =
   "absolute bottom-0 end-0 z-10 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground ring-[6px] ring-background transition-colors outline-none hover:bg-primary/90 focus-visible:ring-foreground [&_svg]:size-5"
@@ -32,8 +33,8 @@ interface QuickAddButtonProps {
 }
 
 /**
- * زر البطاقة الظاهر دائماً: إضافة مباشرة للسلة للمنتج ذي الخيار الواحد،
- * وفتح صفحة المنتج لاختيار المقاس أو اللون للمنتج متعدد الخيارات. المنتج النافد بلا زر.
+ * The card's always-visible button: adds a single-option product straight to the cart, and opens
+ * the product page to pick a size or color for a multi-option one. A sold-out product has no button.
  */
 export function QuickAddButton({ product, className }: QuickAddButtonProps) {
   const addToCart = useAddToCart()

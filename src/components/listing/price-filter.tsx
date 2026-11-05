@@ -29,8 +29,8 @@ export function PriceFilter({
   ]
   const [value, setValue] = useState(fromUrl)
 
-  // مزامنة القيمة عند تغيّر الرابط من خارج الشريط (مسح الفلاتر مثلاً)،
-  // دون إعادة إنشاء الشريط حتى لا يضيع التركيز أثناء استخدام لوحة المفاتيح
+  // Sync the value when the URL changes from outside the slider (for example, clearing filters),
+  // without recreating the slider, so focus isn't lost while using the keyboard
   const urlKey = fromUrl.join("-")
   const [syncedKey, setSyncedKey] = useState(urlKey)
   if (syncedKey !== urlKey) {

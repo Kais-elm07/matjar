@@ -1,12 +1,12 @@
 import type { HomeContentInput } from "@/lib/catalog/types"
 
 /**
- * محتوى الصفحة الرئيسية: الشرائح وبطاقات العروض.
+ * Home page content: the slides and the promo cards.
  *
- * كل بطاقة منتج تشير إلى رابط المنتج فقط، فتؤخذ صورته وسعره ونسبة خصمه من ملف المنتجات،
- * ولا تحتاج تعديلاً عند تغيّر السعر. وبطاقة الفئة تأخذ صورتها من ملف الفئات.
+ * Each product card points only to the product's slug, so its image, price and discount percentage come from the products file,
+ * and it needs no edit when the price changes. A category card takes its image from the categories file.
  *
- * tag: نص الشارة الصغيرة. إن تُرك فارغاً تظهر نسبة الخصم تلقائياً عند وجودها.
+ * tag: the small badge text. If left empty, the discount percentage shows automatically when there is one.
  */
 export const homeContent: HomeContentInput = {
   heroSlides: [

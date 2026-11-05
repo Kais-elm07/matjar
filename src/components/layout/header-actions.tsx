@@ -15,7 +15,7 @@ interface HeaderActionsProps {
   className?: string
 }
 
-/** أيقونتا المفضلة والسلة في الرأس، مع عدّاد برتقالي لا يظهر عند الصفر. */
+/** The wishlist and cart icons in the header, with an orange counter that is hidden at zero. */
 export function HeaderActions({ className }: HeaderActionsProps) {
   const cartCount = useCartCount()
   const wishlistCount = useWishlistCount()

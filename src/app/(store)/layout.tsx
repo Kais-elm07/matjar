@@ -4,7 +4,7 @@ interface StoreLayoutProps {
   children: React.ReactNode
 }
 
-/** تخطيط واجهة المتجر: كل الصفحات داخل هيكل المتجر الموحد. */
+/** The storefront layout: every page sits inside the shared store shell. */
 export default function StoreLayout({ children }: StoreLayoutProps) {
   return <StoreShell>{children}</StoreShell>
 }
