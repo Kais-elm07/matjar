@@ -3,6 +3,8 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
+import { isRecord } from "@/lib/guards"
+
 import { safeStorage } from "./storage"
 
 type WishlistState = {
@@ -12,8 +14,6 @@ type WishlistState = {
   toggle: (slug: string) => boolean
   remove: (slug: string) => void
 }
-
-type PersistedWishlist = Pick<WishlistState, "slugs">
 
 export const useWishlistStore = create<WishlistState>()(
   persist(
@@ -39,14 +39,11 @@ export const useWishlistStore = create<WishlistState>()(
     {
       name: "matjar-wishlist",
       version: 1,
-      storage: safeStorage<PersistedWishlist>(),
+      storage: safeStorage(),
       partialize: (state) => ({ slugs: state.slugs }),
       // المحفوظ يُقبل بعد التحقق من شكله: روابط نصية دون تكرار
       merge: (persisted, current) => {
-        const slugs =
-          typeof persisted === "object" && persisted !== null
-            ? (persisted as { slugs?: unknown }).slugs
-            : undefined
+        const slugs = isRecord(persisted) ? persisted.slugs : undefined
         return {
           ...current,
           slugs: Array.isArray(slugs)

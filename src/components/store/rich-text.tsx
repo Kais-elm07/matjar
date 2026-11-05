@@ -2,10 +2,13 @@ import Link from "next/link"
 
 import { cn } from "@/lib/utils"
 
+/** `line` is where the block or item starts in the source text (from 1), and is its React key. */
+type ListItem = { text: string; line: number }
+
 type Block =
-  | { type: "heading"; level: 2 | 3; text: string }
-  | { type: "paragraph"; text: string }
-  | { type: "list"; ordered: boolean; items: string[] }
+  | { type: "heading"; level: 2 | 3; text: string; line: number }
+  | { type: "paragraph"; text: string; line: number }
+  | { type: "list"; ordered: boolean; items: ListItem[]; line: number }
 
 const ORDERED_ITEM = /^\d+[.)]\s+/
 
@@ -15,50 +18,76 @@ const ORDERED_ITEM = /^\d+[.)]\s+/
  */
 export function parseBlocks(text: string): Block[] {
   const blocks: Block[] = []
-  for (const chunk of text.split(/\n\s*\n/)) {
-    const lines = chunk
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean)
-    let paragraph: string[] = []
-    const flush = () => {
-      if (paragraph.length)
-        blocks.push({ type: "paragraph", text: paragraph.join(" ") })
-      paragraph = []
+  let paragraph: string[] = []
+  let paragraphLine = 0
+  const flush = () => {
+    if (paragraph.length) {
+      blocks.push({
+        type: "paragraph",
+        text: paragraph.join(" "),
+        line: paragraphLine,
+      })
     }
-    for (const line of lines) {
-      const ordered = ORDERED_ITEM.test(line)
-      if (line.startsWith("## ") || line.startsWith("### ")) {
-        flush()
-        const level = line.startsWith("### ") ? 3 : 2
-        blocks.push({ type: "heading", level, text: line.slice(level + 1) })
-      } else if (line.startsWith("- ") || ordered) {
-        flush()
-        const item = ordered ? line.replace(ORDERED_ITEM, "") : line.slice(2)
-        const last = blocks.at(-1)
-        if (last?.type === "list" && last.ordered === ordered) {
-          last.items.push(item)
-        } else {
-          blocks.push({ type: "list", ordered, items: [item] })
-        }
-      } else {
-        paragraph.push(line)
-      }
-    }
-    flush()
+    paragraph = []
   }
+  for (const [position, raw] of text.split("\n").entries()) {
+    const line = position + 1
+    const content = raw.trim()
+    if (!content) {
+      flush()
+      continue
+    }
+    const ordered = ORDERED_ITEM.test(content)
+    if (content.startsWith("## ") || content.startsWith("### ")) {
+      flush()
+      const level = content.startsWith("### ") ? 3 : 2
+      blocks.push({
+        type: "heading",
+        level,
+        text: content.slice(level + 1),
+        line,
+      })
+    } else if (content.startsWith("- ") || ordered) {
+      flush()
+      const item = {
+        text: ordered ? content.replace(ORDERED_ITEM, "") : content.slice(2),
+        line,
+      }
+      const last = blocks.at(-1)
+      if (last?.type === "list" && last.ordered === ordered) {
+        last.items.push(item)
+      } else {
+        blocks.push({ type: "list", ordered, items: [item], line })
+      }
+    } else {
+      if (paragraph.length === 0) paragraphLine = line
+      paragraph.push(content)
+    }
+  }
+  flush()
   return blocks
 }
 
 const INLINE = /(\*\*[^*]+\*\*|\[[^\]]+\]\([^)\s]+\))/g
 const LINK = /^\[([^\]]+)\]\(([^)\s]+)\)$/
 
+/** The text split into plain text, bold and links, each with where it starts in the line. */
+function inlineParts(text: string) {
+  const parts: { text: string; offset: number }[] = []
+  let offset = 0
+  for (const part of text.split(INLINE)) {
+    if (part) parts.push({ text: part, offset })
+    offset += part.length
+  }
+  return parts
+}
+
 /** تنسيق داخل السطر: **نص عريض** و[نص الرابط](/pages/contact). */
 function InlineText({ text }: { text: string }) {
-  return text.split(INLINE).map((part, index) => {
+  return inlineParts(text).map(({ text: part, offset }) => {
     if (part.startsWith("**") && part.endsWith("**")) {
       return (
-        <strong key={index} className="font-bold text-foreground">
+        <strong key={offset} className="font-bold text-foreground">
           {part.slice(2, -2)}
         </strong>
       )
@@ -69,12 +98,12 @@ function InlineText({ text }: { text: string }) {
       const className =
         "rounded-sm font-medium text-primary underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
       return href.startsWith("/") ? (
-        <Link key={index} href={href} className={className}>
+        <Link key={offset} href={href} className={className}>
           {label}
         </Link>
       ) : (
         <a
-          key={index}
+          key={offset}
           href={href}
           target="_blank"
           rel="noopener noreferrer"
@@ -98,12 +127,12 @@ export function RichText({
 }) {
   return (
     <div className={cn("space-y-3 leading-8 text-foreground/90", className)}>
-      {parseBlocks(text).map((block, index) => {
+      {parseBlocks(text).map((block) => {
         if (block.type === "heading") {
           const Heading = block.level === 2 ? "h2" : "h3"
           return (
             <Heading
-              key={index}
+              key={block.line}
               className={cn(
                 "font-bold text-foreground",
                 block.level === 2 ? "pt-4 text-xl" : "pt-2 text-lg"
@@ -117,22 +146,22 @@ export function RichText({
           const List = block.ordered ? "ol" : "ul"
           return (
             <List
-              key={index}
+              key={block.line}
               className={cn(
                 "space-y-1 ps-5 marker:text-primary",
                 block.ordered ? "list-decimal marker:font-bold" : "list-disc"
               )}
             >
-              {block.items.map((item, itemIndex) => (
-                <li key={itemIndex}>
-                  <InlineText text={item} />
+              {block.items.map((item) => (
+                <li key={item.line}>
+                  <InlineText text={item.text} />
                 </li>
               ))}
             </List>
           )
         }
         return (
-          <p key={index}>
+          <p key={block.line}>
             <InlineText text={block.text} />
           </p>
         )

@@ -3,6 +3,9 @@ import { StarIcon } from "lucide-react"
 import type { TestimonialInput } from "@/lib/catalog/types"
 import { cn } from "@/lib/utils"
 
+/** The five stars of a rating, each named by its value. */
+const STARS = [1, 2, 3, 4, 5]
+
 /** آراء العملاء: تظهر فقط عند وجود آراء حقيقية في src/data/testimonials.ts. */
 export function Testimonials({
   testimonials,
@@ -19,9 +22,9 @@ export function Testimonials({
         آراء عملائنا
       </h2>
       <ul className="grid gap-4 md:grid-cols-3">
-        {testimonials.map((testimonial, index) => (
+        {testimonials.map((testimonial) => (
           <li
-            key={`${testimonial.name}-${index}`}
+            key={`${testimonial.name}-${testimonial.title}`}
             className="space-y-3 rounded-xl border bg-card p-6"
           >
             <p
@@ -29,13 +32,13 @@ export function Testimonials({
               aria-label={`التقييم ${testimonial.rating} من 5`}
               className="flex gap-0.5 text-primary"
             >
-              {Array.from({ length: 5 }, (_, star) => (
+              {STARS.map((star) => (
                 <StarIcon
                   key={star}
                   aria-hidden
                   className={cn(
                     "size-4",
-                    star < testimonial.rating ? "fill-current" : "text-border"
+                    star <= testimonial.rating ? "fill-current" : "text-border"
                   )}
                 />
               ))}

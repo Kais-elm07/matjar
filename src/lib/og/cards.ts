@@ -15,6 +15,7 @@ import {
   OG_COLORS,
   OG_SIZE,
   pill,
+  type PillOptions,
   renderCard,
   roundedImage,
   text,
@@ -66,7 +67,12 @@ async function brandRow(markSize = 56, nameSize = 36) {
 
 /** حقائق المتجر في أسفل العمود: الدفع عند الاستلام وحد الشحن المجاني، كل منهما في سطر. */
 async function storeFacts() {
-  const options = { size: 26, weight: 500 as const, paddingX: 20, paddingY: 7 }
+  const options = {
+    size: 26,
+    weight: 500,
+    paddingX: 20,
+    paddingY: 7,
+  } satisfies Partial<PillOptions>
   const [payment, shipping] = await Promise.all([
     pill("الدفع عند الاستلام", {
       ...options,

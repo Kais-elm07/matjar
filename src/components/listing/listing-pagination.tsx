@@ -5,18 +5,25 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
+/** A page link, or a gap ("…") after the page `after`. */
+type PageItem = { type: "page"; page: number } | { type: "gap"; after: number }
+
 /** أرقام الصفحات المعروضة: الأولى والأخيرة وما حول الحالية، مع فواصل. */
 function visiblePages(page: number, pageCount: number) {
   const pages = new Set([1, pageCount, page - 1, page, page + 1])
   const sorted = [...pages]
     .filter((p) => p >= 1 && p <= pageCount)
     .sort((a, b) => a - b)
-  const result: (number | "gap")[] = []
-  sorted.forEach((p, index) => {
-    if (index > 0 && p - sorted[index - 1] > 1) result.push("gap")
-    result.push(p)
-  })
-  return result
+  const items: PageItem[] = []
+  let previous = 0
+  for (const current of sorted) {
+    if (previous > 0 && current - previous > 1) {
+      items.push({ type: "gap", after: previous })
+    }
+    items.push({ type: "page", page: current })
+    previous = current
+  }
+  return items
 }
 
 /**
@@ -66,31 +73,31 @@ export function ListingPagination({
             </a>
           </li>
         )}
-        {visiblePages(page, pageCount).map((item, index) =>
-          item === "gap" ? (
+        {visiblePages(page, pageCount).map((item) =>
+          item.type === "gap" ? (
             <li
-              key={`gap-${index}`}
+              key={`gap-after-${item.after}`}
               aria-hidden
               className="px-1 text-muted-foreground"
             >
               …
             </li>
           ) : (
-            <li key={item}>
+            <li key={item.page}>
               <a
-                href={hrefFor(item)}
-                onClick={handle(item)}
-                aria-current={item === page ? "page" : undefined}
-                aria-label={`الصفحة ${item}`}
+                href={hrefFor(item.page)}
+                onClick={handle(item.page)}
+                aria-current={item.page === page ? "page" : undefined}
+                aria-label={`الصفحة ${item.page}`}
                 className={cn(
                   buttonVariants({
-                    variant: item === page ? "default" : "ghost",
+                    variant: item.page === page ? "default" : "ghost",
                     size: "icon-lg",
                   }),
                   "tabular-nums"
                 )}
               >
-                {item}
+                {item.page}
               </a>
             </li>
           )

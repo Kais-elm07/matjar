@@ -13,11 +13,38 @@ export type AnalyticsConfig =
   | { provider: "plausible"; domain: string; src?: string }
   | { provider: "umami"; websiteId: string; src?: string }
 
+/** The bar above every page. `href` makes the whole bar a link. */
+export type Announcement = { text: string; href?: string }
+
+export interface SiteConfig {
+  name: string
+  tagline: string
+  statement: string
+  description: string
+  url: string
+  currency: { code: string; symbol: string; fractionDigits: number }
+  contact: {
+    email: string
+    phone: string
+    whatsapp: string
+    hours: string
+    address: string
+  }
+  announcement: Announcement | null
+  analytics: AnalyticsConfig | null
+  utcOffset: string
+  productsPerPage: number
+  lowStockThreshold: number
+  shopNav: NavLink[]
+  helpNav: NavLink[]
+  footerNav: FooterNavGroup[]
+}
+
 /**
  * إعدادات المتجر العامة.
  * الاسم والوصف مؤقتان حتى اعتماد الهوية: غيّرهما هنا فيتغيران في كل الموقع.
  */
-export const siteConfig = {
+export const siteConfig: SiteConfig = {
   name: "متجري",
   /** عبارة قصيرة بعد الاسم في عنوان الصفحة الرئيسية، وفي صورة المشاركة العامة */
   tagline: "تسوّق أونلاين بسهولة",
@@ -64,7 +91,7 @@ export const siteConfig = {
   announcement: {
     text: "شحن مجاني للطلبات من {freeShipping}، والدفع عند الاستلام",
     href: "/pages/shipping",
-  } as { text: string; href?: string } | null,
+  },
 
   /**
    * إحصاءات الزيارات (اختيارية)، أو null دون إحصاءات.
@@ -72,7 +99,7 @@ export const siteConfig = {
    *   { provider: "plausible", domain: "example.com" }
    *   { provider: "umami", websiteId: "رقم الموقع من لوحة Umami" }
    */
-  analytics: null as AnalyticsConfig | null,
+  analytics: null,
 
   /**
    * فرق توقيت المتجر عن UTC: تنتهي العروض في آخر ثانية من يومها بهذا التوقيت.
@@ -91,14 +118,14 @@ export const siteConfig = {
     { title: "كل المنتجات", href: "/products" },
     { title: "وصل حديثاً", href: "/products?sort=newest" },
     { title: "العروض", href: "/products?sale=1" },
-  ] satisfies NavLink[],
+  ],
 
   /** روابط المساعدة في قائمة الجوال */
   helpNav: [
     { title: "الشحن والتوصيل", href: "/pages/shipping" },
     { title: "الأسئلة الشائعة", href: "/pages/faq" },
     { title: "تواصل معنا", href: "/pages/contact" },
-  ] satisfies NavLink[],
+  ],
 
   footerNav: [
     {
@@ -126,5 +153,5 @@ export const siteConfig = {
         { title: "الشروط والأحكام", href: "/pages/terms" },
       ],
     },
-  ] satisfies FooterNavGroup[],
+  ],
 }

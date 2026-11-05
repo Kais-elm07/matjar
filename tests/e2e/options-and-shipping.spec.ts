@@ -63,7 +63,8 @@ test("كوبون خاطئ يُرفض، والتوصيل السريع يضيف ر
     await page.getByRole("button", { name: /ملخص الطلب/ }).click()
   }
   const codes = new Set(coupons.map((coupon) => coupon.code))
-  const wrong = ["NOPE", "WRONG1", "XYZ123"].find((code) => !codes.has(code))!
+  const wrong = ["NOPE", "WRONG1", "XYZ123"].find((code) => !codes.has(code))
+  if (!wrong) throw new Error("Every test coupon code exists in the data")
   await page.getByLabel("كوبون الخصم", { exact: true }).fill(wrong)
   await page.getByRole("button", { name: "تطبيق", exact: true }).click()
   await expect(page.getByText("رمز الكوبون غير صحيح")).toBeVisible()

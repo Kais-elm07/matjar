@@ -12,6 +12,7 @@ import { PIECE_FORMS, pluralize } from "@/lib/arabic-plural"
 import { formatPrice } from "@/lib/catalog/money"
 import { cartSubtotal, useCartCount, useCartStore } from "@/lib/store/cart"
 import { useCartSync } from "@/lib/store/cart-sync"
+import { placeholderIds } from "@/lib/placeholders"
 import { useCartRestored } from "@/lib/store/hydration"
 import { cn } from "@/lib/utils"
 
@@ -118,8 +119,8 @@ function CartSkeleton() {
       aria-hidden
     >
       <div className="space-y-4 rounded-xl border p-4">
-        {Array.from({ length: 2 }, (_, index) => (
-          <div key={index} className="flex gap-3">
+        {placeholderIds("line", 2).map((id) => (
+          <div key={id} className="flex gap-3">
             <Skeleton className="size-20 rounded-lg" />
             <div className="flex-1 space-y-2">
               <Skeleton className="h-4 w-2/3" />

@@ -6,6 +6,7 @@ import { persist } from "zustand/middleware"
 import type { VariantOptions } from "@/lib/catalog/options"
 import type { CardImage, CartCatalog } from "@/lib/catalog/types"
 import { optionsKey } from "@/lib/catalog/variant-key"
+import { isRecord } from "@/lib/guards"
 
 import { safeStorage } from "./storage"
 
@@ -28,6 +29,8 @@ export type CartLine = {
 
 /** ما تغيّر في السلة بعد مطابقتها مع بيانات الموقع المنشورة. */
 export type CartNotice = {
+  /** The line's SKU: with `kind`, it tells notices apart */
+  sku: string
   name: string
   kind: "removed" | "sold-out" | "reduced" | "price-up" | "price-down"
 }
@@ -43,21 +46,25 @@ type CartState = {
   sync: (catalog: CartCatalog) => CartNotice[]
 }
 
-type PersistedCart = Pick<CartState, "lines">
-
 /** أقصى كمية مسموحة لسطر حسب مخزونه. */
 export function lineLimit(stock: number) {
   return Math.max(0, Math.min(stock, MAX_LINE_QUANTITY))
 }
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value)
-
 /** سطر محفوظ سليم الشكل. ما عداه يُتجاهل حتى لا تتعطل السلة ببيانات قديمة أو معدّلة يدوياً. */
 function isCartLine(value: unknown): value is CartLine {
   if (!isRecord(value)) return false
-  const { sku, slug, name, image, options, price, compareAtPrice, stock } =
-    value
+  const {
+    sku,
+    slug,
+    name,
+    image,
+    options,
+    price,
+    compareAtPrice,
+    stock,
+    quantity,
+  } = value
   return (
     typeof sku === "string" &&
     typeof slug === "string" &&
@@ -71,8 +78,9 @@ function isCartLine(value: unknown): value is CartLine {
     Number.isFinite(price) &&
     (compareAtPrice === null || Number.isFinite(compareAtPrice)) &&
     Number.isInteger(stock) &&
-    Number.isInteger(value.quantity) &&
-    (value.quantity as number) > 0
+    typeof quantity === "number" &&
+    Number.isInteger(quantity) &&
+    quantity > 0
   )
 }
 
@@ -134,21 +142,22 @@ export const useCartStore = create<CartState>()(
         for (const line of current) {
           const variant = catalog[line.sku]
           // رمز حُذف، أو صار يدل على خيارات أخرى بعد تعديل المنتج
+          const notice = { sku: line.sku, name: line.name }
           if (!variant || variant.options !== optionsKey(line.options)) {
-            notices.push({ name: line.name, kind: "removed" })
+            notices.push({ ...notice, kind: "removed" })
             continue
           }
           if (variant.stock === 0) {
-            notices.push({ name: line.name, kind: "sold-out" })
+            notices.push({ ...notice, kind: "sold-out" })
             continue
           }
           const quantity = Math.min(line.quantity, lineLimit(variant.stock))
           if (quantity < line.quantity) {
-            notices.push({ name: line.name, kind: "reduced" })
+            notices.push({ ...notice, kind: "reduced" })
           }
           if (variant.price !== line.price) {
             notices.push({
-              name: line.name,
+              ...notice,
               kind: variant.price > line.price ? "price-up" : "price-down",
             })
           }
@@ -181,7 +190,7 @@ export const useCartStore = create<CartState>()(
       name: "matjar-cart",
       // ارفع الرقم عند تغيير شكل CartLine، وأضف migrate لتحويل السلال المحفوظة
       version: 1,
-      storage: safeStorage<PersistedCart>(),
+      storage: safeStorage(),
       partialize: (state) => ({ lines: state.lines }),
       // المحفوظ يُقبل بعد التحقق من شكله، وأي سطر تالف يُتجاهل
       merge: (persisted, current) => {

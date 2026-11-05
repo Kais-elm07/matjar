@@ -3,30 +3,32 @@
 import { Slider as SliderPrimitive } from "@base-ui/react/slider"
 import { cn } from "@/lib/utils"
 
+/** The low and high ends of the range. */
+export type SliderRange = readonly [number, number]
+
+/** The range's two thumbs: their React keys, and their positions in the value. */
+const THUMBS = [
+  { id: "low", index: 0 },
+  { id: "high", index: 1 },
+]
+
+interface SliderProps extends SliderPrimitive.Root.Props<SliderRange> {
+  /** اسم كل مقبض لقارئات الشاشة، مثل "أقل سعر" و"أعلى سعر" */
+  getThumbLabel?: (index: number) => string
+}
+
+/** A slider with two thumbs, for choosing a range such as a price range. */
 function Slider({
   className,
-  defaultValue,
-  value,
   min = 0,
   max = 100,
   getThumbLabel,
   ...props
-}: SliderPrimitive.Root.Props & {
-  /** اسم كل مقبض لقارئات الشاشة، مثل "أقل سعر" و"أعلى سعر" */
-  getThumbLabel?: (index: number) => string
-}) {
-  const _values = Array.isArray(value)
-    ? value
-    : Array.isArray(defaultValue)
-      ? defaultValue
-      : [min, max]
-
+}: SliderProps) {
   return (
     <SliderPrimitive.Root
       className={cn("data-horizontal:w-full data-vertical:h-full", className)}
       data-slot="slider"
-      defaultValue={defaultValue}
-      value={value}
       min={min}
       max={max}
       thumbAlignment="edge"
@@ -42,11 +44,11 @@ function Slider({
             className="bg-primary select-none data-horizontal:h-full data-vertical:w-full"
           />
         </SliderPrimitive.Track>
-        {Array.from({ length: _values.length }, (_, index) => (
+        {THUMBS.map((thumb) => (
           <SliderPrimitive.Thumb
             data-slot="slider-thumb"
-            key={index}
-            index={index}
+            key={thumb.id}
+            index={thumb.index}
             getAriaLabel={getThumbLabel}
             className="relative block size-5 shrink-0 rounded-full border-2 border-primary bg-foreground shadow-sm ring-ring/50 transition-[color,box-shadow] select-none after:absolute after:-inset-2 hover:ring-3 focus-visible:ring-3 focus-visible:outline-hidden active:ring-3 disabled:pointer-events-none disabled:opacity-50"
           />

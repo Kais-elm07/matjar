@@ -3,7 +3,7 @@
 import { useState } from "react"
 
 import { Checkbox } from "@/components/ui/checkbox"
-import { Slider } from "@/components/ui/slider"
+import { Slider, type SliderRange } from "@/components/ui/slider"
 import type { Facets, OptionFacet } from "@/lib/catalog/filter"
 import {
   CLEARED_FILTERS,
@@ -221,8 +221,11 @@ function PriceFilter({
 }) {
   const clamp = (value: number) =>
     Math.min(range.max, Math.max(range.min, value))
-  const fromUrl = [clamp(minPrice ?? range.min), clamp(maxPrice ?? range.max)]
-  const [value, setValue] = useState<number[]>(fromUrl)
+  const fromUrl: SliderRange = [
+    clamp(minPrice ?? range.min),
+    clamp(maxPrice ?? range.max),
+  ]
+  const [value, setValue] = useState(fromUrl)
 
   // مزامنة القيمة عند تغيّر الرابط من خارج الشريط (مسح الفلاتر مثلاً)،
   // دون إعادة إنشاء الشريط حتى لا يضيع التركيز أثناء استخدام لوحة المفاتيح
@@ -243,9 +246,8 @@ function PriceFilter({
           max={range.max}
           step={step}
           value={value}
-          onValueChange={(next) => setValue(next as number[])}
-          onValueCommitted={(next) => {
-            const [low, high] = next as number[]
+          onValueChange={(next) => setValue(next)}
+          onValueCommitted={([low, high]) => {
             onChange({
               minPrice: low > range.min ? low : null,
               maxPrice: high < range.max ? high : null,

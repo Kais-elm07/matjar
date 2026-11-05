@@ -20,8 +20,7 @@ const rules = new Intl.PluralRules("ar")
  * pluralize(5, PRODUCT_FORMS) يعطي "5 منتجات"، و pluralize(12, ...) يعطي "12 منتجاً".
  */
 export function pluralize(count: number, forms: PluralForms) {
-  const form = forms[rules.select(count) as keyof PluralForms] ?? forms.other
-  return form.replace("{n}", String(count))
+  return forms[rules.select(count)].replace("{n}", String(count))
 }
 
 export const PRODUCT_FORMS: PluralForms = {

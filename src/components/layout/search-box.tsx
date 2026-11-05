@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { searchCards } from "@/lib/catalog/filter"
 import { formatPrice } from "@/lib/catalog/money"
 import { useSearchIndex } from "@/lib/catalog/use-search-index"
+import { placeholderIds } from "@/lib/placeholders"
 import { cn } from "@/lib/utils"
 
 const MAX_SUGGESTIONS = 6
@@ -162,9 +163,9 @@ export function SearchBox({
             // هياكل بشكل الاقتراحات أثناء تحميل فهرس البحث، بدل مؤشر دوران
             <div role="status" className="space-y-1 py-2">
               <span className="sr-only">جارٍ البحث...</span>
-              {Array.from({ length: 3 }, (_, row) => (
+              {placeholderIds("suggestion", 3).map((id) => (
                 <div
-                  key={row}
+                  key={id}
                   aria-hidden
                   className="flex items-center gap-3 px-3 py-2"
                 >

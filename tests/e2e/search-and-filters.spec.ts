@@ -11,7 +11,8 @@ test("البحث يجد المنتج رغم كتابة التاء المربوط
     card.name.split(" ").some((word) => word.endsWith("ة"))
   )
   if (!product) throw new Error("لا يوجد منتج في اسمه تاء مربوطة")
-  const word = product.name.split(" ").find((entry) => entry.endsWith("ة"))!
+  const word = product.name.split(" ").find((entry) => entry.endsWith("ة"))
+  if (!word) throw new Error("The product name has no word ending in ة")
   const query = `${word.slice(0, -1)}ه`
 
   await open(page, "/")

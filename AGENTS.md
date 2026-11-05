@@ -12,6 +12,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 Before any work on the interface, read `DESIGN.md` at the project root and follow it; it is the single reference for the store's colors, fonts, spacing and components. The mapping of its values to Tailwind classes is in the project skill `.claude/skills/design-system/SKILL.md`. After any change to `DESIGN.md`, run `pnpm design:lint`.
 
+## Code rules
+
+- No `any`, no type assertions (`as`, including `as const`) and no non-null assertions (`!`). Use a type annotation, `satisfies`, or a type guard from `src/lib/guards.ts`. Data read at runtime (the JSON files the browser downloads, browser storage) is checked with a guard before it is used. ESLint enforces these rules.
+- List keys come from the data (a slug, SKU or id), never from the position in the array. Loading placeholders take their keys from `placeholderIds()` in `src/lib/placeholders.ts`.
+- For React performance and component structure, follow the project skills `vercel-react-best-practices` and `vercel-composition-patterns` in `.claude/skills`, copied from github.com/vercel-labs/agent-skills.
+
 ## Language
 
 The project documentation (`README.md`, `PLAN.md`, `DESIGN.md`, `DEPLOYMENT.md`, `USER-TESTING.md` and the design skill) is written in English. The storefront stays in Arabic: interface text, product and category data, the static pages in `src/content/pages`, and validation and error messages.

@@ -36,7 +36,7 @@ afterEach(() => {
 
 describe("safeStorage", () => {
   it("يحفظ ويقرأ القيمة كما هي", () => {
-    const storage = safeStorage<{ lines: CartLine[] }>()
+    const storage = safeStorage()
     storage.setItem("test", { state: { lines: [shirt] }, version: 1 })
     expect(storage.getItem("test")).toEqual({
       state: { lines: [shirt] },
@@ -50,11 +50,17 @@ describe("safeStorage", () => {
     expect(localStorage.getItem("test")).toBeNull()
   })
 
+  it("removes a save that is JSON but not an object", () => {
+    localStorage.setItem("test", "[1, 2]")
+    expect(safeStorage().getItem("test")).toBeNull()
+    expect(localStorage.getItem("test")).toBeNull()
+  })
+
   it("يعمل من الذاكرة حين يمنع المتصفح التخزين", () => {
     vi.spyOn(localStorage, "setItem").mockImplementation(() => {
       throw new DOMException("blocked", "SecurityError")
     })
-    const storage = safeStorage<{ slugs: string[] }>()
+    const storage = safeStorage()
     storage.setItem("wishlist", { state: { slugs: ["watch"] }, version: 1 })
     expect(storage.getItem("wishlist")).toEqual({
       state: { slugs: ["watch"] },
@@ -130,7 +136,9 @@ describe("مطابقة السلة بعد تعديل المنتجات", () => {
     const notices = cart().sync({
       [shirt.sku]: { ...entry, options: "اللون=أزرق|المقاس=S" },
     })
-    expect(notices).toEqual([{ name: shirt.name, kind: "removed" }])
+    expect(notices).toEqual([
+      { sku: shirt.sku, name: shirt.name, kind: "removed" },
+    ])
     expect(cart().lines).toEqual([])
   })
 

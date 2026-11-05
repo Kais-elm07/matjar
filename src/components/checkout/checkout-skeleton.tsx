@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton"
+import { placeholderIds } from "@/lib/placeholders"
 
 /** هيكل صفحة الطلب حتى تُستعاد السلة من المتصفح، بنفس تخطيط النموذج والملخص. */
 export function CheckoutSkeleton() {
@@ -8,8 +9,8 @@ export function CheckoutSkeleton() {
       aria-hidden
     >
       <div className="space-y-6">
-        {Array.from({ length: 3 }, (_, index) => (
-          <Skeleton key={index} className="h-48 rounded-xl" />
+        {placeholderIds("section", 3).map((id) => (
+          <Skeleton key={id} className="h-48 rounded-xl" />
         ))}
       </div>
       <Skeleton className="h-72 rounded-xl" />

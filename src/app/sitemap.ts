@@ -7,6 +7,8 @@ import { absoluteImageUrl, absoluteUrl } from "@/lib/seo"
 // يُولَّد كملف ثابت وقت البناء: out/sitemap.xml
 export const dynamic = "force-static"
 
+type SitemapEntry = MetadataRoute.Sitemap[number]
+
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: absoluteUrl("/"), changeFrequency: "weekly", priority: 1 },
@@ -15,21 +17,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.8,
     },
-    ...getCategories().map((category) => ({
+    ...getCategories().map((category): SitemapEntry => ({
       url: absoluteUrl(`/category/${category.slug}`),
-      changeFrequency: "weekly" as const,
+      changeFrequency: "weekly",
       priority: 0.7,
     })),
-    ...getProducts().map((product) => ({
+    ...getProducts().map((product): SitemapEntry => ({
       url: absoluteUrl(`/product/${product.slug}`),
       lastModified: product.createdAt,
-      changeFrequency: "monthly" as const,
+      changeFrequency: "monthly",
       priority: 0.6,
       images: product.images.map((image) => absoluteImageUrl(image.src)),
     })),
-    ...getContentPages().map((page) => ({
+    ...getContentPages().map((page): SitemapEntry => ({
       url: absoluteUrl(`/pages/${page.slug}`),
-      changeFrequency: "yearly" as const,
+      changeFrequency: "yearly",
       priority: 0.3,
     })),
   ]

@@ -32,7 +32,9 @@ export function CategoryMenu({
   useEffect(() => {
     if (!open) return
     function onPointerDown(event: PointerEvent) {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false)
+      const target = event.target
+      if (target instanceof Node && rootRef.current?.contains(target)) return
+      setOpen(false)
     }
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
@@ -65,9 +67,9 @@ export function CategoryMenu({
       }
       // خروج التركيز من الزر واللوحة (بزر Tab مثلاً) يغلق اللوحة
       onBlur={(event) => {
-        if (!rootRef.current?.contains(event.relatedTarget as Node | null)) {
-          setOpen(false)
-        }
+        const next = event.relatedTarget
+        if (next instanceof Node && rootRef.current?.contains(next)) return
+        setOpen(false)
       }}
     >
       <button

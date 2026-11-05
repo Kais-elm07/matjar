@@ -7,7 +7,7 @@
  * الروابط الكاملة (https://...) والمسارات التي لها امتداد تُستخدم كما هي.
  * الأحجام نفسها في scripts/images.mjs (WIDTHS) وnext.config.ts (deviceSizes).
  */
-export const IMAGE_WIDTHS = [400, 800, 1200] as const
+export const IMAGE_WIDTHS: readonly [400, 800, 1200] = [400, 800, 1200]
 
 const isExternal = (src: string) => /^https?:\/\//.test(src)
 const hasExtension = (src: string) => /\.[a-z0-9]{2,5}(\?.*)?$/i.test(src)

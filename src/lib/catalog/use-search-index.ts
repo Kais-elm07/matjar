@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 
+import { isSearchIndex } from "./guards"
 import type { SearchCardData } from "./types"
 
 let request: Promise<SearchCardData[]> | null = null
@@ -9,9 +10,11 @@ let request: Promise<SearchCardData[]> | null = null
 /** تحميل فهرس البحث مرة واحدة فقط ومشاركته بين كل صناديق البحث في الصفحة. */
 function loadSearchIndex() {
   request ??= fetch("/search-index.json")
-    .then((response) => {
+    .then(async (response) => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
-      return response.json() as Promise<SearchCardData[]>
+      const index: unknown = await response.json()
+      if (!isSearchIndex(index)) throw new Error("Invalid search index")
+      return index
     })
     .catch((error: unknown) => {
       request = null // السماح بإعادة المحاولة

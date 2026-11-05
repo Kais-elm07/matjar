@@ -199,6 +199,9 @@ src/lib/content/               reading and validating the static pages
 src/lib/og/                    share image layout and drawing
 src/lib/seo.ts                 share metadata and structured data for search engines
 src/lib/image-loader.ts        picks the right prepared image size for the screen
+src/lib/guards.ts              type guards that check data read at runtime (JSON files, browser storage)
+
+.claude/skills/                skills for Claude: the design system, and Vercel's React guides
 ```
 
 The data layer in `src/lib/catalog` runs at build time only, and each file has a single job:
@@ -223,6 +226,8 @@ The data layer in `src/lib/catalog` runs at build time only, and each file has a
 ## Quality
 
 - Before every Git commit the code is formatted and linted automatically (Husky and lint-staged), and `DESIGN.md` is linted when it changes. Any ESLint warning blocks the commit.
+- ESLint also rejects `any`, type assertions (`as`), non-null assertions (`!`) and array positions used as list keys. Data the code reads at runtime is checked with the type guards in `src/lib/guards.ts` instead of being assumed.
+- Claude follows Vercel's React guides for performance and component structure: the skills `vercel-react-best-practices` and `vercel-composition-patterns` in `.claude/skills`, copied unchanged from [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) (MIT).
 - `pnpm verify` runs every check plus the unit tests in one command.
 - On every push to `main` and every pull request, GitHub Actions checks formatting, lint errors and types, runs the unit tests, builds the site, then runs the browser tests on Chrome, Firefox and Safari (WebKit). It keeps the built `out` folder for a week, and the test report when something fails.
 

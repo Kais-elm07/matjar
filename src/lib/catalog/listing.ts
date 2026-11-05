@@ -1,12 +1,23 @@
-export const SORT_OPTIONS = [
+export type SortValue =
+  "relevance" | "popular" | "newest" | "price-asc" | "price-desc"
+
+export interface SortOption {
+  value: SortValue
+  label: string
+}
+
+export const SORT_OPTIONS: readonly SortOption[] = [
   { value: "relevance", label: "الأكثر صلة" },
   { value: "popular", label: "الأكثر مبيعاً" },
   { value: "newest", label: "الأحدث" },
   { value: "price-asc", label: "السعر: من الأقل" },
   { value: "price-desc", label: "السعر: من الأعلى" },
-] as const
+]
 
-export type SortValue = (typeof SORT_OPTIONS)[number]["value"]
+/** Whether a value read from the URL or a select box is one of the sort options. */
+export function isSortValue(value: string): value is SortValue {
+  return SORT_OPTIONS.some((option) => option.value === value)
+}
 
 /** الترتيب الافتراضي: الأكثر صلة عند البحث، والأكثر مبيعاً في غير ذلك. */
 export function defaultSort(q: string): SortValue {
@@ -39,8 +50,6 @@ const first = (value: string | string[] | undefined) =>
 
 const all = (value: string | string[] | undefined) =>
   value === undefined ? [] : Array.isArray(value) ? value : [value]
-
-const SORT_VALUES = new Set<string>(SORT_OPTIONS.map((option) => option.value))
 
 /** سعر صحيح غير سالب، أو null لأي قيمة أخرى. */
 function parsePrice(value: string | undefined) {
@@ -85,8 +94,8 @@ export function parseListingParams(
   }
 
   const sort =
-    SORT_VALUES.has(sortParam) && (sortParam !== "relevance" || q)
-      ? (sortParam as SortValue)
+    isSortValue(sortParam) && (sortParam !== "relevance" || q)
+      ? sortParam
       : defaultSort(q)
 
   return {

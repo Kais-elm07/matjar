@@ -39,9 +39,13 @@ const FONT_DIR = path.join(ROOT, "src", "fonts", "ibm-plex-sans-arabic")
 // العائلتان كما يسمّيهما الأمر pnpm fonts: ملف الأرقام والحروف الإنجليزية أولاً ثم العربية،
 // فيأخذ كل حرف شكله من الملف الذي يحويه
 const FONT_FAMILIES = "IBM Plex Sans Arabic Latin,IBM Plex Sans Arabic"
-const WEIGHT_NAMES = { 400: "", 500: "Medium", 700: "Bold" } as const
+type Weight = 400 | 500 | 700
 
-type Weight = keyof typeof WEIGHT_NAMES
+const WEIGHT_NAMES: Record<Weight, string> = {
+  400: "",
+  500: "Medium",
+  700: "Bold",
+}
 
 // مكتبة الخطوط داخل sharp لا تحتمل رسم نص وقراءة SVG في الوقت نفسه من خيطين،
 // وكان البناء ينهار أحياناً بخطأ في الذاكرة. لذلك تعمل sharp بخيط واحد،
@@ -49,10 +53,13 @@ type Weight = keyof typeof WEIGHT_NAMES
 // لأن كل مسار من مسارات الصور قد يحمل نسخته الخاصة من هذا الملف.
 sharp.concurrency(1)
 
-const shared = globalThis as typeof globalThis & {
+/** What this file keeps on globalThis, shared by every copy of it in the process. */
+interface SharedRenderState {
   matjarOgQueue?: Promise<unknown>
   matjarOgFonts?: Promise<void>
 }
+
+const shared: typeof globalThis & SharedRenderState = globalThis
 
 /** ينفّذ عمليات الرسم واحدة تلو الأخرى. لا تُستدعى من داخل مهمة في الطابور، وإلا انتظرت نفسها. */
 function serial<T>(task: () => Promise<T>): Promise<T> {
@@ -185,21 +192,17 @@ export async function text(value: string, options: TextOptions) {
   return layer
 }
 
+export type PillOptions = TextOptions & {
+  background?: string
+  border?: string
+  paddingX: number
+  paddingY: number
+}
+
 /** نص داخل كبسولة، مثل شارة الخصم. border يرسم إطاراً بدل التعبئة. */
 export async function pill(
   value: string,
-  {
-    background,
-    border,
-    paddingX,
-    paddingY,
-    ...options
-  }: TextOptions & {
-    background?: string
-    border?: string
-    paddingX: number
-    paddingY: number
-  }
+  { background, border, paddingX, paddingY, ...options }: PillOptions
 ): Promise<Layer> {
   const label = await text(value, options)
   const width = label.width + paddingX * 2

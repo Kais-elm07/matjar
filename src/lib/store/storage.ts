@@ -1,4 +1,6 @@
-import type { PersistStorage, StorageValue } from "zustand/middleware"
+import type { PersistStorage } from "zustand/middleware"
+
+import { isFiniteNumber, isRecord } from "@/lib/guards"
 
 /**
  * تخزين السلة والمفضلة في المتصفح بأمان.
@@ -57,18 +59,28 @@ function remove(name: string) {
   }
 }
 
-/** تخزين لـ zustand persist لا يرمي أخطاء، ويتجاهل المحفوظ التالف. */
-export function safeStorage<State>(): PersistStorage<State> {
+/**
+ * Storage for zustand persist that never throws and drops a corrupt save.
+ * The saved state comes back as `unknown`, because each store checks its shape in `merge`.
+ */
+export function safeStorage(): PersistStorage<unknown> {
   return {
     getItem(name) {
       const raw = read(name)
       if (raw === null) return null
       try {
-        return JSON.parse(raw) as StorageValue<State>
+        const saved: unknown = JSON.parse(raw)
+        if (isRecord(saved)) {
+          return {
+            state: saved.state,
+            version: isFiniteNumber(saved.version) ? saved.version : undefined,
+          }
+        }
       } catch {
-        remove(name)
-        return null
+        // The saved text is not JSON: it is removed below
       }
+      remove(name)
+      return null
     },
     setItem(name, value) {
       write(name, JSON.stringify(value))

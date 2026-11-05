@@ -114,11 +114,11 @@ describe("مطابقة السلة مع بيانات الموقع", () => {
     })
 
     expect(notices).toEqual([
-      { name: "قميص قطني كلاسيكي", kind: "reduced" },
-      { name: "شاحن سريع 65 واط", kind: "price-up" },
-      { name: "محفظة جلدية", kind: "removed" },
-      { name: "سماعة بلوتوث محمولة", kind: "sold-out" },
-      { name: "مصباح طاولة خشبي", kind: "price-down" },
+      { sku: "SHIRT-M", name: "قميص قطني كلاسيكي", kind: "reduced" },
+      { sku: "CHARGER", name: "شاحن سريع 65 واط", kind: "price-up" },
+      { sku: "WALLET", name: "محفظة جلدية", kind: "removed" },
+      { sku: "SPEAKER", name: "سماعة بلوتوث محمولة", kind: "sold-out" },
+      { sku: "LAMP", name: "مصباح طاولة خشبي", kind: "price-down" },
     ])
     expect(
       cart().lines.map(({ sku, quantity, price }) => ({ sku, quantity, price }))

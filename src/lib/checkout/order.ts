@@ -4,6 +4,7 @@ import { useSyncExternalStore } from "react"
 
 import type { VariantOptions } from "@/lib/catalog/options"
 import type { CardImage } from "@/lib/catalog/types"
+import { isRecord } from "@/lib/guards"
 import { cartSubtotal, type CartLine } from "@/lib/store/cart"
 
 import { deliveryTime } from "./delivery"
@@ -111,14 +112,16 @@ const readRaw = () => {
 
 /** طلب محفوظ بالشكل الذي تعرضه صفحة التأكيد. ما عداه يُعامل كأن لا طلب. */
 function isPlacedOrder(value: unknown): value is PlacedOrder {
-  if (typeof value !== "object" || value === null) return false
-  const order = value as Partial<PlacedOrder>
   return (
-    typeof order.number === "string" &&
-    typeof order.customer?.name === "string" &&
-    typeof order.shipping?.label === "string" &&
-    Array.isArray(order.lines) &&
-    typeof order.totals?.total === "number"
+    isRecord(value) &&
+    typeof value.number === "string" &&
+    isRecord(value.customer) &&
+    typeof value.customer.name === "string" &&
+    isRecord(value.shipping) &&
+    typeof value.shipping.label === "string" &&
+    Array.isArray(value.lines) &&
+    isRecord(value.totals) &&
+    typeof value.totals.total === "number"
   )
 }
 

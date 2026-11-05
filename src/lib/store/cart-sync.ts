@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 
+import { isCartCatalog } from "@/lib/catalog/guards"
 import type { CartCatalog } from "@/lib/catalog/types"
 
 import { useCartStore, type CartNotice } from "./cart"
@@ -13,9 +14,11 @@ let request: Promise<CartCatalog> | null = null
 function loadCartCatalog() {
   // التحقق من نسخة الموقع في كل مرة، فلا تبقى أسعار قديمة في ذاكرة المتصفح بعد نشر تحديث
   request ??= fetch("/cart-catalog.json", { cache: "no-cache" })
-    .then((response) => {
+    .then(async (response) => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
-      return response.json() as Promise<CartCatalog>
+      const catalog: unknown = await response.json()
+      if (!isCartCatalog(catalog)) throw new Error("Invalid cart catalog")
+      return catalog
     })
     .catch((error: unknown) => {
       request = null // السماح بإعادة المحاولة في المرة القادمة

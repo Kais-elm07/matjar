@@ -1,6 +1,7 @@
 import type { z } from "zod"
 
 import { siteConfig } from "@/config/site"
+import { isRecord } from "@/lib/guards"
 
 import { UTC_OFFSET_PATTERN } from "./dates"
 import { isColorOption } from "./options"
@@ -56,7 +57,9 @@ export function validateCatalogData(
   }
 
   const slugOf = (item: unknown, index: number) =>
-    (item as { slug?: string } | null)?.slug ?? `رقم ${index + 1}`
+    isRecord(item) && typeof item.slug === "string"
+      ? item.slug
+      : `رقم ${index + 1}`
 
   const categories = parseList<ParsedCategory>(
     categorySchema,

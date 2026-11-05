@@ -74,10 +74,26 @@ describe("تنسيق النصوص", () => {
         "## الشحن\n\nنوصل الطلبات\nإلى كل المدن.\n\n- سريع\n- آمن\n\n1. اطلب\n2. استلم"
       )
     ).toEqual([
-      { type: "heading", level: 2, text: "الشحن" },
-      { type: "paragraph", text: "نوصل الطلبات إلى كل المدن." },
-      { type: "list", ordered: false, items: ["سريع", "آمن"] },
-      { type: "list", ordered: true, items: ["اطلب", "استلم"] },
+      { type: "heading", level: 2, text: "الشحن", line: 1 },
+      { type: "paragraph", text: "نوصل الطلبات إلى كل المدن.", line: 3 },
+      {
+        type: "list",
+        ordered: false,
+        items: [
+          { text: "سريع", line: 6 },
+          { text: "آمن", line: 7 },
+        ],
+        line: 6,
+      },
+      {
+        type: "list",
+        ordered: true,
+        items: [
+          { text: "اطلب", line: 9 },
+          { text: "استلم", line: 10 },
+        ],
+        line: 9,
+      },
     ])
   })
 

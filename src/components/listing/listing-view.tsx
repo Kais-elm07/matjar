@@ -28,11 +28,11 @@ import {
   CLEARED_FILTERS,
   countActiveFilters,
   fromURLSearchParams,
+  isSortValue,
   listingHref,
   parseListingParams,
   sortOptionsFor,
   type ListingParams,
-  type SortValue,
 } from "@/lib/catalog/listing"
 import type {
   CategoryOption,
@@ -209,9 +209,10 @@ export function ListingView(props: ListingViewProps) {
             <NativeSelect
               id={sortId}
               value={params.sort}
-              onChange={(event) =>
-                navigate({ sort: event.target.value as SortValue })
-              }
+              onChange={(event) => {
+                const sort = event.target.value
+                if (isSortValue(sort)) navigate({ sort })
+              }}
               className="[&_select]:h-11 [&_select]:min-w-32 [&_select]:text-sm"
             >
               {sortOptionsFor(params.q).map((option) => (

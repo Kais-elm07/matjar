@@ -36,8 +36,10 @@ export function CartNotices({
       <div className="space-y-1">
         <p className="font-bold">تغيّرت بعض المنتجات في سلتك</p>
         <ul className="space-y-0.5 text-muted-foreground">
-          {notices.map((notice, index) => (
-            <li key={index}>{MESSAGES[notice.kind](notice.name)}</li>
+          {notices.map((notice) => (
+            <li key={`${notice.sku}-${notice.kind}`}>
+              {MESSAGES[notice.kind](notice.name)}
+            </li>
           ))}
         </ul>
         <button

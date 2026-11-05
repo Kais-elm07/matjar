@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest"
 
 import { buildOrder } from "@/lib/checkout/order"
-import { checkoutSchema, normalizePhone } from "@/lib/checkout/schema"
+import {
+  checkoutSchema,
+  normalizePhone,
+  type CheckoutValues,
+} from "@/lib/checkout/schema"
 import {
   calculateTotals,
   couponProblem,
@@ -242,7 +246,7 @@ describe("checkoutSchema", () => {
 })
 
 describe("buildOrder", () => {
-  const values = {
+  const values: CheckoutValues = {
     fullName: "أحمد محمد",
     phone: "0501234567",
     email: "",
@@ -250,7 +254,7 @@ describe("buildOrder", () => {
     district: "النرجس",
     street: "شارع الملك فهد 12",
     notes: "",
-    shippingMethod: "standard" as const,
+    shippingMethod: "standard",
   }
   const line = {
     sku: "SHIRT-01",
