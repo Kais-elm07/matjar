@@ -1,8 +1,7 @@
+import { PRODUCT_GRID } from "@/components/product/product-styles"
 import { Skeleton } from "@/components/ui/skeleton"
 import { placeholderIds } from "@/lib/placeholders"
 import { cn } from "@/lib/utils"
-
-import { PRODUCT_GRID } from "./product-styles"
 
 interface ProductGridSkeletonProps {
   count?: number

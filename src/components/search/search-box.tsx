@@ -7,10 +7,10 @@ import { useRouter } from "next/navigation"
 import { ArrowRightIcon, SearchIcon } from "lucide-react"
 
 import { Skeleton } from "@/components/ui/skeleton"
-import { searchCards } from "@/lib/catalog/filter"
-import { formatPrice } from "@/lib/catalog/money"
-import { useSearchIndex } from "@/lib/catalog/use-search-index"
+import { formatPrice } from "@/lib/money"
 import { placeholderIds } from "@/lib/placeholders"
+import { searchCards } from "@/lib/search/search-cards"
+import { useSearchIndex } from "@/lib/search/use-search-index"
 import { cn } from "@/lib/utils"
 
 const MAX_SUGGESTIONS = 6

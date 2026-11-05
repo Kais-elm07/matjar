@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
 import { CheckoutView } from "@/components/checkout/checkout-view"
-import { Breadcrumbs } from "@/components/store/breadcrumbs"
+import { Breadcrumbs } from "@/components/shared/breadcrumbs"
 import { getCheckoutConfig } from "@/lib/checkout/config"
 
 export const metadata: Metadata = {

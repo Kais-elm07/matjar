@@ -4,8 +4,8 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { ListingView } from "@/components/listing/listing-view"
-import { Breadcrumbs } from "@/components/store/breadcrumbs"
-import { JsonLd } from "@/components/store/json-ld"
+import { Breadcrumbs } from "@/components/shared/breadcrumbs"
+import { JsonLd } from "@/components/shared/json-ld"
 import { siteConfig } from "@/config/site"
 import { PRODUCT_FORMS, pluralize } from "@/lib/arabic-plural"
 import {

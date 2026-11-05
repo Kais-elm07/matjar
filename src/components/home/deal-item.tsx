@@ -4,7 +4,7 @@ import { useSyncExternalStore } from "react"
 import { TimerIcon } from "lucide-react"
 
 import { pluralize, type PluralForms } from "@/lib/arabic-plural"
-import { saleEndTime } from "@/lib/catalog/dates"
+import { saleEndTime } from "@/lib/dates"
 import { cn } from "@/lib/utils"
 
 const MONTHS = [

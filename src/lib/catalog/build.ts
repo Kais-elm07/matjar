@@ -5,14 +5,18 @@ import path from "node:path"
 
 import { categories as categoryData } from "@/data/categories"
 import { products as productData } from "@/data/products"
+import { getOptionGroups } from "@/lib/catalog/options"
+import type { ParsedCategory, ParsedProduct } from "@/lib/catalog/schema"
+import type {
+  Category,
+  CategoryLink,
+  Product,
+  Variant,
+} from "@/lib/catalog/types"
+import { validateCatalogData } from "@/lib/catalog/validate"
+import { storeToday } from "@/lib/dates"
 import { IMAGE_WIDTHS, imageFile } from "@/lib/image-loader"
-
-import { storeToday } from "./dates"
-import { discountPercent, toMinorUnits } from "./money"
-import { getOptionGroups } from "./options"
-import type { ParsedCategory, ParsedProduct } from "./schema"
-import type { Category, CategoryLink, Product, Variant } from "./types"
-import { validateCatalogData } from "./validate"
+import { discountPercent, toMinorUnits } from "@/lib/money"
 
 /**
  * Builds the catalog once at build time from the src/data files, after validating them:

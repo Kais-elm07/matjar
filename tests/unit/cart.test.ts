@@ -6,8 +6,8 @@ import {
   MAX_LINE_QUANTITY,
   useCartStore,
   type CartLine,
-} from "@/lib/store/cart"
-import { useWishlistStore } from "@/lib/store/wishlist"
+} from "@/lib/state/cart"
+import { useWishlistStore } from "@/lib/state/wishlist"
 
 type NewLine = Omit<CartLine, "quantity">
 

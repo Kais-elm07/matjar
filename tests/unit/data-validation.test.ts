@@ -163,7 +163,7 @@ describe("shipping and coupon files", () => {
           { name: "الرياض", fee: 25, days: [1, 2] },
           { name: "الرياض", fee: 30, days: [2, 3] },
         ],
-        express: { extraFee: 20, label: "سريع" },
+        express: { extraFee: 20, deliveryTime: "سريع" },
       },
     }))
     vi.doMock("@/data/coupons", () => ({ coupons: [] }))

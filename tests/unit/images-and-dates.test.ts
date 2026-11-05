@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { saleEndTime, storeToday } from "@/lib/catalog/dates"
+import { saleEndTime, storeToday } from "@/lib/dates"
 import imageLoader, { imageFile } from "@/lib/image-loader"
 import { absoluteImageUrl } from "@/lib/seo"
 

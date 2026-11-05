@@ -1,4 +1,4 @@
-import { discountPercent, formatPrice } from "@/lib/catalog/money"
+import { discountPercent, formatPrice } from "@/lib/money"
 import { cn } from "@/lib/utils"
 
 interface PriceProps {

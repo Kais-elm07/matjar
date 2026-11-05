@@ -1,4 +1,4 @@
-import { InlineText } from "@/components/store/inline-text"
+import { InlineText } from "@/components/content/inline-text"
 import { cn } from "@/lib/utils"
 
 /** `line` is where the block or item starts in the source text (from 1), and is its React key. */

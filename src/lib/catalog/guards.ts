@@ -1,3 +1,9 @@
+import type { VariantOptions } from "@/lib/catalog/options"
+import type {
+  CardImage,
+  CartCatalog,
+  SearchCardData,
+} from "@/lib/catalog/types"
 import {
   isArrayOf,
   isBoolean,
@@ -6,9 +12,6 @@ import {
   isRecord,
   isString,
 } from "@/lib/guards"
-
-import type { VariantOptions } from "./options"
-import type { CardImage, CartCatalog, SearchCardData } from "./types"
 
 /**
  * Checks for the two JSON files the browser downloads (search-index.json and cart-catalog.json).

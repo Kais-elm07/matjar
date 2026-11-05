@@ -2,19 +2,19 @@
 
 import { cn } from "@/lib/utils"
 
-interface CategoryButtonProps {
+interface CategoryFilterButtonProps {
   label: string
   count?: number
   active: boolean
   onClick: () => void
 }
 
-export function CategoryButton({
+export function CategoryFilterButton({
   label,
   count,
   active,
   onClick,
-}: CategoryButtonProps) {
+}: CategoryFilterButtonProps) {
   return (
     <button
       type="button"

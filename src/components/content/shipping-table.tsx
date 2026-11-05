@@ -1,6 +1,6 @@
-import { formatPrice } from "@/lib/catalog/money"
 import { getCheckoutConfig } from "@/lib/checkout/config"
 import { deliveryTime } from "@/lib/checkout/delivery"
+import { formatPrice } from "@/lib/money"
 
 /** Table of cities with delivery prices and times, from src/data/shipping.ts so it matches the checkout page. */
 export function ShippingTable() {
@@ -44,7 +44,7 @@ export function ShippingTable() {
                         {formatPrice(city.fee + express.extraFee)}
                       </span>{" "}
                       <span className="text-muted-foreground">
-                        ({express.label})
+                        ({express.deliveryTime})
                       </span>
                     </>
                   ) : (

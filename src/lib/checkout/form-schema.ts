@@ -1,8 +1,7 @@
 import { z } from "zod"
 
-import { toWesternDigits } from "@/lib/catalog/arabic"
-
-import type { ShippingCity } from "./types"
+import { toWesternDigits } from "@/lib/arabic-digits"
+import type { ShippingCity } from "@/lib/checkout/types"
 
 // The published site's content security policy (public/_headers) blocks eval, and Zod tries new Function to speed up validation,
 // so the browser reports a violation even though Zod moves past it. Without that attempt, validation runs in the browser the normal way.

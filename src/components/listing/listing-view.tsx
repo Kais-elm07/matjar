@@ -16,14 +16,20 @@ import { ProductGrid } from "@/components/product/product-grid"
 import { Button } from "@/components/ui/button"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { siteConfig } from "@/config/site"
+import { useIdle } from "@/hooks/use-idle"
+import { useMediaQuery } from "@/hooks/use-media-query"
 import { PRODUCT_FORMS, pluralize } from "@/lib/arabic-plural"
+import type {
+  CategoryOption,
+  ProductCardData,
+  SearchCardData,
+} from "@/lib/catalog/types"
 import {
   computeFacets,
   filterCards,
   paginate,
-  searchCards,
   sortCards,
-} from "@/lib/catalog/filter"
+} from "@/lib/listing/filter"
 import {
   CLEARED_FILTERS,
   countActiveFilters,
@@ -33,19 +39,10 @@ import {
   parseListingParams,
   sortOptionsFor,
   type ListingParams,
-} from "@/lib/catalog/listing"
-import type {
-  CategoryOption,
-  ProductCardData,
-  SearchCardData,
-} from "@/lib/catalog/types"
-import {
-  updateListingUrl,
-  useListingSearch,
-} from "@/lib/catalog/use-listing-search"
+} from "@/lib/listing/params"
+import { updateListingUrl, useListingQuery } from "@/lib/listing/url-query"
 import { scrollBehavior } from "@/lib/motion"
-import { useIdle } from "@/lib/use-idle"
-import { useMediaQuery } from "@/lib/use-media-query"
+import { searchCards } from "@/lib/search/search-cards"
 import { cn } from "@/lib/utils"
 
 // The filter panel renders in the sidebar on desktop only, and on mobile inside the
@@ -77,7 +74,7 @@ type ListingViewProps = {
 export function ListingView(props: ListingViewProps) {
   const { categories } = props
   const search = props.search === true
-  const searchString = useListingSearch()
+  const searchString = useListingQuery()
   const rawPathname = usePathname()
   // A trailing slash, as on the published site, so links match at build time and in the browser
   const pathname = rawPathname.endsWith("/") ? rawPathname : `${rawPathname}/`

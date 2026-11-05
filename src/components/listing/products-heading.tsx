@@ -1,13 +1,13 @@
 "use client"
 
-import { useListingSearch } from "@/lib/catalog/use-listing-search"
+import { useListingQuery } from "@/lib/listing/url-query"
 
 /**
  * The products page title, based on the URL: "العروض" (Offers), "وصل حديثاً" (New arrivals)
  * or "كل المنتجات" (All products).
  */
 export function ProductsHeading() {
-  const params = new URLSearchParams(useListingSearch())
+  const params = new URLSearchParams(useListingQuery())
   const title =
     params.get("sale") === "1"
       ? "العروض"

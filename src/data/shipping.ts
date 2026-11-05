@@ -20,5 +20,5 @@ export const shipping: ShippingInput = {
     { name: "بريدة", fee: 35, days: [3, 5] },
     { name: "مدينة أخرى", fee: 40, days: [4, 7] },
   ],
-  express: { extraFee: 20, label: "في اليوم التالي" },
+  express: { extraFee: 20, deliveryTime: "في اليوم التالي" },
 }

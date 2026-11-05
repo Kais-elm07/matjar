@@ -1,6 +1,6 @@
 "use client"
 
-import { CategoryButton } from "@/components/listing/category-button"
+import { CategoryFilterButton } from "@/components/listing/category-filter-button"
 import { FilterSection } from "@/components/listing/filter-section"
 import type { CategoryOption } from "@/lib/catalog/types"
 
@@ -24,7 +24,7 @@ export function CategoryFilter({
     <FilterSection title="الفئة">
       <ul className="space-y-0.5">
         <li>
-          <CategoryButton
+          <CategoryFilterButton
             label="كل الفئات"
             active={!selected}
             onClick={() => onSelect(null)}
@@ -36,7 +36,7 @@ export function CategoryFilter({
           )
           return (
             <li key={root.slug}>
-              <CategoryButton
+              <CategoryFilterButton
                 label={root.name}
                 count={counts[root.slug]}
                 active={selected === root.slug}
@@ -46,7 +46,7 @@ export function CategoryFilter({
                 <ul className="ms-3 border-s ps-2">
                   {children.map((child) => (
                     <li key={child.slug}>
-                      <CategoryButton
+                      <CategoryFilterButton
                         label={child.name}
                         count={counts[child.slug]}
                         active={selected === child.slug}

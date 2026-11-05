@@ -1,4 +1,4 @@
-import type { ProductImageInput, VariantInput } from "./types"
+import type { ProductImageInput, VariantInput } from "@/lib/catalog/types"
 
 /**
  * Product images in order: slug-1, slug-2, ...

@@ -10,13 +10,12 @@ import {
 } from "lucide-react"
 
 import { CountBadge } from "@/components/layout/count-badge"
-import { TabLink } from "@/components/layout/tab-link"
-import { useCartCount } from "@/lib/store/cart"
-import { useUiStore } from "@/lib/store/ui"
-import { useWishlistCount } from "@/lib/store/wishlist"
+import { TabBarLink } from "@/components/layout/tab-bar-link"
+import { TAB_BAR_ITEM } from "@/components/layout/tab-bar-styles"
+import { useCartCount } from "@/lib/state/cart"
+import { useUiStore } from "@/lib/state/ui"
+import { useWishlistCount } from "@/lib/state/wishlist"
 import { cn } from "@/lib/utils"
-
-import { TAB_BAR_ITEM as ITEM } from "./tab-bar-styles"
 
 /** The fixed navigation bar at the bottom of the phone screen: Home, Categories, Search, Wishlist and Cart. */
 export function MobileTabBar() {
@@ -37,7 +36,7 @@ export function MobileTabBar() {
     >
       <ul className="grid h-16 grid-cols-5">
         <li>
-          <TabLink
+          <TabBarLink
             href="/"
             icon={HomeIcon}
             label="الرئيسية"
@@ -50,14 +49,14 @@ export function MobileTabBar() {
             aria-haspopup="dialog"
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen(true)}
-            className={cn(ITEM, "w-full text-muted-foreground")}
+            className={cn(TAB_BAR_ITEM, "w-full text-muted-foreground")}
           >
             <LayoutGridIcon aria-hidden />
             الفئات
           </button>
         </li>
         <li>
-          <TabLink
+          <TabBarLink
             href="/search"
             icon={SearchIcon}
             label="البحث"
@@ -65,7 +64,7 @@ export function MobileTabBar() {
           />
         </li>
         <li>
-          <TabLink
+          <TabBarLink
             href="/wishlist"
             icon={HeartIcon}
             label="المفضلة"
@@ -79,7 +78,7 @@ export function MobileTabBar() {
             onClick={() => setCartOpen(true)}
             aria-label={cartCount > 0 ? `السلة (${cartCount})` : "السلة"}
             className={cn(
-              ITEM,
+              TAB_BAR_ITEM,
               "w-full",
               isActive("/cart") ? "text-primary" : "text-muted-foreground"
             )}

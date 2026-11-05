@@ -1,9 +1,9 @@
 import type { Metadata } from "next"
 
 import { siteConfig } from "@/config/site"
-import { toSchemaPrice } from "@/lib/catalog/money"
 import type { Product } from "@/lib/catalog/types"
 import { IMAGE_WIDTHS, imageFile } from "@/lib/image-loader"
+import { toSchemaPrice } from "@/lib/money"
 
 /** Share images at 1200×630, generated at build time by the routes in src/app/og. */
 export const shareImages = {

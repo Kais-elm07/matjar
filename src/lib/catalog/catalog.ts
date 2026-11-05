@@ -1,9 +1,14 @@
 import "server-only"
 
-import { catalog } from "./build"
-import { toProductCard, toSearchCard } from "./cards"
-import type { CartCatalog, Category, CategoryOption, Product } from "./types"
-import { optionsKey } from "./variant-key"
+import { catalog } from "@/lib/catalog/build"
+import { toProductCard, toSearchCard } from "@/lib/catalog/cards"
+import type {
+  CartCatalog,
+  Category,
+  CategoryOption,
+  Product,
+} from "@/lib/catalog/types"
+import { optionsKey } from "@/lib/catalog/variant-key"
 
 /**
  * The site's only data layer: every page reads categories and products from here.

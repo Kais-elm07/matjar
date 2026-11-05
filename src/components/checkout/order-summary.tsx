@@ -7,9 +7,9 @@ import { ChevronDownIcon } from "lucide-react"
 
 import { CouponField } from "@/components/checkout/coupon-field"
 import { PIECE_FORMS, pluralize } from "@/lib/arabic-plural"
-import { formatPrice } from "@/lib/catalog/money"
 import type { CheckoutConfig, Coupon, OrderTotals } from "@/lib/checkout/types"
-import type { CartLine } from "@/lib/store/cart"
+import { formatPrice } from "@/lib/money"
+import type { CartLine } from "@/lib/state/cart"
 import { cn } from "@/lib/utils"
 
 interface OrderSummaryProps {

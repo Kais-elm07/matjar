@@ -3,13 +3,12 @@
 import Link from "next/link"
 import { HeartIcon, ShoppingBagIcon } from "lucide-react"
 
-import { useCartCount } from "@/lib/store/cart"
-import { useUiStore } from "@/lib/store/ui"
-import { useWishlistCount } from "@/lib/store/wishlist"
+import { CountBadge } from "@/components/layout/count-badge"
+import { HEADER_ICON_BUTTON } from "@/components/layout/header-styles"
+import { useCartCount } from "@/lib/state/cart"
+import { useUiStore } from "@/lib/state/ui"
+import { useWishlistCount } from "@/lib/state/wishlist"
 import { cn } from "@/lib/utils"
-
-import { CountBadge } from "./count-badge"
-import { HEADER_ICON_BUTTON as ICON_BUTTON } from "./header-styles"
 
 interface HeaderActionsProps {
   className?: string
@@ -28,7 +27,7 @@ export function HeaderActions({ className }: HeaderActionsProps) {
         aria-label={
           wishlistCount > 0 ? `المفضلة (${wishlistCount})` : "المفضلة"
         }
-        className={cn(ICON_BUTTON, "hidden sm:inline-flex")}
+        className={cn(HEADER_ICON_BUTTON, "hidden sm:inline-flex")}
       >
         <HeartIcon aria-hidden />
         <CountBadge count={wishlistCount} />
@@ -37,7 +36,7 @@ export function HeaderActions({ className }: HeaderActionsProps) {
         type="button"
         onClick={() => setCartOpen(true)}
         aria-label={cartCount > 0 ? `السلة (${cartCount})` : "السلة"}
-        className={ICON_BUTTON}
+        className={HEADER_ICON_BUTTON}
       >
         <ShoppingBagIcon aria-hidden />
         <CountBadge count={cartCount} />

@@ -2,17 +2,16 @@ import "server-only"
 
 import { homeContent } from "@/data/home"
 import { testimonials } from "@/data/testimonials"
-
-import { catalog } from "./build"
-import { toProductCard } from "./cards"
-import { getRootCategories } from "./catalog"
-import { discountPercent } from "./money"
+import { catalog } from "@/lib/catalog/build"
+import { toProductCard } from "@/lib/catalog/cards"
+import { getRootCategories } from "@/lib/catalog/catalog"
 import type {
   CategoryBanner,
   CategoryBannerInput,
   ProductBanner,
   ProductBannerInput,
-} from "./types"
+} from "@/lib/catalog/types"
+import { discountPercent } from "@/lib/money"
 
 /** Number of products in each row of the home page */
 const RAIL_LIMIT = 8

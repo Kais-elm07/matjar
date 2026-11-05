@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
 import { WishlistView } from "@/components/cart/wishlist-view"
-import { Breadcrumbs } from "@/components/store/breadcrumbs"
+import { Breadcrumbs } from "@/components/shared/breadcrumbs"
 
 export const metadata: Metadata = {
   title: "المفضلة",

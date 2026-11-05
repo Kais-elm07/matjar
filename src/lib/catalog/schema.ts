@@ -1,8 +1,7 @@
 import { z } from "zod"
 
 import { siteConfig } from "@/config/site"
-
-import { fitsCurrency } from "./money"
+import { fitsCurrency } from "@/lib/money"
 
 /**
  * Rules for the categories and products files in src/data, with an Arabic message for each field.

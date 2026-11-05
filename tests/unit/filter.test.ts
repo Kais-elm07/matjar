@@ -1,16 +1,16 @@
 import { describe, expect, it } from "vitest"
 
-import { normalizeForSearch } from "@/lib/catalog/arabic"
 import { getSearchIndex } from "@/lib/catalog/catalog"
+import type { SearchCardData } from "@/lib/catalog/types"
 import {
   computeFacets,
   filterCards,
   paginate,
-  searchCards,
   sortCards,
-} from "@/lib/catalog/filter"
-import { parseListingParams, type ListingParams } from "@/lib/catalog/listing"
-import type { SearchCardData } from "@/lib/catalog/types"
+} from "@/lib/listing/filter"
+import { parseListingParams, type ListingParams } from "@/lib/listing/params"
+import { normalizeForSearch } from "@/lib/search/normalize"
+import { searchCards } from "@/lib/search/search-cards"
 
 function card(
   fields: Partial<SearchCardData> & Pick<SearchCardData, "slug" | "name">

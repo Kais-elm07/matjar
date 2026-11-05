@@ -1,8 +1,8 @@
 import { DealItem } from "@/components/home/deal-item"
 import { ProductCard } from "@/components/product/product-card"
 import { RAIL_ITEM } from "@/components/product/product-styles"
-import { Carousel } from "@/components/store/carousel"
-import { SectionHeading } from "@/components/store/section-heading"
+import { Carousel } from "@/components/shared/carousel"
+import { SectionHeading } from "@/components/shared/section-heading"
 import type { ProductCardData } from "@/lib/catalog/types"
 
 interface DealsRailProps {

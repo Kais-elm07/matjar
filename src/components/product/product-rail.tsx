@@ -1,8 +1,7 @@
 import { ProductCard } from "@/components/product/product-card"
-import { Carousel } from "@/components/store/carousel"
+import { RAIL_ITEM } from "@/components/product/product-styles"
+import { Carousel } from "@/components/shared/carousel"
 import type { ProductCardData } from "@/lib/catalog/types"
-
-import { RAIL_ITEM } from "./product-styles"
 
 interface ProductRailProps {
   products: ProductCardData[]

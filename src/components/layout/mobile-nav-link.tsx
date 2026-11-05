@@ -5,14 +5,19 @@ import { ChevronRightIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-interface NavItemProps {
+interface MobileNavLinkProps {
   href: string
   title: string
   onNavigate: () => void
   className?: string
 }
 
-export function NavItem({ href, title, onNavigate, className }: NavItemProps) {
+export function MobileNavLink({
+  href,
+  title,
+  onNavigate,
+  className,
+}: MobileNavLinkProps) {
   return (
     <Link
       href={href}

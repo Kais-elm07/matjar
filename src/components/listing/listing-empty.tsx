@@ -3,9 +3,9 @@
 import Link from "next/link"
 import { SearchXIcon } from "lucide-react"
 
-import { EmptyState } from "@/components/store/empty-state"
+import { EmptyState } from "@/components/shared/empty-state"
 import { Button, buttonVariants } from "@/components/ui/button"
-import { countActiveFilters, type ListingParams } from "@/lib/catalog/listing"
+import { countActiveFilters, type ListingParams } from "@/lib/listing/params"
 
 interface ListingEmptyProps {
   params: ListingParams

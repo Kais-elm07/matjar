@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest"
 
 import { parseFaq, plainAnswer } from "@/components/content/faq-list"
-import { parseBlocks } from "@/components/store/rich-text"
+import { parseBlocks } from "@/components/content/rich-text"
 import { siteConfig } from "@/config/site"
 import { getProduct } from "@/lib/catalog/catalog"
-import { toSchemaPrice } from "@/lib/catalog/money"
 import { getContentPage, getContentPages } from "@/lib/content/pages"
+import { toSchemaPrice } from "@/lib/money"
 import {
   absoluteImageUrl,
   absoluteUrl,

@@ -1,6 +1,6 @@
 import { ChevronDownIcon } from "lucide-react"
 
-import { RichText } from "@/components/store/rich-text"
+import { RichText } from "@/components/content/rich-text"
 
 /** `line` is where the question or group starts in the page text (from 1), and is its React key. */
 export type FaqItem = { question: string; answer: string; line: number }

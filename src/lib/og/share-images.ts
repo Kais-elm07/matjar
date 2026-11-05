@@ -5,9 +5,9 @@ import type { OverlayOptions } from "sharp"
 import { siteConfig } from "@/config/site"
 import { PRODUCT_FORMS, pluralize } from "@/lib/arabic-plural"
 import { getHomeSections } from "@/lib/catalog/home"
-import { discountPercent, formatPrice } from "@/lib/catalog/money"
 import type { Category, Product } from "@/lib/catalog/types"
 import { getCheckoutConfig } from "@/lib/checkout/config"
+import { discountPercent, formatPrice } from "@/lib/money"
 import {
   type Layer,
   localImage,
@@ -16,7 +16,7 @@ import {
   OG_SIZE,
   pill,
   type PillOptions,
-  renderCard,
+  renderShareImage,
   roundedImage,
   text,
 } from "@/lib/og/render"
@@ -27,7 +27,7 @@ import {
  */
 
 const MARGIN = 48
-/** The image is a square as tall as the card minus the two margins */
+/** The photo is a square as tall as the share image minus the two margins */
 const IMAGE_SIZE = OG_SIZE.height - MARGIN * 2
 const RADIUS = 18
 /** The right edge, top and bottom of the text column */
@@ -111,7 +111,7 @@ async function storeFacts() {
  * The general image: the home page and every page without its own image.
  * Four products from different categories.
  */
-export async function siteCard() {
+export async function siteShareImage() {
   const products = getHomeSections()
     .trending.map((group) => group.products[0])
     .slice(0, 4)
@@ -146,7 +146,7 @@ export async function siteCard() {
   ])
   const taglineTop = brand.bottom + 40
 
-  return renderCard([
+  return renderShareImage([
     // Ordered from the right, as it is read: the first is at the top right
     ...photos.map((photo, index) => ({
       input: photo.input,
@@ -160,7 +160,7 @@ export async function siteCard() {
   ])
 }
 
-export async function productCard(product: Product) {
+export async function productShareImage(product: Product) {
   const image = product.images[0]
   const discount = discountPercent(product.price, product.compareAtPrice)
   const [photo, brand] = await Promise.all([
@@ -250,10 +250,10 @@ export async function productCard(product: Product) {
     )
   }
 
-  return renderCard(layers)
+  return renderShareImage(layers)
 }
 
-export async function categoryCard(category: Category) {
+export async function categoryShareImage(category: Category) {
   const [photo, brand, facts] = await Promise.all([
     roundedImage(
       category.image ? localImage(category.image) : null,
@@ -289,7 +289,7 @@ export async function categoryCard(category: Category) {
   const eyebrowTop = brand.bottom + 48
   const nameTop = eyebrowTop + eyebrow.height + 8
 
-  return renderCard([
+  return renderShareImage([
     { input: photo.input, left: MARGIN, top: MARGIN },
     ...brand.layers,
     atRight(eyebrow, eyebrowTop),

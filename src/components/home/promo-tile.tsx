@@ -1,11 +1,10 @@
 import Image from "next/image"
 import Link from "next/link"
 
-import { formatPrice } from "@/lib/catalog/money"
+import { IMAGE_SHADE } from "@/components/home/banner-styles"
 import type { ProductBanner } from "@/lib/catalog/types"
+import { formatPrice } from "@/lib/money"
 import { cn } from "@/lib/utils"
-
-import { IMAGE_SHADE } from "./banner-styles"
 
 interface PromoTileProps {
   banner: ProductBanner

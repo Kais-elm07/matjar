@@ -2,11 +2,10 @@ import Link from "next/link"
 import type { LucideIcon } from "lucide-react"
 
 import { CountBadge } from "@/components/layout/count-badge"
+import { TAB_BAR_ITEM } from "@/components/layout/tab-bar-styles"
 import { cn } from "@/lib/utils"
 
-import { TAB_BAR_ITEM as ITEM } from "./tab-bar-styles"
-
-interface TabLinkProps {
+interface TabBarLinkProps {
   href: string
   icon: LucideIcon
   label: string
@@ -14,19 +13,22 @@ interface TabLinkProps {
   active: boolean
 }
 
-export function TabLink({
+export function TabBarLink({
   href,
   icon: Icon,
   label,
   count = 0,
   active,
-}: TabLinkProps) {
+}: TabBarLinkProps) {
   return (
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
       aria-label={count > 0 ? `${label} (${count})` : undefined}
-      className={cn(ITEM, active ? "text-primary" : "text-muted-foreground")}
+      className={cn(
+        TAB_BAR_ITEM,
+        active ? "text-primary" : "text-muted-foreground"
+      )}
     >
       <span className="relative">
         <Icon aria-hidden />

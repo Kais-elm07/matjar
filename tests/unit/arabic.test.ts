@@ -1,17 +1,14 @@
 import { describe, expect, it } from "vitest"
 
+import { toWesternDigits } from "@/lib/arabic-digits"
 import { PIECE_FORMS, PRODUCT_FORMS, pluralize } from "@/lib/arabic-plural"
-import {
-  normalizeForSearch,
-  toSearchTerms,
-  toWesternDigits,
-} from "@/lib/catalog/arabic"
 import {
   getColorHex,
   isColorOption,
   sortOptionValues,
 } from "@/lib/catalog/options"
 import { deliveryTime } from "@/lib/checkout/delivery"
+import { normalizeForSearch, toSearchTerms } from "@/lib/search/normalize"
 
 describe("normalizeForSearch", () => {
   it("removes diacritics and tatweel", () => {

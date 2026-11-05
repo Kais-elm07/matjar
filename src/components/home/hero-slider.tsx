@@ -6,10 +6,10 @@ import Link from "next/link"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
 import { buttonVariants } from "@/components/ui/button"
-import { formatPrice } from "@/lib/catalog/money"
+import { useIdle } from "@/hooks/use-idle"
 import type { ProductBanner } from "@/lib/catalog/types"
+import { formatPrice } from "@/lib/money"
 import { scrollBehavior } from "@/lib/motion"
-import { useIdle } from "@/lib/use-idle"
 import { cn } from "@/lib/utils"
 
 interface HeroSliderProps {

@@ -1,13 +1,13 @@
 import { Suspense } from "react"
 
 import { LazyCartSheet } from "@/components/cart/lazy-cart-sheet"
+import { CartWishlistRestorer } from "@/components/global/cart-wishlist-restorer"
+import { ListingUrlListener } from "@/components/global/listing-url-listener"
 import { AnnouncementBar } from "@/components/layout/announcement-bar"
 import { MobileTabBar } from "@/components/layout/mobile-tab-bar"
 import { SiteFooter } from "@/components/layout/site-footer"
 import { SiteHeader } from "@/components/layout/site-header"
 import { WhatsAppButton } from "@/components/layout/whatsapp-button"
-import { StoreRestorer } from "@/components/store/store-restorer"
-import { SearchParamsListener } from "@/lib/catalog/use-listing-search"
 import { cn } from "@/lib/utils"
 
 interface StoreShellProps {
@@ -44,10 +44,10 @@ export function StoreShell({ children, mainClassName }: StoreShellProps) {
       <MobileTabBar />
       <WhatsAppButton />
       <LazyCartSheet />
-      <StoreRestorer />
+      <CartWishlistRestorer />
       {/* Tells listing pages when the URL changes (filters and sorting) */}
       <Suspense fallback={null}>
-        <SearchParamsListener />
+        <ListingUrlListener />
       </Suspense>
     </>
   )

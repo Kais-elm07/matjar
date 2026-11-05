@@ -2,8 +2,8 @@
 
 import { useCallback } from "react"
 
-import { useCartStore, type CartLine } from "@/lib/store/cart"
-import { useUiStore } from "@/lib/store/ui"
+import { useCartStore, type CartLine } from "@/lib/state/cart"
+import { useUiStore } from "@/lib/state/ui"
 import { toast } from "@/lib/toast"
 
 /**

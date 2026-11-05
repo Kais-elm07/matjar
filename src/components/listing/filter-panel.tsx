@@ -3,17 +3,16 @@
 import { CategoryFilter } from "@/components/listing/category-filter"
 import { CheckRow } from "@/components/listing/check-row"
 import { FilterSection } from "@/components/listing/filter-section"
+import type { FilterChange } from "@/components/listing/filter-types"
 import { OptionFilter } from "@/components/listing/option-filter"
 import { PriceFilter } from "@/components/listing/price-filter"
-import type { Facets } from "@/lib/catalog/filter"
+import type { CategoryOption } from "@/lib/catalog/types"
+import type { Facets } from "@/lib/listing/filter"
 import {
   CLEARED_FILTERS,
   countActiveFilters,
   type ListingParams,
-} from "@/lib/catalog/listing"
-import type { CategoryOption } from "@/lib/catalog/types"
-
-import type { FilterChange } from "./filter-types"
+} from "@/lib/listing/params"
 
 interface FilterPanelProps {
   params: ListingParams

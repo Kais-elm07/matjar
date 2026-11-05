@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest"
 
-import { buildOrder } from "@/lib/checkout/order"
 import {
   checkoutSchema,
   normalizePhone,
   type CheckoutValues,
-} from "@/lib/checkout/schema"
+} from "@/lib/checkout/form-schema"
+import { buildOrder } from "@/lib/checkout/order"
 import {
   calculateTotals,
   couponProblem,
@@ -59,7 +59,7 @@ const FREESHIP = coupon({ code: "FREESHIP", type: "free-shipping" })
 const config: CheckoutConfig = {
   freeShippingFrom: 30000,
   cities: [riyadh, abha],
-  express: { extraFee: 2000, label: "في اليوم التالي" },
+  express: { extraFee: 2000, deliveryTime: "في اليوم التالي" },
   coupons: [WELCOME10, SAVE50, FREESHIP],
 }
 

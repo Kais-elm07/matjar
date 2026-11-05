@@ -1,9 +1,9 @@
 "use client"
 
 import { Logo } from "@/components/layout/logo"
-import type { NavCategory } from "@/components/layout/mobile-nav"
-import { NavItem } from "@/components/layout/nav-item"
-import { NavList } from "@/components/layout/nav-list"
+import { MobileNavLink } from "@/components/layout/mobile-nav-link"
+import { MobileNavLinks } from "@/components/layout/mobile-nav-links"
+import type { NavCategory } from "@/components/layout/nav-types"
 import { Separator } from "@/components/ui/separator"
 import {
   Sheet,
@@ -12,7 +12,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { siteConfig } from "@/config/site"
-import { useUiStore } from "@/lib/store/ui"
+import { useUiStore } from "@/lib/state/ui"
 
 interface MobileNavSheetProps {
   categories: NavCategory[]
@@ -36,11 +36,11 @@ export function MobileNavSheet({ categories }: MobileNavSheetProps) {
           aria-label="القائمة الرئيسية"
           className="flex-1 overflow-y-auto p-2"
         >
-          <NavList links={[allProducts]} onNavigate={close} />
+          <MobileNavLinks links={[allProducts]} onNavigate={close} />
           <ul>
             {categories.map((category) => (
               <li key={category.slug}>
-                <NavItem
+                <MobileNavLink
                   href={`/category/${category.slug}`}
                   title={category.name}
                   onNavigate={close}
@@ -49,7 +49,7 @@ export function MobileNavSheet({ categories }: MobileNavSheetProps) {
                   <ul className="ms-4 border-s ps-1">
                     {category.children.map((child) => (
                       <li key={child.slug}>
-                        <NavItem
+                        <MobileNavLink
                           href={`/category/${child.slug}`}
                           title={child.name}
                           onNavigate={close}
@@ -62,9 +62,9 @@ export function MobileNavSheet({ categories }: MobileNavSheetProps) {
               </li>
             ))}
           </ul>
-          <NavList links={shopLinks} onNavigate={close} />
+          <MobileNavLinks links={shopLinks} onNavigate={close} />
           <Separator className="my-2" />
-          <NavList
+          <MobileNavLinks
             links={siteConfig.helpNav}
             onNavigate={close}
             itemClassName="text-muted-foreground"

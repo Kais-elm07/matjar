@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test"
 
 import { coupons } from "../../src/data/coupons"
 import { shipping } from "../../src/data/shipping"
-import { formatPrice, toMinorUnits } from "../../src/lib/catalog/money"
+import { formatPrice, toMinorUnits } from "../../src/lib/money"
 import { isPhone, loadProducts, open, simpleProduct } from "./helpers"
 
 test("Choosing product options, then adding the product to the cart with the same options", async ({

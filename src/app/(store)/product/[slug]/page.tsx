@@ -4,9 +4,9 @@ import { notFound } from "next/navigation"
 import { ProductDetails } from "@/components/product/product-details"
 import { ProductRail } from "@/components/product/product-rail"
 import { ProductTabs } from "@/components/product/product-tabs"
-import { Breadcrumbs } from "@/components/store/breadcrumbs"
-import { JsonLd } from "@/components/store/json-ld"
-import { SectionHeading } from "@/components/store/section-heading"
+import { Breadcrumbs } from "@/components/shared/breadcrumbs"
+import { JsonLd } from "@/components/shared/json-ld"
+import { SectionHeading } from "@/components/shared/section-heading"
 import {
   getProduct,
   getProducts,

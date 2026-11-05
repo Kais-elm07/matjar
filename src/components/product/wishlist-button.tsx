@@ -4,7 +4,7 @@ import { useState } from "react"
 import { HeartIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { useIsWishlisted, useWishlistStore } from "@/lib/store/wishlist"
+import { useIsWishlisted, useWishlistStore } from "@/lib/state/wishlist"
 import { toast } from "@/lib/toast"
 import { cn } from "@/lib/utils"
 

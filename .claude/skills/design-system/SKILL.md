@@ -69,7 +69,7 @@ The values are applied in `src/app/globals.css` as shadcn variables with the sam
 - No fake numbers ("viewing now"), no countdown without a real date in the data, and no made-up customer reviews or rating stars.
 - A `grid` that contains a horizontally swiped row needs `grid-cols-1` on mobile, or the page widens to the row's width.
 - Motion is short (300 ms or less) and purposeful, and smooth scrolling goes through `scrollBehavior()` in `src/lib/motion.ts` so that it respects the "reduce motion" setting. No motion to reveal content on scroll.
-- Any dialog or panel that only appears on a click is loaded with `next/dynamic` when it opens or once the browser is idle (`useIdle` in `src/lib/use-idle.ts`), as in `LazyCartSheet` and `MobileNav`, so it does not delay the page on mobile.
+- Any dialog or panel that only appears on a click is loaded with `next/dynamic` when it opens or once the browser is idle (`useIdle` in `src/hooks/use-idle.ts`), as in `LazyCartSheet` and `MobileNav`, so it does not delay the page on mobile.
 - Sections further down a long page are laid out and painted only when they come near the screen: `section-later` on a section inside the page container, and `render-later` on a full-width element such as the footer (both in `src/app/globals.css`). A `section-later` section has no background, border or spacing of its own, and its parent spaces its children with `gap`, not `space-y`, as on the home page and the product page. After a reload, back and forward, or a move inside the store, everything renders at once (`data-render-all`, `src/lib/render-later.ts`), so the browser returns to the same place.
 - Only the first photo of a slider or gallery is in the page's HTML, with `loading="eager"` and `fetchPriority="high"` when it is the largest element on the first screen. The others are rendered once the browser is idle (`useIdle`) or when their slide is shown, as in `HeroSlider` and `ProductGallery`, so they don't share the connection with the first photo.
 - A component is a server component unless it needs state or events. Put `"use client"` on the smallest interactive part only (a button or a tab), and pass it the static parts as children, as in `TrendingTabs` and `Carousel`.
@@ -81,14 +81,14 @@ The values are applied in `src/app/globals.css` as shadcn variables with the sam
 
 - `ProductCard`, `ProductGrid` and `ProductRail` in `src/components/product`: the dark product card with the round cart button, its grid and its horizontal row. Their data has the type `ProductCardData`, and the search index uses `SearchCardData` (the card plus the search text).
 - The home page sections in `src/components/home`, each one a separate component: `TrustStrip`, `WhyUs`, `PromoGrid`, `NewArrivals`, `TrendingTabs`, `DealsRail`, `CategoryRail`, `Testimonials` and `ContactSection`. The page itself only puts them in order.
-- `Carousel` and `SectionHeading` in `src/components/store`: a swiped row with round scroll buttons, and a section heading with an orange "View all" link and an optional description.
+- `Carousel` and `SectionHeading` in `src/components/shared`: a swiped row with round scroll buttons, and a section heading with an orange "View all" link and an optional description.
 - `PromoTile`, `DiscountCard`, `SpotlightCard` and `WideBanner` in `src/components/home`, one file each: the photo deal tiles, the discount card, the category cards and the wide banner. Their shared dark gradient over photos is `IMAGE_SHADE` in `banner-styles.ts`.
 - `HeroSlider` in `src/components/home`: the full-width hero, with centered text over a darkening layer and a gradient.
 - `ContactCards` in `src/components/content`: the contact cards with orange circles, for the home page and the "Contact us" page.
 - `useAddToCart` and `QuantityStepper` in `src/components/cart`: adding to the cart while opening its panel, and the quantity selector.
 - `Tabs` in `src/components/ui/tabs.tsx`: lightweight tabs with the shadcn API but without Base UI, with every panel in the HTML. Their default look is a pill with a gray border, orange when active, so don't repeat their classes.
 - `StoreShell` in `src/components/layout`: the whole store shell (the header, the footer, the cart and the bottom bar).
-- `SearchBox variant="header"` in `src/components/layout`: the wide search field in the middle of the header.
+- `SearchBox variant="header"` in `src/components/search`: the wide search field in the middle of the header.
 - `toast` in `src/lib/toast.ts`: short notifications, whose library loads with the first message. Don't import from `sonner` directly.
 - `openGraph` and `shareImages` in `src/lib/seo.ts`: the share data, with its image, for any new page.
 

@@ -5,12 +5,12 @@ import Link from "next/link"
 import { CircleCheckIcon, InfoIcon, PackageSearchIcon } from "lucide-react"
 
 import { OrderDetailRow } from "@/components/checkout/order-detail-row"
-import { EmptyState } from "@/components/store/empty-state"
+import { EmptyState } from "@/components/shared/empty-state"
 import { buttonVariants } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { PIECE_FORMS, pluralize } from "@/lib/arabic-plural"
-import { formatPrice } from "@/lib/catalog/money"
-import { useLastOrder } from "@/lib/checkout/order"
+import { useLastOrder } from "@/lib/checkout/last-order"
+import { formatPrice } from "@/lib/money"
 
 /** Confirmation page for the demo order: the order number, delivery, amounts and products. */
 export function OrderConfirmation() {

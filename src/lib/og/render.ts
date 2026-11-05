@@ -265,7 +265,7 @@ export async function logoMark(size: number) {
 }
 
 /** Combines the layers on a dark 1200×630 background and saves a light JPEG that every platform accepts. */
-export function renderCard(layers: OverlayOptions[]) {
+export function renderShareImage(layers: OverlayOptions[]) {
   return serial(() =>
     sharp({
       create: { ...OG_SIZE, channels: 3, background: OG_COLORS.background },

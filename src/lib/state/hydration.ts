@@ -2,14 +2,14 @@
 
 import { useEffect, useSyncExternalStore } from "react"
 
-import { useCartStore } from "./cart"
-import { useWishlistStore } from "./wishlist"
+import { useCartStore } from "@/lib/state/cart"
+import { useWishlistStore } from "@/lib/state/wishlist"
 
 const stores = [useCartStore, useWishlistStore]
 
 /**
  * Restores the cart and wishlist from the browser after the page's first render, and updates them when another tab changes them.
- * Called once in the store layout.
+ * Called once, by CartWishlistRestorer in StoreShell.
  */
 export function useRestoreStores() {
   useEffect(() => {

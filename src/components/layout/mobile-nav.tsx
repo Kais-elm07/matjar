@@ -3,17 +3,11 @@
 import dynamic from "next/dynamic"
 import { MenuIcon } from "lucide-react"
 
-import { useUiStore } from "@/lib/store/ui"
-import { useIdle } from "@/lib/use-idle"
+import { HEADER_ICON_BUTTON } from "@/components/layout/header-styles"
+import type { NavCategory } from "@/components/layout/nav-types"
+import { useIdle } from "@/hooks/use-idle"
+import { useUiStore } from "@/lib/state/ui"
 import { cn } from "@/lib/utils"
-
-import { HEADER_ICON_BUTTON } from "./header-styles"
-
-export type NavCategory = {
-  slug: string
-  name: string
-  children: { slug: string; name: string }[]
-}
 
 const MobileNavSheet = dynamic(
   () =>

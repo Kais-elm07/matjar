@@ -1,6 +1,6 @@
 import { getCategories, getCategory } from "@/lib/catalog/catalog"
-import { categoryCard } from "@/lib/og/cards"
 import { jpegResponse } from "@/lib/og/render"
+import { categoryShareImage } from "@/lib/og/share-images"
 
 // A share image for each category, generated at build time: out/og/category/<slug>.jpg
 export const dynamic = "force-static"
@@ -17,5 +17,5 @@ export async function GET(
   const { file } = await params
   const category = getCategory(file.replace(/\.jpg$/, ""))
   if (!category) return new Response(null, { status: 404 })
-  return jpegResponse(await categoryCard(category))
+  return jpegResponse(await categoryShareImage(category))
 }

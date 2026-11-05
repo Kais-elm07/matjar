@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react"
 
-import { formatPrice } from "@/lib/catalog/money"
+import { formatPrice } from "@/lib/money"
 import { cn } from "@/lib/utils"
 
 interface ShippingOptionProps extends React.ComponentProps<"input"> {

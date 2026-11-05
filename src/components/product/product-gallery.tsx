@@ -5,9 +5,9 @@ import dynamic from "next/dynamic"
 import Image from "next/image"
 import { ZoomInIcon } from "lucide-react"
 
+import { useIdle } from "@/hooks/use-idle"
 import type { ProductImage } from "@/lib/catalog/types"
 import { scrollBehavior } from "@/lib/motion"
-import { useIdle } from "@/lib/use-idle"
 import { cn } from "@/lib/utils"
 
 // The zoom dialog's code loads after the page appears, or on the first click on the image

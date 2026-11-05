@@ -3,10 +3,9 @@
 import { useState } from "react"
 
 import { FilterSection } from "@/components/listing/filter-section"
+import type { FilterChange } from "@/components/listing/filter-types"
 import { Slider, type SliderRange } from "@/components/ui/slider"
-import { formatPrice, toMinorUnits } from "@/lib/catalog/money"
-
-import type { FilterChange } from "./filter-types"
+import { formatPrice, toMinorUnits } from "@/lib/money"
 
 interface PriceFilterProps {
   range: { min: number; max: number }

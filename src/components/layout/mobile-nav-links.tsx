@@ -1,20 +1,24 @@
 "use client"
 
-import { NavItem } from "@/components/layout/nav-item"
+import { MobileNavLink } from "@/components/layout/mobile-nav-link"
 import type { NavLink } from "@/config/site"
 
-interface NavListProps {
+interface MobileNavLinksProps {
   links: NavLink[]
   onNavigate: () => void
   itemClassName?: string
 }
 
-export function NavList({ links, onNavigate, itemClassName }: NavListProps) {
+export function MobileNavLinks({
+  links,
+  onNavigate,
+  itemClassName,
+}: MobileNavLinksProps) {
   return (
     <ul>
       {links.map((link) => (
         <li key={link.href}>
-          <NavItem
+          <MobileNavLink
             href={link.href}
             title={link.title}
             onNavigate={onNavigate}

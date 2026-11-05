@@ -1,4 +1,4 @@
-import { discountPercent } from "@/lib/catalog/money"
+import { discountPercent } from "@/lib/money"
 import { cn } from "@/lib/utils"
 
 interface DiscountBadgeProps {

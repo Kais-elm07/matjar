@@ -2,8 +2,8 @@ import Image from "next/image"
 import Link from "next/link"
 
 import { buttonVariants } from "@/components/ui/button"
-import { formatPrice } from "@/lib/catalog/money"
 import type { ProductBanner } from "@/lib/catalog/types"
+import { formatPrice } from "@/lib/money"
 import { cn } from "@/lib/utils"
 
 interface WideBannerProps {

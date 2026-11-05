@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next"
 import localFont from "next/font/local"
 
-import { Analytics } from "@/components/store/analytics"
-import { LazyToaster } from "@/components/store/lazy-toaster"
-import { RenderAllAfterNavigation } from "@/components/store/render-all-after-navigation"
+import { Analytics } from "@/components/global/analytics"
+import { LazyToaster } from "@/components/global/lazy-toaster"
+import { RenderAllAfterNavigation } from "@/components/global/render-all-after-navigation"
 import { DirectionProvider } from "@/components/ui/direction"
 import { siteConfig } from "@/config/site"
 import { RENDER_ALL_SCRIPT } from "@/lib/render-later"

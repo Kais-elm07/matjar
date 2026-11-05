@@ -5,13 +5,13 @@ import { HeartIcon, WifiOffIcon } from "lucide-react"
 
 import { ProductGrid } from "@/components/product/product-grid"
 import { ProductGridSkeleton } from "@/components/product/product-grid-skeleton"
-import { EmptyState } from "@/components/store/empty-state"
+import { EmptyState } from "@/components/shared/empty-state"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { PRODUCT_FORMS, pluralize } from "@/lib/arabic-plural"
 import type { SearchCardData } from "@/lib/catalog/types"
-import { useSearchIndex } from "@/lib/catalog/use-search-index"
-import { useWishlistRestored } from "@/lib/store/hydration"
-import { useWishlistStore } from "@/lib/store/wishlist"
+import { useSearchIndex } from "@/lib/search/use-search-index"
+import { useWishlistRestored } from "@/lib/state/hydration"
+import { useWishlistStore } from "@/lib/state/wishlist"
 
 /**
  * The wishlist page: cards for the products saved in the browser.

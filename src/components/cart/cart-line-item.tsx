@@ -6,8 +6,8 @@ import { ImageOffIcon, Trash2Icon } from "lucide-react"
 
 import { QuantityStepper } from "@/components/cart/quantity-stepper"
 import { Button } from "@/components/ui/button"
-import { formatPrice } from "@/lib/catalog/money"
-import { lineLimit, useCartStore, type CartLine } from "@/lib/store/cart"
+import { formatPrice } from "@/lib/money"
+import { lineLimit, useCartStore, type CartLine } from "@/lib/state/cart"
 import { cn } from "@/lib/utils"
 
 interface CartLineItemProps {

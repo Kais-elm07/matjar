@@ -7,7 +7,7 @@ import {
   toMajorUnits,
   toMinorUnits,
   toSchemaPrice,
-} from "@/lib/catalog/money"
+} from "@/lib/money"
 
 // A non-breaking space separates the number and the currency symbol, so they never split across two lines
 const SAR = `${String.fromCharCode(0xa0)}ر.س`

@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import { Toaster as Sonner, type ToasterProps as SonnerProps } from "sonner"
 import {
   CircleCheckIcon,
@@ -9,9 +10,19 @@ import {
   Loader2Icon,
 } from "lucide-react"
 
-interface ToasterProps extends SonnerProps {}
+interface ToasterProps extends SonnerProps {
+  /**
+   * Called once the toast list has mounted. Sonner subscribes to the messages in its own effect,
+   * and a child's effects run before its parent's, so from then on it receives every message.
+   */
+  onMount?: () => void
+}
 
-const Toaster = ({ ...props }: ToasterProps) => {
+const Toaster = ({ onMount, ...props }: ToasterProps) => {
+  useEffect(() => {
+    onMount?.()
+  }, [onMount])
+
   return (
     <Sonner
       // The store's identity is dark, so the toasts are dark, in the surface colors

@@ -14,11 +14,11 @@ import {
   getRelatedProducts,
   getSearchIndex,
 } from "@/lib/catalog/catalog"
-import { storeToday } from "@/lib/catalog/dates"
 import { getHomeContent, getHomeSections } from "@/lib/catalog/home"
-import { discountPercent, toMinorUnits } from "@/lib/catalog/money"
 import { optionsKey } from "@/lib/catalog/variant-key"
 import { getCheckoutConfig } from "@/lib/checkout/config"
+import { storeToday } from "@/lib/dates"
+import { discountPercent, toMinorUnits } from "@/lib/money"
 
 /** Checks on the current store data: they fail if a product or category is added in a way that breaks the site. */
 describe("actual store data", () => {

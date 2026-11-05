@@ -7,8 +7,7 @@ import type { VariantOptions } from "@/lib/catalog/options"
 import type { CardImage, CartCatalog } from "@/lib/catalog/types"
 import { optionsKey } from "@/lib/catalog/variant-key"
 import { isRecord } from "@/lib/guards"
-
-import { safeStorage } from "./storage"
+import { safeStorage } from "@/lib/state/storage"
 
 /** Maximum quantity of a single variant in the cart, even if the stock is larger. */
 export const MAX_LINE_QUANTITY = 10
@@ -43,7 +42,7 @@ type CartState = {
   remove: (sku: string) => void
   clear: () => void
   /** Applies the current prices and stock to the cart, and returns a list of what changed. */
-  sync: (catalog: CartCatalog) => CartNotice[]
+  sync: (cartCatalog: CartCatalog) => CartNotice[]
 }
 
 /** Maximum quantity allowed for a line, given its stock. */
@@ -135,12 +134,12 @@ export const useCartStore = create<CartState>()(
         set({ lines: [] })
       },
 
-      sync(catalog) {
+      sync(cartCatalog) {
         const notices: CartNotice[] = []
         const current = get().lines
         const lines: CartLine[] = []
         for (const line of current) {
-          const variant = catalog[line.sku]
+          const variant = cartCatalog[line.sku]
           // A SKU that was deleted, or now points to other options after the product was edited
           const notice = { sku: line.sku, name: line.name }
           if (!variant || variant.options !== optionsKey(line.options)) {

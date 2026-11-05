@@ -1,8 +1,7 @@
 import { ProductCard } from "@/components/product/product-card"
+import { PRODUCT_GRID } from "@/components/product/product-styles"
 import type { ProductCardData } from "@/lib/catalog/types"
 import { cn } from "@/lib/utils"
-
-import { PRODUCT_GRID } from "./product-styles"
 
 interface ProductGridProps {
   products: ProductCardData[]

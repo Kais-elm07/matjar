@@ -1,36 +1,16 @@
-import { normalizeForSearch, toSearchTerms } from "./arabic"
-import type { ListingParams, SortValue } from "./listing"
-import { toMajorUnits, toMinorUnits } from "./money"
-import { getColorHex, isColorOption, sortOptionValues } from "./options"
-import type { ProductCardData, SearchCardData } from "./types"
+import {
+  getColorHex,
+  isColorOption,
+  sortOptionValues,
+} from "@/lib/catalog/options"
+import type { ProductCardData } from "@/lib/catalog/types"
+import type { ListingParams, SortValue } from "@/lib/listing/params"
+import { toMajorUnits, toMinorUnits } from "@/lib/money"
 
 /**
- * Search, filtering and sorting in the browser.
- * Simple stateless functions that work on product cards only.
+ * Filtering, sorting and pages for the product lists, in the browser.
+ * Simple stateless functions that work on product cards only. Text search is in src/lib/search.
  */
-
-/** Search results sorted by relevance: matches in the name first, then best sellers. */
-export function searchCards<T extends SearchCardData>(
-  cards: T[],
-  query: string
-): T[] {
-  const terms = toSearchTerms(query)
-  if (terms.length === 0) return []
-  const phrase = terms.join(" ")
-
-  return cards
-    .filter((card) => terms.every((term) => card.searchText.includes(term)))
-    .map((card) => {
-      const name = normalizeForSearch(card.name)
-      const score =
-        (name.startsWith(phrase) ? 6 : 0) +
-        (name.includes(phrase) ? 3 : 0) +
-        terms.filter((term) => name.includes(term)).length
-      return { card, score }
-    })
-    .sort((a, b) => b.score - a.score || b.card.popularity - a.card.popularity)
-    .map(({ card }) => card)
-}
 
 function matchesOptions(
   card: ProductCardData,

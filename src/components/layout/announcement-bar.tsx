@@ -1,8 +1,8 @@
 import Link from "next/link"
 
 import { siteConfig } from "@/config/site"
-import { formatPrice } from "@/lib/catalog/money"
 import { getCheckoutConfig } from "@/lib/checkout/config"
+import { formatPrice } from "@/lib/money"
 
 /** Orange announcement bar at the top of every page. Its text and link are in src/config/site.ts; hidden if null. */
 export function AnnouncementBar() {

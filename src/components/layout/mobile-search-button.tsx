@@ -2,10 +2,9 @@
 
 import { SearchIcon, XIcon } from "lucide-react"
 
-import { useUiStore } from "@/lib/store/ui"
+import { HEADER_ICON_BUTTON } from "@/components/layout/header-styles"
+import { useUiStore } from "@/lib/state/ui"
 import { cn } from "@/lib/utils"
-
-import { HEADER_ICON_BUTTON as ICON_BUTTON } from "./header-styles"
 
 interface MobileSearchButtonProps {
   className?: string
@@ -22,7 +21,7 @@ export function MobileSearchButton({ className }: MobileSearchButtonProps) {
       aria-expanded={open}
       aria-controls="mobile-search"
       onClick={() => setOpen(!open)}
-      className={cn(ICON_BUTTON, className)}
+      className={cn(HEADER_ICON_BUTTON, className)}
     >
       {open ? <XIcon aria-hidden /> : <SearchIcon aria-hidden />}
     </button>

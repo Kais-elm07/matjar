@@ -22,7 +22,7 @@ import { WishlistButton } from "@/components/product/wishlist-button"
 import { Button } from "@/components/ui/button"
 import { getColorHex, type VariantOptions } from "@/lib/catalog/options"
 import type { Product, Variant } from "@/lib/catalog/types"
-import { lineLimit } from "@/lib/store/cart"
+import { lineLimit } from "@/lib/state/cart"
 import { cn } from "@/lib/utils"
 
 type ValueState = "available" | "sold-out" | "unavailable"

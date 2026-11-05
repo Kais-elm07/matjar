@@ -1,12 +1,11 @@
-import { toWesternDigits } from "@/lib/catalog/arabic"
-
+import { toWesternDigits } from "@/lib/arabic-digits"
 import type {
   CheckoutConfig,
   Coupon,
   OrderTotals,
   ShippingCity,
   ShippingMethod,
-} from "./types"
+} from "@/lib/checkout/types"
 
 /** Finds a coupon by its code, ignoring letter case and spaces. */
 export function findCoupon(config: CheckoutConfig, code: string) {

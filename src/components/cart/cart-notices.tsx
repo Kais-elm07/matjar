@@ -2,7 +2,7 @@
 
 import { InfoIcon } from "lucide-react"
 
-import type { CartNotice } from "@/lib/store/cart"
+import type { CartNotice } from "@/lib/state/cart"
 import { cn } from "@/lib/utils"
 
 const MESSAGES: Record<CartNotice["kind"], (name: string) => string> = {

@@ -1,7 +1,7 @@
 "use client"
 
 import { FilterSection } from "@/components/listing/filter-section"
-import type { OptionFacet } from "@/lib/catalog/filter"
+import type { OptionFacet } from "@/lib/listing/filter"
 import { cn } from "@/lib/utils"
 
 interface OptionFilterProps {

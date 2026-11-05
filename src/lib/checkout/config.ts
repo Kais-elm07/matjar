@@ -4,9 +4,8 @@ import { z } from "zod"
 
 import { coupons as couponData } from "@/data/coupons"
 import { shipping as shippingData } from "@/data/shipping"
-import { toMinorUnits } from "@/lib/catalog/money"
-
-import type { CheckoutConfig } from "./types"
+import type { CheckoutConfig } from "@/lib/checkout/types"
+import { toMinorUnits } from "@/lib/money"
 
 /**
  * Checkout settings, validated at build time: shipping and coupons.
@@ -33,7 +32,10 @@ const shippingSchema = z.object({
       })
     )
     .min(1, { error: "أضف مدينة واحدة على الأقل" }),
-  express: z.object({ extraFee: amount, label: z.string().trim().min(1) }),
+  express: z.object({
+    extraFee: amount,
+    deliveryTime: z.string().trim().min(1),
+  }),
 })
 
 const couponSchema = z
@@ -106,7 +108,7 @@ function buildConfig(): CheckoutConfig {
     })),
     express: {
       extraFee: toMinorUnits(shipping.data.express.extraFee),
-      label: shipping.data.express.label,
+      deliveryTime: shipping.data.express.deliveryTime,
     },
     coupons: coupons.data.map((coupon) => ({
       code: coupon.code,

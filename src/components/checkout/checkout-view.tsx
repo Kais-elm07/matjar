@@ -20,28 +20,29 @@ import { CheckoutSkeleton } from "@/components/checkout/checkout-skeleton"
 import { CHECKOUT_INPUT } from "@/components/checkout/checkout-styles"
 import { OrderSummary } from "@/components/checkout/order-summary"
 import { ShippingOption } from "@/components/checkout/shipping-option"
-import { EmptyState } from "@/components/store/empty-state"
+import { EmptyState } from "@/components/shared/empty-state"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { Textarea } from "@/components/ui/textarea"
-import { formatPrice } from "@/lib/catalog/money"
 import { deliveryTime } from "@/lib/checkout/delivery"
-import { buildOrder, saveLastOrder } from "@/lib/checkout/order"
 import {
   checkoutSchema,
   type CheckoutInput,
   type CheckoutValues,
-} from "@/lib/checkout/schema"
+} from "@/lib/checkout/form-schema"
+import { saveLastOrder } from "@/lib/checkout/last-order"
+import { buildOrder } from "@/lib/checkout/order"
 import { calculateTotals } from "@/lib/checkout/totals"
 import type {
   CheckoutConfig,
   Coupon,
   ShippingMethod,
 } from "@/lib/checkout/types"
-import { cartSubtotal, useCartStore } from "@/lib/store/cart"
-import { useCartSync } from "@/lib/store/cart-sync"
-import { useCartRestored } from "@/lib/store/hydration"
+import { formatPrice } from "@/lib/money"
+import { cartSubtotal, useCartStore } from "@/lib/state/cart"
+import { useCartSync } from "@/lib/state/cart-sync"
+import { useCartRestored } from "@/lib/state/hydration"
 import { cn } from "@/lib/utils"
 
 interface CheckoutViewProps {
@@ -318,7 +319,7 @@ export function CheckoutView({ config }: CheckoutViewProps) {
                 title="توصيل سريع"
                 description={
                   city?.express
-                    ? config.express.label
+                    ? config.express.deliveryTime
                     : `متاح في ${expressCities.join(" و")} فقط`
                 }
                 price={city?.express ? totalsFor("express").shipping : null}

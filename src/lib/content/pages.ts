@@ -6,8 +6,8 @@ import path from "node:path"
 import { z } from "zod"
 
 import { siteConfig } from "@/config/site"
-import { formatPrice } from "@/lib/catalog/money"
 import { getCheckoutConfig } from "@/lib/checkout/config"
+import { formatPrice } from "@/lib/money"
 
 /**
  * Static pages from text files in src/content/pages: each .md file is a page,

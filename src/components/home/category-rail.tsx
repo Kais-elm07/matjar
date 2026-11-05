@@ -1,6 +1,6 @@
 import { CategoryTile } from "@/components/home/category-tile"
-import { Carousel } from "@/components/store/carousel"
-import { SectionHeading } from "@/components/store/section-heading"
+import { Carousel } from "@/components/shared/carousel"
+import { SectionHeading } from "@/components/shared/section-heading"
 import type { Category } from "@/lib/catalog/types"
 
 interface CategoryRailProps {

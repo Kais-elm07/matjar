@@ -16,8 +16,11 @@ export type ShippingInput = {
   /** Standard shipping is free when the order subtotal after discount reaches this amount */
   freeShippingFrom: number
   cities: ShippingCityInput[]
-  /** Express delivery: an amount added to the standard delivery price */
-  express: { extraFee: number; label: string }
+  /**
+   * Express delivery: an amount added to the standard delivery price, and when the order
+   * arrives, shown as written, such as "في اليوم التالي" (the next day)
+   */
+  express: { extraFee: number; deliveryTime: string }
 }
 
 export type CouponInput = {
@@ -58,7 +61,7 @@ export type Coupon = {
 export type CheckoutConfig = {
   freeShippingFrom: number
   cities: ShippingCity[]
-  express: { extraFee: number; label: string }
+  express: { extraFee: number; deliveryTime: string }
   coupons: Coupon[]
 }
 

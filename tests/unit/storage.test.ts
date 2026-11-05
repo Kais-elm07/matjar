@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { useCartStore, type CartLine } from "@/lib/store/cart"
-import { resetStorageProbe, safeStorage } from "@/lib/store/storage"
-import { useWishlistStore } from "@/lib/store/wishlist"
+import { useCartStore, type CartLine } from "@/lib/state/cart"
+import { resetStorageProbe, safeStorage } from "@/lib/state/storage"
+import { useWishlistStore } from "@/lib/state/wishlist"
 
 /**
  * Saving the cart and wishlist in the browser: a corrupt save or blocked storage must not break the site,

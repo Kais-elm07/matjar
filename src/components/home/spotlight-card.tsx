@@ -1,11 +1,10 @@
 import Image from "next/image"
 import Link from "next/link"
 
+import { IMAGE_SHADE } from "@/components/home/banner-styles"
 import { buttonVariants } from "@/components/ui/button"
 import type { CategoryBanner } from "@/lib/catalog/types"
 import { cn } from "@/lib/utils"
-
-import { IMAGE_SHADE } from "./banner-styles"
 
 interface SpotlightCardProps {
   banner: CategoryBanner

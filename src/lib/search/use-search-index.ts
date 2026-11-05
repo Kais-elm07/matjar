@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react"
 
-import { isSearchIndex } from "./guards"
-import type { SearchCardData } from "./types"
+import { isSearchIndex } from "@/lib/catalog/guards"
+import type { SearchCardData } from "@/lib/catalog/types"
 
 let request: Promise<SearchCardData[]> | null = null
 

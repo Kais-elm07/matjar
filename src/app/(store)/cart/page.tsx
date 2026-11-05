@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
 import { CartView } from "@/components/cart/cart-view"
-import { Breadcrumbs } from "@/components/store/breadcrumbs"
+import { Breadcrumbs } from "@/components/shared/breadcrumbs"
 
 export const metadata: Metadata = {
   title: "سلة التسوق",

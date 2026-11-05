@@ -14,10 +14,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
-import { formatPrice } from "@/lib/catalog/money"
-import { cartSubtotal, useCartCount, useCartStore } from "@/lib/store/cart"
-import { useCartSync } from "@/lib/store/cart-sync"
-import { useUiStore } from "@/lib/store/ui"
+import { formatPrice } from "@/lib/money"
+import { cartSubtotal, useCartCount, useCartStore } from "@/lib/state/cart"
+import { useCartSync } from "@/lib/state/cart-sync"
+import { useUiStore } from "@/lib/state/ui"
 
 /** The side cart panel: slides in from the end side when an item is added or the cart icon is pressed. */
 export function CartSheet() {

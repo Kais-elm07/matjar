@@ -4,8 +4,7 @@ import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
 import { isRecord } from "@/lib/guards"
-
-import { safeStorage } from "./storage"
+import { safeStorage } from "@/lib/state/storage"
 
 type WishlistState = {
   /** Slugs of the saved products, newest first */

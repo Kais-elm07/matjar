@@ -2,9 +2,9 @@
 
 import { XIcon } from "lucide-react"
 
-import { CLEARED_FILTERS, type ListingParams } from "@/lib/catalog/listing"
-import { formatPrice, toMinorUnits } from "@/lib/catalog/money"
 import type { CategoryOption } from "@/lib/catalog/types"
+import { CLEARED_FILTERS, type ListingParams } from "@/lib/listing/params"
+import { formatPrice, toMinorUnits } from "@/lib/money"
 
 function priceLabel(min: number | null, max: number | null) {
   const format = (value: number) => formatPrice(toMinorUnits(value))

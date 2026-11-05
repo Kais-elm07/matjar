@@ -1,4 +1,4 @@
-import type { OptionGroup, VariantOptions } from "./options"
+import type { OptionGroup, VariantOptions } from "@/lib/catalog/options"
 
 // ---------------------------------------------------------------------------
 // Shape of the data as written in the src/data files (prices in riyals)

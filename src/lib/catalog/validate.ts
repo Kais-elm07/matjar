@@ -1,17 +1,16 @@
 import type { z } from "zod"
 
 import { siteConfig } from "@/config/site"
-import { isRecord } from "@/lib/guards"
-
-import { UTC_OFFSET_PATTERN } from "./dates"
-import { isColorOption } from "./options"
+import { isColorOption } from "@/lib/catalog/options"
 import {
   categorySchema,
   productSchema,
   type ParsedCategory,
   type ParsedProduct,
-} from "./schema"
-import { optionsKey } from "./variant-key"
+} from "@/lib/catalog/schema"
+import { optionsKey } from "@/lib/catalog/variant-key"
+import { UTC_OFFSET_PATTERN } from "@/lib/dates"
+import { isRecord } from "@/lib/guards"
 
 /** The field path as the store owner understands it: variants[2].price (counting from 1, not 0). */
 function fieldPath(path: PropertyKey[]) {

@@ -4,9 +4,8 @@ import { useEffect, useState } from "react"
 
 import { isCartCatalog } from "@/lib/catalog/guards"
 import type { CartCatalog } from "@/lib/catalog/types"
-
-import { useCartStore, type CartNotice } from "./cart"
-import { useCartRestored } from "./hydration"
+import { useCartStore, type CartNotice } from "@/lib/state/cart"
+import { useCartRestored } from "@/lib/state/hydration"
 
 let request: Promise<CartCatalog> | null = null
 

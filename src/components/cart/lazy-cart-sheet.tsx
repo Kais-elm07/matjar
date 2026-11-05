@@ -2,8 +2,8 @@
 
 import dynamic from "next/dynamic"
 
-import { useUiStore } from "@/lib/store/ui"
-import { useIdle } from "@/lib/use-idle"
+import { useIdle } from "@/hooks/use-idle"
+import { useUiStore } from "@/lib/state/ui"
 
 const CartSheet = dynamic(
   () => import("@/components/cart/cart-sheet").then((mod) => mod.CartSheet),
