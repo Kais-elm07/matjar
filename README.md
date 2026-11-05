@@ -119,7 +119,7 @@ The script loads after the page has finished loading, so it does not slow it dow
 
 1. Put the original image in `assets/images/products/` with a name such as `classic-cotton-shirt-1.jpg`. A square image 1200 pixels wide or larger works best.
 2. In the products file, write the path without an extension, `/images/products/classic-cotton-shirt-1`, or use `productImages("classic-cotton-shirt", 2)`.
-3. When running or building, the image is converted automatically to WebP at 400, 800 and 1200 pixels wide, and the browser picks the right size for the visitor's screen.
+3. When running or building, the image is converted automatically to WebP at 200, 400, 800 and 1200 pixels wide, and the browser picks the right size for the visitor's screen.
 
 The `public/images` folder is generated automatically and is not committed to Git, so never put images there by hand. Category images go in `assets/images/categories/` the same way. A production build stops with a list of any image that the data mentions but that does not exist.
 

@@ -136,6 +136,45 @@
   }
 }
 
+/*
+ * Content further down a long page: the browser skips its layout and painting until it comes near
+ * the screen, so a phone shows the first screen sooner. The height is a first guess until the
+ * content has been shown once; after that the browser keeps its real height (auto).
+ * Painting is clipped at the element's edges, so this one is for full-width elements such as the footer.
+ * Everything renders at once after a reload, back and forward, or a move inside the store
+ * (data-render-all, src/lib/render-later.ts), so the browser returns to the same place.
+ */
+@utility render-later {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 30rem;
+
+  :root[data-render-all] & {
+    content-visibility: visible;
+  }
+}
+
+/*
+ * The same for a section inside the page container. Its box grows by 16 px on every side, with the
+ * same padding inside, so the rows that swipe to the screen edge on a phone and the focus rings at
+ * its edges are not clipped. The section itself must have no background, border or spacing of its
+ * own, and its parent spaces its children with gap: a negative margin would cancel space-y.
+ */
+@utility section-later {
+  content-visibility: auto;
+  /* About the average height of the home page sections on a phone, then on larger screens */
+  contain-intrinsic-size: auto 28rem;
+  margin: --spacing(-4);
+  padding: --spacing(4);
+
+  @variant md {
+    contain-intrinsic-size: auto 24rem;
+  }
+
+  :root[data-render-all] & {
+    content-visibility: visible;
+  }
+}
+
 /* For visitors who turned on reduced motion in their device settings: no sliding, no zooming and no smooth scrolling */
 @media (prefers-reduced-motion: reduce) {
   *,

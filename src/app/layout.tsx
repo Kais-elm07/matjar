@@ -3,8 +3,10 @@ import localFont from "next/font/local"
 
 import { Analytics } from "@/components/store/analytics"
 import { LazyToaster } from "@/components/store/lazy-toaster"
+import { RenderAllAfterNavigation } from "@/components/store/render-all-after-navigation"
 import { DirectionProvider } from "@/components/ui/direction"
 import { siteConfig } from "@/config/site"
+import { RENDER_ALL_SCRIPT } from "@/lib/render-later"
 import { openGraph } from "@/lib/seo"
 
 import "./globals.css"
@@ -85,12 +87,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ar"
       dir="rtl"
       className={`${plexArabic.variable} ${plexLatin.variable} h-full antialiased`}
+      // The script below may add data-render-all before React starts
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: RENDER_ALL_SCRIPT }} />
+      </head>
       <body className="flex min-h-full flex-col">
         <DirectionProvider direction="rtl">
           {children}
           <LazyToaster />
           <Analytics />
+          <RenderAllAfterNavigation />
         </DirectionProvider>
       </body>
     </html>

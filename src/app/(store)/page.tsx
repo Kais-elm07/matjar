@@ -48,7 +48,9 @@ export default function HomePage() {
       <HeroSlider slides={heroSlides} />
       <TrustStrip />
 
-      <div className="page-container space-y-14 py-10 md:space-y-20 md:py-14">
+      {/* Every section here is rendered only when it comes near the screen (section-later in
+          globals.css), so a phone shows the hero sooner; the sections have no style of their own */}
+      <div className="page-container flex flex-col gap-14 py-10 *:section-later md:gap-20 md:py-14">
         <WhyUs />
         <PromoGrid promos={promos} maxDiscount={maxDiscount} />
 

@@ -9,6 +9,7 @@ import { buttonVariants } from "@/components/ui/button"
 import { formatPrice } from "@/lib/catalog/money"
 import type { ProductBanner } from "@/lib/catalog/types"
 import { scrollBehavior } from "@/lib/motion"
+import { useIdle } from "@/lib/use-idle"
 import { cn } from "@/lib/utils"
 
 interface HeroSliderProps {
@@ -25,6 +26,9 @@ export function HeroSlider({ slides }: HeroSliderProps) {
   const listRef = useRef<HTMLUListElement>(null)
   const slideRefs = useRef<(HTMLLIElement | null)[]>([])
   const [active, setActive] = useState(0)
+  // The other slides' photos wait until the page has loaded, or until their slide is shown,
+  // so on a slow phone they don't share the connection with the first photo
+  const idle = useIdle()
 
   function onScroll() {
     const list = listRef.current
@@ -68,13 +72,16 @@ export function HeroSlider({ slides }: HeroSliderProps) {
             className="relative w-full shrink-0 snap-center"
           >
             <div className="relative flex min-h-[32rem] items-center md:h-[min(72svh,42rem)] md:min-h-[30rem]">
-              {slide.image && (
+              {slide.image && (index === 0 || index === active || idle) && (
+                // The first photo is the largest element on a phone's first screen (LCP), so it
+                // loads at once and before the other images
                 <Image
                   src={slide.image.src}
                   alt={slide.image.alt}
                   fill
                   sizes="100vw"
-                  priority={index === 0}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  fetchPriority={index === 0 ? "high" : "auto"}
                   className="object-cover"
                 />
               )}

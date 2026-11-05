@@ -41,13 +41,21 @@ export function Carousel({
     // In the Arabic (RTL) direction the scroll value starts at zero and turns negative toward the end
     const scrolled = Math.abs(list.scrollLeft)
     const max = list.scrollWidth - list.clientWidth
-    setEdges({ atStart: scrolled <= 4, atEnd: scrolled >= max - 4 })
+    const atStart = scrolled <= 4
+    const atEnd = scrolled >= max - 4
+    // The same state while nothing changed, so scrolling doesn't re-render the row on every event
+    setEdges((edges) =>
+      edges.atStart === atStart && edges.atEnd === atEnd
+        ? edges
+        : { atStart, atEnd }
+    )
   }, [])
 
   useEffect(() => {
-    updateEdges()
     const list = listRef.current
     if (!list) return
+    // The observer reports the row's first size too, after the browser's own layout,
+    // so measuring it here doesn't force an extra layout while the page loads
     const observer = new ResizeObserver(updateEdges)
     observer.observe(list)
     return () => observer.disconnect()

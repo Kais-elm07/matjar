@@ -100,15 +100,19 @@ export function ProductGallery({
                 className="absolute inset-0 cursor-zoom-in outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
                 aria-label={`تكبير الصورة ${index + 1} من ${images.length}`}
               >
-                <Image
-                  src={image.src}
-                  alt={image.alt}
-                  fill
-                  sizes="(min-width: 1024px) 560px, (min-width: 768px) 50vw, 100vw"
-                  loading={index === 0 ? "eager" : "lazy"}
-                  fetchPriority={index === 0 ? "high" : "auto"}
-                  className="object-cover"
-                />
+                {/* The other large photos wait until the page has loaded, or until they are shown,
+                    so on a slow phone they don't share the connection with the first photo */}
+                {(index === 0 || index === activeIndex || idle) && (
+                  <Image
+                    src={image.src}
+                    alt={image.alt}
+                    fill
+                    sizes="(min-width: 1024px) 560px, (min-width: 768px) 50vw, 100vw"
+                    loading={index === 0 ? "eager" : "lazy"}
+                    fetchPriority={index === 0 ? "high" : "auto"}
+                    className="object-cover"
+                  />
+                )}
               </button>
             </div>
           ))}

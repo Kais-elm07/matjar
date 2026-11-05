@@ -62,7 +62,9 @@ export default async function ProductPage({
   }))
 
   return (
-    <div className="page-container space-y-12 py-5 md:space-y-16 md:py-8">
+    // The info tabs and the related products are rendered only when they come near the screen
+    // (section-later in globals.css), so a phone shows the photo and the price sooner
+    <div className="page-container flex flex-col gap-12 py-5 md:gap-16 md:py-8">
       <div>
         <Breadcrumbs items={[...trail, { name: product.name }]} />
         <ProductDetails
@@ -78,10 +80,13 @@ export default async function ProductPage({
         />
       </div>
 
-      <ProductTabs product={product} />
+      {/* A wrapper, because the tabs have a top border and padding of their own */}
+      <div className="section-later">
+        <ProductTabs product={product} />
+      </div>
 
       {related.length > 0 && (
-        <section aria-labelledby="related-heading">
+        <section aria-labelledby="related-heading" className="section-later">
           <ProductRail
             label="منتجات قد تعجبك"
             header={

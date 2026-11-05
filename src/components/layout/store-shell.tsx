@@ -36,8 +36,9 @@ export function StoreShell({ children, mainClassName }: StoreShellProps) {
       <main id="main-content" className={cn("flex-1", mainClassName)}>
         {children}
       </main>
-      {/* Room for the fixed mobile bottom bar, so it doesn't cover the footer */}
-      <div className="pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
+      {/* Room for the fixed mobile bottom bar, so it doesn't cover the footer. The footer is
+          rendered only when it comes near the screen (render-later in globals.css) */}
+      <div className="pb-[calc(4rem+env(safe-area-inset-bottom))] render-later md:pb-0">
         <SiteFooter />
       </div>
       <MobileTabBar />

@@ -31,15 +31,49 @@ const DAY_FORMS: PluralForms = {
   other: "{n} يوم",
 }
 
-/** A clock that updates every second in the browser, and is null during the build and the first render. */
-function subscribe(onChange: () => void) {
-  const timer = setInterval(onChange, 1000)
-  return () => clearInterval(timer)
+/**
+ * One clock for all the deals on the page: a single timer that ticks every second while at least
+ * one deal is shown, instead of a timer for each deal.
+ */
+const listeners = new Set<() => void>()
+let timer: ReturnType<typeof setInterval> | undefined
+
+function subscribe(onTick: () => void) {
+  listeners.add(onTick)
+  timer ??= setInterval(() => {
+    for (const listener of listeners) listener()
+  }, 1000)
+  return () => {
+    listeners.delete(onTick)
+    if (listeners.size === 0) {
+      clearInterval(timer)
+      timer = undefined
+    }
+  }
 }
-const nowInSeconds = () => Math.floor(Date.now() / 1000)
-const atBuildTime = () => null
 
 const pad = (value: number) => value.toString().padStart(2, "0")
+
+/**
+ * The time left until the deal ends (in seconds since 1970), or null once it has ended.
+ * Whole days while a day or more is left, so the pill fits on one line on a phone; the ticking
+ * clock appears in the last day. The text is what the deal subscribes to, so until the last day
+ * it re-renders once a day, not every second.
+ */
+function timeLeft(end: number) {
+  const left = end - Math.floor(Date.now() / 1000)
+  if (left <= 0) return null
+  const days = Math.floor(left / 86400)
+  return days > 0
+    ? `ينتهي خلال ${pluralize(days, DAY_FORMS)}`
+    : `ينتهي خلال ${pad(Math.floor(left / 3600))}:${pad(Math.floor((left % 3600) / 60))}:${pad(left % 60)}`
+}
+
+/** The deal's last day, shown during the build and the first render, before the browser's clock is read. */
+function lastDay(endsAt: string) {
+  const [, month, day] = endsAt.split("-").map(Number)
+  return `ينتهي العرض في ${day} ${MONTHS[month - 1]}`
+}
 
 interface DealItemProps {
   /** The last day of the deal, in the format 2026-12-31 */
@@ -53,23 +87,14 @@ interface DealItemProps {
  * (in the store's time zone). The product leaves the section when the deal ends.
  */
 export function DealItem({ endsAt, children, className }: DealItemProps) {
-  const now = useSyncExternalStore(subscribe, nowInSeconds, atBuildTime)
   const end = saleEndTime(endsAt) / 1000
+  const label = useSyncExternalStore(
+    subscribe,
+    () => timeLeft(end),
+    () => lastDay(endsAt)
+  )
 
-  if (now !== null && now >= end) return null
-
-  const [, month, day] = endsAt.split("-").map(Number)
-  let label = `ينتهي العرض في ${day} ${MONTHS[month - 1]}`
-  if (now !== null) {
-    const left = end - now
-    const days = Math.floor(left / 86400)
-    // Whole days while a day or more is left, so the pill fits on one line on a phone;
-    // the ticking clock appears in the last day
-    label =
-      days > 0
-        ? `ينتهي خلال ${pluralize(days, DAY_FORMS)}`
-        : `ينتهي خلال ${pad(Math.floor(left / 3600))}:${pad(Math.floor((left % 3600) / 60))}:${pad(left % 60)}`
-  }
+  if (label === null) return null
 
   return (
     <li className={cn("flex flex-col gap-2", className)}>

@@ -6,6 +6,9 @@ import { absoluteImageUrl } from "@/lib/seo"
 
 describe("prepared image paths", () => {
   it("picks the smallest size that covers the requested width", () => {
+    expect(imageFile("/images/products/shirt-1", 160)).toBe(
+      "/images/products/shirt-1-200.webp"
+    )
     expect(imageFile("/images/products/shirt-1", 300)).toBe(
       "/images/products/shirt-1-400.webp"
     )

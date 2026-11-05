@@ -2,7 +2,7 @@
 /**
  * The store's images.
  *
- *   pnpm images        converts the original images in assets/images to WebP at widths of 400, 800 and 1200 pixels
+ *   pnpm images        converts the original images in assets/images to WebP at widths of 200, 400, 800 and 1200 pixels
  *                      in public/images. It runs automatically before pnpm dev and pnpm build,
  *                      and skips the images that haven't changed since the last run.
  *   pnpm images:demo   draws demo images (SVG) for the products and categories that have no real photo, then processes them.
@@ -23,7 +23,9 @@ import sharp from "sharp"
 const ROOT = process.cwd()
 const SOURCE_DIR = path.join(ROOT, "assets", "images")
 const OUTPUT_DIR = path.join(ROOT, "public", "images")
-const WIDTHS = [400, 800, 1200]
+// 200 is for the small thumbnails (the gallery, the cart and the search suggestions);
+// the same sizes are in IMAGE_WIDTHS (src/lib/image-loader.ts) and next.config.ts
+const WIDTHS = [200, 400, 800, 1200]
 const SOURCE_EXTENSIONS = new Set([
   ".jpg",
   ".jpeg",
