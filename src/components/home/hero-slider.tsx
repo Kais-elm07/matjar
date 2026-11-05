@@ -148,7 +148,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
                 onClick={() => show(index)}
                 aria-label={`الشريحة ${index + 1}`}
                 aria-current={index === active}
-                className="group/dot flex h-8 min-w-6 items-center justify-center px-2 outline-none"
+                className="group/dot flex size-11 items-center justify-center outline-none"
               >
                 <span
                   className={cn(

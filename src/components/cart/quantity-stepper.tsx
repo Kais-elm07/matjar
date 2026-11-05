@@ -16,6 +16,12 @@ interface QuantityStepperProps {
   className?: string
 }
 
+/** The buttons fill the stepper's height. The small stepper's 36 px buttons get an invisible ::after area, to reach 44 px. */
+const BUTTON = {
+  default: "h-full rounded-full",
+  sm: "relative h-full rounded-full after:absolute after:-inset-1",
+}
+
 /** Quantity selector: one button to increase and another to decrease, without going past the limit. */
 export function QuantityStepper({
   value,
@@ -32,7 +38,8 @@ export function QuantityStepper({
       role="group"
       aria-label={label}
       className={cn(
-        "flex shrink-0 items-center rounded-full border",
+        // An outline instead of a border, so the buttons get the full 44 px height
+        "flex shrink-0 items-center rounded-full outline -outline-offset-1 outline-border",
         size === "sm" ? "h-9" : "h-11",
         className
       )}
@@ -40,7 +47,7 @@ export function QuantityStepper({
       <Button
         variant="ghost"
         size={buttonSize}
-        className="h-full rounded-full"
+        className={BUTTON[size]}
         disabled={disabled || value >= max}
         onClick={() => onChange(value + 1)}
         aria-label="زيادة الكمية"
@@ -59,7 +66,7 @@ export function QuantityStepper({
       <Button
         variant="ghost"
         size={buttonSize}
-        className="h-full rounded-full"
+        className={BUTTON[size]}
         disabled={disabled || value <= 1}
         onClick={() => onChange(value - 1)}
         aria-label="إنقاص الكمية"

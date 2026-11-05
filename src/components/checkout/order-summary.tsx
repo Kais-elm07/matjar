@@ -75,7 +75,7 @@ export function OrderSummary({
         <ul className="divide-y rounded-lg border bg-background px-3">
           {lines.map((line) => (
             <li key={line.sku} className="flex items-center gap-3 py-3">
-              <span className="relative size-14 shrink-0 overflow-hidden rounded-md border">
+              <span className="relative size-14 shrink-0 overflow-hidden rounded-lg border">
                 {line.image && (
                   <Image
                     src={line.image.src}
@@ -85,7 +85,7 @@ export function OrderSummary({
                     className="object-cover"
                   />
                 )}
-                <span className="absolute -end-1 -top-1 flex size-5 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground tabular-nums">
+                <span className="absolute -end-1 -top-1 flex size-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground tabular-nums">
                   {line.quantity}
                 </span>
               </span>
@@ -109,7 +109,7 @@ export function OrderSummary({
         </ul>
         <Link
           href="/cart"
-          className="inline-block rounded-sm text-sm font-medium text-primary underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="-my-3 inline-block rounded-sm py-3 text-sm font-medium text-primary underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           تعديل السلة
         </Link>
@@ -149,7 +149,7 @@ export function OrderSummary({
         </dl>
         {totals.freeShippingRemaining !== null &&
           totals.freeShippingRemaining > 0 && (
-            <p className="rounded-md bg-background px-3 py-2 text-xs">
+            <p className="rounded-lg bg-background px-3 py-2 text-xs">
               أضف منتجات بقيمة{" "}
               <span className="font-bold">
                 {formatPrice(totals.freeShippingRemaining)}

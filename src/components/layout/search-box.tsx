@@ -105,13 +105,15 @@ export function SearchBox({
       <div
         className={cn(
           "flex items-center rounded-full border bg-muted text-foreground transition-colors focus-within:border-primary/70",
-          header ? "h-10 border-border/70 ps-0.5 pe-2" : "h-11 ps-1 pe-3"
+          "h-11",
+          header ? "border-border/70 ps-0.5 pe-2" : "ps-1 pe-3"
         )}
       >
         <button
           type="submit"
           aria-label="بحث"
-          className="flex size-9 shrink-0 items-center justify-center rounded-full outline-none hover:bg-foreground/10 focus-visible:ring-3 focus-visible:ring-ring [&_svg]:size-5"
+          // The invisible ::after area makes the 36 px button a 44 px touch target
+          className="relative flex size-9 shrink-0 items-center justify-center rounded-full outline-none after:absolute after:-inset-1 hover:bg-foreground/10 focus-visible:ring-3 focus-visible:ring-ring [&_svg]:size-5"
         >
           <SearchIcon aria-hidden />
         </button>
@@ -133,7 +135,7 @@ export function SearchBox({
           enterKeyHint="search"
           autoComplete="off"
           className={cn(
-            "min-w-0 flex-1 bg-transparent outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden",
+            "min-w-0 flex-1 self-stretch bg-transparent outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden",
             header ? "text-sm" : "text-base"
           )}
           onChange={(event) => {
@@ -173,7 +175,7 @@ export function SearchBox({
                   aria-hidden
                   className="flex items-center gap-3 px-3 py-2"
                 >
-                  <Skeleton className="size-12 shrink-0 rounded-md" />
+                  <Skeleton className="size-12 shrink-0 rounded-lg" />
                   <div className="flex-1 space-y-2">
                     <Skeleton className="h-3 w-3/4" />
                     <Skeleton className="h-3 w-1/3" />
@@ -203,7 +205,7 @@ export function SearchBox({
                       index === activeIndex && "bg-muted"
                     )}
                   >
-                    <span className="relative size-12 shrink-0 overflow-hidden rounded-md bg-muted">
+                    <span className="relative size-12 shrink-0 overflow-hidden rounded-lg bg-muted">
                       {product.image && (
                         <Image
                           src={product.image.src}

@@ -26,7 +26,7 @@ export function StoreShell({ children, mainClassName }: StoreShellProps) {
       {/* The first thing the Tab key reaches: skips the announcement and header to the content */}
       <a
         href="#main-content"
-        className="sr-only rounded-lg bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:start-4 focus:top-3 focus:z-50"
+        className="sr-only rounded-lg bg-primary px-4 py-2.5 text-primary-foreground focus:not-sr-only focus:fixed focus:start-4 focus:top-3 focus:z-50"
       >
         انتقل إلى المحتوى
       </a>

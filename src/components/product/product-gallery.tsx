@@ -117,7 +117,11 @@ export function ProductGallery({
           <ZoomInIcon className="size-4" aria-hidden />
         </span>
         {images.length > 1 && (
-          <span className="pointer-events-none absolute start-3 bottom-3 rounded-full bg-card/85 px-2.5 py-1 text-xs font-medium tabular-nums md:hidden">
+          // Left to right, so it reads "1 / 3" and not "3 / 1" in the Arabic direction
+          <span
+            dir="ltr"
+            className="pointer-events-none absolute start-3 bottom-3 rounded-full bg-card/85 px-2.5 py-1 text-xs font-medium tabular-nums md:hidden"
+          >
             {activeIndex + 1} / {images.length}
           </span>
         )}
@@ -133,7 +137,7 @@ export function ProductGallery({
                 aria-label={`عرض الصورة ${index + 1}`}
                 aria-current={index === activeIndex}
                 className={cn(
-                  "relative block size-16 overflow-hidden rounded-md border-2 border-border bg-muted transition-colors md:size-20",
+                  "relative block size-16 overflow-hidden rounded-lg border-2 border-border bg-muted transition-colors md:size-20",
                   index === activeIndex
                     ? "border-primary"
                     : "opacity-70 hover:opacity-100"

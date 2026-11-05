@@ -63,7 +63,7 @@ The values are applied in `src/app/globals.css` as shadcn variables with the sam
 - Red is for errors and sold-out items only.
 - Buttons, fields and image boxes are `rounded-lg` (8 px); cards, dialogs and photo tiles are `rounded-xl` (12 px); and tabs, chips, the search field and badges are pills (`rounded-full`). The hero, the trust strip and the footer have no corners.
 - Product cards are `rounded-xl bg-card` with no border and no shadow, separated by gaps in the grid (`grid gap-3 md:gap-4`; see `ProductGrid`). The round cart button in their corner (`QuickAddButton`) is surrounded by `ring-[6px] ring-background`, so leave room for it with `pe-12` in the text column.
-- The header is dark and sticky (`sticky top-0 bg-card`), 64 px tall, with a 40 px row of links on desktop. Elements pinned under it start at `top-32`.
+- The header is dark and sticky (`sticky top-0 bg-card`), 64 px tall, with a 44 px row of links on desktop. Elements pinned under it start at `top-32`.
 - Text on photos is white, over a darkening layer in the background color (`bg-background/45`) and a dark gradient (`bg-gradient-to-t from-background/95`), never directly on the photo.
 - The add-to-cart button is always visible on the card, and nothing important appears only on mouse hover.
 - No fake numbers ("viewing now"), no countdown without a real date in the data, and no made-up customer reviews or rating stars.

@@ -16,7 +16,7 @@ export function Logo({ className, onNavigate }: LogoProps) {
       href="/"
       onClick={onNavigate}
       className={cn(
-        "flex shrink-0 items-center gap-2 rounded-lg text-xl font-bold text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring",
+        "flex h-11 shrink-0 items-center gap-2 rounded-lg text-xl font-bold text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring",
         className
       )}
     >

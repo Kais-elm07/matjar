@@ -32,13 +32,13 @@ export function SiteFooter() {
           {siteConfig.footerNav.map((group) => (
             <nav key={group.title} aria-label={group.title}>
               <h2 className="text-sm font-bold">{group.title}</h2>
-              <ul className="mt-4 space-y-2 text-sm">
+              <ul className="mt-2 text-sm">
                 {group.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
                       prefetch={false}
-                      className="inline-block rounded-sm py-0.5 text-muted-foreground transition-colors outline-none hover:text-primary focus-visible:ring-3 focus-visible:ring-ring"
+                      className="inline-flex min-h-11 items-center rounded-sm text-muted-foreground transition-colors outline-none hover:text-primary focus-visible:ring-3 focus-visible:ring-ring"
                     >
                       {link.title}
                     </Link>

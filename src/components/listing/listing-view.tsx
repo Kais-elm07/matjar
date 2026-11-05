@@ -185,7 +185,7 @@ export function ListingView(props: ListingViewProps) {
               <SlidersHorizontalIcon aria-hidden />
               تصفية
               {activeCount > 0 && (
-                <span className="flex size-5 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground tabular-nums">
+                <span className="flex size-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground tabular-nums">
                   {activeCount}
                 </span>
               )}

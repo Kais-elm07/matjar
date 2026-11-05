@@ -63,11 +63,12 @@ export function DealItem({ endsAt, children, className }: DealItemProps) {
   if (now !== null) {
     const left = end - now
     const days = Math.floor(left / 86400)
-    const clock = `${pad(Math.floor((left % 86400) / 3600))}:${pad(Math.floor((left % 3600) / 60))}:${pad(left % 60)}`
+    // Whole days while a day or more is left, so the pill fits on one line on a phone;
+    // the ticking clock appears in the last day
     label =
       days > 0
-        ? `ينتهي خلال ${pluralize(days, DAY_FORMS)} و ${clock}`
-        : `ينتهي خلال ${clock}`
+        ? `ينتهي خلال ${pluralize(days, DAY_FORMS)}`
+        : `ينتهي خلال ${pad(Math.floor(left / 3600))}:${pad(Math.floor((left % 3600) / 60))}:${pad(left % 60)}`
   }
 
   return (

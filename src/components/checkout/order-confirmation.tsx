@@ -134,7 +134,7 @@ export function OrderConfirmation() {
         <ul className="divide-y">
           {order.lines.map((line) => (
             <li key={line.sku} className="flex items-center gap-3 py-3">
-              <span className="relative size-14 shrink-0 overflow-hidden rounded-md border">
+              <span className="relative size-14 shrink-0 overflow-hidden rounded-lg border">
                 {line.image && (
                   <Image
                     src={line.image.src}

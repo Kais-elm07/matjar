@@ -114,7 +114,7 @@ spacing:
   container-max: 1280px
   touch-target: 44px
   header-height: 64px
-  header-nav-height: 40px
+  header-nav-height: 44px
   tab-bar-height: 64px
 components:
   button-cta:
@@ -150,7 +150,7 @@ components:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.foreground}"
     typography: "{typography.label-md}"
-    height: 40px
+    height: 44px
   header-link-hover:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.primary}"
@@ -221,7 +221,7 @@ components:
     backgroundColor: "{colors.surface-muted}"
     textColor: "{colors.foreground}"
     rounded: "{rounded.full}"
-    size: 40px
+    size: 44px
   filter-chip:
     backgroundColor: "{colors.background}"
     textColor: "{colors.foreground}"
@@ -390,14 +390,14 @@ The font has static weights, and only three are available: 400 for text, 500 for
 ## Layout
 
 - **Grid:** a container with a maximum width of 1280 px in the middle, and a side margin of 16 px on mobile and 24 on desktop (`page-container`). Only the hero, the trust strip under it and the footer span the full screen width.
-- **Header on desktop:** two rows fixed to the top of the screen. The first, 64 px tall, has the logo at the start, a wide search field in the middle, and the wishlist, the cart and the orange "Shop now" button at the end. The second, 40 px tall, has the shopping and help links in the middle, and "Categories" opens a large panel with columns.
+- **Header on desktop:** two rows fixed to the top of the screen. The first, 64 px tall, has the logo at the start, a wide search field in the middle, and the wishlist, the cart and the orange "Shop now" button at the end. The second, 44 px tall, has the shopping and help links in the middle, and "Categories" opens a large panel with columns.
 - **Header on mobile:** one row, 64 px tall: the menu button at the start, the logo, and the search button and the cart at the end. The search button opens the search field in a row under the header.
 - **Bottom navigation bar on mobile:** fixed and 64 px tall: Home, Categories, Search, Wishlist, Cart. Every page leaves room for it at the bottom.
 - **Home page order:** the full-width hero, then the dark trust strip directly under it, then "Why choose us?" with three circles, then the deals grid (two image tiles, a tall tile and the discount card), then best sellers, then the two featured category cards, then new arrivals with a large banner, a row of products and a centered button, then trending with category tabs, then deals with a countdown, then the wide banner, then the category tiles, then customer reviews if there are any, then Contact us, then the footer.
 - **Product rows:** swiped horizontally on every screen, with a gap of 12 to 16 px, and two round scroll buttons in the section heading on desktop.
 - **Product grid in listings:** two columns on mobile, 3 on tablets and 4 on desktop (3 when the filter sidebar is shown), with separate cards and gaps between them.
 - **Spacing scale:** multiples of 4 px. The space between page sections is 56 to 80 px, and inside cards 10 to 16 px.
-- **Touch:** every clickable element is at least 44 px tall, and small chips are 36 px with space between them.
+- **Touch:** every clickable element is at least 44 px tall, and small chips are 36 px with space between them. A control that must look smaller (the search button, the steppers in the cart panel) gets an invisible area around it (`after:-inset-1`), and a text link inside a row (breadcrumbs, "View all") gets vertical padding with a matching negative margin, so the target reaches 44 px without changing the layout. The one exception is the link in the 32 px announcement bar, which fills the whole bar.
 - **Direction:** always use logical properties (`ms`, `me`, `ps`, `pe`, `start` and `end`) instead of left and right.
 
 ## Elevation & Depth
@@ -432,7 +432,7 @@ Depth comes from **background shades**, not from shadows: the background is the 
 - **Category tiles (category-tile):** the category photo at a 4:5 ratio, with 12 px corners and a thin border, and the category name and product count in white at its bottom over a dark gradient.
 - **Product card (product-card):** the surface color, 12 px corners and no shadow. Inside it, the image box has 8 px corners, with the orange discount badge in its start corner and the round orange heart button in its end corner. Under the image: the category name in gray, then the product name in bold, then the price in orange. In the card's bottom corner on the end side sits a round orange cart button (48 px) surrounded by a ring in the background color: it adds a single-option product directly, and opens the product page to choose a size or color for a product with several options. A sold-out product has no button and carries an "Out of stock" badge.
 - **Tabs and chips:** pills with a gray border and white text; the active one is orange with dark text.
-- **Countdown:** an orange pill above the card, shown only for a product with a real deal end date in the data; the product leaves the section when its deal ends.
+- **Countdown:** an orange pill above the card, shown only for a product with a real deal end date in the data. It shows whole days while a day or more is left, so it fits on one line on a phone, and a ticking clock in the last day; the product leaves the section when its deal ends.
 - **Product page:** the gallery sits in a light-surface box with 12 px corners and a thin border, and the active thumbnail has an orange border. The name is white and the large price orange. The size and color options are pills with a gray border, and the selected one is orange. The orange "Add to cart" button sits next to the quantity selector, with "Buy now" under it with a white border. The purchase benefits are in a surface-colored card, followed by the tabs, then similar products.
 - **Cart panel:** slides in from the end side in the surface color, with the products and their images and options, the quantity selector, removal, the subtotal, and two buttons: the orange "Checkout" and "View cart".
 - **Checkout:** one page with steps numbered in orange circles, each step in a card with a thin border. Fields are 44 px tall, with a gray border and the page background; the label sits above the field and the error message under it in light red. The summary is in a surface-colored card, sticky on desktop and collapsible on mobile, and the orange confirm button carries the total. A "demo store" notice shows before and after confirming.

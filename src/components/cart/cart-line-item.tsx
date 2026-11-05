@@ -54,7 +54,7 @@ export function CartLineItem({
         <Link
           href={href}
           onClick={onNavigate}
-          className="line-clamp-2 text-sm leading-6 font-medium hover:underline"
+          className="-my-2.5 line-clamp-2 py-2.5 text-sm leading-6 font-medium hover:underline"
         >
           {line.name}
         </Link>

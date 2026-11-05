@@ -79,7 +79,8 @@ export const siteConfig: SiteConfig = {
     phone: "+966 00 000 0000",
     /** WhatsApp number in international format, such as "+966 50 123 4567". If set, the floating button shows */
     whatsapp: "+966 00 000 0000",
-    hours: "السبت إلى الخميس، من 9 صباحاً حتى 9 مساءً",
+    // \u00a0 is a non-breaking space: it keeps each number on the same line as its word
+    hours: "السبت إلى الخميس، من 9\u00a0صباحاً حتى 9\u00a0مساءً",
     /** The store's address, if it has a physical place; it shows with a link to Google Maps */
     address: "",
   },

@@ -63,7 +63,7 @@ export default async function ContentPageRoute({
                   href={`/pages/${item.slug}`}
                   aria-current={item.slug === page.slug ? "page" : undefined}
                   className={cn(
-                    "flex h-11 items-center rounded-md px-3 text-sm outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50",
+                    "flex h-11 items-center rounded-lg px-3 text-sm outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50",
                     item.slug === page.slug &&
                       "bg-primary/10 font-bold text-primary hover:bg-primary/15"
                   )}

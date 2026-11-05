@@ -29,7 +29,8 @@ export function SectionHeading({
         {href && (
           <Link
             href={href}
-            className="inline-flex items-center gap-0.5 rounded-sm text-sm font-medium text-primary underline-offset-4 transition-colors outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
+            // The vertical padding makes a 44 px touch target, and the negative margin keeps the row's height
+            className="-my-3 inline-flex items-center gap-0.5 rounded-sm py-3 text-sm font-medium text-primary underline-offset-4 transition-colors outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             {linkLabel}
             <ChevronRightIcon className="size-4 rtl:rotate-180" aria-hidden />

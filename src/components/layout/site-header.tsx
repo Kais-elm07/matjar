@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils"
 
 /** Links in the desktop navigation row: light text that turns orange on hover (DESIGN.md: header-link-hover). */
 const NAV_LINK =
-  "inline-flex h-10 items-center rounded-lg px-3 text-sm font-medium whitespace-nowrap text-foreground/85 transition-colors outline-none hover:text-primary focus-visible:ring-3 focus-visible:ring-ring aria-expanded:text-primary"
+  "inline-flex h-11 items-center rounded-lg px-3 text-sm font-medium whitespace-nowrap text-foreground/85 transition-colors outline-none hover:text-primary focus-visible:ring-3 focus-visible:ring-ring aria-expanded:text-primary"
 
 /**
  * The dark sticky store header: a row with the logo, a wide search field in the middle, the wishlist,
@@ -49,8 +49,8 @@ export function SiteHeader() {
           <Link
             href="/products"
             className={cn(
-              buttonVariants({ variant: "cta" }),
-              "ms-2 hidden h-10 px-5 text-sm font-bold lg:inline-flex"
+              buttonVariants({ variant: "cta", size: "xl" }),
+              "ms-2 hidden lg:inline-flex"
             )}
           >
             تسوّق الآن
@@ -63,7 +63,7 @@ export function SiteHeader() {
         aria-label="التسوق"
         className="relative hidden border-t border-border/60 md:block"
       >
-        <div className="page-container flex h-10 items-center justify-center gap-1">
+        <div className="page-container flex h-11 items-center justify-center gap-1">
           <CategoryMenu categories={navCategories} className={NAV_LINK} />
           {[...siteConfig.shopNav, ...siteConfig.helpNav].map((link) => (
             <Link key={link.href} href={link.href} className={NAV_LINK}>

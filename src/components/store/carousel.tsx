@@ -73,7 +73,7 @@ export function Carousel({
               <Button
                 variant="outline"
                 size="icon-lg"
-                className="size-10 rounded-full border-transparent bg-muted hover:bg-muted/70"
+                className="size-11 rounded-full border-transparent bg-muted hover:bg-muted/70"
                 aria-label={`السابق في ${label}`}
                 disabled={edges.atStart}
                 onClick={() => scrollByPage(-1)}
@@ -83,7 +83,7 @@ export function Carousel({
               <Button
                 variant="outline"
                 size="icon-lg"
-                className="size-10 rounded-full border-transparent bg-muted hover:bg-muted/70"
+                className="size-11 rounded-full border-transparent bg-muted hover:bg-muted/70"
                 aria-label={`التالي في ${label}`}
                 disabled={edges.atEnd}
                 onClick={() => scrollByPage(1)}
