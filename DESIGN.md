@@ -2,10 +2,12 @@
 version: alpha
 name: متجري
 description: >-
-  الهوية البصرية لمتجر إلكتروني عربي للعرض بطابع "ليل دافئ": خلفية داكنة
-  ولون برتقالي واحد للأفعال والأسعار، وصور منتجات حقيقية على بطاقات داكنة
-  بزوايا دائرية وزر سلة دائري في ركنها، ورأس داكن بحقل بحث عريض وصف روابط،
-  وتذييل ينتهي بشريط برتقالي. اسم المتجر مؤقت حتى اعتماد الاسم النهائي.
+  The visual identity of a demo Arabic online store in a "Warm Night" style: a
+  dark background with a single orange for actions and prices, real product
+  photos on dark cards with rounded corners and a round cart button in the
+  corner, a dark header with a wide search field and a row of links, and a
+  footer that ends in an orange bar. The store name is a placeholder until the
+  final name is approved.
 colors:
   primary: "#ffa629"
   on-primary: "#111111"
@@ -334,131 +336,132 @@ components:
     typography: "{typography.headline-display}"
 ---
 
-# الهوية البصرية لمتجري
+# Matjari (متجري) visual identity
 
-هذا الملف هو المرجع الوحيد لشكل المتجر. أي صفحة أو مكوّن جديد يتبع القيم والقواعد هنا.
-الألوان مطبّقة في الكود داخل `src/app/globals.css` بنفس قيم hex المكتوبة هنا، والزوايا عبر المتغير `--radius`.
-عند تغيير الهوية: عدّل هذا الملف أولاً، ثم افحصه بالأمر `pnpm design:lint`، ثم انقل القيم إلى `globals.css`.
+This file is the single reference for how the store looks. Every new page or component follows the values and rules here.
+The colors are applied in the code in `src/app/globals.css` with the same hex values written here, and the corner radius through the `--radius` variable.
+To change the identity: edit this file first, check it with `pnpm design:lint`, then copy the values into `globals.css`.
+The storefront is in Arabic; the interface labels quoted here are English translations of its Arabic text.
 
 ## Overview
 
-متجر عربي بطابع **ليل دافئ**: صفحات داكنة تُبرز صور المنتجات الحقيقية، ولون برتقالي واحد يقود العين إلى السعر وزر الشراء، فيجد الزائر المنتج ويفهم سعره ويضيفه للسلة دون تشتيت.
+An Arabic store in a **Warm Night** style: dark pages that make the real product photos stand out, and a single orange that leads the eye to the price and the buy button, so visitors find a product, understand its price and add it to the cart without distraction.
 
-- **مصدر الإلهام:** تصميم مفهومي لمتجر أثاث ("Luxe Living") وجده صاحب المشروع وأعجبته ألوانه: أسطح سوداء ورمادية داكنة، وبرتقالي للأزرار والأسعار، وبطاقات منتجات بزر سلة دائري في ركنها، ومربعات فئات مصوّرة، وتذييل ينتهي بشريط برتقالي. أُعيد بناء الأفكار بالعربية ومن اليمين لليسار بصور مجانية من Pexels، ولم يُنسخ من التصميم الأصلي كود ولا صورة.
-- **الشخصية:** دافئة وواثقة وعصرية، تشبه متاجر الأجهزة والأثاث الحديثة لا الأسواق المزدحمة.
-- **الجمهور:** متسوقون عرب يتصفحون غالباً من الجوال، بعضهم قليل الخبرة بالتسوق الإلكتروني.
-- **الإحساس المطلوب:** صورة كبيرة معتمة الأطراف تستقبل الزائر بعنوان في منتصفها، ورأس داكن ثابت بحقل بحث عريض، وبطاقات داكنة ترفع الصور عن الخلفية، والبرتقالي وحده يعني "اضغط هنا" أو "هذا هو السعر".
-- **الاتجاه:** الواجهة كلها من اليمين لليسار. المحاذاة والأسهم والقوائم المنزلقة تبدأ من اليمين.
-- **الجوال أولاً:** كل تصميم يبدأ من عرض 375 بكسل، مع شريط تنقل ثابت أسفل الشاشة.
+- **Inspiration:** a concept design for a furniture store ("Luxe Living") that the owner found, and whose colors the owner liked: black and dark gray surfaces, orange for buttons and prices, product cards with a round cart button in the corner, photo category tiles, and a footer that ends in an orange bar. The ideas were rebuilt in Arabic, right to left, with free photos from Pexels; no code and no image was copied from the original design.
+- **Personality:** warm, confident and modern, like today's electronics and furniture stores rather than crowded marketplaces.
+- **Audience:** Arab shoppers who mostly browse on their phones, some of them with little online shopping experience.
+- **Intended feel:** a large photo with darkened edges greets the visitor with a headline in its middle, a sticky dark header holds a wide search field, dark cards lift the photos off the background, and orange alone means "press here" or "this is the price".
+- **Direction:** the whole interface is right to left. Alignment, arrows and sliding menus start from the right.
+- **Mobile first:** every design starts at a width of 375 px, with a navigation bar fixed to the bottom of the screen.
 
 ## Colors
 
-خلفية داكنة بثلاث درجات، ونص أبيض، ولون واحد للهوية هو البرتقالي. لا كحلي ولا أزرق ولا أي لون آخر للتزيين.
+A dark background in three shades, white text, and a single brand color: orange. No navy, no blue and no other decorative color.
 
-- **البرتقالي (primary, #ffa629):** الأزرار الرئيسية، والأسعار، والروابط عند المرور، والتبويب النشط، والعدّادات، وشارات الخصم، وشريط الإعلان، وشريط التذييل السفلي. النص فوقه داكن دائماً (on-primary, #111111) بتباين 9.6:1، ولا يوضع نص أبيض فوقه أبداً.
-- **البرتقالي الخافت (primary-soft):** خلفية الخيار المختار في الفلاتر، ونصه برتقالي.
-- **الخلفية (background, #121214):** أرضية كل الصفحات، وهي أغمق درجة. النص الأبيض فوقها بتباين 18:1.
-- **السطح (surface, #1c1c1f):** الرأس، والتذييل، وبطاقات المنتجات، والنوافذ المنزلقة، والرسائل. درجة واحدة أفتح من الخلفية حتى ترتفع البطاقات عنها دون ظل.
-- **السطح الفاتح (surface-muted, #2a2a2e):** حقل البحث، ومربع الصورة داخل البطاقة قبل تحميلها، ودوائر الأيقونات، وأزرار التمرير، والهياكل أثناء التحميل.
-- **النص الأساسي (foreground, #ffffff):** العناوين وأسماء المنتجات وروابط الرأس.
-- **النص الثانوي (muted-foreground, #a1a1a6):** الأوصاف وأسماء الفئات في البطاقات والسعر قبل الخصم وروابط التذييل، بتباين 6.4:1 على السطح و7.3:1 على الخلفية.
-- **الحدود (border, #333338):** حدود الحقول والبطاقات المصوّرة والخطوط الفاصلة. رفيعة وخافتة، لأن اختلاف درجات الخلفية يفصل الأجزاء غالباً.
-- **حلقة التركيز (ring, #ffa629):** برتقالية على الأسطح الداكنة. فوق زر برتقالي تصبح بيضاء حتى تبقى ظاهرة.
-- **الأحمر (error, #f87171):** رسائل الخطأ و"نفد من المخزون" فقط، وهو أحمر فاتح يُقرأ على الداكن بتباين 6:1.
-- **الأصفر (warning, #fbbf24):** تنبيه "بقي عدد قليل".
-- **الأخضر (success, #4ade80):** حالة "متوفر"، وزر واتساب العائم يأخذ أخضر واتساب الأغمق (whatsapp, #15803d) لأن الأيقونة البيضاء فوقه تحتاج تبايناً 5:1.
-- **النص فوق الصور:** أبيض دائماً فوق طبقة تعتيم بلون الخلفية (45%) وتدرج أغمق من الأسفل، حتى يبقى مقروءاً مهما كانت الصورة.
+- **Orange (primary, #ffa629):** primary buttons, prices, links on hover, the active tab, counters, discount badges, the announcement bar and the footer's bottom bar. Text on it is always dark (on-primary, #111111), at a contrast of 9.6:1, and white text never goes on it.
+- **Soft orange (primary-soft):** the background of the selected option in the filters, with orange text.
+- **Background (background, #121214):** the base of every page, and the darkest shade. White text on it has a contrast of 18:1.
+- **Surface (surface, #1c1c1f):** the header, the footer, product cards, sliding panels and notifications. One shade lighter than the background, so the cards rise above it without a shadow.
+- **Light surface (surface-muted, #2a2a2e):** the search field, the image box inside a card before the image loads, icon circles, scroll buttons and loading skeletons.
+- **Primary text (foreground, #ffffff):** headings, product names and header links.
+- **Secondary text (muted-foreground, #a1a1a6):** descriptions, category names on cards, the pre-discount price and footer links, at a contrast of 6.4:1 on the surface and 7.3:1 on the background.
+- **Borders (border, #333338):** the borders of fields and photo cards, and dividers. Thin and faint, because the difference between the background shades usually separates the parts.
+- **Focus ring (ring, #ffa629):** orange on dark surfaces. On an orange button it turns white, so it stays visible.
+- **Red (error, #f87171):** only error messages and "Out of stock". It is a light red that reads on dark at a contrast of 6:1.
+- **Yellow (warning, #fbbf24):** the "Only a few left" notice.
+- **Green (success, #4ade80):** the "In stock" status. The floating WhatsApp button uses WhatsApp's darker green (whatsapp, #15803d), because the white icon on it needs a contrast of 5:1.
+- **Text on photos:** always white, over a darkening layer in the background color (45%) and a darker gradient from the bottom, so it stays readable whatever the photo.
 
 ## Typography
 
-خط واحد فقط في كل الموقع: **IBM Plex Sans Arabic**، مستضاف داخل المشروع في `src/fonts`، بملفات للحروف العربية وملفات للأرقام والحروف اللاتينية.
-الملفات نسخ مصغّرة تحوي حروف المتجر فقط، يولّدها الأمر `pnpm fonts` من الأصول في `assets/fonts`، فيبقى حجم الخط كله 66 كيلوبايت.
-التصميم المرجعي يستخدم خط Segoe UI، وهو خط نظام Windows لا يمكن تضمينه في موقع، فبقي IBM Plex Sans Arabic وهو قريب منه في الوضوح.
-الخط ثابت الأوزان، والمتوفر منه ثلاثة فقط: 400 للنصوص، و500 للأسماء والأزرار، و700 للعناوين والأسعار.
+There is only one font across the whole site: **IBM Plex Sans Arabic**, self-hosted in `src/fonts`, with files for the Arabic letters and files for digits and Latin letters.
+The files are subsets that contain only the characters the store uses, generated by `pnpm fonts` from the sources in `assets/fonts`, so the whole font weighs 66 KB.
+The reference design uses Segoe UI, a Windows system font that cannot be embedded in a website, so IBM Plex Sans Arabic stayed; it is close to Segoe UI in clarity.
+The font has static weights, and only three are available: 400 for text, 500 for names and buttons, and 700 for headings and prices.
 
-- **عنوان الواجهة (headline-display):** 60 بكسل على الحاسوب و36 على الجوال، أبيض في منتصف الصورة، في سطرين على الأكثر.
-- **العناوين (headline):** عريضة (700) مع تباعد أسطر مريح للحروف العربية. لكل عنوان قيمة للجوال وأخرى للحاسوب، وعناوين الأقسام الوسطية ("لماذا تختارنا؟" و"تواصل معنا") في المنتصف.
-- **النصوص (body):** 16 بكسل كحد أدنى للنص الأساسي، بتباعد أسطر 1.75 لأن الحروف العربية تحتاج مساحة رأسية أكبر من اللاتينية.
-- **الأسماء والأزرار (label):** وزن متوسط 500، والشارات الصغيرة 12 بكسل بوزن 700.
-- **الأسعار (price):** عريضة بالبرتقالي دائماً، وبأرقام 0-9 لتجنب الالتباس، والعملة بعد الرقم: "129 ر.س".
-- **الحقول:** 16 بكسل على الجوال حتى لا يكبّر المتصفح الصفحة تلقائياً عند الكتابة.
-- **لا تباعد بين الحروف:** الحروف العربية متصلة، وأي تباعد يقطعها. العناوين الكبيرة تكبر بالحجم لا بالتباعد.
+- **Hero headline (headline-display):** 60 px on desktop and 36 on mobile, white, in the middle of the photo, in two lines at most.
+- **Headings (headline):** bold (700), with comfortable line spacing for Arabic letters. Every heading has a mobile value and a desktop value, and the headings of centered sections ("Why choose us?" and "Contact us") are centered.
+- **Body text (body):** at least 16 px for the main text, with a line height of 1.75, because Arabic letters need more vertical space than Latin ones.
+- **Names and buttons (label):** medium weight (500), and small badges at 12 px in weight 700.
+- **Prices (price):** always bold and orange, with Western digits (0-9) to avoid confusion, and the currency after the number: "129 ر.س" (129 SAR).
+- **Fields:** 16 px on mobile, so the browser does not zoom the page in automatically while typing.
+- **No letter spacing:** Arabic letters are joined, and any spacing breaks them apart. Large headings grow in size, not in spacing.
 
 ## Layout
 
-- **الشبكة:** حاوية بعرض أقصى 1280 بكسل في المنتصف، وهامش جانبي 16 بكسل على الجوال و24 على الحاسوب (`page-container`). الواجهة وشريط الثقة تحتها والتذييل وحدها بعرض الشاشة كاملاً.
-- **الرأس على الحاسوب:** صفان ثابتان أعلى الشاشة: الأول بارتفاع 64 بكسل فيه الشعار في البداية، وحقل بحث عريض في المنتصف، والمفضلة والسلة وزر "تسوّق الآن" البرتقالي في النهاية. والثاني بارتفاع 40 بكسل فيه روابط التسوق والمساعدة في المنتصف، و"الفئات" يفتح لوحة كبيرة بأعمدة.
-- **الرأس على الجوال:** صف واحد بارتفاع 64 بكسل: زر القائمة في البداية، والشعار، وزر البحث والسلة في النهاية. زر البحث يفتح حقل البحث في سطر تحت الرأس.
-- **شريط التنقل السفلي على الجوال:** ثابت بارتفاع 64 بكسل: الرئيسية، الفئات، البحث، المفضلة، السلة. وتُترك له مساحة أسفل كل صفحة.
-- **ترتيب الصفحة الرئيسية:** الواجهة بعرض الشاشة، ثم شريط الثقة الداكن تحتها مباشرة، ثم "لماذا تختارنا؟" بثلاث دوائر، ثم شبكة العروض (مربعا صورة ومربع طويل وبطاقة الخصم)، ثم الأكثر مبيعاً، ثم بطاقتا الأقسام المميزة، ثم وصل حديثاً بلافتة كبيرة وصف منتجات وزر في المنتصف، ثم الرائج بتبويبات الفئات، ثم عروض بعدّاد تنازلي، ثم اللافتة العريضة، ثم مربعات الفئات، ثم آراء العملاء إن وُجدت، ثم تواصل معنا، ثم التذييل.
-- **صفوف المنتجات:** تُسحب أفقياً على كل الشاشات بفجوة 12 إلى 16 بكسل، مع زرّي تمرير دائريين في رأس القسم على الحاسوب.
-- **شبكة المنتجات في القوائم:** عمودان على الجوال، 3 على اللوحي، 4 على الحاسوب (3 عند وجود شريط الفلاتر الجانبي)، والبطاقات مستقلة بفجوات بينها.
-- **مقياس المسافات:** مضاعفات 4 بكسل. المسافة بين أقسام الصفحة 56 إلى 80 بكسل، وداخل البطاقات 10 إلى 16 بكسل.
-- **اللمس:** كل عنصر قابل للنقر بارتفاع 44 بكسل على الأقل، والشرائح الصغيرة 36 بكسل مع مسافات بينها.
-- **الاتجاه:** استخدم الخصائص المنطقية دائماً (`ms` و`me` و`ps` و`pe` و`start` و`end`) بدل اليسار واليمين.
+- **Grid:** a container with a maximum width of 1280 px in the middle, and a side margin of 16 px on mobile and 24 on desktop (`page-container`). Only the hero, the trust strip under it and the footer span the full screen width.
+- **Header on desktop:** two rows fixed to the top of the screen. The first, 64 px tall, has the logo at the start, a wide search field in the middle, and the wishlist, the cart and the orange "Shop now" button at the end. The second, 40 px tall, has the shopping and help links in the middle, and "Categories" opens a large panel with columns.
+- **Header on mobile:** one row, 64 px tall: the menu button at the start, the logo, and the search button and the cart at the end. The search button opens the search field in a row under the header.
+- **Bottom navigation bar on mobile:** fixed and 64 px tall: Home, Categories, Search, Wishlist, Cart. Every page leaves room for it at the bottom.
+- **Home page order:** the full-width hero, then the dark trust strip directly under it, then "Why choose us?" with three circles, then the deals grid (two image tiles, a tall tile and the discount card), then best sellers, then the two featured category cards, then new arrivals with a large banner, a row of products and a centered button, then trending with category tabs, then deals with a countdown, then the wide banner, then the category tiles, then customer reviews if there are any, then Contact us, then the footer.
+- **Product rows:** swiped horizontally on every screen, with a gap of 12 to 16 px, and two round scroll buttons in the section heading on desktop.
+- **Product grid in listings:** two columns on mobile, 3 on tablets and 4 on desktop (3 when the filter sidebar is shown), with separate cards and gaps between them.
+- **Spacing scale:** multiples of 4 px. The space between page sections is 56 to 80 px, and inside cards 10 to 16 px.
+- **Touch:** every clickable element is at least 44 px tall, and small chips are 36 px with space between them.
+- **Direction:** always use logical properties (`ms`, `me`, `ps`, `pe`, `start` and `end`) instead of left and right.
 
 ## Elevation & Depth
 
-العمق يأتي من **درجات الخلفية** لا من الظلال: الخلفية أغمق، والبطاقات والرأس والتذييل درجة أفتح، ومربعات الصور والحقول درجة أفتح منها.
+Depth comes from **background shades**, not from shadows: the background is the darkest, the cards, the header and the footer are one shade lighter, and image boxes and fields are one shade lighter still.
 
-- لا ظلال على البطاقات ولا على الأزرار. الظل مسموح فقط للعناصر العائمة: لوحة الفئات، واقتراحات البحث، ونافذة السلة، والرسائل، وتكون خلفيتها بلون السطح مع طبقة تعتيم سوداء (60%) خلف النوافذ.
-- زر السلة الدائري في ركن البطاقة محاط بحلقة بلون الخلفية (6 بكسل)، فيبدو كأن البطاقة مقطوعة حوله.
-- الصور تكبر قليلاً (3%) عند مرور الفأرة فوق البطاقة والمربعات المصوّرة، وهذه الحركة الوحيدة فيها.
-- الحقول والبطاقات المصوّرة لها حد رفيع بلون الحدود حتى تُرى حوافها فوق الخلفية الداكنة.
+- No shadows on cards or buttons. A shadow is allowed only on floating elements: the categories panel, the search suggestions, the cart panel and notifications, which use the surface color, with a black overlay (60%) behind dialogs.
+- The round cart button in the corner of the card is surrounded by a ring in the background color (6 px), so the card looks cut out around it.
+- Photos grow slightly (3%) when the mouse passes over a card or a photo tile, and that is the only motion on them.
+- Fields and photo cards have a thin border in the border color, so their edges show against the dark background.
 
 ## Shapes
 
-- **الأزرار:** زوايا 8 بكسل (`lg`)، وكذلك الحقول ومربعات الصور داخل البطاقات.
-- **البطاقات والمربعات المصوّرة والنوافذ:** 12 بكسل (`xl`).
-- **الحبوب (full):** حقل البحث، والتبويبات، وشرائح الفلاتر، وشارات الأقسام، وعدّاد العروض.
-- **الدوائر تبقى دوائر:** زر السلة في البطاقة، وزر المفضلة فوق الصورة، وأزرار التمرير، والعدّادات، ودوائر "لماذا تختارنا؟" والتواصل، ودوائر الألوان في الفلاتر والمتغيرات.
-- **الشارات الصغيرة، مثل الخصم:** 4 بكسل (`sm`).
-- **الواجهة وشريط الثقة والتذييل:** بلا زوايا، لأنها بعرض الشاشة.
+- **Buttons:** 8 px corners (`lg`), and the same for fields and for the image boxes inside cards.
+- **Cards, photo tiles and dialogs:** 12 px (`xl`).
+- **Pills (full):** the search field, tabs, filter chips, section badges and the deals countdown.
+- **Circles stay circles:** the cart button on the card, the wishlist button on the photo, scroll buttons, counters, the "Why choose us?" and contact circles, and the color swatches in filters and variants.
+- **Small badges, such as the discount:** 4 px (`sm`).
+- **The hero, the trust strip and the footer:** no corners, because they span the full screen width.
 
 ## Components
 
-- **الزر الرئيسي (button-cta):** برتقالي بنص داكن، زوايا 8 بكسل، بارتفاع 44 بكسل، للفعل الأهم في المنطقة: "أضف للسلة"، "إتمام الطلب"، "تسوّق الآن"، "عرض النتائج". فوق الصور أيضاً، فهو يُقرأ على أي صورة.
-- **الزر الثانوي (button-secondary):** شفاف بحد أبيض ونص أبيض، للفعل الثاني: "اشترِ الآن"، "عرض السلة".
-- **الزر الخفيف (button-outline):** شفاف بحد رمادي، للأفعال البديلة مثل "مسح الفلاتر" و"متابعة التسوق" و"مشاركة".
-- **الرأس:** داكن (surface) ثابت أعلى الشاشة بحد سفلي رفيع. الشعار مربع برتقالي بأيقونة حقيبة داكنة واسم المتجر بالأبيض. حقل البحث حبة بلون السطح الفاتح بعرض 36 ريم. عدّادا المفضلة والسلة دائرتان برتقاليتان صغيرتان لا تظهران عند الصفر. روابط الصف الثاني بيضاء وتصبح برتقالية عند المرور.
-- **شريط الإعلان:** سطر برتقالي رفيع أعلى كل الصفحات فوق الرأس، يختفي عند التمرير، بنص داكن قصير ورابط اختياري.
-- **الواجهة الرئيسية:** صورة بعرض الشاشة بارتفاع 72% من الشاشة على الحاسوب و32 ريم على الجوال، فوقها تعتيم بلون الخلفية وتدرج أغمق من الأسفل، وفي منتصفها: شارة برتقالية صغيرة، وعنوان كبير، وسطر وصف، والسعر، وزر برتقالي واحد. أكثر من شريحة تُسحب باللمس بنقاط (النشطة برتقالية) وأسهم، دون تشغيل تلقائي.
-- **شريط الثقة (trust-strip):** شريط بلون السطح تحت الواجهة مباشرة بعرض الشاشة: أربع ميزات بأيقونة برتقالية وعنوان قصير ووصف رمادي، في عمودين على الجوال وأربعة على الحاسوب.
-- **لماذا تختارنا؟ (feature-circle):** عنوان في المنتصف وثلاث دوائر بلون السطح الفاتح وحد رفيع، فيها أيقونة برتقالية، وتحتها عنوان عريض ووصف رمادي.
-- **شبكة العروض:** مربعا صورة فوق بعضهما ومربع طويل بجانبهما، كل مربع صورة منتج بزوايا 12 بكسل وحد رفيع، وفي أسفله شارة برتقالية وعنوان وسعر فوق تدرج داكن. وبجانبها بطاقة بلون السطح فيها "خصومات تصل إلى N%" بالبرتقالي وزر "تسوّق العروض". نسبة الخصم تُحسب من المنتجات ذات العروض الحقيقية.
-- **مربعات الفئات (category-tile):** صورة الفئة بنسبة 4:5 بزوايا 12 بكسل وحد رفيع، وفي أسفلها اسم الفئة وعدد المنتجات بالأبيض فوق تدرج داكن.
-- **بطاقة المنتج (product-card):** بلون السطح بزوايا 12 بكسل بلا ظل، وداخلها مربع الصورة بزوايا 8 بكسل، وفي ركنه شارة الخصم البرتقالية (البداية) وزر القلب البرتقالي الدائري (النهاية). تحت الصورة: اسم الفئة بالرمادي، ثم الاسم عريضاً، ثم السعر بالبرتقالي. وفي ركن البطاقة السفلي من جهة النهاية زر سلة دائري برتقالي (48 بكسل) محاط بحلقة بلون الخلفية: يضيف مباشرة للمنتج ذي الخيار الواحد، ويفتح صفحة المنتج لاختيار المقاس أو اللون للمنتج متعدد الخيارات. المنتج النافد بلا زر وعليه شارة "نفد من المخزون".
-- **التبويبات والشرائح:** حبوب بحد رمادي ونص أبيض، والنشطة برتقالية بنص داكن.
-- **العدّاد التنازلي:** حبة برتقالية فوق البطاقة، يظهر فقط لمنتج له تاريخ انتهاء عرض حقيقي في البيانات، ويختفي المنتج من القسم عند انتهائه.
-- **صفحة المنتج:** المعرض في مربع بلون السطح الفاتح بزوايا 12 بكسل وحد رفيع، والصور المصغرة بحد برتقالي للنشطة. الاسم بالأبيض والسعر الكبير بالبرتقالي. خيارات المقاس واللون حبوب بحد رمادي والمختارة برتقالية. زر "أضف للسلة" برتقالي بجانب محدد الكمية، وتحته "اشترِ الآن" بحد أبيض. مزايا الشراء في بطاقة بلون السطح، ثم التبويبات، ثم منتجات مشابهة.
-- **نافذة السلة:** تنزلق من جهة النهاية بلون السطح، فيها المنتجات بصورها وخياراتها، ومحدد الكمية، والحذف، والمجموع، وزرّا "إتمام الطلب" البرتقالي و"عرض السلة".
-- **إتمام الطلب:** صفحة واحدة بخطوات مرقمة في دوائر برتقالية، كل خطوة في بطاقة بحد رفيع. الحقول بارتفاع 44 بكسل بحد رمادي وخلفية الصفحة، والتسمية فوق الحقل، ورسالة الخطأ تحته بالأحمر الفاتح. الملخص في بطاقة بلون السطح، مثبت على الحاسوب ويُطوى على الجوال، وزر التأكيد البرتقالي يحمل الإجمالي. تنبيه "متجر تجريبي" ظاهر قبل التأكيد وبعده.
-- **تواصل معنا:** عنوان في المنتصف، ثم بطاقات بلون السطح لكل وسيلة: دائرة بلون السطح الفاتح بأيقونة برتقالية، والاسم بالرمادي والقيمة بالأبيض. تظهر في الصفحة الرئيسية وفي صفحة "تواصل معنا".
-- **زر واتساب:** دائرة خضراء بأيقونة بيضاء في زاوية الشاشة من جهة النهاية، فوق شريط الجوال السفلي. يظهر فقط عند ضبط رقم واتساب.
-- **الصفحات الثابتة:** عمود نص بعرض أقصى 768 بكسل وعناوين عريضة، وقائمة جانبية بالصفحات في بطاقة بلون السطح على الحاسوب. الأسئلة الشائعة تُفتح وتُطوى، وجدول الشحن يُبنى من ملف الشحن.
-- **التذييل:** بلون السطح بعرض الشاشة: الشعار وجملة المتجر بالرمادي وزر "تواصل معنا" البرتقالي في جهة البداية، وأعمدة الروابط بالرمادي (برتقالية عند المرور) في جهة النهاية، ثم سطر الحقوق بحد علوي رفيع، وفي النهاية شريط برتقالي بارتفاع 12 بكسل (footer-bar).
-- **صور المشاركة (share-image):** تظهر عند مشاركة رابط في واتساب ومواقع التواصل، وتُولَّد وقت البناء بمقاس 1200×630: صورة لكل منتج، وصورة لكل فئة، وصورة عامة للمتجر. خلفية داكنة، والصورة مربعة على اليسار بزوايا دائرية، وعمود النص على اليمين: الشعار واسم المتجر، ثم اسم الفئة بالرمادي، ثم الاسم بالأبيض العريض، والسعر بالبرتقالي في الأسفل وبجانبه السعر قبل الخصم مشطوباً. شارة الخصم برتقالية فوق الصورة. صورة الفئة والصورة العامة تعرضان حقيقتين فقط من بيانات المتجر: الدفع عند الاستلام وحد الشحن المجاني.
-- **الحالات الفارغة:** إطار متقطع وأيقونة في دائرة بلون السطح الفاتح وجملة توضح ما حدث وزر لما يمكن فعله.
-- **التحميل:** هياكل بلون السطح الفاتح نابضة بنفس شكل المحتوى، بدل مؤشرات الدوران.
-- **الأيقونات:** مكتبة Lucide بخط رفيع، والأسهم تنعكس تلقائياً في الاتجاه العربي.
+- **Primary button (button-cta):** orange with dark text, 8 px corners and 44 px tall, for the most important action in an area: "Add to cart", "Checkout", "Shop now", "Show results". It is also used on photos, because it reads on any image.
+- **Secondary button (button-secondary):** transparent, with a white border and white text, for the second action: "Buy now", "View cart".
+- **Light button (button-outline):** transparent with a gray border, for alternative actions such as "Clear filters", "Continue shopping" and "Share".
+- **Header:** dark (surface), fixed to the top of the screen, with a thin bottom border. The logo is an orange square with a dark bag icon, followed by the store name in white. The search field is a pill in the light surface color, 36 rem wide. The wishlist and cart counters are small orange circles that are hidden at zero. The links in the second row are white and turn orange on hover.
+- **Announcement bar:** a thin orange line at the top of every page, above the header, that disappears on scroll, with short dark text and an optional link.
+- **Hero:** a full-width photo, 72% of the screen height on desktop and 32 rem on mobile, under a darkening layer in the background color and a darker gradient from the bottom. In its middle: a small orange badge, a large headline, a line of description, the price and one orange button. Several slides are swiped by touch, with dots (the active one orange) and arrows, and no autoplay.
+- **Trust strip (trust-strip):** a full-width strip in the surface color directly under the hero: four features, each with an orange icon, a short title and a gray description, in two columns on mobile and four on desktop.
+- **Why choose us? (feature-circle):** a centered heading and three circles in the light surface color with a thin border, each holding an orange icon, with a bold title and a gray description under it.
+- **Deals grid:** two image tiles stacked on top of each other and a tall tile next to them. Each tile is a product photo with 12 px corners and a thin border, with an orange badge, a title and a price at its bottom over a dark gradient. Next to them, a card in the surface color with "Discounts up to N%" in orange and a "Shop the deals" button. The discount percentage is computed from the products that have real deals.
+- **Category tiles (category-tile):** the category photo at a 4:5 ratio, with 12 px corners and a thin border, and the category name and product count in white at its bottom over a dark gradient.
+- **Product card (product-card):** the surface color, 12 px corners and no shadow. Inside it, the image box has 8 px corners, with the orange discount badge in its start corner and the round orange heart button in its end corner. Under the image: the category name in gray, then the product name in bold, then the price in orange. In the card's bottom corner on the end side sits a round orange cart button (48 px) surrounded by a ring in the background color: it adds a single-option product directly, and opens the product page to choose a size or color for a product with several options. A sold-out product has no button and carries an "Out of stock" badge.
+- **Tabs and chips:** pills with a gray border and white text; the active one is orange with dark text.
+- **Countdown:** an orange pill above the card, shown only for a product with a real deal end date in the data; the product leaves the section when its deal ends.
+- **Product page:** the gallery sits in a light-surface box with 12 px corners and a thin border, and the active thumbnail has an orange border. The name is white and the large price orange. The size and color options are pills with a gray border, and the selected one is orange. The orange "Add to cart" button sits next to the quantity selector, with "Buy now" under it with a white border. The purchase benefits are in a surface-colored card, followed by the tabs, then similar products.
+- **Cart panel:** slides in from the end side in the surface color, with the products and their images and options, the quantity selector, removal, the subtotal, and two buttons: the orange "Checkout" and "View cart".
+- **Checkout:** one page with steps numbered in orange circles, each step in a card with a thin border. Fields are 44 px tall, with a gray border and the page background; the label sits above the field and the error message under it in light red. The summary is in a surface-colored card, sticky on desktop and collapsible on mobile, and the orange confirm button carries the total. A "demo store" notice shows before and after confirming.
+- **Contact us:** a centered heading, then a surface-colored card for each channel: a light-surface circle with an orange icon, the channel's name in gray and its value in white. It appears on the home page and on the "Contact us" page.
+- **WhatsApp button:** a green circle with a white icon in the corner of the screen on the end side, above the mobile bottom bar. It shows only when a WhatsApp number is set.
+- **Static pages:** a text column at most 768 px wide with bold headings, and a side list of the pages in a surface-colored card on desktop. FAQ answers open and close, and the shipping table is built from the shipping file.
+- **Footer:** full width in the surface color: the logo, the store's tagline in gray and the orange "Contact us" button on the start side, and the link columns in gray (orange on hover) on the end side, then the copyright line with a thin top border, and at the very end a 12 px orange bar (footer-bar).
+- **Share images (share-image):** they appear when a link is shared on WhatsApp and social networks, and are generated at build time at 1200×630: one image per product, one per category, and a general image for the store. A dark background, the square photo on the left with rounded corners, and the text column on the right: the logo and the store name, then the category name in gray, then the product name in bold white, with the price in orange at the bottom and the pre-discount price struck through next to it. The discount badge is orange, over the photo. The category images and the general image show only two facts from the store data: cash on delivery and the free-shipping threshold.
+- **Empty states:** a dashed frame, an icon in a light-surface circle, a sentence that explains what happened, and a button for what can be done next.
+- **Loading:** pulsing skeletons in the light surface color, shaped like the content, instead of spinners.
+- **Icons:** the Lucide library with thin strokes; arrows mirror automatically in the Arabic direction.
 
 ## Do's and Don'ts
 
-- افعل: ابدأ أي تصميم من شاشة الجوال ثم وسّعه.
-- افعل: استخدم البرتقالي لفعل واحد بارز في كل منطقة، والزر ذا الحد الأبيض للفعل الثاني.
-- افعل: حافظ على تباين 4.5:1 على الأقل لكل نص، وافحصه بالأمر `pnpm design:lint`.
-- افعل: اكتب الأعداد بصيغ الجمع العربية الصحيحة: "منتج واحد"، "منتجان"، "5 منتجات"، "20 منتجاً".
-- افعل: أظهر الشحن والإجمالي قبل أي تأكيد، ولا تفاجئ الزائر بأي مبلغ.
-- افعل: اجعل الحركة قصيرة (300 ملّي ثانية أو أقل) ولغرض واضح، مثل انزلاق النوافذ، ونبضة القلب عند الحفظ، وانفتاح الأسئلة الشائعة. ومن طلب تقليل الحركة من إعدادات جهازه لا يرى أي حركة.
-- افعل: استخدم صور منتجات حقيقية بخلفيات هادئة، فالتصميم الداكن يُبرزها. الصور التجريبية الحالية من Pexels مرخصة للاستخدام الحر، وتُستبدل بصور المتجر الفعلية.
-- لا تفعل: لا تضع نصاً أبيض فوق البرتقالي، ولا نصاً برتقالياً فوق البرتقالي. النص فوقه داكن دائماً.
-- لا تفعل: لا تستخدم البرتقالي لخلفيات كبيرة غير شريط الإعلان وشريط التذييل، ولا تضع بطاقتين برتقاليتين متجاورتين.
-- لا تفعل: لا تضع ظلاً حول بطاقة المنتج، فدرجة لونها تفصلها عن الخلفية.
-- لا تفعل: لا تعرض أرقاماً وهمية مثل "25 شخصاً يشاهدون الآن" أو "شخص اشترى للتو"، ولا عدّاداً تنازلياً دون تاريخ حقيقي، ولا تقييمات ونجوماً دون آراء حقيقية.
-- لا تفعل: لا تخفِ زر الإضافة للسلة أو أي معلومة مهمة خلف تمرير الفأرة، لأن الجوال لا يملك ذلك.
-- لا تفعل: لا تشغّل الشرائح المتحركة تلقائياً، فالزائر يقرر متى ينتقل.
-- لا تفعل: لا تُظهر المحتوى بحركة عند التمرير إليه، فهذا يؤخر القراءة ويثقل الصفحة على الجوال.
-- لا تفعل: لا تستخدم أكثر من خط واحد، ولا أوزاناً غير 400 و500 و700، ولا تباعداً بين الحروف العربية.
-- لا تفعل: لا تستخدم الأحمر إلا للأخطاء والنفاد.
-- لا تفعل: لا تستخدم left وright في التنسيق، بل start وend.
-- لا تفعل: لا تضع نصاً مهماً فوق صورة دون طبقة تعتيم وتدرج داكن يضمنان قراءته.
+- Do: start every design from the phone screen, then expand it.
+- Do: use orange for one prominent action in each area, and the white-bordered button for the second action.
+- Do: keep a contrast of at least 4.5:1 for all text, and check it with `pnpm design:lint`.
+- Do: write counts with the correct Arabic plural forms: "منتج واحد" (one product), "منتجان" (two products), "5 منتجات" (5 products), "20 منتجاً" (20 products).
+- Do: show shipping and the total before any confirmation, and never surprise the visitor with an amount.
+- Do: keep motion short (300 ms or less) and purposeful, such as panels sliding in, the heartbeat when saving to the wishlist, and FAQ answers opening. Anyone who asked for reduced motion in their device settings sees no motion at all.
+- Do: use real product photos with calm backgrounds, which the dark design makes stand out. The current demo photos come from Pexels, are licensed for free use, and will be replaced by the store's actual photos.
+- Don't: put white text on orange, or orange text on orange. Text on orange is always dark.
+- Don't: use orange for large backgrounds other than the announcement bar and the footer bar, and don't put two orange cards next to each other.
+- Don't: put a shadow around the product card; its shade already separates it from the background.
+- Don't: show fake numbers such as "25 people are viewing this now" or "someone just bought this", a countdown without a real date, or ratings and stars without real reviews.
+- Don't: hide the add-to-cart button or any important information behind a mouse hover, because phones have no hover.
+- Don't: autoplay sliders; the visitor decides when to move on.
+- Don't: reveal content with motion as it scrolls into view; it delays reading and makes the page heavier on mobile.
+- Don't: use more than one font, weights other than 400, 500 and 700, or letter spacing on Arabic text.
+- Don't: use red except for errors and sold-out items.
+- Don't: use left and right in styles; use start and end.
+- Don't: put important text over a photo without a darkening layer and a dark gradient that keep it readable.

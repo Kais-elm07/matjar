@@ -8,6 +8,10 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-## التصميم
+## Design
 
-قبل أي عمل على الواجهة اقرأ `DESIGN.md` في جذر المشروع واتبعه، فهو المرجع الوحيد لألوان المتجر وخطوطه ومسافاته ومكوناته. ربط قيمه بأصناف Tailwind موجود في مهارة المشروع `.claude/skills/design-system/SKILL.md`. بعد أي تعديل على `DESIGN.md` شغّل `pnpm design:lint`.
+Before any work on the interface, read `DESIGN.md` at the project root and follow it; it is the single reference for the store's colors, fonts, spacing and components. The mapping of its values to Tailwind classes is in the project skill `.claude/skills/design-system/SKILL.md`. After any change to `DESIGN.md`, run `pnpm design:lint`.
+
+## Language
+
+The project documentation (`README.md`, `PLAN.md`, `DESIGN.md`, `DEPLOYMENT.md`, `USER-TESTING.md` and the design skill) is written in English. The storefront stays in Arabic: interface text, product and category data, the static pages in `src/content/pages`, and validation and error messages.
