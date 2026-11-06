@@ -54,7 +54,7 @@ export function CouponField({
     return (
       <div
         className={cn(
-          "rounded-lg border bg-background px-3 py-2 text-sm",
+          "rounded-xl border bg-background px-3 py-2 text-sm",
           belowMinimum ? "border-warning/50" : "border-success/40"
         )}
       >

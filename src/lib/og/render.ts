@@ -15,23 +15,26 @@ import path from "node:path"
 
 import sharp, { type OverlayOptions, type Sharp } from "sharp"
 
+import type { PhotoLook } from "@/lib/catalog/types"
 import { IMAGE_WIDTHS, imageFile } from "@/lib/image-loader"
+import { toneColor, TONE_LIGHTNESS, type Tone } from "@/lib/tone"
 
 /**
- * Build-time tools that draw the share images (Open Graph): Arabic text in the store's font, images with rounded corners, and badges.
+ * Build-time tools that draw the share images (Open Graph): Arabic text in the store's font, photos with rounded corners, and badges.
  * Drawing uses the sharp library, and text goes through the Pango inside it, so Arabic letters join and each line runs from the right.
  */
 
 export const OG_SIZE = { width: 1200, height: 630 }
 
-/** DESIGN.md colors used in the share images: a dark background, white text, and orange for the price and badges */
+/** DESIGN.md colors used in the share images: a dark background, white text, and blue for the price and badges */
 export const OG_COLORS = {
-  background: "#121214",
-  surface: "#2a2a2e",
+  background: "#0b0e14",
+  card: "#141821",
+  surface: "#1e2430",
   foreground: "#ffffff",
-  muted: "#a1a1a6",
-  primary: "#ffa629",
-  onPrimary: "#111111",
+  muted: "#a3adbf",
+  primary: "#4f8cff",
+  onPrimary: "#0b0e14",
 }
 
 const ROOT = process.cwd()
@@ -228,10 +231,58 @@ export function localImage(src: string) {
 }
 
 /**
- * A square image with rounded corners. If the image is missing, the logo shows on a square in the surface color.
+ * The light of a stage behind a cut-out, drawn as on the site (DESIGN.md: stage-backdrop and stage-platform):
+ * a radial light in the photo's tone over the card color, and the glowing platform near the bottom.
+ * The tone is turned into sRGB colors, because the SVG renderer cannot draw OKLCH colors.
  */
-export async function roundedImage(
+function stageSvg(size: number, tone: Tone) {
+  const light = toneColor(tone, TONE_LIGHTNESS)
+  const dim = toneColor(tone, 0.3)
+  const glow = toneColor(tone, 0.78)
+  return Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">` +
+      `<defs><radialGradient id="light" cx="50%" cy="52%" r="62%">` +
+      `<stop offset="0" stop-color="${light}" stop-opacity="0.95"/>` +
+      `<stop offset="0.45" stop-color="${dim}" stop-opacity="0.55"/>` +
+      `<stop offset="1" stop-color="${dim}" stop-opacity="0"/></radialGradient>` +
+      `<radialGradient id="glow"><stop offset="0" stop-color="${glow}" stop-opacity="0.6"/>` +
+      `<stop offset="0.65" stop-color="${glow}" stop-opacity="0.18"/>` +
+      `<stop offset="1" stop-color="${glow}" stop-opacity="0"/></radialGradient></defs>` +
+      `<rect width="${size}" height="${size}" fill="${OG_COLORS.card}"/>` +
+      `<rect width="${size}" height="${size}" fill="url(#light)"/>` +
+      `<ellipse cx="${size / 2}" cy="${Math.round(size * 0.84)}" rx="${Math.round(size * 0.36)}" ry="${Math.round(size * 0.075)}" fill="url(#glow)"/>` +
+      `</svg>`
+  )
+}
+
+/** A cut-out standing on its platform, in the light of its tone, in a square. */
+async function stagedCutout(file: string, tone: Tone, size: number) {
+  const product = await toPng(
+    sharp(file).resize(Math.round(size * 0.76), Math.round(size * 0.74), {
+      fit: "inside",
+    })
+  )
+  const { width = size, height = size } = await sharp(product).metadata()
+  return toPng(
+    sharp(stageSvg(size, tone)).composite([
+      {
+        input: product,
+        left: Math.round((size - width) / 2),
+        // The product stands on the platform
+        top: Math.max(0, Math.round(size * 0.84 - height)),
+      },
+    ])
+  )
+}
+
+/**
+ * A square photo with rounded corners. A cut-out stands on its platform in the light of its tone, like on
+ * the site's stage; any other photo fills the square. If the photo is missing, the logo shows on a square
+ * in the surface color.
+ */
+export async function photoSquare(
   file: string | null,
+  look: PhotoLook | null,
   size: number,
   radius: number
 ): Promise<Layer> {
@@ -239,7 +290,9 @@ export async function roundedImage(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"><rect width="${size}" height="${size}" rx="${radius}"/></svg>`
   )
   const base = file
-    ? await toPng(sharp(file).resize(size, size, { fit: "cover" }))
+    ? look?.cutout
+      ? await stagedCutout(file, look.tone, size)
+      : await toPng(sharp(file).resize(size, size, { fit: "cover" }))
     : await toPng(
         sharp({
           create: {
@@ -256,7 +309,7 @@ export async function roundedImage(
   return { input, width: size, height: size }
 }
 
-/** The store logo (a dark bag in an orange square) from the site icon file src/app/icon.svg. */
+/** The store logo (a dark bag in a blue square) from the site icon file src/app/icon.svg. */
 export async function logoMark(size: number) {
   const svg = await readFile(path.join(ROOT, "src", "app", "icon.svg"))
   // The icon is drawn on a 32-pixel square, so the density is scaled up to draw it sharply at the requested size

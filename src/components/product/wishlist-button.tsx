@@ -16,7 +16,7 @@ interface WishlistButtonProps {
 }
 
 /**
- * Wishlist button: a heart in an orange circle on the card image, or a text button on the product page.
+ * Wishlist button: a heart in a blue circle on the card image, or a text button on the product page.
  * A filled heart means the product is saved.
  */
 export function WishlistButton({

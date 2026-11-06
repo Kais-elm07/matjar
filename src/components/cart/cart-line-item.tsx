@@ -37,15 +37,16 @@ export function CartLineItem({
         onClick={onNavigate}
         tabIndex={-1}
         aria-hidden
-        className="relative size-20 shrink-0 overflow-hidden rounded-lg border bg-background"
+        className="relative size-20 shrink-0 overflow-hidden rounded-xl border bg-muted"
       >
         {line.image ? (
+          // The whole product shows: a cut-out is not cropped (DESIGN.md: Product photos)
           <Image
             src={line.image.src}
             alt=""
             fill
             sizes="80px"
-            className="object-cover"
+            className="object-contain p-1.5"
           />
         ) : (
           <ImageOffIcon className="absolute inset-0 m-auto size-6 text-muted-foreground/50" />

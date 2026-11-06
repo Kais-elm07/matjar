@@ -8,10 +8,10 @@ export function CartSkeleton() {
       className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]"
       aria-hidden
     >
-      <div className="space-y-4 rounded-xl border p-4">
+      <div className="space-y-4 rounded-2xl border p-4">
         {placeholderIds("line", 2).map((id) => (
           <div key={id} className="flex gap-3">
-            <Skeleton className="size-20 rounded-lg" />
+            <Skeleton className="size-20 rounded-xl" />
             <div className="flex-1 space-y-2">
               <Skeleton className="h-4 w-2/3" />
               <Skeleton className="h-3 w-1/3" />
@@ -20,7 +20,7 @@ export function CartSkeleton() {
           </div>
         ))}
       </div>
-      <Skeleton className="h-64 rounded-xl" />
+      <Skeleton className="h-64 rounded-2xl" />
     </div>
   )
 }

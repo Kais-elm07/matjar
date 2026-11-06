@@ -20,6 +20,11 @@ const imageSrc = z
 
 const text = z.string().trim().min(1, { error: "لا يمكن أن يكون فارغاً" })
 
+/** A color for the light behind a photo, such as #c2410c (DESIGN.md: the product's tone) */
+const hexColor = z.string().regex(/^#[0-9a-f]{6}$/i, {
+  error: "اللون يجب أن يكون رمزاً سداسياً يبدأ بعلامة #، مثل #c2410c",
+})
+
 const DATE_FORMAT = /^\d{4}-\d{2}-\d{2}$/
 
 /** A day that exists in the calendar (2026-02-30 is rejected). A format error is reported on its own. */
@@ -87,6 +92,7 @@ export const productSchema = z.object({
         src: imageSrc,
         alt: z.string().trim().optional(),
         color: z.string().trim().optional(),
+        tone: hexColor.optional(),
       })
     )
     .min(1, { error: "كل منتج يحتاج صورة واحدة على الأقل" }),

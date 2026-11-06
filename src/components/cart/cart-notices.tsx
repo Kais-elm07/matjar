@@ -30,7 +30,7 @@ export function CartNotices({
     <div
       role="status"
       className={cn(
-        "flex gap-3 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm",
+        "flex gap-3 rounded-2xl border border-warning/30 bg-warning/5 p-3 text-sm",
         className
       )}
     >

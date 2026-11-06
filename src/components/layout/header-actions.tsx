@@ -14,7 +14,7 @@ interface HeaderActionsProps {
   className?: string
 }
 
-/** The wishlist and cart icons in the header, with an orange counter that is hidden at zero. */
+/** The wishlist and cart icons in the header, with a blue counter that is hidden at zero. */
 export function HeaderActions({ className }: HeaderActionsProps) {
   const cartCount = useCartCount()
   const wishlistCount = useWishlistCount()

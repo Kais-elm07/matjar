@@ -35,7 +35,7 @@ export function ProductTabs({ product }: ProductTabsProps) {
 
       {product.specs.length > 0 && (
         <TabsContent value="specs" className="max-w-2xl">
-          <dl className="divide-y rounded-xl border">
+          <dl className="divide-y rounded-2xl border">
             {product.specs.map((spec) => (
               <div
                 key={spec.label}

@@ -77,7 +77,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   // The mobile browser bar takes the store's dark background color, and native fields and menus are dark too
-  themeColor: "#121214",
+  themeColor: "#0b0e14",
   colorScheme: "dark",
 }
 

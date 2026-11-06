@@ -10,10 +10,10 @@ export function CheckoutSkeleton() {
     >
       <div className="space-y-6">
         {placeholderIds("section", 3).map((id) => (
-          <Skeleton key={id} className="h-48 rounded-xl" />
+          <Skeleton key={id} className="h-48 rounded-2xl" />
         ))}
       </div>
-      <Skeleton className="h-72 rounded-xl" />
+      <Skeleton className="h-72 rounded-2xl" />
     </div>
   )
 }

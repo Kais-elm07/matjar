@@ -5,11 +5,14 @@ import path from "node:path"
 
 import { categories as categoryData } from "@/data/categories"
 import { products as productData } from "@/data/products"
+import { photoLook, readImageMeta } from "@/lib/catalog/image-meta"
 import { getOptionGroups } from "@/lib/catalog/options"
 import type { ParsedCategory, ParsedProduct } from "@/lib/catalog/schema"
 import type {
   Category,
   CategoryLink,
+  CoverPhoto,
+  ImageMeta,
   Product,
   Variant,
 } from "@/lib/catalog/types"
@@ -33,6 +36,7 @@ const byNewest = (a: Product, b: Product) =>
 function toProduct(
   input: ParsedProduct,
   pathOf: (slug: string) => CategoryLink[],
+  meta: ImageMeta,
   today: string
 ): Product {
   // A sale that ended before the build day: every variant goes back to its price before discount.
@@ -68,6 +72,7 @@ function toProduct(
         image.alt ??
         (image.color ? `${input.name}، اللون ${image.color}` : input.name),
       color: image.color ?? null,
+      ...photoLook(meta, image.src, image.tone),
     })),
     variants,
     optionGroups: getOptionGroups(variants),
@@ -87,7 +92,8 @@ function toProduct(
 function toCategories(
   parsed: ParsedCategory[],
   products: Product[],
-  pathOf: (slug: string) => CategoryLink[]
+  pathOf: (slug: string) => CategoryLink[],
+  meta: ImageMeta
 ): Category[] {
   const children = new Map<string, string[]>()
   for (const category of parsed) {
@@ -99,9 +105,19 @@ function toCategories(
   }
   // A product counts in its category and in all of that category's parents
   const counts = new Map<string, number>()
-  for (const product of products) {
+  // The first photo of the most popular product in each category and its parents, the default cover
+  const covers = new Map<string, CoverPhoto>()
+  for (const product of [...products].sort(byPopularity)) {
+    const [photo] = product.images
     for (const link of product.categoryPath) {
       counts.set(link.slug, (counts.get(link.slug) ?? 0) + 1)
+      if (photo && !covers.has(link.slug)) {
+        covers.set(link.slug, {
+          src: photo.src,
+          tone: photo.tone,
+          cutout: photo.cutout,
+        })
+      }
     }
   }
 
@@ -109,7 +125,9 @@ function toCategories(
     slug: category.slug,
     name: category.name,
     description: category.description || null,
-    image: category.image ?? null,
+    image: category.image
+      ? { src: category.image, ...photoLook(meta, category.image) }
+      : (covers.get(category.slug) ?? null),
     parentSlug: category.parent ?? null,
     childSlugs: children.get(category.slug) ?? [],
     path: pathOf(category.slug),
@@ -136,7 +154,7 @@ function assertImagesExist(products: Product[], categories: Category[]) {
     }
   }
   for (const category of categories) {
-    check(category.image, `الفئة "${category.slug}"`)
+    check(category.image?.src ?? null, `الفئة "${category.slug}"`)
   }
   if (missing.length > 0) {
     throw new Error(
@@ -160,10 +178,11 @@ function buildCatalog() {
   }
 
   const today = storeToday()
+  const meta = readImageMeta()
   const products = parsed.products
     .filter((product) => !product.hidden)
-    .map((input) => toProduct(input, pathOf, today))
-  const categories = toCategories(parsed.categories, products, pathOf)
+    .map((input) => toProduct(input, pathOf, meta, today))
+  const categories = toCategories(parsed.categories, products, pathOf, meta)
   assertImagesExist(products, categories)
 
   return {

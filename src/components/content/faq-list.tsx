@@ -14,7 +14,7 @@ export function FaqList({ groups }: FaqListProps) {
       {groups.map((group) => (
         <section key={group.line} className="space-y-3">
           {group.title && <h2 className="text-xl font-bold">{group.title}</h2>}
-          <div className="divide-y rounded-xl border">
+          <div className="divide-y rounded-2xl border">
             {group.items.map((item) => (
               <details key={item.line} className="group/faq faq-item">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-4 font-bold outline-none focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">

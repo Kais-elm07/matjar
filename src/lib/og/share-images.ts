@@ -14,15 +14,16 @@ import {
   logoMark,
   OG_COLORS,
   OG_SIZE,
+  photoSquare,
   pill,
   type PillOptions,
   renderShareImage,
-  roundedImage,
   text,
 } from "@/lib/og/render"
 
 /**
- * Share image designs: the image on the left, and the text in a column on the right, over a dark background.
+ * Share image designs: the photo on the left, and the text in a column on the right, over a dark background.
+ * A cut-out stands on its platform in the light of its tone, as on the site's stage.
  * Colors and font come from DESIGN.md, and the size is 1200×630, which every social platform shows in full.
  */
 
@@ -119,8 +120,9 @@ export async function siteShareImage() {
   const cell = (IMAGE_SIZE - gap) / 2
   const photos = await Promise.all(
     products.map((product) =>
-      roundedImage(
+      photoSquare(
         product.image ? localImage(product.image.src) : null,
+        product.image,
         cell,
         RADIUS - 4
       )
@@ -164,7 +166,12 @@ export async function productShareImage(product: Product) {
   const image = product.images[0]
   const discount = discountPercent(product.price, product.compareAtPrice)
   const [photo, brand] = await Promise.all([
-    roundedImage(image ? localImage(image.src) : null, IMAGE_SIZE, RADIUS),
+    photoSquare(
+      image ? localImage(image.src) : null,
+      image ?? null,
+      IMAGE_SIZE,
+      RADIUS
+    ),
     brandRow(),
   ])
   const layers: Placed[] = [
@@ -255,8 +262,9 @@ export async function productShareImage(product: Product) {
 
 export async function categoryShareImage(category: Category) {
   const [photo, brand, facts] = await Promise.all([
-    roundedImage(
-      category.image ? localImage(category.image) : null,
+    photoSquare(
+      category.image ? localImage(category.image.src) : null,
+      category.image,
       IMAGE_SIZE,
       RADIUS
     ),

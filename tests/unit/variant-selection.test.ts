@@ -10,6 +10,10 @@ import {
   selectOption,
   type PurchasableProduct,
 } from "@/lib/catalog/variant-selection"
+import { BRAND_TONE } from "@/lib/tone"
+
+/** The look of a cut-out photo, which these rules don't depend on */
+const look = { tone: BRAND_TONE, cutout: true }
 
 const variant = (
   sku: string,
@@ -33,8 +37,8 @@ const shirt: PurchasableProduct = {
     variant("M-BLUE", { المقاس: "M", اللون: "أزرق" }, 5),
   ],
   images: [
-    { src: "/images/white", alt: "قميص أبيض", color: "أبيض" },
-    { src: "/images/blue", alt: "قميص أزرق", color: "أزرق" },
+    { src: "/images/white", alt: "قميص أبيض", color: "أبيض", ...look },
+    { src: "/images/blue", alt: "قميص أزرق", color: "أزرق", ...look },
   ],
 }
 

@@ -26,7 +26,7 @@ interface ContactCardsProps {
 }
 
 /**
- * Surface-colored contact cards, each channel with a circle holding an orange icon (DESIGN.md: Contact us).
+ * Surface-colored contact cards, each channel with a circle holding a blue icon (DESIGN.md: Contact us).
  * They appear on the home page and the "تواصل معنا" (Contact us) page.
  * A field left empty in the settings gets no card.
  */
@@ -90,7 +90,7 @@ export function ContactCards({ className }: ContactCardsProps) {
           </>
         )
         const card =
-          "flex h-full items-center gap-3 rounded-xl border bg-card p-4 outline-none"
+          "flex h-full items-center gap-3 rounded-2xl border bg-card p-4 outline-none"
         return (
           <li key={label}>
             {href ? (

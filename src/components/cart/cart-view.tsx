@@ -50,7 +50,7 @@ export function CartView() {
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
       <section
         aria-labelledby="cart-items-heading"
-        className="rounded-xl border"
+        className="rounded-2xl border"
       >
         <h2 id="cart-items-heading" className="sr-only">
           المنتجات في السلة
@@ -69,7 +69,7 @@ export function CartView() {
 
       <aside
         aria-labelledby="cart-summary-heading"
-        className="space-y-4 rounded-xl border bg-card p-5 lg:sticky lg:top-32"
+        className="space-y-4 rounded-2xl border bg-card p-5 lg:sticky lg:top-32"
       >
         <h2 id="cart-summary-heading" className="text-lg font-bold">
           ملخص الطلب

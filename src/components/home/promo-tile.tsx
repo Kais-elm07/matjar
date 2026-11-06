@@ -1,7 +1,7 @@
-import Image from "next/image"
 import Link from "next/link"
 
 import { IMAGE_SHADE } from "@/components/home/banner-styles"
+import { PhotoBox } from "@/components/shared/photo-box"
 import type { ProductBanner } from "@/lib/catalog/types"
 import { formatPrice } from "@/lib/money"
 import { cn } from "@/lib/utils"
@@ -11,23 +11,27 @@ interface PromoTileProps {
   className?: string
 }
 
-/** A product image tile in the promo grid: the photo fills it, with the badge, title and price at its bottom. */
+/**
+ * A product tile in the promo grid: a photo box washed with the product's tone, with the cut-out floating in
+ * its upper part, and the badge, title and price at its bottom over a dark gradient (DESIGN.md: Promo grid).
+ */
 export function PromoTile({ banner, className }: PromoTileProps) {
   return (
     <Link
       href={banner.href}
       className={cn(
-        "group relative block overflow-hidden rounded-xl border bg-muted outline-none focus-visible:ring-3 focus-visible:ring-ring",
+        "group relative block overflow-hidden rounded-2xl border bg-muted outline-none focus-visible:ring-3 focus-visible:ring-ring",
         className
       )}
     >
       {banner.image && (
-        <Image
-          src={banner.image.src}
+        <PhotoBox
+          photo={banner.image}
           alt=""
-          fill
           sizes="(min-width: 768px) 30vw, 50vw"
-          className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          className="absolute inset-0 rounded-none"
+          imageClassName="group-hover:scale-105"
+          cutoutClassName="p-[12%] pb-[34%]"
         />
       )}
       <span aria-hidden className={IMAGE_SHADE} />

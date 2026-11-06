@@ -1,9 +1,9 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { ArrowRightIcon } from "lucide-react"
 
+import { PhotoBox } from "@/components/shared/photo-box"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { SearchCardData } from "@/lib/catalog/types"
 import { formatPrice } from "@/lib/money"
@@ -55,7 +55,7 @@ export function SearchSuggestions({
               aria-hidden
               className="flex items-center gap-3 px-3 py-2"
             >
-              <Skeleton className="size-12 shrink-0 rounded-lg" />
+              <Skeleton className="size-12 shrink-0 rounded-xl" />
               <div className="flex-1 space-y-2">
                 <Skeleton className="h-3 w-3/4" />
                 <Skeleton className="h-3 w-1/3" />
@@ -85,17 +85,17 @@ export function SearchSuggestions({
                   index === activeIndex && "bg-muted"
                 )}
               >
-                <span className="relative size-12 shrink-0 overflow-hidden rounded-lg bg-muted">
-                  {product.image && (
-                    <Image
-                      src={product.image.src}
-                      alt=""
-                      fill
-                      sizes="64px"
-                      className="object-cover"
-                    />
-                  )}
-                </span>
+                {product.image ? (
+                  <PhotoBox
+                    photo={product.image}
+                    alt=""
+                    sizes="64px"
+                    className="size-12 shrink-0"
+                    cutoutClassName="p-1.5"
+                  />
+                ) : (
+                  <span className="size-12 shrink-0 rounded-xl bg-muted" />
+                )}
                 <span className="min-w-0 flex-1">
                   <span className="line-clamp-1 text-sm font-medium">
                     {product.name}

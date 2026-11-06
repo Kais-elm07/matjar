@@ -16,8 +16,11 @@ export function ProductGridSkeleton({
   return (
     <ul className={cn(PRODUCT_GRID, className)} aria-hidden>
       {placeholderIds("product", count).map((id) => (
-        <li key={id} className="space-y-3 rounded-xl bg-card p-3">
-          <Skeleton className="aspect-square w-full rounded-lg" />
+        <li
+          key={id}
+          className="space-y-3 rounded-2xl border bg-card p-2.5 md:p-3"
+        >
+          <Skeleton className="aspect-square w-full rounded-xl" />
           <Skeleton className="h-3 w-1/3" />
           <Skeleton className="h-4 w-4/5" />
           <div className="flex items-end justify-between">

@@ -1,7 +1,9 @@
 import type { VariantOptions } from "@/lib/catalog/options"
 import type {
   CardImage,
+  CardPhoto,
   CartCatalog,
+  ImageMeta,
   SearchCardData,
 } from "@/lib/catalog/types"
 import {
@@ -12,15 +14,46 @@ import {
   isRecord,
   isString,
 } from "@/lib/guards"
+import type { Tone } from "@/lib/tone"
 
 /**
  * Checks for the catalog's shapes in data read at runtime: the two JSON files the browser downloads
- * (search-index.json and cart-catalog.json), and the product parts kept in the saved cart and order.
+ * (search-index.json and cart-catalog.json), the product parts kept in the saved cart and order,
+ * and the photo colors that pnpm images writes (image-meta.json).
  * The general checks they build on are in src/lib/guards.ts.
  */
 
 export function isCardImage(value: unknown): value is CardImage {
   return isRecord(value) && isString(value.src) && isString(value.alt)
+}
+
+function isTone(value: unknown): value is Tone {
+  return (
+    isRecord(value) && isFiniteNumber(value.hue) && isFiniteNumber(value.chroma)
+  )
+}
+
+function isCardPhoto(value: unknown): value is CardPhoto {
+  return (
+    isRecord(value) &&
+    isString(value.src) &&
+    isString(value.alt) &&
+    isTone(value.tone) &&
+    isBoolean(value.cutout)
+  )
+}
+
+function isImageMetaEntry(value: unknown): value is ImageMeta[string] {
+  return (
+    isRecord(value) &&
+    isNullOr(value.color, isString) &&
+    isBoolean(value.cutout)
+  )
+}
+
+/** The photo colors in public/images/image-meta.json, by the photo's path in the data files. */
+export function isImageMeta(value: unknown): value is ImageMeta {
+  return isRecord(value) && Object.values(value).every(isImageMetaEntry)
 }
 
 export function isVariantOptions(value: unknown): value is VariantOptions {
@@ -52,7 +85,7 @@ function isSearchCard(value: unknown): value is SearchCardData {
     isNullOr(value.compareAtPrice, isFiniteNumber) &&
     isBoolean(value.priceVaries) &&
     isBoolean(value.inStock) &&
-    isNullOr(value.image, isCardImage) &&
+    isNullOr(value.image, isCardPhoto) &&
     isNullOr(value.categoryName, isString) &&
     isNullOr(value.quickAdd, isQuickAdd) &&
     isNullOr(value.saleEndsAt, isString) &&

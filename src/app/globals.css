@@ -32,34 +32,68 @@
 }
 
 /*
- * Colors of the "ليل دافئ" (warm night) identity (a dark background in three shades, white text, and one orange for actions and prices),
- * with the same hex values as DESIGN.md. The store is always dark, so there is no light mode and no .dark class.
+ * Colors of the "بقعة ضوء" (Spotlight) identity (a dark background with a blue tint in three shades, white text, and one electric blue for actions and prices),
+ * with the same values as DESIGN.md. The store is always dark, so there is no light mode and no .dark class.
  * To change the identity: edit DESIGN.md first and check it with the pnpm design:lint command, then copy the values here.
  */
 :root {
-  /* The dark background and the white text */
-  --background: #121214;
+  /* The dark background with a hint of blue, and the white text */
+  --background: #0b0e14;
   --foreground: #ffffff;
-  /* The surface: header, footer, product cards, pop-ups and messages */
-  --card: #1c1c1f;
-  --popover: #1c1c1f;
+  /* The surface: header, footer, cards, pop-ups and messages */
+  --card: #141821;
+  --popover: #141821;
   --popover-foreground: #ffffff;
-  /* Orange: primary buttons, prices, counters, badges and the active tab. Text on it is dark */
-  --primary: #ffa629;
-  --primary-foreground: #111111;
-  /* The light surface (surface-muted in DESIGN.md): the search field, image boxes, icon circles, scroll buttons and skeletons */
-  --muted: #2a2a2e;
-  --muted-foreground: #a1a1a6;
+  /* Electric blue: primary buttons, prices, counters, badges and the active tab. Text on it is dark */
+  --primary: #4f8cff;
+  --primary-foreground: #0b0e14;
+  /* The light surface (surface-muted in DESIGN.md): the search field, photo boxes, icon circles, scroll buttons and skeletons */
+  --muted: #1e2430;
+  --muted-foreground: #a3adbf;
   /* Light red for errors and sold out, yellow for the "بقي عدد قليل" (only a few left) notice, green for "متوفر" (in stock), and WhatsApp green for its floating button */
   --destructive: #f87171;
   --warning: #fbbf24;
   --success: #4ade80;
   --whatsapp: #15803d;
-  --border: #333338;
-  --input: #333338;
-  --ring: #ffa629;
-  /* Corners: 8 pixels for buttons, fields and image boxes, 12 for cards (rounded-xl), and 4 for badges */
+  --border: #2a3344;
+  --input: #2a3344;
+  --ring: #4f8cff;
+  /* Corners: 8 pixels for fields (rounded-lg), 12 for photo boxes (rounded-xl), 16 for cards (rounded-2xl), and 4 for badges */
   --radius: 0.5rem;
+  /*
+   * The product's tone (DESIGN.md: stage-tone): the hue and chroma of the light behind a photo in the OKLCH
+   * color space. toneStyle() in src/lib/tone.ts sets them on the element that holds the photo; these are the
+   * store's blue, for a light without a photo. The light is always drawn at the same lightness (0.4), so white
+   * text keeps its contrast whatever the hue.
+   */
+  --tone-h: 262;
+  --tone-c: 0.1;
+}
+
+/*
+ * The 3D turn of a photo on a stage, set on every frame of a swipe by useStageMotion (src/hooks): --turn runs
+ * from -1 (arriving) through 0 (in view) to 1 (leaving), and --away is its distance from the middle, from 0 to 1.
+ * The tilt toward the mouse is registered as angles, so its short transition can ease it.
+ */
+@property --turn {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@property --away {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@property --tilt-x {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+@property --tilt-y {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
 }
 
 @layer base {
@@ -133,6 +167,93 @@
   :root[data-render-all] & {
     content-visibility: visible;
   }
+}
+
+/*
+ * The light of a stage (DESIGN.md: stage-backdrop): a soft wash from the top and a radial light in the
+ * product's tone around the product, fading into the page background. --stage-x and --stage-y place the
+ * light behind the product: the middle by default, and the end side of the hero on wider screens.
+ */
+@utility stage-backdrop {
+  background:
+    radial-gradient(
+      60% 50% at var(--stage-x, 50%) -10%,
+      oklch(0.62 var(--tone-c) var(--tone-h) / 0.28),
+      transparent 65%
+    ),
+    radial-gradient(
+      65% 70% at var(--stage-x, 50%) var(--stage-y, 50%),
+      oklch(0.4 var(--tone-c) var(--tone-h) / 0.95),
+      oklch(0.3 var(--tone-c) var(--tone-h) / 0.5) 45%,
+      transparent 78%
+    );
+}
+
+/*
+ * The glowing platform under a product on a stage (DESIGN.md: stage-platform), with a soft dark spot where
+ * the product stands. It narrows and dims as its photo turns away.
+ */
+@utility stage-platform {
+  position: absolute;
+  inset-inline: 10%;
+  bottom: 3%;
+  height: 16%;
+  border: 1px solid oklch(0.82 var(--tone-c) var(--tone-h) / 0.35);
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    oklch(0.78 var(--tone-c) var(--tone-h) / 0.55),
+    oklch(0.6 var(--tone-c) var(--tone-h) / 0.18) 65%,
+    transparent
+  );
+  opacity: calc(1 - var(--away) * 0.9);
+  transform: scaleX(calc(1 - var(--away) * 0.45));
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 22% 18%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, oklch(0 0 0 / 0.55), transparent);
+  }
+}
+
+/* The row of slides on a stage: useStageMotion sets the tilt toward the mouse on it, and this eases it */
+@utility stage-track {
+  transition:
+    --tilt-x 300ms ease-out,
+    --tilt-y 300ms ease-out;
+}
+
+/*
+ * The photo on a stage: it turns around its vertical axis with the swipe, moves back, shrinks and fades as
+ * it leaves, so a photo that has left is never seen beside the one in view, and tilts toward the mouse.
+ */
+@utility stage-photo {
+  opacity: clamp(0, 1 - var(--away) * 1.15, 1);
+  transform: perspective(1200px) rotateX(var(--tilt-x))
+    rotateY(calc(var(--turn) * 34deg + var(--tilt-y)))
+    translateZ(calc(var(--away) * -180px)) scale(calc(1 - var(--away) * 0.12));
+}
+
+/*
+ * The light in a photo box, for the cards, the tiles and the thumbnails: a wash of the photo's tone over the
+ * light surface, and a short glow near the bottom, under the product.
+ */
+@utility tone-wash {
+  background:
+    radial-gradient(
+      34% 6% at 50% 89%,
+      oklch(0.78 var(--tone-c) var(--tone-h) / 0.42),
+      transparent
+    ),
+    radial-gradient(
+      78% 68% at 50% 68%,
+      oklch(0.4 var(--tone-c) var(--tone-h) / 0.85),
+      oklch(0.3 var(--tone-c) var(--tone-h) / 0.35) 55%,
+      transparent 88%
+    ),
+    var(--muted);
 }
 
 /* For visitors who turned on reduced motion in their device settings: no sliding, no zooming and no smooth scrolling */

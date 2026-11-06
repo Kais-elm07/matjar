@@ -1,8 +1,8 @@
 "use client"
 
-import Image from "next/image"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
+import { PhotoBox } from "@/components/shared/photo-box"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import type { ProductImage } from "@/lib/catalog/types"
@@ -15,7 +15,7 @@ interface ProductZoomProps {
   onOpenChange: (open: boolean) => void
 }
 
-/** The product image zoom dialog, with navigation between the images. */
+/** The product image zoom dialog, with navigation between the images, on the light of each photo's tone. */
 export function ProductZoom({
   images,
   activeIndex,
@@ -32,15 +32,15 @@ export function ProductZoom({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[min(92vw,44rem)] gap-3 p-3 sm:max-w-[min(92vw,44rem)]">
         <DialogTitle className="sr-only">{active.alt}</DialogTitle>
-        <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-muted">
-          <Image
-            src={active.src}
-            alt={active.alt}
-            fill
-            sizes="(min-width: 768px) 704px, 92vw"
-            className="object-contain"
-          />
-        </div>
+        {/* The whole photo shows, so a regular photo is not cropped either */}
+        <PhotoBox
+          photo={active}
+          alt={active.alt}
+          sizes="(min-width: 768px) 704px, 92vw"
+          className="aspect-square w-full"
+          imageClassName="object-contain"
+          cutoutClassName="p-[7%]"
+        />
         {images.length > 1 && (
           <div className="flex items-center justify-between">
             <Button

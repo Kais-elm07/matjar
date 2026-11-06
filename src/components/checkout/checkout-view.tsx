@@ -130,7 +130,7 @@ export function CheckoutView({ config }: CheckoutViewProps) {
           <PaymentStep />
 
           <div className="space-y-3">
-            <p className="flex gap-2 rounded-xl bg-muted p-3 text-sm leading-6">
+            <p className="flex gap-2 rounded-2xl bg-muted p-3 text-sm leading-6">
               <InfoIcon
                 className="mt-1 size-4 shrink-0 text-primary"
                 aria-hidden

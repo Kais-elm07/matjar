@@ -42,20 +42,29 @@ const ITEMS: { icon: LucideIcon; title: string; description: string }[] = [
 ]
 
 /**
- * The full-width trust strip under the hero: the six reasons to shop here, and the only list of
- * them on the site, so no other section repeats them (DESIGN.md: trust-strip).
+ * The trust cards under the hero: the six reasons to shop here, each in a card with its icon in a soft
+ * blue circle, pulled up into the hero's bottom edge from tablets up (DESIGN.md: trust-card). It is the
+ * only list of these reasons on the site, so no other section repeats them.
  */
 export function TrustStrip() {
   return (
-    <section aria-label="لماذا تتسوق معنا" className="border-y bg-card">
-      <ul className="page-container grid grid-cols-2 gap-x-6 gap-y-4 py-5 md:grid-cols-3 md:py-6 xl:grid-cols-6">
+    <section
+      aria-label="لماذا تتسوق معنا"
+      className="relative page-container md:-mt-10"
+    >
+      <ul className="grid grid-cols-2 gap-2.5 pt-4 md:grid-cols-3 md:gap-3 md:pt-0 xl:grid-cols-6">
         {ITEMS.map(({ icon: Icon, title, description }) => (
-          <li key={title} className="flex items-start gap-3">
-            <Icon className="mt-0.5 size-6 shrink-0 text-primary" aria-hidden />
-            <div>
-              <p className="text-sm font-bold md:text-base">{title}</p>
+          <li
+            key={title}
+            className="flex items-start gap-2.5 rounded-2xl border bg-card p-3 md:gap-3 md:p-3.5"
+          >
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/12 text-primary md:size-10">
+              <Icon className="size-[18px] md:size-5" aria-hidden />
+            </span>
+            <div className="min-w-0">
+              <p className="text-sm font-bold">{title}</p>
               {/* Balanced lines, so no word is left alone on the second line */}
-              <p className="text-xs text-balance text-muted-foreground md:text-sm">
+              <p className="text-xs leading-5 text-balance text-muted-foreground">
                 {description}
               </p>
             </div>

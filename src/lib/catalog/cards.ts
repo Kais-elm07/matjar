@@ -27,7 +27,14 @@ export function toProductCard(product: Product): ProductCardData {
     compareAtPrice: product.compareAtPrice,
     priceVaries: product.maxPrice !== product.price,
     inStock: product.inStock,
-    image: image ? { src: image.src, alt: image.alt } : null,
+    image: image
+      ? {
+          src: image.src,
+          alt: image.alt,
+          tone: image.tone,
+          cutout: image.cutout,
+        }
+      : null,
     categoryName: product.categoryPath.at(-1)?.name ?? null,
     quickAdd:
       product.variants.length === 1

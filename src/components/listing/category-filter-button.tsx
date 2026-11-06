@@ -22,7 +22,7 @@ export function CategoryFilterButton({
       onClick={onClick}
       className={cn(
         "flex min-h-11 w-full items-center justify-between gap-2 rounded-lg px-2 text-start text-sm transition-colors hover:bg-muted",
-        active && "bg-primary/10 font-bold text-primary hover:bg-primary/15"
+        active && "bg-primary/12 font-bold text-primary hover:bg-primary/16"
       )}
     >
       {label}

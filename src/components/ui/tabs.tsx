@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils"
  * Lightweight tabs with shadcn's tabs API but no Base UI library, to reduce the page's JavaScript.
  * All panels are in the HTML (inactive ones get the `hidden` attribute), so search engines read them.
  * Arrow keys move between tabs following the page direction; Home and End go to the first and last.
- * The default look comes from DESIGN.md: pills with a gray border, and the active one is orange
+ * The default look comes from DESIGN.md: pills with a gray border, and the active one is blue
  * with dark text (section-tab-active).
  */
 

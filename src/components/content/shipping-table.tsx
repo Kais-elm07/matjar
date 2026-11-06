@@ -10,7 +10,7 @@ export function ShippingTable() {
 
   return (
     <div className="space-y-3">
-      <div className="overflow-x-auto rounded-xl border">
+      <div className="overflow-x-auto rounded-2xl border">
         <table className="w-full min-w-[32rem] text-sm">
           <caption className="sr-only">أسعار ومدة التوصيل حسب المدينة</caption>
           <thead className="bg-muted text-start">

@@ -8,7 +8,7 @@ interface SectionHeadingProps {
   linkLabel?: string
 }
 
-/** A section heading on the page, with an optional orange "عرض الكل" (View all) link beside it. */
+/** A section heading on the page, with an optional blue "عرض الكل" (View all) link beside it. */
 export function SectionHeading({
   id,
   title,

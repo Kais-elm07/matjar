@@ -1,4 +1,5 @@
 import type { OptionGroup, VariantOptions } from "@/lib/catalog/options"
+import type { Tone } from "@/lib/tone"
 
 // ---------------------------------------------------------------------------
 // Shape of the data as written in the src/data files (prices in riyals)
@@ -9,7 +10,11 @@ export type CategoryInput = {
   slug: string
   name: string
   description?: string
-  /** Image path without an extension, such as "/images/categories/clothing" */
+  /**
+   * The category's cover: the path of a product photo without an extension, such as
+   * "/images/products/portable-speaker-2", shown on its tile. Default: the first photo of the
+   * category's most popular product.
+   */
   image?: string
   /** The parent category's slug, if this is a subcategory */
   parent?: string
@@ -22,6 +27,11 @@ export type ProductImageInput = {
   alt?: string
   /** The color value this image belongs to; the gallery moves to it when that color is chosen */
   color?: string
+  /**
+   * The color of the light behind this photo, such as "#c2410c", instead of the color pnpm images
+   * measures from the photo (DESIGN.md: the product's tone)
+   */
+  tone?: string
 }
 
 export type VariantInput = {
@@ -109,11 +119,20 @@ export type CategoryOption = CategoryLink & { parentSlug: string | null }
 /** A top-level category with its subcategories, as the header's category menu and the mobile menu show them. */
 export type NavCategory = CategoryLink & { children: CategoryLink[] }
 
+/**
+ * How a photo is shown (DESIGN.md: the product's tone and Product photos): the tone of the light behind it,
+ * and whether it is a cut-out, which floats on that light, or a regular photo, which is framed.
+ */
+export type PhotoLook = { tone: Tone; cutout: boolean }
+
+/** A category's cover on its tile: a product photo with its look. Decorative, so it has no description. */
+export type CoverPhoto = { src: string } & PhotoLook
+
 export type Category = {
   slug: string
   name: string
   description: string | null
-  image: string | null
+  image: CoverPhoto | null
   parentSlug: string | null
   childSlugs: string[]
   /** The path from the top-level category down to this category */
@@ -126,7 +145,7 @@ export type ProductImage = {
   src: string
   alt: string
   color: string | null
-}
+} & PhotoLook
 
 export type Variant = {
   sku: string
@@ -156,8 +175,11 @@ export type Product = {
   saleEndsAt: string | null
 }
 
-/** The card image: only the path and the screen reader description. */
+/** A product's image in the cart and the order: only the path and the screen reader description. */
 export type CardImage = { src: string; alt: string }
+
+/** The photo on a product card: the image with its look, for the light in its photo box. */
+export type CardPhoto = CardImage & PhotoLook
 
 /** Product card data: everything the lists, filters and sorting need in the browser, and nothing else. */
 export type ProductCardData = {
@@ -167,7 +189,7 @@ export type ProductCardData = {
   compareAtPrice: number | null
   priceVaries: boolean
   inStock: boolean
-  image: CardImage | null
+  image: CardPhoto | null
   /** The most specific category name, shown above the product name on the card */
   categoryName: string | null
   /** For single-variant products: add to the cart directly from the card */
@@ -204,8 +226,17 @@ export type CategoryBanner = {
   href: string
   title: string
   text: string | null
-  image: string | null
+  image: CoverPhoto | null
 }
+
+/**
+ * What pnpm images measured in each photo (public/images/image-meta.json), by its path in the data files:
+ * its main color, or null when it has no clear color, and whether it is a cut-out.
+ */
+export type ImageMeta = Record<
+  string,
+  { color: string | null; cutout: boolean }
+>
 
 /**
  * Prices and stock of every variant by SKU, which the cart saved in the browser is compared against.

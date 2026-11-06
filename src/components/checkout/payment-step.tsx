@@ -6,7 +6,7 @@ import { CheckoutSection } from "@/components/checkout/checkout-section"
 export function PaymentStep() {
   return (
     <CheckoutSection step={4} title="طريقة الدفع">
-      <div className="flex items-center gap-3 rounded-xl border border-primary bg-primary/5 p-4">
+      <div className="flex items-center gap-3 rounded-2xl border border-primary bg-primary/5 p-4">
         <BanknoteIcon className="size-6 shrink-0 text-primary" aria-hidden />
         <div>
           <p className="font-bold">الدفع عند الاستلام</p>

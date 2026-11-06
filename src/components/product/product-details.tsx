@@ -95,7 +95,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
           onBuyNow={buyNow}
         />
 
-        <ul className="grid gap-3 rounded-xl border bg-card p-4 text-sm sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-3">
+        <ul className="grid gap-3 rounded-2xl border bg-card p-4 text-sm sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-3">
           <TrustItem icon={BanknoteIcon} text="الدفع عند الاستلام" />
           <TrustItem icon={TruckIcon} text="توصيل إلى باب بيتك" />
           <TrustItem icon={RotateCcwIcon} text="إرجاع واستبدال بسهولة" />

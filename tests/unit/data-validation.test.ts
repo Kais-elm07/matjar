@@ -110,6 +110,12 @@ describe("product and category files", () => {
           images: [{ src: "/images/products/x-1", color: "أزرق" }],
           variants: [{ sku: "T-5", price: 100, stock: 1 }],
         },
+        {
+          ...validProduct,
+          slug: "named-tone",
+          images: [{ src: "/images/products/y-1", tone: "orange" }],
+          variants: [{ sku: "T-6", price: 100, stock: 1 }],
+        },
       ],
     }))
 
@@ -118,6 +124,43 @@ describe("product and category files", () => {
     expect(message).toContain("الحقل variants[1].price")
     expect(message).toContain(`المتغير "T-4" يكرر خيارات متغير آخر`)
     expect(message).toContain(`للصورة لون "أزرق" لكن المنتج ليس له خيار لون`)
+    expect(message).toContain(
+      "الحقل images[1].tone: اللون يجب أن يكون رمزاً سداسياً"
+    )
+  })
+
+  it("takes a photo's tone from the data, and a category's cover from its most popular product", async () => {
+    vi.doMock("@/data/categories", () => ({
+      categories: [
+        { slug: "men", name: "رجالي" },
+        { slug: "shoes", name: "أحذية", parent: "men" },
+      ],
+    }))
+    vi.doMock("@/data/products", () => ({
+      products: [
+        { ...validProduct, popularity: 10 },
+        {
+          ...validProduct,
+          slug: "red-sneakers",
+          category: "shoes",
+          images: [{ src: "/images/products/red-1", tone: "#dc2626" }],
+          variants: [{ sku: "T-2", price: 100, stock: 5 }],
+          popularity: 50,
+        },
+      ],
+    }))
+
+    const catalog = await import("@/lib/catalog/catalog")
+    const { toneFromHex } = await import("@/lib/tone")
+    const sneakers = catalog.getProduct("red-sneakers")
+    expect(sneakers?.images[0].tone).toEqual(toneFromHex("#dc2626"))
+    // The parent category shows its most popular product, which is in the subcategory
+    expect(catalog.getCategory("men")?.image?.src).toBe(
+      "/images/products/red-1"
+    )
+    expect(catalog.getCategory("shoes")?.image?.tone).toEqual(
+      toneFromHex("#dc2626")
+    )
   })
 
   it("resets a product whose sale has ended to its price before the discount", async () => {

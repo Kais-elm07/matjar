@@ -131,7 +131,7 @@ describe("actual store data", () => {
     }
     for (const category of categories) {
       if (category.image) {
-        expect(hasSource(category.image), category.image).toBe(true)
+        expect(hasSource(category.image.src), category.image.src).toBe(true)
       }
     }
   })

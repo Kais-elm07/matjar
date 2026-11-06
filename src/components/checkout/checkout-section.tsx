@@ -4,7 +4,7 @@ interface CheckoutSectionProps {
   children: React.ReactNode
 }
 
-/** A numbered step in the order form: an orange circle with the number and a title, in a thin-bordered card. */
+/** A numbered step in the order form: a blue circle with the number and a title, in a thin-bordered card. */
 export function CheckoutSection({
   step,
   title,
@@ -13,7 +13,7 @@ export function CheckoutSection({
   return (
     <section
       aria-labelledby={`checkout-step-${step}`}
-      className="rounded-xl border p-4 md:p-6"
+      className="rounded-2xl border p-4 md:p-6"
     >
       <h2
         id={`checkout-step-${step}`}

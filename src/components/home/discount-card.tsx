@@ -20,7 +20,7 @@ export function DiscountCard({
   return (
     <div
       className={cn(
-        "flex flex-col justify-center gap-3 rounded-xl border bg-card p-6 md:p-8",
+        "flex flex-col justify-center gap-3 rounded-2xl border bg-card p-6 md:p-8",
         className
       )}
     >

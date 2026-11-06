@@ -12,7 +12,7 @@ interface ShippingOptionProps extends React.ComponentProps<"input"> {
   disabled?: boolean
 }
 
-/** A shipping option as a clickable card; the selected one has an orange border. */
+/** A shipping option as a clickable card; the selected one has a blue border. */
 export function ShippingOption({
   icon: Icon,
   title,
@@ -24,7 +24,7 @@ export function ShippingOption({
   return (
     <label
       className={cn(
-        "flex cursor-pointer items-center gap-3 rounded-xl border p-4 transition-colors has-checked:border-primary has-checked:bg-primary/5 has-focus-visible:ring-3 has-focus-visible:ring-ring/50",
+        "flex cursor-pointer items-center gap-3 rounded-2xl border p-4 transition-colors has-checked:border-primary has-checked:bg-primary/5 has-focus-visible:ring-3 has-focus-visible:ring-ring/50",
         disabled && "cursor-not-allowed opacity-50"
       )}
     >

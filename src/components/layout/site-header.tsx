@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { ArrowRightIcon } from "lucide-react"
 
 import { CategoryMenu } from "@/components/layout/category-menu"
 import { HeaderActions } from "@/components/layout/header-actions"
@@ -12,7 +13,7 @@ import { siteConfig } from "@/config/site"
 import type { NavCategory } from "@/lib/catalog/types"
 import { cn } from "@/lib/utils"
 
-/** Links in the desktop navigation row: light text that turns orange on hover (DESIGN.md: header-link-hover). */
+/** Links in the desktop navigation row: light text that turns blue on hover (DESIGN.md: header-link-hover). */
 const NAV_LINK =
   "inline-flex h-11 items-center rounded-lg px-3 text-sm font-medium whitespace-nowrap text-foreground/85 transition-colors outline-none hover:text-primary focus-visible:ring-3 focus-visible:ring-ring aria-expanded:text-primary"
 
@@ -23,7 +24,7 @@ interface SiteHeaderProps {
 
 /**
  * The dark sticky store header: a row with the logo, a wide search field in the middle, the wishlist,
- * the cart and the "تسوّق الآن" (Shop now) button, and on desktop a second row with the shopping and
+ * the cart and the blue "تسوّق الآن" (Shop now) pill, and on desktop a second row with the shopping and
  * help links, where "الفئات" (Categories) opens a panel with columns.
  * On mobile: the menu button, the logo, the search button and the cart in a single row.
  */
@@ -49,6 +50,7 @@ export function SiteHeader({ categories }: SiteHeaderProps) {
             )}
           >
             تسوّق الآن
+            <ArrowRightIcon className="size-4 rtl:rotate-180" aria-hidden />
           </Link>
         </div>
       </div>

@@ -1,6 +1,6 @@
-import Image from "next/image"
 import Link from "next/link"
 
+import { PhotoBox } from "@/components/shared/photo-box"
 import { PRODUCT_FORMS, pluralize } from "@/lib/arabic-plural"
 import type { Category } from "@/lib/catalog/types"
 import { categoryPath } from "@/lib/routes"
@@ -9,29 +9,31 @@ interface CategoryTileProps {
   category: Category
 }
 
-/** A 4:5 category photo tile, with its name and product count over a dark gradient (DESIGN.md: category-tile). */
+/**
+ * A category tile: a surface card with 16px corners and a thin border, whose photo box shows the cut-out of
+ * the category's cover photo on a wash of its tone, with the name and product count under the box
+ * (DESIGN.md: category-tile). On hover it rises like a product card.
+ */
 export function CategoryTile({ category }: CategoryTileProps) {
   return (
     <Link
       href={categoryPath(category.slug)}
-      className="group relative block aspect-[4/5] overflow-hidden rounded-xl border bg-muted outline-none focus-visible:ring-3 focus-visible:ring-ring"
+      className="group flex h-full flex-col gap-2.5 rounded-2xl border bg-card p-2 pb-3 transition-[translate,border-color] duration-200 outline-none hover:-translate-y-0.5 hover:border-primary/40 focus-visible:ring-3 focus-visible:ring-ring"
     >
-      {category.image && (
-        <Image
-          src={category.image}
+      {category.image ? (
+        <PhotoBox
+          photo={category.image}
           alt=""
-          fill
-          sizes="(min-width: 1024px) 240px, (min-width: 640px) 31vw, 44vw"
-          className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          sizes="(min-width: 1024px) 220px, (min-width: 640px) 30vw, 42vw"
+          className="aspect-square"
+          imageClassName="group-hover:scale-105"
         />
+      ) : (
+        <span className="block aspect-square rounded-xl bg-muted" />
       )}
-      <span
-        aria-hidden
-        className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/35 to-transparent"
-      />
-      <span className="absolute inset-x-0 bottom-0 p-3 md:p-4">
-        <span className="block text-base font-bold">{category.name}</span>
-        <span className="block text-xs text-foreground/75">
+      <span className="px-1">
+        <span className="block text-sm font-bold">{category.name}</span>
+        <span className="block text-xs text-muted-foreground">
           {pluralize(category.productCount, PRODUCT_FORMS)}
         </span>
       </span>

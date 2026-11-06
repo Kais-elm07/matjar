@@ -41,7 +41,7 @@ export function OrderSummary({
   return (
     <aside
       aria-labelledby="order-summary-heading"
-      className={cn("rounded-xl border bg-card", className)}
+      className={cn("rounded-2xl border bg-card", className)}
     >
       {/* On mobile the collapse button covers the whole row for easier tapping; it is hidden on desktop */}
       <div className="relative flex items-center justify-between gap-3 p-4">
@@ -56,7 +56,7 @@ export function OrderSummary({
           onClick={() => setOpen((value) => !value)}
           aria-expanded={open}
           aria-controls="order-summary-content"
-          className="flex items-center gap-1.5 rounded-sm font-bold text-primary outline-none after:absolute after:inset-0 after:rounded-xl focus-visible:after:ring-3 focus-visible:after:ring-ring/50 lg:hidden"
+          className="flex items-center gap-1.5 rounded-sm font-bold text-primary outline-none after:absolute after:inset-0 after:rounded-2xl focus-visible:after:ring-3 focus-visible:after:ring-ring/50 lg:hidden"
         >
           <span className="sr-only">
             {open ? "إخفاء ملخص الطلب، " : "عرض ملخص الطلب، "}الإجمالي
@@ -73,17 +73,17 @@ export function OrderSummary({
         id="order-summary-content"
         className={cn("space-y-4 px-4 pb-4 lg:block", !open && "hidden")}
       >
-        <ul className="divide-y rounded-lg border bg-background px-3">
+        <ul className="divide-y rounded-xl border bg-background px-3">
           {lines.map((line) => (
             <li key={line.sku} className="flex items-center gap-3 py-3">
-              <span className="relative size-14 shrink-0 overflow-hidden rounded-lg border">
+              <span className="relative size-14 shrink-0 rounded-xl border bg-muted">
                 {line.image && (
                   <Image
                     src={line.image.src}
                     alt=""
                     fill
                     sizes="56px"
-                    className="object-cover"
+                    className="rounded-xl object-contain p-1"
                   />
                 )}
                 <span className="absolute -end-1 -top-1 flex size-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground tabular-nums">
@@ -149,7 +149,7 @@ export function OrderSummary({
         </dl>
         {totals.freeShippingRemaining !== null &&
           totals.freeShippingRemaining > 0 && (
-            <p className="rounded-lg bg-background px-3 py-2 text-xs">
+            <p className="rounded-xl bg-background px-3 py-2 text-xs">
               أضف منتجات بقيمة{" "}
               <span className="font-bold">
                 {formatPrice(totals.freeShippingRemaining)}

@@ -25,7 +25,7 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
         {testimonials.map((testimonial) => (
           <li
             key={`${testimonial.name}-${testimonial.title}`}
-            className="space-y-3 rounded-xl border bg-card p-6"
+            className="space-y-3 rounded-2xl border bg-card p-6"
           >
             <p
               role="img"

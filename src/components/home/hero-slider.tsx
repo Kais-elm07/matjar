@@ -1,29 +1,33 @@
 "use client"
 
 import { useRef, useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
-import { buttonVariants } from "@/components/ui/button"
+import { HeroSlide } from "@/components/home/hero-slide"
+import { StageBackdrop } from "@/components/shared/stage-backdrop"
 import { useIdle } from "@/hooks/use-idle"
+import { useStageMotion } from "@/hooks/use-stage-motion"
 import type { ProductBanner } from "@/lib/catalog/types"
-import { formatPrice } from "@/lib/money"
 import { scrollToSlide, visibleSlide } from "@/lib/slider"
+import { BRAND_TONE, toneStyle } from "@/lib/tone"
 import { cn } from "@/lib/utils"
+
+/** The round arrows beside the dots, from tablets up */
+const ARROW =
+  "hidden size-11 items-center justify-center rounded-full border bg-card/80 text-foreground outline-none hover:bg-card focus-visible:ring-3 focus-visible:ring-ring md:flex"
 
 interface HeroSliderProps {
   slides: ProductBanner[]
 }
 
 /**
- * The full-width hero: a large photo under a darkening layer in the background color and a darker
- * gradient from the bottom, with the badge, headline, description, price and orange button in its
- * middle. Multiple slides are swiped by touch, with arrows on desktop and dots (the active one
- * orange), and they do not move automatically.
+ * The full-width hero, a stage (DESIGN.md: Hero): one slide per product, swiped by touch, with the dots
+ * (the active one blue) between two arrows under the slides, and nothing moves on its own. As a slide moves,
+ * its photo turns away in 3D and the light behind the stage blends into the next product's tone
+ * (useStageMotion). On wider screens the light sits behind the product, on the end side.
  */
 export function HeroSlider({ slides }: HeroSliderProps) {
-  const listRef = useRef<HTMLUListElement>(null)
+  const { trackRef, backdropRef } = useStageMotion<HTMLUListElement>()
   const slideRefs = useRef<(HTMLLIElement | null)[]>([])
   const [active, setActive] = useState(0)
   // The other slides' photos wait until the page has loaded, or until their slide is shown,
@@ -31,14 +35,14 @@ export function HeroSlider({ slides }: HeroSliderProps) {
   const idle = useIdle()
 
   function onScroll() {
-    const list = listRef.current
+    const list = trackRef.current
     if (list) setActive(visibleSlide(list))
   }
 
   /** Scrolls only the slides to the requested slide, without moving the page vertically. */
   function show(index: number) {
     const count = slides.length
-    const list = listRef.current
+    const list = trackRef.current
     const slide = slideRefs.current[(index + count) % count]
     if (list && slide) scrollToSlide(list, slide)
   }
@@ -47,12 +51,17 @@ export function HeroSlider({ slides }: HeroSliderProps) {
     <section
       aria-roledescription="عرض شرائح"
       aria-label="أبرز العروض"
-      className="relative bg-muted"
+      className="relative isolate overflow-hidden bg-background"
     >
+      <StageBackdrop
+        ref={backdropRef}
+        tone={slides[0]?.image?.tone ?? BRAND_TONE}
+        className="[--stage-y:30%] md:[--stage-x:28%] md:[--stage-y:48%]"
+      />
       <ul
-        ref={listRef}
+        ref={trackRef}
         onScroll={onScroll}
-        className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain"
+        className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain stage-track"
       >
         {slides.map((slide, index) => (
           <li
@@ -62,85 +71,31 @@ export function HeroSlider({ slides }: HeroSliderProps) {
             }}
             aria-roledescription="شريحة"
             aria-label={`${index + 1} من ${slides.length}`}
-            className="relative w-full shrink-0 snap-center"
+            style={toneStyle(slide.image?.tone ?? BRAND_TONE)}
+            className="w-full shrink-0 snap-center"
           >
-            <div className="relative flex min-h-[32rem] items-center md:h-[min(72svh,42rem)] md:min-h-[30rem]">
-              {slide.image && (index === 0 || index === active || idle) && (
-                // The first photo is the largest element on a phone's first screen (LCP), so it
-                // loads at once and before the other images
-                <Image
-                  src={slide.image.src}
-                  alt={slide.image.alt}
-                  fill
-                  sizes="100vw"
-                  loading={index === 0 ? "eager" : "lazy"}
-                  fetchPriority={index === 0 ? "high" : "auto"}
-                  className="object-cover"
-                />
-              )}
-              {/* Even darkening keeps the white text readable, and a gradient blends the bottom
-                  of the photo into the page background */}
-              <div aria-hidden className="absolute inset-0 bg-background/45" />
-              <div
-                aria-hidden
-                className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-background via-background/55 to-transparent"
-              />
-              <div className="relative page-container flex justify-center py-16 md:py-20">
-                <div className="flex max-w-3xl flex-col items-center gap-4 text-center">
-                  {slide.tag && (
-                    <p className="inline-flex rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground">
-                      {slide.tag}
-                    </p>
-                  )}
-                  <h2 className="text-4xl leading-[1.25] font-bold md:text-6xl md:leading-[1.15]">
-                    {slide.title}
-                  </h2>
-                  {slide.text && (
-                    <p className="max-w-xl text-base text-foreground/85 md:text-lg">
-                      {slide.text}
-                    </p>
-                  )}
-                  <p className="text-sm text-foreground/85">
-                    {slide.priceVaries ? "يبدأ من " : "بسعر "}
-                    <span className="text-xl font-bold text-primary">
-                      {formatPrice(slide.price)}
-                    </span>
-                  </p>
-                  <Link
-                    href={slide.href}
-                    className={cn(
-                      buttonVariants({ variant: "cta", size: "xl" }),
-                      "mt-2 h-12 px-8"
-                    )}
-                  >
-                    تسوّق الآن
-                  </Link>
-                </div>
-              </div>
-            </div>
+            <HeroSlide
+              slide={slide}
+              photo={
+                index === 0 || index === active || idle ? slide.image : null
+              }
+              priority={index === 0}
+            />
           </li>
         ))}
       </ul>
 
       {slides.length > 1 && (
-        <>
+        <div className="absolute inset-x-0 bottom-3 flex items-center justify-center gap-2 md:bottom-14">
           <button
             type="button"
             onClick={() => show(active - 1)}
             aria-label="الشريحة السابقة"
-            className="absolute start-4 top-1/2 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-card/80 text-foreground outline-none hover:bg-card focus-visible:ring-3 focus-visible:ring-ring md:flex"
+            className={ARROW}
           >
             <ChevronLeftIcon className="size-5 rtl:rotate-180" aria-hidden />
           </button>
-          <button
-            type="button"
-            onClick={() => show(active + 1)}
-            aria-label="الشريحة التالية"
-            className="absolute end-4 top-1/2 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-card/80 text-foreground outline-none hover:bg-card focus-visible:ring-3 focus-visible:ring-ring md:flex"
-          >
-            <ChevronRightIcon className="size-5 rtl:rotate-180" aria-hidden />
-          </button>
-          <div className="absolute inset-x-0 bottom-3 flex justify-center md:bottom-5">
+          <div className="flex">
             {slides.map((slide, index) => (
               <button
                 key={slide.href}
@@ -159,7 +114,15 @@ export function HeroSlider({ slides }: HeroSliderProps) {
               </button>
             ))}
           </div>
-        </>
+          <button
+            type="button"
+            onClick={() => show(active + 1)}
+            aria-label="الشريحة التالية"
+            className={ARROW}
+          >
+            <ChevronRightIcon className="size-5 rtl:rotate-180" aria-hidden />
+          </button>
+        </div>
       )}
     </section>
   )

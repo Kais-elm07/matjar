@@ -152,7 +152,7 @@ export function SearchBox({
           // Prevent losing focus when a suggestion is clicked
           onMouseDown={(event) => event.preventDefault()}
           className={cn(
-            "absolute top-full z-50 mt-2 overflow-hidden rounded-xl border bg-popover text-popover-foreground shadow-lg",
+            "absolute top-full z-50 mt-2 overflow-hidden rounded-2xl border bg-popover text-popover-foreground shadow-lg",
             header ? "inset-x-0 min-w-80" : "inset-x-0"
           )}
         >

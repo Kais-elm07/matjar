@@ -22,7 +22,7 @@ export function OrderConfirmation() {
       <div className="mx-auto max-w-3xl space-y-6" aria-hidden>
         <Skeleton className="mx-auto size-16 rounded-full" />
         <Skeleton className="mx-auto h-8 w-64" />
-        <Skeleton className="h-48 rounded-xl" />
+        <Skeleton className="h-48 rounded-2xl" />
       </div>
     )
   }
@@ -67,7 +67,7 @@ export function OrderConfirmation() {
         </p>
       </div>
 
-      <p className="flex gap-2 rounded-lg border border-warning/30 bg-warning/5 p-4 text-sm leading-6">
+      <p className="flex gap-2 rounded-2xl border border-warning/30 bg-warning/5 p-4 text-sm leading-6">
         <InfoIcon className="mt-1 size-4 shrink-0 text-warning" aria-hidden />
         هذا طلب تجريبي للعرض فقط: لم يُرسل لأي جهة، ولن يُشحن، ولن يُطلب منك دفع
         أي مبلغ.
@@ -76,7 +76,7 @@ export function OrderConfirmation() {
       <div className="grid gap-4 md:grid-cols-2">
         <section
           aria-labelledby="delivery-heading"
-          className="rounded-xl border p-5"
+          className="rounded-2xl border p-5"
         >
           <h3 id="delivery-heading" className="mb-3 font-bold">
             التوصيل
@@ -95,7 +95,7 @@ export function OrderConfirmation() {
 
         <section
           aria-labelledby="payment-heading"
-          className="rounded-xl border p-5"
+          className="rounded-2xl border p-5"
         >
           <h3 id="payment-heading" className="mb-3 font-bold">
             الدفع عند الاستلام
@@ -127,7 +127,7 @@ export function OrderConfirmation() {
 
       <section
         aria-labelledby="items-heading"
-        className="rounded-xl border p-5"
+        className="rounded-2xl border p-5"
       >
         <h3 id="items-heading" className="mb-2 font-bold">
           المنتجات ({pluralize(count, PIECE_FORMS)})
@@ -135,14 +135,14 @@ export function OrderConfirmation() {
         <ul className="divide-y">
           {order.lines.map((line) => (
             <li key={line.sku} className="flex items-center gap-3 py-3">
-              <span className="relative size-14 shrink-0 overflow-hidden rounded-lg border">
+              <span className="relative size-14 shrink-0 overflow-hidden rounded-xl border bg-muted">
                 {line.image && (
                   <Image
                     src={line.image.src}
                     alt=""
                     fill
                     sizes="56px"
-                    className="object-cover"
+                    className="object-contain p-1"
                   />
                 )}
               </span>

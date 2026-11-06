@@ -8,7 +8,7 @@ import { siteConfig } from "@/config/site"
 /**
  * The dark full-width footer: the logo, the store statement and the "تواصل معنا" (Contact us)
  * button on the start side, the link columns on the end side, then the copyright line, and it
- * ends in an orange bar (DESIGN.md: footer-bar).
+ * ends in a thin blue line that fades toward both edges (DESIGN.md: footer-line).
  */
 export function SiteFooter() {
   return (
@@ -61,7 +61,10 @@ export function SiteFooter() {
           </p>
         </div>
       </div>
-      <div aria-hidden className="h-3 bg-primary" />
+      <div
+        aria-hidden
+        className="h-[3px] bg-gradient-to-r from-transparent via-primary to-transparent"
+      />
     </footer>
   )
 }

@@ -9,7 +9,7 @@ interface LogoProps {
   onNavigate?: () => void
 }
 
-/** The logo: a dark bag in an orange square, then the store name in white. The same look on every dark surface. */
+/** The logo: a dark bag in a blue square, then the store name in white. The same look on every dark surface. */
 export function Logo({ className, onNavigate }: LogoProps) {
   return (
     <Link
