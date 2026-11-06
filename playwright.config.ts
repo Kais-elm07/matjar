@@ -1,5 +1,3 @@
-import { existsSync } from "node:fs"
-
 import { defineConfig, devices } from "@playwright/test"
 
 const PORT = 3200
@@ -13,13 +11,6 @@ const chrome = isCI ? {} : { channel: "chrome" }
 // because Playwright's current build of it doesn't start on some Windows machines (it can't find the mozglue library)
 const withFirefox = isCI || Boolean(process.env.E2E_FIREFOX)
 
-// The tests run against the built site; without it, they all fail with confusing 404 errors
-if (!existsSync("out/index.html")) {
-  throw new Error(
-    "No build found in out/. Run pnpm build first, then pnpm test:e2e."
-  )
-}
-
 /**
  * Browser tests (pnpm test:e2e) on the static build in out/, as it will be published,
  * so run pnpm build before them. Four devices: a desktop with Chrome and Firefox,
@@ -27,6 +18,8 @@ if (!existsSync("out/index.html")) {
  */
 export default defineConfig({
   testDir: "tests/e2e",
+  // Stops the run with a clear message when there is no build in out/
+  globalSetup: "./tests/e2e/global-setup.ts",
   fullyParallel: true,
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
@@ -40,7 +33,9 @@ export default defineConfig({
   },
   webServer: {
     command: `node node_modules/serve/build/main.js out --listen ${PORT} --no-clipboard`,
-    url: `http://localhost:${PORT}/`,
+    // Ready as soon as the port answers. Waiting for the home page instead would time out
+    // without a build, before global-setup.ts can say what is missing
+    port: PORT,
     reuseExistingServer: !isCI,
   },
   projects: [
