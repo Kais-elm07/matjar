@@ -1,8 +1,8 @@
 # Online Store Plan (Frontend-Only Showcase)
 
-**Version:** 2.9
-**Date:** November 5, 2026
-**Status:** Approved. Phases 1 to 7 are complete except the items that need the owner (a review on a real phone and testing with real people). The phase 8 files are ready, and the owner postponed the deployment itself. A full review of code quality, performance and load capacity has been carried out. The project is on GitHub and the GitHub Actions checks pass.
+**Version:** 3.1
+**Date:** November 6, 2026
+**Status:** Approved up to phase 9. Phases 1 to 7 are complete except the items that need the owner (a review on a real phone and testing with real people). The phase 8 files are ready, and the owner postponed the deployment itself. A full review of code quality, performance and load capacity has been carried out. The project is on GitHub and the GitHub Actions checks pass. Phase 10, a design-only evolution to the "Spotlight" identity, was proposed, prototyped and built on November 6, 2026, on the Git branch `phase-10-spotlight`; the owner's look on a real phone remains.
 
 ---
 
@@ -10,6 +10,8 @@
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 3.1 | November 6, 2026 | Phase 10 was built on the branch `phase-10-spotlight`: `DESIGN.md` and the design skill were rewritten for the "Spotlight" identity; the colors, the pill buttons and the corners changed in the code; every demo product photo became a cut-out, made with an open-source background-removal model on the developer's computer, with other Pexels photos where a photo could not be cut cleanly or was too small (and the black headset recolored from the red one); the color options of four products now follow their photos, and the category covers are product photos; `pnpm images` measures each photo's color, and the catalog gives every photo its tone; the hero and the product gallery became stages whose light follows the product and whose photos turn in 3D, with no new dependency; the cards, the category tiles, the banners and the share images took the same look. Unit tests for the tone, its contrast on every hue and the swipe arithmetic, and two browser tests for the gallery, were added. |
+| 3.0 | November 6, 2026 | Phase 10 was proposed at the owner's request: a design-only evolution toward two concept designs the owner chose (a page whose background takes the product's color, and a dark tech storefront with one electric blue). It defines the "Spotlight" identity, a backdrop that follows the product's color, a 3D turn between photos in CSS only, and a restyle of every component with no change to the structure, the data or the features. It waits for decisions 9 to 11 in section 17. |
 | 2.9 | November 5, 2026 | At the owner's request, the project documentation was translated to English and given English file names: this plan (`PLAN.md`), `README.md`, `DESIGN.md`, the design-system skill, the deployment guide (`DEPLOYMENT.md`) and the user-testing guide (`USER-TESTING.md`). The storefront and its content stay in Arabic. The status was also brought up to date: the project is on GitHub, and the checks pass there on Chrome, Firefox and Safari (WebKit). |
 | 2.8 | November 4, 2026 | A full review of code quality and performance, at the owner's request before deployment: large files (the data layer, the home page, checkout and the listings) were split into small modules; bugs were fixed (cart storage when the browser blocks it, the slide direction of side panels in RTL, the image gallery, phone numbers written as +966 05, and the price reverting after a deal ends); less is sent to the browser; unused code was removed; and 31 new unit tests, two browser tests and a load test were added. The owner postponed the deployment. |
 | 2.7 | November 4, 2026 | The interface was redesigned in a "Warm Night" style at the owner's request, after a concept design whose colors the owner liked (Luxe Living): a dark background with a single orange for actions and prices, dark cards with a round cart button in the corner, a dark header with a wide search field and a row of links, a footer ending in an orange bar, and new home sections (Why choose us, the deals grid, Contact us), with free real product photos from Pexels instead of the demo drawings. DESIGN.md is the reference. |
@@ -293,19 +295,22 @@ Home / Search / Category
 
 The labels above are described in English; on the site they are in Arabic.
 
-### 4.5 Design system (the "Warm Night" identity, approved on November 4, 2026; the full reference is DESIGN.md)
+### 4.5 Design system (the "Spotlight" identity, approved on November 6, 2026; the full reference is DESIGN.md)
 
 | Element | Decision |
 | --- | --- |
 | **Font** | IBM Plex Sans Arabic in three weights (400, 500 and 700), self-hosted and subset |
-| **Colors** | A dark background in three shades with white text, a single orange for buttons, prices and badges, and a light red for errors |
-| **Corners** | Buttons and fields 8 px, cards 12, badges 4, and tabs, chips and the search field fully rounded (pill) |
+| **Colors** | A dark background with a blue tint in three shades, white text, a single electric blue for buttons, prices and badges, a light red for errors, and behind every product photo a light in the product's own color |
+| **Corners** | Buttons, tabs, chips and the search field fully rounded (pill), fields 8 px, photo boxes 12, cards and dialogs 16, badges 4 |
+| **Photos** | Cut-outs on a transparent background, floating on the light of their color, which turn in 3D as they move |
 | **Spacing** | A 4 px scale (4, 8, 12, 16, 24, 32, 48) |
 | **Icons** | Lucide, with arrows mirrored in RTL |
 | **Numerals** | Western digits (0-9) for prices, to avoid confusion |
 | **Dark mode** | The store is always dark, with no light mode |
 
 The whole system is documented in `DESIGN.md` at the project root, which is the reference for any new design.
+
+Phase 10 replaced the "Warm Night" identity (dark with orange, November 4, 2026) with "Spotlight": a blue-tinted dark stage, one electric blue instead of the orange, a light behind each product that takes its color, and a 3D turn between photos. The earlier identity is in the Git history.
 
 ### 4.6 Accessibility
 
@@ -408,7 +413,7 @@ export const categories = [
     slug: "clothing",
     name: "ملابس",
     description: "أزياء يومية مريحة",
-    image: "/images/categories/clothing",
+    image: "/images/products/floral-summer-dress-2",
   },
   { slug: "men", name: "رجالي", parent: "clothing" },
 ]
@@ -595,6 +600,113 @@ export const categories = [
 - [ ] Update the packages monthly.
 - [ ] Evaluate: is it time to add a server? (section 16)
 
+### Phase 10: Design evolution: the "Spotlight" identity ✅ (built November 6, 2026)
+
+**Status:** proposed on November 6, 2026, and decisions 9 to 11 in section 17 were taken the same day: the electric blue accent, five demo cut-outs and pill buttons. Before any code is touched, the owner asked for an interactive prototype of the hero (the tinted backdrop and the 3D turn), which is kept outside the project. The owner reviewed it the same day and asked for three changes, which are now part of this phase: every product photo is a cut-out, the backdrop changes the moment the photo does, and the category tiles and the product page use the same stage, so the whole site has one look. The phase was built the same day on the Git branch `phase-10-spotlight`, in four commits that each pass `pnpm verify` (`DESIGN.md`, the code and its tests, the cut-out photos, and the documentation) instead of one per step, because the steps share files; what remains is the owner's look on a real phone and merging the branch.
+
+**Scope:** design only. No new pages, no new features, and no change to the site map, the purchase journey, the folder structure or the shape of the data files (except one optional field, see 10.3). Every component keeps its name, its file and its props; only its look changes.
+
+**Duration:** 6 to 8 days
+
+#### 10.1 The references
+
+Two concept designs the owner found, described here so they can be rebuilt in Arabic without copying anything from them:
+
+1. **A one-product store page (a puffer jacket).** One product at a time fills the screen, and the whole page background takes the product's color as a soft gradient (orange for an orange jacket). A dark card in the middle holds a slim navigation row, a two-line headline with a short paragraph, the product floating in front of the card with a soft shadow, the price with the old price struck through, three size circles and one button. Two arrows move to the next product, and the background changes color with it.
+2. **A tech gadget storefront.** A near-black page with a blue tint, one electric blue for buttons, links and glows, a hero with a large product standing on a glowing round platform beside a large headline and two buttons, a row of four trust cards right under the hero, "Shop by category" as square dark tiles with the product's photo on them, "Featured products" as dark cards with a New, Best seller or Sale badge, the price and a cart icon in the corner, a wide blue gradient banner, and a final row of perks.
+
+The store keeps everything that already works in its structure and takes three things from the references: the colors and depth of the second, the **changing background** of the first, and a **3D movement between photos** that both suggest.
+
+#### 10.2 The identity: "Spotlight" (بقعة ضوء)
+
+The idea in one sentence: the store is a dark stage, every product stands in a spotlight, and the stage lights take the product's own color.
+
+- **Colors.** A near-black background with a blue tint in three shades, white text, one electric blue for actions and prices, and a fourth color that is never fixed: the **tone** of the product on screen, which tints the backdrop behind it. The proposed values, to be confirmed by `pnpm design:lint`: background `#0b0e14`, surface `#141821`, light surface `#1e2430`, border `#2a3344`, secondary text `#a3adbf`, primary `#4f8cff` with dark text on it (`#0b0e14`, a contrast of 6:1), and the same red, yellow, green and WhatsApp green as today. The blue replaces the orange everywhere the orange is used now (buttons, prices, badges, counters, the active tab, the announcement bar, hover links and the footer bar), so the "one accent color" rule stays. Decision 9 keeps the orange instead if the owner prefers it.
+- **The tone.** Each product photo gets a tone at build time: the average direction of the hue of its colorful pixels, weighted by how colorful each one is, with transparent pixels ignored, and a strength that says how colorful the photo is. A photo with no clear color (a white shirt, a black speaker) gets no tone, and the backdrop stays neutral. The tone is always drawn at a fixed lightness in the `oklch` color space, so white text on a tinted backdrop keeps a contrast of at least 4.5:1 whatever the product's color; a unit test checks the worst case across every hue. The owner can override the tone of any photo in the data file.
+- **Shapes.** Buttons, the search field, chips and tabs become pills (fully rounded); cards, tiles and dialogs grow to 16 px corners; fields keep 8 px and image boxes 12 px; badges keep 4 px.
+- **Depth.** Still no shadows on cards. Depth comes from the background shades, from thin borders that are slightly lighter on cards, and from **one light source per screen**: a glowing ellipse (the "platform") under the product on the stage, drawn as a radial gradient in the product's tone. A card lifts by 2 px and its border takes a hint of blue on hover. No blur filters anywhere, because they are slow on phones.
+- **Typography.** Unchanged: IBM Plex Sans Arabic in three weights, at the same sizes. A small blue label (the "eyebrow") above the hero headline replaces today's pill badge.
+- **Motion.** Short and purposeful, as today, plus the two movements in 10.4. Everything is still off for anyone who asked for reduced motion.
+
+#### 10.3 The stage: a backdrop that follows the product
+
+The stage is built from small shared parts in `src/components/shared`: `StageBackdrop` (the light), `StageVisual` (the photo on its platform) and `PhotoBox` (the small version in cards and tiles). Its styles are utilities in `globals.css` (`stage-backdrop`, `stage-platform`, `stage-photo` and `tone-wash`), which read the tone from two CSS variables that `toneStyle()` in `src/lib/tone.ts` sets, and its motion is the hook `useStageMotion` in `src/hooks`. The hero and the product gallery use it:
+
+- A backdrop in two layers that cross-fade: the page background, and a radial gradient in the product's tone from the middle of the stage. The backdrop follows the swipe itself: as the next slide moves toward the middle, its tone blends in by the same fraction, so the color changes the moment the photo does, with no delay and no fade after the swipe settles.
+- The platform under the product: an ellipse in the tone, brighter in the middle, drawn as a radial gradient.
+- The product photo in front of it. A **cut-out photo** (transparent background) floats directly on the backdrop above the platform. A **regular photo** sits in a 16 px frame with a thin border, and the platform glows around the frame's bottom edge, so the stage works with the current Pexels photos and with the owner's future photos alike.
+- **On the home page:** every hero slide is a stage. The eyebrow, the headline, the text, the price and the blue button sit beside the product on desktop and under it on phones. The text stays white and readable because of the fixed lightness.
+- **On the product page:** the gallery is a stage. Choosing a color moves the gallery to that color's photo, as today, and shifts the backdrop to that photo's tone. The purchase panel beside it keeps its layout.
+- **Where the tone comes from:** `pnpm images`, which already runs before `dev` and `build`, writes `public/images/image-meta.json`: for each photo, its main color (the average of its colorful pixels around their most common hue) and whether it has a transparent background. The site turns the color into a hue and a strength in OKLCH (`src/lib/tone.ts`). The catalog reads the file at build time with a guard (`src/lib/catalog/image-meta.ts`), and a missing file means no tones, so the unit tests and a fresh clone still work. `ProductImageInput` gets one optional field, `tone`, for the owner to override a photo's tone with a hex color. `ProductImage` carries the tone to the hero, the promo tiles, the wide banner, the gallery and the share images, and the card image carries it too (two short numbers per product in the search index) for the wash behind the cut-out on the cards and the category tiles.
+
+#### 10.4 Moving between photos in 3D
+
+- **Turning photos.** The hero slides and the gallery photos already swipe with scroll-snap. On every frame of a swipe, each photo's distance from the middle of the track sets its turn: the photo that leaves rotates away by about 35 degrees around its vertical axis, moves back, shrinks and fades out, and the one that arrives turns into place. The turn is tied to the swipe itself, so it works with a finger, the arrows, the thumbnails and the keyboard, and mirrors itself in the Arabic direction. It is a few lines of JavaScript on the scroll event (scroll-driven CSS animations were tried first in the prototype, but Chromium computes horizontal view timelines wrongly in the right-to-left direction), so it works the same in every browser.
+- **Tilt on desktop.** The same hook tilts the photo on a stage by a few degrees toward the mouse, on the hero and the product page, so the product reads as an object with depth. It runs only on devices with a mouse, and never with reduced motion.
+- **The platform follows the turn:** it narrows and dims as a photo leaves, and widens as the next one arrives.
+- **Reduced motion:** the turn and the tilt are off, and photos and backdrops change with a plain fade.
+
+#### 10.5 Every component in the new identity
+
+Only looks change here; names, files, props and order stay.
+
+- **Announcement bar:** a thin blue bar with dark text, as today's orange one.
+- **Header:** the surface color with a 1 px bottom border; the logo mark becomes a blue rounded square with the dark bag icon; the search pill in the light surface with a blue focus ring; links turn blue on hover; the "تسوّق الآن" (Shop now) button becomes a pill with a trailing arrow.
+- **Hero:** the stage (10.3 and 10.4), the eyebrow, the headline, the text, the price and one blue pill button. Dots and arrows stay, and there is still no autoplay.
+- **Trust strip:** six cards with a thin border and the icon in a blue-tinted circle, inside the page container and pulled up into the hero's bottom edge on desktop; two columns on phones, three on tablets and six on wide screens.
+- **Promo grid, spotlight cards and the wide banner:** 16 px corners, the photo on a tone-tinted backdrop with the platform glow (cut-outs float, photos are framed), and the text over the dark side of the gradient as today.
+- **Category tiles:** square dark tiles. In the 12 px box on each tile, a cut-out of one product of the category floats on a wash of that product's tone (the small glow under it included), and the name and count sit under the box instead of over a photo. The category's own photo is no longer shown there.
+- **Product card:** 16 px corners, a 1 px border that lightens on hover, the lift on hover, the cut-out in its 12 px box on a wash of its tone, the discount badge in blue with dark text, the price in blue, and the round blue cart button in the corner with its ring in the background color, as today.
+- **Tabs, chips and the countdown:** pills, with the active tab in blue with dark text.
+- **Product page:** the same stage as the hero (the cut-out on its platform, the turn between photos, and the backdrop that takes the chosen color's tone the moment the photo changes), with the thumbnails as a row of 12 px boxes (the active one with a blue border), the purchase panel unchanged in layout, option pills, the trust card and the tabs in the new surfaces, and the zoom dialog with 16 px corners.
+- **Cart panel, checkout, listings and filters, static pages, empty states, skeletons, notifications and the 404 page:** colors and corners only.
+- **Mobile bottom bar:** the surface color, with the active item in blue.
+- **Footer:** the surface color, blue hover links, and the 12 px orange bar becomes a 3 px blue line that fades toward the edges.
+- **Share images:** the new colors in `OG_COLORS`, and a product's share image takes its photo's tone as the backdrop, at the fixed lightness.
+- **Icon and theme color:** `src/app/icon.svg` in blue, and `themeColor` in the new background.
+
+#### 10.6 Photos
+
+The floating product in both references is a **cut-out**: a photo with a transparent background, the normal result of product photography. After the prototype, the owner decided that **every product photo is a cut-out** (decision 10): a regular photo is still framed, as a fallback, but the demo data gets cut-outs for all of its product photos, made once with an open-source segmentation model that runs locally (the prototype used it on 13 photos, about 4 seconds each, with no manual work), and the category tiles show a product cut-out instead of the category photo. The stage detects a cut-out by its transparent pixels (`pnpm images` records it in `image-meta.json`, and the WebP copies keep the transparency). The guidelines for the owner's photos go in `DESIGN.md` and the README: a PNG with a transparent background, at least 1200 px on the long side, the product centered with about 10% of empty space around it, and no text on the photo.
+
+**Result:** all 42 demo photos are cut-outs. Where the model could not separate the product cleanly (a black headset on a black mat, a white power bank in a hand) or the product was too small in its photo, another Pexels photo was used; the black headset is the red one with its red parts recolored; and the color options of the prayer rug, the speaker, the backpack and the hair dryer were adjusted to the photos that exist. The pink dress and the green rug set their tone in the data, because the color measured from their photos is brownish.
+
+#### 10.7 What does not change
+
+- The rules in `DESIGN.md` that are not about colors and shapes: right to left with logical properties, mobile first from 375 px, 44 px touch targets, AA contrast checked by `pnpm design:lint`, Arabic plural forms, Western digits in prices, no fake numbers, no autoplay, no content revealed by motion on scroll, no hover-only information, and text on photos only over a darkening layer.
+- The code rules in `AGENTS.md` and the project skills: one component per file, typed props, keys from the data, no `any`, `as` or `!`, server components by default with the smallest client parts only, and the deferred loading of panels and far-down sections.
+- **Performance budget:** no new dependency (no 3D or animation library; everything is CSS plus one small hook). At most 3 KB (gzipped) more JavaScript and 6 KB more CSS on the home page. The hero photo stays the first-screen image with high priority, the backdrop is CSS, and the stage has a fixed aspect ratio, so there is no layout shift. Lighthouse on mobile stays at 90 or more on the home page, a product page and a listing.
+- **Tests:** the unit tests gain the tone computation, the guard of `image-meta.json` and the contrast check across hues. The browser tests keep passing because they rely on text and roles, and gain two: the backdrop's tone changes when a color is chosen, and the gallery's arrows and thumbnails move between photos.
+
+#### 10.8 Steps, in order
+
+Each step is one commit that passes `pnpm verify`, and the site is reviewed at 375 px and 1280 px after each.
+
+- [x] **Decisions 9 to 11** from the owner (section 17): taken on November 6, 2026.
+- [x] **A prototype of the hero** outside the project (a single page with the new colors, the tinted backdrop and the 3D turn), for the owner to see and adjust before the code changes: made and reviewed on November 6, 2026, then extended with the product page and the category tiles at the owner's request.
+- [x] **The identity on paper:** rewrite `DESIGN.md` (the values in the front matter, then Overview, Colors, Shapes, Elevation, Components and Do's and Don'ts) and the mapping table in the design skill; `pnpm design:lint` passes with no warnings.
+- [x] **The tokens in code:** `globals.css`, the pill buttons in `ui/button.tsx`, `OG_COLORS`, `icon.svg` and `themeColor`. The whole site switches color in this step and still looks right.
+- [x] **The image meta pipeline:** the tone and transparency computation in `scripts/images.mjs`, `public/images/image-meta.json`, the guard and reader in `src/lib/catalog`, the optional `tone` field in the data, and the unit tests.
+- [x] **The stage and the hero:** `StageBackdrop`, `StageVisual` and `useStageMotion`, the light that blends during the swipe and the platform, the turn on swipe, and the restyled hero.
+- [x] **The product page:** the gallery on the stage, the tone that follows the chosen color, the desktop tilt, the thumbnails and the zoom dialog.
+- [x] **The home sections:** the trust strip, the promo grid, the spotlight cards, the category tiles, the wide banner, the deals countdown, the tabs, the reviews and the contact cards.
+- [x] **The shell and the rest:** the announcement bar, the header, the mobile bar, the footer, the cart panel, checkout, the listings and filters, the static pages, empty states, skeletons, notifications and the 404 page.
+- [x] **Photos:** every demo product photo cut out with the local model, the product cut-outs of the category tiles, and the photo guidelines in `DESIGN.md` and the README.
+- [x] **Verification on the development machine:** every check and the unit tests (`pnpm verify`), the production build, and the browser tests on Chrome, an Android phone and an iPhone (Safari's engine), with the two new tests; the pages reviewed at phone, tablet and desktop widths; the README status, this plan's changelog and section 4.5 brought up to date.
+- [ ] **Verification by the owner:** a look on a real phone, then GitHub Actions (with Firefox) once the branch is pushed, and Lighthouse on mobile after the deployment.
+
+**Definition of done:** the owner approves the look on their phone, the GitHub Actions checks pass, Lighthouse on mobile is 90 or more on the three page types, and every rule in 10.7 still holds.
+
+#### 10.9 Risks
+
+| Risk | How it is avoided |
+| --- | --- |
+| An older browser without registered CSS properties (Safari before 16.4, Firefox before 128) | The photos still turn, and only the tilt toward the mouse moves without easing; nothing breaks and nothing is hidden. |
+| The tone of a lifestyle photo is its background, not the product (a watch on a wooden table gives brown) | That is usually pleasant, because the backdrop matches the photo; otherwise the owner overrides the tone in the data. Cut-outs always give the product's own color. |
+| White text on a tinted backdrop loses contrast on light products (yellow, beige) | The fixed lightness in `oklch` keeps the backdrop dark whatever the hue, and a unit test checks every hue. |
+| Too many glows make the page busy and slow | One light source per screen (the stage), low-alpha washes elsewhere, radial gradients only, and no blur filters or card shadows. |
+| The redesign quietly changes behavior | Each step touches styles and the two new visual behaviors only, and the browser tests of every flow must stay green at each commit. |
+
 ---
 
 ## 8. Checkout without a server
@@ -690,8 +802,9 @@ The steps for each host are in `DEPLOYMENT.md`.
 | 5 | 4 + 5 ✅ | Checkout and content |
 | 6 | 6 + 7 | Improvements and testing |
 | 7 | 8 | Deployment |
+| 8 | 10 ✅ | The "Spotlight" design evolution |
 
-**Total: about 7 weeks**, instead of 12 in the previous plan, because the server and the admin dashboard were removed.
+**Total: about 7 weeks**, instead of 12 in the previous plan, because the server and the admin dashboard were removed, plus phase 10, which was built in a day.
 
 ---
 
@@ -757,9 +870,12 @@ Ordered by expected impact:
 | 6 | Should the store be in Arabic only, or in English too? | Translating from the start is easier |
 | 7 | Which host and which domain? | Phase 8 |
 | 8 | Who will edit the product data? Do you want an Excel import tool? | The priority of the import tool in the roadmap |
+| 9 | The accent color of phase 10: ✅ the electric blue of the second reference (November 6, 2026) | Phase 10, before any code is written |
+| 10 | Product photos: ✅ every product photo is a cut-out (November 6, 2026, after the prototype): the demo photos are cut out once with a segmentation model run locally, and the owner's real photos must come as cut-outs | Phase 10 (10.6) |
+| 11 | Buttons: ✅ pills, as in both references (November 6, 2026) | Phase 10 (10.2) |
 
 ---
 
 ## Next step
 
-Review the site on your phone, and test it with 3 to 5 people following `USER-TESTING.md`. Then, when you decide to go ahead, start **phase 8**: deployment, which needs decision 7 (the host and the domain); the steps are in `DEPLOYMENT.md`. At any time: send the real contact details to replace the placeholders, answer decision 4 (keep or remove the "demo version" notice on the About us and Terms pages), and answer decisions 1 and 2 so the demo data can be replaced.
+Review the site on your phone, and test it with 3 to 5 people following `USER-TESTING.md`. Then, when you decide to go ahead, start **phase 8**: deployment, which needs decision 7 (the host and the domain); the steps are in `DEPLOYMENT.md`. At any time: send the real contact details to replace the placeholders, answer decision 4 (keep or remove the "demo version" notice on the About us and Terms pages), and answer decisions 1 and 2 so the demo data can be replaced. For the new design (phase 10): look at it on your phone, then push the branch `phase-10-spotlight` and merge it into `main` once you approve it.

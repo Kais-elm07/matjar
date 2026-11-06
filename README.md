@@ -4,7 +4,7 @@ An Arabic (right-to-left), mobile-first online storefront that runs as a fully s
 The storefront itself is in Arabic for Arabic-speaking shoppers. The project documentation is in English.
 The full plan and implementation phases are in [PLAN.md](PLAN.md).
 
-**Current status:** Phases 1 to 7 are complete: the project scaffold, the full catalog (categories, products, search, filters), the cart and wishlist in the browser, the demo checkout, the static pages, polish (share images, performance, copy and accessibility review, light motion, optional analytics) and automated tests. Items that only the owner can do are still open: a review on a real phone, testing with real people, and real contact details. On November 4, 2026 the interface was redesigned at the owner's request in the "Warm Night" style: a dark background, a single orange accent for actions and prices, dark product cards with a round cart button in the corner, a dark header with a wide search field, a footer ending in an orange bar, and real product photos from Pexels instead of drawn placeholders (details in `DESIGN.md`). For phase 8 (deployment) the hosting files (`public/_headers` and `netlify.toml`) and the [DEPLOYMENT.md](DEPLOYMENT.md) guide are ready, and the owner postponed the deployment itself. On November 4 and 5, 2026 the code was reviewed for quality, performance and load capacity: strict types, one component per file, English code comments, a design polish, a faster first screen on phones, and folders and names that say what they hold (see "Project structure", "How the code fits together" and "Performance and load capacity"). The GitHub Actions checks pass.
+**Current status:** Phases 1 to 7 are complete: the project scaffold, the full catalog (categories, products, search, filters), the cart and wishlist in the browser, the demo checkout, the static pages, polish (share images, performance, copy and accessibility review, light motion, optional analytics) and automated tests. Items that only the owner can do are still open: a review on a real phone, testing with real people, and real contact details. On November 4, 2026 the interface was redesigned at the owner's request in the "Warm Night" style: a dark background, a single orange accent for actions and prices, dark product cards with a round cart button in the corner, a dark header with a wide search field, a footer ending in an orange bar, and real product photos from Pexels instead of drawn placeholders (details in `DESIGN.md`). For phase 8 (deployment) the hosting files (`public/_headers` and `netlify.toml`) and the [DEPLOYMENT.md](DEPLOYMENT.md) guide are ready, and the owner postponed the deployment itself. On November 4 and 5, 2026 the code was reviewed for quality, performance and load capacity: strict types, one component per file, English code comments, a design polish, a faster first screen on phones, and folders and names that say what they hold (see "Project structure", "How the code fits together" and "Performance and load capacity"). On November 6, 2026 the interface moved to the "Spotlight" identity at the owner's request (phase 10 of the plan): a dark stage with a blue tint and a single electric blue, every product photo cut out of its background, a light behind each product that takes the product's own color, photos that turn in 3D as they move, and the same look on the cards, the category tiles and the product page (details in `DESIGN.md`). The GitHub Actions checks pass.
 
 ## Requirements
 
@@ -41,8 +41,8 @@ Deployment steps for Cloudflare Pages, Netlify or regular hosting, and what to d
 | `pnpm dev`           | Run the site for development with instant reload on every change            |
 | `pnpm build`         | Build the static site into `out/`                                           |
 | `pnpm preview`       | Serve the built site locally before deploying                               |
-| `pnpm images`        | Process images (runs automatically before `dev` and `build`)                |
-| `pnpm images:photos` | Download the Pexels demo photos listed in `assets/images/sources.json`      |
+| `pnpm images`        | Process images and measure each photo's color (runs before `dev`, `build`)  |
+| `pnpm images:photos` | Download the original Pexels photos behind the demo cut-outs, if missing    |
 | `pnpm fonts`         | Subset the font files from `assets/fonts` into `src/fonts`                  |
 | `pnpm lint`          | ESLint, where any warning counts as an error                                |
 | `pnpm typecheck`     | Check types, after generating the route types (`next typegen`)              |
@@ -58,7 +58,7 @@ Deployment steps for Cloudflare Pages, Netlify or regular hosting, and what to d
 
 All data lives in `src/data`. Changes show up immediately with `pnpm dev`, and need `pnpm build` plus a new deployment to reach visitors.
 
-- **Categories:** `src/data/categories.ts`. A subcategory names its parent's slug in `parent`.
+- **Categories:** `src/data/categories.ts`. A subcategory names its parent's slug in `parent`. A category's cover on its tile is a product photo: set it in `image`, such as `/images/products/portable-speaker-2`, or leave it out to show the first photo of the category's most popular product.
 - **Products:** `src/data/products.ts`. Prices are in riyals, and `optionMatrix` generates every size and color combination automatically, with optional price or stock overrides for a single value or a full combination.
 - **Slugs:** lowercase English with dashes, such as `classic-cotton-shirt`, because they work on every host.
 
@@ -103,7 +103,7 @@ Each page is a text file in `src/content/pages`, and the file name is its URL: `
 
 ## Share images
 
-When a link is shared on WhatsApp or social networks, a 1200×630 image appears: each product has an image with its photo, name, price and discount badge, each category has one with its name and product count, and the rest of the site uses a general store image.
+When a link is shared on WhatsApp or social networks, a 1200×630 image appears: each product has an image with its photo, name, price and discount badge, each category has one with its name and product count, and the rest of the site uses a general store image. A cut-out stands on its platform in the light of its tone, as on the site's stage.
 
 - JPEG files are generated at build time into `out/og` (the routes live in `src/app/og`), so they always follow the current prices and names.
 - The layout is in `src/lib/og/share-images.ts` and the drawing helpers are in `src/lib/og/render.ts`. Colors and font come from `DESIGN.md`.
@@ -121,13 +121,14 @@ The script loads after the page has finished loading, so it does not slow it dow
 
 ## Adding images
 
-1. Put the original image in `assets/images/products/` with a name such as `classic-cotton-shirt-1.jpg`. A square image 1200 pixels wide or larger works best.
-2. In the products file, write the path without an extension, `/images/products/classic-cotton-shirt-1`, or use `productImages("classic-cotton-shirt", 2)`.
-3. When running or building, the image is converted automatically to WebP at 200, 400, 800 and 1200 pixels wide, and the browser picks the right size for the visitor's screen.
+1. Remove the photo's background, so the product stands alone on a transparent background (a cut-out), and save it as PNG or WebP, at least 1200 pixels on its long side, with the product in the middle and no text on it. Any tool works: remove.bg, the "Remove Background" of photo editors, or the open-source [`@imgly/background-removal-node`](https://github.com/imgly/background-removal-js) model that cut out the demo photos on the developer's computer. A regular photo still works: it stands in a frame instead of floating.
+2. Put it in `assets/images/products/` with a name such as `classic-cotton-shirt-1.png`.
+3. In the products file, write the path without an extension, `/images/products/classic-cotton-shirt-1`, or use `productImages("classic-cotton-shirt", 2)`.
+4. When running or building, the image is converted automatically to WebP at 200, 400, 800 and 1200 pixels wide (WebP keeps the transparent background), and the browser picks the right size for the visitor's screen. `pnpm images` also measures the photo's main color into `public/images/image-meta.json`, and the site turns it into the light behind the product (DESIGN.md: the product's tone). A black or white product has no clear color and takes the store's blue. To choose the light yourself, give the image a color in the products file: `{ src: "/images/products/x-1", tone: "#c2410c" }`.
 
-The `public/images` folder is generated automatically and is not committed to Git, so never put images there by hand. Category images go in `assets/images/categories/` the same way. A production build stops with a list of any image that the data mentions but that does not exist.
+The `public/images` folder is generated automatically and is not committed to Git, so never put images there by hand. A category's cover is one of the product photos (see "Editing products and categories"). A production build stops with a list of any image that the data mentions but that does not exist.
 
-The current images are free real photos from [Pexels](https://www.pexels.com/license/) (their license allows use without attribution), shown until they are replaced by your own product photos with the same names. Each photo's Pexels ID is recorded in `assets/images/sources.json`, and `pnpm images:photos` downloads any that are missing.
+The current images are free real photos from [Pexels](https://www.pexels.com/license/) (their license allows changing them and using them without attribution), with their backgrounds removed, shown until they are replaced by your own product photos with the same names. Each photo's Pexels ID is recorded in `assets/images/sources.json`, and `pnpm images:photos` downloads the original photo, with its background, of any product photo that is missing.
 
 ## Font
 
@@ -144,7 +145,7 @@ The whole visual identity is described in [DESIGN.md](DESIGN.md), in [Google's D
 
 - It is the reference Claude reads before any interface work, through the project skill `.claude/skills/design-system`.
 - `pnpm design:lint` validates the file and its color contrast, and runs automatically in GitHub Actions and before each commit that changes it.
-- To change the identity: edit `DESIGN.md` first and lint it, then copy the colors into `src/app/globals.css`, `OG_COLORS` in `src/lib/og/render.ts` (share images), `themeColor` in `src/app/layout.tsx` and `src/app/icon.svg`. The full checklist is at the end of `.claude/skills/design-system/SKILL.md`.
+- To change the identity: edit `DESIGN.md` first and lint it, then copy the colors into `src/app/globals.css`, `OG_COLORS` in `src/lib/og/render.ts` (share images), `BRAND_HEX` in `src/lib/tone.ts` (the light behind photos without a clear color), `themeColor` in `src/app/layout.tsx` and `src/app/icon.svg`. The full checklist is at the end of `.claude/skills/design-system/SKILL.md`.
 
 ## Where to change...
 
@@ -162,6 +163,8 @@ The whole visual identity is described in [DESIGN.md](DESIGN.md), in [Google's D
 | Option swatch colors (red, blue...)      | `src/lib/catalog/options.ts`                                |
 | Arabic font                              | `assets/fonts`, then `pnpm fonts`, and `src/app/layout.tsx` |
 | Site icon                                | `src/app/icon.svg`                                          |
+| A category's cover photo                 | `image` in `src/data/categories.ts`                         |
+| The light behind one product photo       | `tone` on the image in `src/data/products.ts`               |
 
 ## Changing the country
 
@@ -193,7 +196,8 @@ src/components/
   layout/                      the page frame: StoreShell, header, category menu, mobile menu, footer, bottom tab bar
   global/                      mounted once for the whole site: analytics, toast messages, restoring the saved
                                cart and wishlist, listening to URL changes, rendering every section after a move
-  shared/                      small pieces many pages use: breadcrumbs, swiped rows, empty states, section
+  shared/                      small pieces many pages use: breadcrumbs, swiped rows, the stage (the light behind
+                               a product and the photo on its platform), photo boxes, empty states, section
                                headings, structured data (JSON-LD)
   home/                        the home page sections, one file per section
   product/                     product card, grid and row, and the product page: gallery, option picker,
@@ -225,12 +229,14 @@ src/lib/
   guards.ts                    type guards for data read at runtime (JSON files, browser storage)
   toast.ts                     toast messages, whose library loads with the first message
   render-later.ts              the script that renders every section at once after a reload or "back"
-  slider.ts                    the slide in view and scrolling to a slide, for the hero and the gallery
+  slider.ts                    the slide in view, scrolling to a slide, and the stage's 3D turn and light during a swipe
+  tone.ts                      the product's tone: a photo's color as the light behind it (OKLCH), and its CSS variables
   contact.ts                   phone, WhatsApp and map links
   motion.ts                    smooth scrolling that respects the "reduce motion" setting
   placeholders.ts              keys for loading placeholders
   utils.ts                     cn(), which merges Tailwind classes
-src/hooks/                     general React hooks: useIdle (after the page has loaded) and useMediaQuery
+src/hooks/                     general React hooks: useIdle (after the page has loaded), useMediaQuery, and
+                               useStageMotion (the 3D turn of a stage's photos and its light during a swipe)
 
 src/data/                      the store's data: categories, products, home page, reviews, shipping, coupons
 src/config/site.ts             general store settings
@@ -254,13 +260,14 @@ public/_headers, netlify.toml  hosting settings: security and caching headers, N
 | `define.ts`            | Helpers for writing the products file (`productImages`, `optionMatrix`)                                     | Build                 |
 | `schema.ts`            | Rules for every field in the category and product files, with Arabic messages                               | Build                 |
 | `validate.ts`          | Checks the two files together (duplicate slugs, missing categories, duplicate variants)                     | Build                 |
-| `build.ts`             | Builds the catalog once: prices in halalas, category paths, sorted lists, expired deals                     | Build (`server-only`) |
+| `build.ts`             | Builds the catalog once: prices in halalas, category paths and covers, sorted lists, expired deals          | Build (`server-only`) |
+| `image-meta.ts`        | Reads the photo colors `pnpm images` measured, and gives every photo its tone and whether it is a cut-out   | Build (`server-only`) |
 | `catalog.ts`           | The read functions the pages use                                                                            | Build (`server-only`) |
 | `home.ts`              | Home page sections and promo cards                                                                          | Build (`server-only`) |
 | `cards.ts`             | The card data that reaches the browser, with as few fields as possible                                      | Build                 |
 | `options.ts`           | Option names and color swatches                                                                             | Both                  |
 | `variant-key.ts`       | The key that ties a cart line to its options                                                                | Both                  |
-| `guards.ts`            | Checks the two JSON files the browser downloads                                                             | Browser               |
+| `guards.ts`            | Checks the two JSON files the browser downloads, and the photo colors file                                  | Both                  |
 | `variant-selection.ts` | Choosing a variant on the product page: the matching variant, which values can be chosen, the color's photo | Browser               |
 
 ## How the code fits together
@@ -270,7 +277,7 @@ The site is built once (`pnpm build`) into plain files. Most of the work happens
 **At build time** (server components, and the files that import `server-only`):
 
 1. `src/data` holds the products, categories, home page, shipping and coupons, with prices in riyals.
-2. `src/lib/catalog/build.ts` checks the category and product files (`schema.ts`, `validate.ts`) and builds the catalog once: prices in halalas, category paths, expired deals back to their old price, and a check that every image exists. Any mistake stops the build with an Arabic message. The shipping and coupon files go through the same kind of check in `src/lib/checkout/config.ts`.
+2. `src/lib/catalog/build.ts` checks the category and product files (`schema.ts`, `validate.ts`) and builds the catalog once: prices in halalas, category paths and covers, expired deals back to their old price, every photo's tone (`image-meta.ts`), and a check that every image exists. Any mistake stops the build with an Arabic message. The shipping and coupon files go through the same kind of check in `src/lib/checkout/config.ts`.
 3. The pages in `src/app/(store)` read the catalog through `src/lib/catalog/catalog.ts` and `home.ts`, and pass client components only the fields they need (`cards.ts`).
 4. Two routes write static JSON files: `/search-index.json` (every product's card and search text) and `/cart-catalog.json` (the current price and stock of every variant). The share images in `src/app/og` are drawn the same way.
 
@@ -281,11 +288,12 @@ The site is built once (`pnpm build`) into plain files. Most of the work happens
 - The cart and wishlist are Zustand stores saved in localStorage (`src/lib/state`). When the cart or checkout opens, the cart is checked against `/cart-catalog.json`, so prices and stock are current.
 - Checkout checks the form (`src/lib/checkout/form-schema.ts`), calculates the totals (`totals.ts`) from the shipping and coupon settings the page received at build time, and keeps the demo order in sessionStorage for the confirmation page (`last-order.ts`).
 - Panels that open on a tap (the cart, the mobile menu, image zoom, the filter sheet and toast messages) load their code once the page has loaded (`src/hooks/use-idle.ts`).
+- The hero and the product gallery are stages: during a swipe, `useStageMotion` writes each photo's 3D turn and the blend of the light straight to CSS variables on every frame, without rendering React again (`src/hooks/use-stage-motion.ts`, with the arithmetic in `src/lib/slider.ts`).
 
 ## Tests
 
-- **Unit tests** (`pnpm test`, in `tests/unit`): price formatting, Arabic search (hamza forms, taa marbuta, Arabic and Persian digits and letters), plural forms, filters and sorting and their URLs, the cart, its matching with current prices and its safe storage, shipping and coupons, the checkout form and order building, the product-writing helpers, deal expiry, and data file validation. They run in seconds, so run them after any change in `src/lib` or `src/data`.
-- **Browser tests** (`pnpm test:e2e`, in `tests/e2e`): open the built site and act like a visitor: browsing, search, filtering and sorting, picking a size and color, the cart, checkout with a coupon and express delivery, the wishlist, the mobile menu, and the 404 page. Run `pnpm build` first.
+- **Unit tests** (`pnpm test`, in `tests/unit`): price formatting, Arabic search (hamza forms, taa marbuta, Arabic and Persian digits and letters), plural forms, filters and sorting and their URLs, the cart, its matching with current prices and its safe storage, shipping and coupons, the checkout form and order building, the product-writing helpers, deal expiry, data file validation, the product's tone (with a check that white text keeps a contrast of 7:1 on the light of every hue), the photo colors file, and the stage's swipe arithmetic. They run in seconds, so run them after any change in `src/lib` or `src/data`.
+- **Browser tests** (`pnpm test:e2e`, in `tests/e2e`): open the built site and act like a visitor: browsing, search, filtering and sorting, picking a size and color, the gallery's arrows and thumbnails, the light of the product page's stage following the chosen color, the cart, checkout with a coupon and express delivery, the wishlist, the mobile menu, and the 404 page. Run `pnpm build` first.
 - **Devices:** a desktop with Chrome, a Galaxy S24 phone with the Chrome engine (like Samsung Internet), an iPhone 15 with the Safari engine, and a desktop with Firefox. Locally the installed Chrome is used, and Firefox is added with `E2E_FIREFOX=1 pnpm test:e2e`. The first time on a new machine: `pnpm exec playwright install webkit firefox`.
 - The tests do not depend on specific product names, so they stay valid when the demo data is replaced.
 - **Testing with real people:** the tasks and the feedback table are in [USER-TESTING.md](USER-TESTING.md).
