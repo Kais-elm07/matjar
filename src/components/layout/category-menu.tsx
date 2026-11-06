@@ -4,7 +4,7 @@ import { useEffect, useId, useRef, useState } from "react"
 import Link from "next/link"
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react"
 
-import type { NavCategory } from "@/components/layout/nav-types"
+import type { NavCategory } from "@/lib/catalog/types"
 import { categoryPath } from "@/lib/routes"
 import { cn } from "@/lib/utils"
 

@@ -1,117 +1,41 @@
 "use client"
 
-import { useState } from "react"
 import { useRouter } from "next/navigation"
-import {
-  BanknoteIcon,
-  RotateCcwIcon,
-  ShoppingCartIcon,
-  TruckIcon,
-  ZapIcon,
-} from "lucide-react"
+import { BanknoteIcon, RotateCcwIcon, TruckIcon } from "lucide-react"
 
-import { QuantityStepper } from "@/components/cart/quantity-stepper"
 import { useAddToCart } from "@/components/cart/use-add-to-cart"
 import { DiscountBadge } from "@/components/product/discount-badge"
 import { Price } from "@/components/product/price"
 import { ProductGallery } from "@/components/product/product-gallery"
-import { ShareButton } from "@/components/product/share-button"
+import { PurchaseActions } from "@/components/product/purchase-actions"
 import { StockStatus } from "@/components/product/stock-status"
 import { TrustItem } from "@/components/product/trust-item"
-import { WishlistButton } from "@/components/product/wishlist-button"
-import { Button } from "@/components/ui/button"
-import { getColorHex, type VariantOptions } from "@/lib/catalog/options"
-import type { Product, Variant } from "@/lib/catalog/types"
-import { lineLimit } from "@/lib/state/cart"
-import { cn } from "@/lib/utils"
-
-type ValueState = "available" | "sold-out" | "unavailable"
-
-/**
- * Only what the purchase panel needs, so the description and specs aren't sent
- * a second time with the page code.
- */
-export type PurchasableProduct = Pick<
-  Product,
-  | "slug"
-  | "name"
-  | "images"
-  | "variants"
-  | "optionGroups"
-  | "price"
-  | "compareAtPrice"
->
+import { useVariantSelection } from "@/components/product/use-variant-selection"
+import { VariantPicker } from "@/components/product/variant-picker"
+import type { PurchasableProduct } from "@/lib/catalog/variant-selection"
 
 interface ProductDetailsProps {
   product: PurchasableProduct
 }
 
-/** Image gallery and purchase panel: picking a variant changes the price, stock and color image. */
+/**
+ * The top of the product page: the photo gallery and the purchase panel. Choosing options changes the
+ * price, the stock and the photo (useVariantSelection); the description and specs are in ProductTabs.
+ */
 export function ProductDetails({ product }: ProductDetailsProps) {
-  const groups = product.optionGroups
-  const firstAvailable =
-    product.variants.find((variant) => variant.stock > 0) ?? product.variants[0]
-
-  const [selected, setSelected] = useState<VariantOptions>(
-    firstAvailable.options
-  )
-  const [imageIndex, setImageIndex] = useState(() =>
-    imageIndexForOptions(product, firstAvailable.options, 0)
-  )
-  const [quantity, setQuantity] = useState(1)
+  const choice = useVariantSelection(product)
+  const { variant, stock } = choice
   const router = useRouter()
   const addToCart = useAddToCart()
+  const price = variant?.price ?? product.price
+  const compareAtPrice = variant
+    ? variant.compareAtPrice
+    : product.compareAtPrice
 
-  const variant: Variant | undefined = product.variants.find((candidate) =>
-    groups.every(
-      (group) => candidate.options[group.name] === selected[group.name]
-    )
-  )
-  const stock = variant?.stock ?? 0
-  const maxQuantity = Math.max(1, lineLimit(stock))
-  const currentQuantity = Math.min(quantity, maxQuantity)
-  const canBuy = Boolean(variant) && stock > 0
-
-  function valueState(groupName: string, value: string): ValueState {
-    const candidates = product.variants.filter(
-      (candidate) =>
-        candidate.options[groupName] === value &&
-        groups.every(
-          (group) =>
-            group.name === groupName ||
-            candidate.options[group.name] === selected[group.name]
-        )
-    )
-    if (candidates.length === 0) return "unavailable"
-    return candidates.some((candidate) => candidate.stock > 0)
-      ? "available"
-      : "sold-out"
-  }
-
-  function selectValue(groupName: string, value: string) {
-    let next = { ...selected, [groupName]: value }
-    const exact = product.variants.some((candidate) =>
-      groups.every(
-        (group) => candidate.options[group.name] === next[group.name]
-      )
-    )
-    if (!exact) {
-      // The combination doesn't exist: pick the closest variant with this value (in stock first)
-      const fallback =
-        product.variants.find(
-          (c) => c.options[groupName] === value && c.stock > 0
-        ) ?? product.variants.find((c) => c.options[groupName] === value)
-      if (fallback) next = fallback.options
-    }
-    setSelected(next)
-    setQuantity(1)
-    setImageIndex((current) => imageIndexForOptions(product, next, current))
-  }
-
-  /** Adds the selected variant in the selected quantity and returns the number of items added. */
+  /** Adds the chosen variant in the chosen quantity and returns the number of items added. */
   function add(openCart: boolean) {
     if (!variant || stock === 0) return 0
-    const image = product.images[imageIndex] ?? product.images[0]
+    const image = product.images[choice.imageIndex] ?? product.images[0]
     return addToCart(
       {
         sku: variant.sku,
@@ -123,7 +47,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
         compareAtPrice: variant.compareAtPrice,
         stock: variant.stock,
       },
-      currentQuantity,
+      choice.quantity,
       { openCart }
     )
   }
@@ -137,8 +61,8 @@ export function ProductDetails({ product }: ProductDetailsProps) {
     <div className="grid gap-6 md:grid-cols-2 md:gap-10 lg:gap-14">
       <ProductGallery
         images={product.images}
-        activeIndex={imageIndex}
-        onActiveIndexChange={setImageIndex}
+        activeIndex={choice.imageIndex}
+        onActiveIndexChange={choice.setImageIndex}
       />
 
       <div className="flex flex-col gap-5">
@@ -147,106 +71,29 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             {product.name}
           </h1>
           <div className="flex flex-wrap items-center gap-3">
-            <Price
-              price={variant?.price ?? product.price}
-              compareAtPrice={
-                variant ? variant.compareAtPrice : product.compareAtPrice
-              }
-              size="lg"
-            />
-            <DiscountBadge
-              price={variant?.price ?? product.price}
-              compareAtPrice={
-                variant ? variant.compareAtPrice : product.compareAtPrice
-              }
-            />
+            <Price price={price} compareAtPrice={compareAtPrice} size="lg" />
+            <DiscountBadge price={price} compareAtPrice={compareAtPrice} />
           </div>
           <StockStatus stock={stock} />
         </div>
 
-        {groups.map((group) => (
-          <fieldset key={group.name} className="space-y-3">
-            <legend className="mb-3 text-sm font-bold">
-              {group.name}:{" "}
-              <span className="font-normal text-muted-foreground">
-                {selected[group.name]}
-              </span>
-            </legend>
-            <div className="flex flex-wrap gap-2">
-              {group.values.map((value) => {
-                const state = valueState(group.name, value)
-                const isSelected = selected[group.name] === value
-                const color = group.isColor ? getColorHex(value) : null
-                return (
-                  <button
-                    key={value}
-                    type="button"
-                    aria-pressed={isSelected}
-                    disabled={state === "unavailable"}
-                    onClick={() => selectValue(group.name, value)}
-                    className={cn(
-                      "relative inline-flex h-11 min-w-11 items-center justify-center gap-2 rounded-full border px-4 text-sm font-medium transition-colors hover:border-foreground/50 disabled:cursor-not-allowed disabled:opacity-40",
-                      isSelected &&
-                        "border-primary bg-primary text-primary-foreground hover:border-primary",
-                      state === "sold-out" &&
-                        "text-muted-foreground line-through decoration-1"
-                    )}
-                  >
-                    {color && (
-                      <span
-                        aria-hidden
-                        className="size-5 rounded-full border border-foreground/20"
-                        style={{ backgroundColor: color }}
-                      />
-                    )}
-                    {value}
-                    {state === "sold-out" && (
-                      <span className="sr-only">(نفد)</span>
-                    )}
-                  </button>
-                )
-              })}
-            </div>
-          </fieldset>
-        ))}
+        <VariantPicker
+          groups={product.optionGroups}
+          selected={choice.selected}
+          stateOf={choice.stateOf}
+          onSelect={choice.select}
+        />
 
-        <div className="space-y-3">
-          <div className="flex items-stretch gap-3">
-            <QuantityStepper
-              value={currentQuantity}
-              max={maxQuantity}
-              disabled={!canBuy}
-              onChange={setQuantity}
-            />
-            <Button
-              variant="cta"
-              size="xl"
-              className="flex-1"
-              disabled={!canBuy}
-              onClick={() => add(true)}
-            >
-              <ShoppingCartIcon data-icon="inline-start" aria-hidden />
-              {canBuy ? "أضف للسلة" : "غير متوفر حالياً"}
-            </Button>
-          </div>
-          <Button
-            size="xl"
-            className="w-full"
-            disabled={!canBuy}
-            onClick={buyNow}
-          >
-            <ZapIcon data-icon="inline-start" aria-hidden />
-            اشترِ الآن
-          </Button>
-          <div className="grid grid-cols-2 gap-3">
-            <WishlistButton
-              slug={product.slug}
-              name={product.name}
-              variant="labeled"
-            />
-            <ShareButton title={product.name} />
-          </div>
-        </div>
+        <PurchaseActions
+          slug={product.slug}
+          name={product.name}
+          canBuy={choice.canBuy}
+          quantity={choice.quantity}
+          maxQuantity={choice.maxQuantity}
+          onQuantityChange={choice.setQuantity}
+          onAddToCart={() => add(true)}
+          onBuyNow={buyNow}
+        />
 
         <ul className="grid gap-3 rounded-xl border bg-card p-4 text-sm sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-3">
           <TrustItem icon={BanknoteIcon} text="الدفع عند الاستلام" />
@@ -262,18 +109,4 @@ export function ProductDetails({ product }: ProductDetailsProps) {
       </div>
     </div>
   )
-}
-
-/** The selected color's image if there is one; otherwise the current image stays. */
-function imageIndexForOptions(
-  product: PurchasableProduct,
-  options: VariantOptions,
-  current: number
-) {
-  const colorGroup = product.optionGroups.find((group) => group.isColor)
-  if (!colorGroup) return current
-  const index = product.images.findIndex(
-    (image) => image.color === options[colorGroup.name]
-  )
-  return index >= 0 ? index : current
 }

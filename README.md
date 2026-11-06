@@ -46,7 +46,8 @@ Deployment steps for Cloudflare Pages, Netlify or regular hosting, and what to d
 | `pnpm fonts`         | Subset the font files from `assets/fonts` into `src/fonts`                  |
 | `pnpm lint`          | ESLint, where any warning counts as an error                                |
 | `pnpm typecheck`     | Check types, after generating the route types (`next typegen`)              |
-| `pnpm check`         | Check formatting, lint errors, types and the design file in one go          |
+| `pnpm knip`          | Find files, exports and packages that nothing uses any more                 |
+| `pnpm check`         | Check formatting, lint errors, types, the design file and unused code       |
 | `pnpm verify`        | `pnpm check` plus the unit tests: the full check before saving or deploying |
 | `pnpm test`          | Unit tests (Vitest), in seconds                                             |
 | `pnpm test:e2e`      | Browser tests (Playwright) against the built site                           |
@@ -195,11 +196,12 @@ src/components/
   shared/                      small pieces many pages use: breadcrumbs, swiped rows, empty states, section
                                headings, structured data (JSON-LD)
   home/                        the home page sections, one file per section
-  product/                     product card, grid and row, and the product page: gallery, details, tabs
+  product/                     product card, grid and row, and the product page: gallery, option picker,
+                               purchase buttons, tabs
   listing/                     product lists: filters, sorting, pagination, active filters
   search/                      the search box with its suggestions, and the search results page
   cart/                        cart panel, cart and wishlist pages, quantity stepper
-  checkout/                    checkout form and its fields, order summary, confirmation page
+  checkout/                    checkout form (one component per step), order summary, confirmation page
   content/                     static pages: their text, contact cards, shipping table, FAQ
 
 src/lib/
@@ -223,6 +225,7 @@ src/lib/
   guards.ts                    type guards for data read at runtime (JSON files, browser storage)
   toast.ts                     toast messages, whose library loads with the first message
   render-later.ts              the script that renders every section at once after a reload or "back"
+  slider.ts                    the slide in view and scrolling to a slide, for the hero and the gallery
   contact.ts                   phone, WhatsApp and map links
   motion.ts                    smooth scrolling that respects the "reduce motion" setting
   placeholders.ts              keys for loading placeholders
@@ -245,19 +248,20 @@ public/_headers, netlify.toml  hosting settings: security and caching headers, N
 
 `src/lib/catalog` holds everything about products and categories. Files that run only while the site is built import `server-only`, so importing them from browser code fails the build:
 
-| File             | Job                                                                                     | Runs                  |
-| ---------------- | --------------------------------------------------------------------------------------- | --------------------- |
-| `types.ts`       | The types of the data files and of the built catalog                                    | Both                  |
-| `define.ts`      | Helpers for writing the products file (`productImages`, `optionMatrix`)                 | Build                 |
-| `schema.ts`      | Rules for every field in the category and product files, with Arabic messages           | Build                 |
-| `validate.ts`    | Checks the two files together (duplicate slugs, missing categories, duplicate variants) | Build                 |
-| `build.ts`       | Builds the catalog once: prices in halalas, category paths, sorted lists, expired deals | Build (`server-only`) |
-| `catalog.ts`     | The read functions the pages use                                                        | Build (`server-only`) |
-| `home.ts`        | Home page sections and promo cards                                                      | Build (`server-only`) |
-| `cards.ts`       | The card data that reaches the browser, with as few fields as possible                  | Build                 |
-| `options.ts`     | Option names and color swatches                                                         | Both                  |
-| `variant-key.ts` | The key that ties a cart line to its options                                            | Both                  |
-| `guards.ts`      | Checks the two JSON files the browser downloads                                         | Browser               |
+| File                   | Job                                                                                                         | Runs                  |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------- | --------------------- |
+| `types.ts`             | The types of the data files and of the built catalog                                                        | Both                  |
+| `define.ts`            | Helpers for writing the products file (`productImages`, `optionMatrix`)                                     | Build                 |
+| `schema.ts`            | Rules for every field in the category and product files, with Arabic messages                               | Build                 |
+| `validate.ts`          | Checks the two files together (duplicate slugs, missing categories, duplicate variants)                     | Build                 |
+| `build.ts`             | Builds the catalog once: prices in halalas, category paths, sorted lists, expired deals                     | Build (`server-only`) |
+| `catalog.ts`           | The read functions the pages use                                                                            | Build (`server-only`) |
+| `home.ts`              | Home page sections and promo cards                                                                          | Build (`server-only`) |
+| `cards.ts`             | The card data that reaches the browser, with as few fields as possible                                      | Build                 |
+| `options.ts`           | Option names and color swatches                                                                             | Both                  |
+| `variant-key.ts`       | The key that ties a cart line to its options                                                                | Both                  |
+| `guards.ts`            | Checks the two JSON files the browser downloads                                                             | Browser               |
+| `variant-selection.ts` | Choosing a variant on the product page: the matching variant, which values can be chosen, the color's photo | Browser               |
 
 ## How the code fits together
 
@@ -293,8 +297,9 @@ The site is built once (`pnpm build`) into plain files. Most of the work happens
 - Each component lives in its own file, named after it, with a `<Component>Props` interface for its props. Only the compound components in `src/components/ui` (such as a dialog and its parts) share a file.
 - Code comments, test names, CI step names and commit messages are in English. The interface, the product data and the messages the store owner reads stay in Arabic.
 - Claude follows Vercel's React guides for performance and component structure: the skills `vercel-react-best-practices` and `vercel-composition-patterns` in `.claude/skills`, copied unchanged from [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) (MIT).
+- knip (`pnpm knip`, part of `pnpm check` and GitHub Actions) fails when a file, an export or a package is no longer used. `knip.jsonc` lists the two it cannot see because only a config file uses them.
 - `pnpm verify` runs every check plus the unit tests in one command.
-- On every push to `main` and every pull request, GitHub Actions checks formatting, lint errors and types, runs the unit tests, builds the site, then runs the browser tests on Chrome, Firefox and Safari (WebKit). It keeps the built `out` folder for a week, and the test report when something fails.
+- On every push to `main` and every pull request, GitHub Actions checks formatting, lint errors, types and unused code, runs the unit tests, builds the site, then runs the browser tests on Chrome, Firefox and Safari (WebKit). It keeps the built `out` folder for a week, and the test report when something fails.
 
 ## Performance and load capacity
 

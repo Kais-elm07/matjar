@@ -1,0 +1,13 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema-jsonc.json",
+  // knip (pnpm knip) fails when a file, an export or a package is no longer used.
+  // These two are used only by a config file, which knip cannot see.
+  "ignore": [
+    // vitest.config.mts maps "server-only" to this empty file in the unit tests
+    "tests/unit/support/empty.ts",
+  ],
+  "ignoreDependencies": [
+    // next.config.ts names it as the Turbopack loader for the CSS files
+    "@tailwindcss/turbopack",
+  ],
+}

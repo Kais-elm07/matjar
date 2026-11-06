@@ -1,9 +1,8 @@
 import type { Metadata } from "next"
-import Image from "next/image"
-import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { ListingView } from "@/components/listing/listing-view"
+import { SubcategoryNav } from "@/components/listing/subcategory-nav"
 import { Breadcrumbs } from "@/components/shared/breadcrumbs"
 import { JsonLd } from "@/components/shared/json-ld"
 import { siteConfig } from "@/config/site"
@@ -71,39 +70,7 @@ export default async function CategoryPage({
         )}
       </header>
 
-      {children.length > 0 && (
-        <nav
-          aria-label="الفئات الفرعية"
-          className="-mx-4 mb-8 no-scrollbar overflow-x-auto px-4 pb-1"
-        >
-          <ul className="flex gap-3">
-            {children.map((child) => (
-              <li key={child.slug} className="shrink-0">
-                <Link
-                  href={categoryPath(child.slug)}
-                  className="flex items-center gap-3 rounded-full border bg-card py-1.5 ps-1.5 pe-4 text-sm font-medium transition-colors hover:border-primary hover:text-primary"
-                >
-                  {child.image && (
-                    <span className="relative size-9 overflow-hidden rounded-full bg-muted">
-                      <Image
-                        src={child.image}
-                        alt=""
-                        fill
-                        sizes="64px"
-                        className="object-cover"
-                      />
-                    </span>
-                  )}
-                  {child.name}
-                  <span className="text-xs text-muted-foreground tabular-nums">
-                    {child.productCount}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )}
+      <SubcategoryNav subcategories={children} />
 
       <ListingView products={products} />
 

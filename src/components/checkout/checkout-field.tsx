@@ -1,29 +1,37 @@
+"use client"
+
+import { useFormState, type FieldPath } from "react-hook-form"
+
+import { errorId, hintId } from "@/components/checkout/use-checkout-field"
 import { Label } from "@/components/ui/label"
+import type { CheckoutInput } from "@/lib/checkout/form-schema"
 import { cn } from "@/lib/utils"
 
 interface CheckoutFieldProps {
-  id: string
+  /** The form field's name, which is also the input's id (useCheckoutField) */
+  name: FieldPath<CheckoutInput>
   label: string
   optional?: boolean
   hint?: string
-  error?: string
   className?: string
   children: React.ReactNode
 }
 
-/** A field with its label above it and the error message or hint below it. */
+/** A field with its label above it and its error message or hint below it. */
 export function CheckoutField({
-  id,
+  name,
   label,
   optional = false,
   hint,
-  error,
   className,
   children,
 }: CheckoutFieldProps) {
+  const { errors } = useFormState<CheckoutInput>({ name })
+  const error = errors[name]?.message
+
   return (
     <div className={cn("space-y-1.5", className)}>
-      <Label htmlFor={id}>
+      <Label htmlFor={name}>
         {label}
         {optional && (
           <span className="font-normal text-muted-foreground">(اختياري)</span>
@@ -31,11 +39,11 @@ export function CheckoutField({
       </Label>
       {children}
       {error ? (
-        <p id={`${id}-error`} className="text-xs font-medium text-destructive">
+        <p id={errorId(name)} className="text-xs font-medium text-destructive">
           {error}
         </p>
       ) : hint ? (
-        <p id={`${id}-hint`} className="text-xs text-muted-foreground">
+        <p id={hintId(name)} className="text-xs text-muted-foreground">
           {hint}
         </p>
       ) : null}

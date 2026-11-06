@@ -7,7 +7,7 @@ import { ZoomInIcon } from "lucide-react"
 
 import { useIdle } from "@/hooks/use-idle"
 import type { ProductImage } from "@/lib/catalog/types"
-import { scrollBehavior } from "@/lib/motion"
+import { scrollToSlide, visibleSlide } from "@/lib/slider"
 import { cn } from "@/lib/utils"
 
 // The zoom dialog's code loads after the page appears, or on the first click on the image
@@ -45,9 +45,7 @@ export function ProductGallery({
     let timer: ReturnType<typeof setTimeout> | undefined
     function settle() {
       if (!track) return
-      // In the Arabic (RTL) direction the scroll value is negative, so take its absolute value
-      const index = Math.round(Math.abs(track.scrollLeft) / track.clientWidth)
-      onActiveIndexChange(Math.min(index, images.length - 1))
+      onActiveIndexChange(Math.min(visibleSlide(track), images.length - 1))
     }
     function onScroll() {
       clearTimeout(timer)
@@ -64,15 +62,7 @@ export function ProductGallery({
   useEffect(() => {
     const track = trackRef.current
     const slide = slideRefs.current[activeIndex]
-    if (!track || !slide) return
-    const trackBox = track.getBoundingClientRect()
-    const slideBox = slide.getBoundingClientRect()
-    if (Math.abs(slideBox.left - trackBox.left) > 2) {
-      track.scrollBy({
-        left: slideBox.left - trackBox.left,
-        behavior: scrollBehavior(),
-      })
-    }
+    if (track && slide) scrollToSlide(track, slide)
   }, [activeIndex])
 
   return (

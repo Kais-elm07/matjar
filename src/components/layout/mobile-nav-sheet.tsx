@@ -3,7 +3,6 @@
 import { Logo } from "@/components/layout/logo"
 import { MobileNavLink } from "@/components/layout/mobile-nav-link"
 import { MobileNavLinks } from "@/components/layout/mobile-nav-links"
-import type { NavCategory } from "@/components/layout/nav-types"
 import { Separator } from "@/components/ui/separator"
 import {
   Sheet,
@@ -12,6 +11,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { siteConfig } from "@/config/site"
+import type { NavCategory } from "@/lib/catalog/types"
 import { categoryPath } from "@/lib/routes"
 import { useUiStore } from "@/lib/state/ui"
 

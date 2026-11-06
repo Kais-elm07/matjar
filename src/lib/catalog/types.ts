@@ -106,6 +106,9 @@ export type CategoryLink = { slug: string; name: string }
 /** A category in the category filter: name, slug and parent category */
 export type CategoryOption = CategoryLink & { parentSlug: string | null }
 
+/** A top-level category with its subcategories, as the header's category menu and the mobile menu show them. */
+export type NavCategory = CategoryLink & { children: CategoryLink[] }
+
 export type Category = {
   slug: string
   name: string

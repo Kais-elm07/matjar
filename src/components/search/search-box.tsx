@@ -1,22 +1,16 @@
 "use client"
 
 import { useId, useMemo, useRef, useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ArrowRightIcon, SearchIcon } from "lucide-react"
+import { SearchIcon } from "lucide-react"
 
-import { Skeleton } from "@/components/ui/skeleton"
-import { formatPrice } from "@/lib/money"
-import { placeholderIds } from "@/lib/placeholders"
-import { productPath } from "@/lib/routes"
+import { SearchSuggestions } from "@/components/search/search-suggestions"
+import { productPath, searchPath } from "@/lib/routes"
 import { searchCards } from "@/lib/search/search-cards"
 import { useSearchIndex } from "@/lib/search/use-search-index"
 import { cn } from "@/lib/utils"
 
 const MAX_SUGGESTIONS = 6
-
-const searchHref = (query: string) => `/search/?q=${encodeURIComponent(query)}`
 
 interface SearchBoxProps {
   className?: string
@@ -40,24 +34,26 @@ export function SearchBox({
   onSubmitted,
 }: SearchBoxProps) {
   const router = useRouter()
-  const id = useId()
-  const listId = `${id}-suggestions`
+  const fieldId = useId()
+  const listId = `${fieldId}-suggestions`
+  const optionId = (position: number) => `${fieldId}-option-${position}`
   const inputRef = useRef<HTMLInputElement>(null)
   const header = variant === "header"
 
   const [query, setQuery] = useState("")
   const [open, setOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
-  const [indexWanted, setIndexWanted] = useState(false)
-  const { data: index, error } = useSearchIndex(indexWanted)
+  // The search index loads the first time the field gets focus
+  const [needsIndex, setNeedsIndex] = useState(false)
+  const { data: searchIndex, error } = useSearchIndex(needsIndex)
 
   const trimmed = query.trim()
   const results = useMemo(
     () =>
-      index && trimmed
-        ? searchCards(index, trimmed).slice(0, MAX_SUGGESTIONS)
+      searchIndex && trimmed
+        ? searchCards(searchIndex, trimmed).slice(0, MAX_SUGGESTIONS)
         : [],
-    [index, trimmed]
+    [searchIndex, trimmed]
   )
   const showPanel = open && trimmed.length > 0
 
@@ -76,7 +72,7 @@ export function SearchBox({
     event.preventDefault()
     const selected = results[activeIndex]
     if (selected) router.push(productPath(selected.slug))
-    else if (trimmed) router.push(searchHref(trimmed))
+    else if (trimmed) router.push(searchPath(trimmed))
     else return
     finish()
   }
@@ -129,7 +125,7 @@ export function SearchBox({
           aria-controls={listId}
           aria-autocomplete="list"
           aria-activedescendant={
-            activeIndex >= 0 ? `${id}-option-${activeIndex}` : undefined
+            activeIndex >= 0 ? optionId(activeIndex) : undefined
           }
           enterKeyHint="search"
           autoComplete="off"
@@ -143,7 +139,7 @@ export function SearchBox({
             setActiveIndex(-1)
           }}
           onFocus={() => {
-            setIndexWanted(true)
+            setNeedsIndex(true)
             setOpen(true)
           }}
           onBlur={close}
@@ -160,84 +156,15 @@ export function SearchBox({
             header ? "inset-x-0 min-w-80" : "inset-x-0"
           )}
         >
-          {error ? (
-            <p className="p-4 text-sm text-muted-foreground">
-              تعذّر تحميل الاقتراحات. اضغط Enter للبحث.
-            </p>
-          ) : !index ? (
-            // Skeletons shaped like the suggestions while the search index loads, instead of a spinner
-            <div role="status" className="space-y-1 py-2">
-              <span className="sr-only">جارٍ البحث...</span>
-              {placeholderIds("suggestion", 3).map((id) => (
-                <div
-                  key={id}
-                  aria-hidden
-                  className="flex items-center gap-3 px-3 py-2"
-                >
-                  <Skeleton className="size-12 shrink-0 rounded-lg" />
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-3 w-3/4" />
-                    <Skeleton className="h-3 w-1/3" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : results.length === 0 ? (
-            <p className="p-4 text-sm">
-              لا توجد منتجات تطابق «{trimmed}». جرّب كلمة أخرى.
-            </p>
-          ) : (
-            <ul id={listId} role="listbox" aria-label="اقتراحات البحث">
-              {results.map((product, index) => (
-                <li
-                  key={product.slug}
-                  id={`${id}-option-${index}`}
-                  role="option"
-                  aria-selected={index === activeIndex}
-                >
-                  <Link
-                    href={productPath(product.slug)}
-                    tabIndex={-1}
-                    onClick={finish}
-                    className={cn(
-                      "flex items-center gap-3 px-3 py-2 transition-colors hover:bg-muted",
-                      index === activeIndex && "bg-muted"
-                    )}
-                  >
-                    <span className="relative size-12 shrink-0 overflow-hidden rounded-lg bg-muted">
-                      {product.image && (
-                        <Image
-                          src={product.image.src}
-                          alt=""
-                          fill
-                          sizes="64px"
-                          className="object-cover"
-                        />
-                      )}
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="line-clamp-1 text-sm font-medium">
-                        {product.name}
-                      </span>
-                      <span className="text-sm font-bold text-primary">
-                        {product.priceVaries && "من "}
-                        {formatPrice(product.price)}
-                      </span>
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-          <Link
-            href={searchHref(trimmed)}
-            tabIndex={-1}
-            onClick={finish}
-            className="flex items-center justify-between gap-2 border-t px-3 py-3 text-sm font-medium text-primary transition-colors hover:bg-muted"
-          >
-            عرض كل النتائج لـ «{trimmed}»
-            <ArrowRightIcon className="size-4 rtl:rotate-180" aria-hidden />
-          </Link>
+          <SearchSuggestions
+            query={trimmed}
+            results={results}
+            status={error ? "error" : searchIndex ? "ready" : "loading"}
+            listId={listId}
+            optionId={optionId}
+            activeIndex={activeIndex}
+            onNavigate={finish}
+          />
         </div>
       )}
     </form>

@@ -6,6 +6,7 @@ import type {
   CartCatalog,
   Category,
   CategoryOption,
+  NavCategory,
   Product,
 } from "@/lib/catalog/types"
 import { optionsKey } from "@/lib/catalog/variant-key"
@@ -32,6 +33,18 @@ export function getChildCategories(category: Category) {
   return category.childSlugs
     .map((slug) => catalog.categoryBySlug.get(slug))
     .filter((child): child is Category => Boolean(child))
+}
+
+/** The top-level categories with their subcategories' names, for the header menus. */
+export function getNavCategories(): NavCategory[] {
+  return getRootCategories().map((category) => ({
+    slug: category.slug,
+    name: category.name,
+    children: getChildCategories(category).map(({ slug, name }) => ({
+      slug,
+      name,
+    })),
+  }))
 }
 
 /** Categories with their names and parents, for the category filter on the all-products and search pages. */

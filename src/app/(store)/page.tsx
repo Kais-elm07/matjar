@@ -1,20 +1,19 @@
 import type { Metadata } from "next"
 
+import { BestSellers } from "@/components/home/best-sellers"
 import { CategoryRail } from "@/components/home/category-rail"
 import { ContactSection } from "@/components/home/contact-section"
 import { DealsRail } from "@/components/home/deals-rail"
 import { HeroSlider } from "@/components/home/hero-slider"
 import { NewArrivals } from "@/components/home/new-arrivals"
 import { PromoGrid } from "@/components/home/promo-grid"
-import { SpotlightCard } from "@/components/home/spotlight-card"
+import { SpotlightGrid } from "@/components/home/spotlight-grid"
 import { Testimonials } from "@/components/home/testimonials"
 import { TrendingTabs } from "@/components/home/trending-tabs"
 import { TrustStrip } from "@/components/home/trust-strip"
 import { WhyUs } from "@/components/home/why-us"
 import { WideBanner } from "@/components/home/wide-banner"
-import { ProductRail } from "@/components/product/product-rail"
 import { JsonLd } from "@/components/shared/json-ld"
-import { SectionHeading } from "@/components/shared/section-heading"
 import { siteConfig } from "@/config/site"
 import { getCategories } from "@/lib/catalog/catalog"
 import { getHomeContent, getHomeSections } from "@/lib/catalog/home"
@@ -54,31 +53,8 @@ export default function HomePage() {
         <WhyUs />
         <PromoGrid promos={promos} maxDiscount={maxDiscount} />
 
-        <section aria-labelledby="best-sellers-heading">
-          <ProductRail
-            label="الأكثر مبيعاً"
-            header={
-              <SectionHeading
-                id="best-sellers-heading"
-                title="الأكثر مبيعاً"
-                href="/products"
-              />
-            }
-            products={bestSellers}
-          />
-        </section>
-
-        {spotlights.length > 0 && (
-          <section aria-label="أقسام مميزة">
-            <ul className="grid gap-4 md:grid-cols-2">
-              {spotlights.map((spotlight) => (
-                <li key={spotlight.href}>
-                  <SpotlightCard banner={spotlight} />
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+        <BestSellers products={bestSellers} />
+        <SpotlightGrid spotlights={spotlights} />
 
         <NewArrivals products={newArrivals} />
         <TrendingTabs groups={trending} />
@@ -87,11 +63,11 @@ export default function HomePage() {
         <CategoryRail categories={getCategories()} />
         <Testimonials testimonials={testimonials} />
         <ContactSection />
-
-        {websiteJsonLd().map((data) => (
-          <JsonLd key={data["@type"]} data={data} />
-        ))}
       </div>
+
+      {websiteJsonLd().map((data) => (
+        <JsonLd key={data["@type"]} data={data} />
+      ))}
     </>
   )
 }

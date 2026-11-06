@@ -9,7 +9,7 @@ import { buttonVariants } from "@/components/ui/button"
 import { useIdle } from "@/hooks/use-idle"
 import type { ProductBanner } from "@/lib/catalog/types"
 import { formatPrice } from "@/lib/money"
-import { scrollBehavior } from "@/lib/motion"
+import { scrollToSlide, visibleSlide } from "@/lib/slider"
 import { cn } from "@/lib/utils"
 
 interface HeroSliderProps {
@@ -32,9 +32,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
 
   function onScroll() {
     const list = listRef.current
-    if (!list) return
-    // In the Arabic (right-to-left) direction the scroll value is negative, so we take its absolute value
-    setActive(Math.round(Math.abs(list.scrollLeft) / list.clientWidth))
+    if (list) setActive(visibleSlide(list))
   }
 
   /** Scrolls only the slides to the requested slide, without moving the page vertically. */
@@ -42,12 +40,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
     const count = slides.length
     const list = listRef.current
     const slide = slideRefs.current[(index + count) % count]
-    if (!list || !slide) return
-    list.scrollBy({
-      left:
-        slide.getBoundingClientRect().left - list.getBoundingClientRect().left,
-      behavior: scrollBehavior(),
-    })
+    if (list && slide) scrollToSlide(list, slide)
   }
 
   return (

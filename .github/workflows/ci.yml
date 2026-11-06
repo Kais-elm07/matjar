@@ -1,5 +1,5 @@
 # Automatic checks on every pull request and every push to the main branch:
-# formatting, ESLint, types, the design file and unit tests, then a full build of the site,
+# formatting, ESLint, types, unused code (knip), the design file and unit tests, then a full build of the site,
 # then browser tests on the built site with Chrome, Firefox and Safari (WebKit).
 name: CI
 
@@ -45,6 +45,9 @@ jobs:
 
       - name: Check types (TypeScript)
         run: pnpm typecheck
+
+      - name: Check for unused files, exports and packages (knip)
+        run: pnpm knip
 
       - name: Check the design file (DESIGN.md)
         run: pnpm design:lint

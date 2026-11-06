@@ -6,9 +6,9 @@
  */
 
 /** `line` is where the block or item starts in the source text (from 1), and is its React key. */
-export type ListItem = { text: string; line: number }
+type ListItem = { text: string; line: number }
 
-export type TextBlock =
+type TextBlock =
   | { type: "heading"; level: 2 | 3; text: string; line: number }
   | { type: "paragraph"; text: string; line: number }
   | { type: "list"; ordered: boolean; items: ListItem[]; line: number }
@@ -72,7 +72,7 @@ const INLINE = /(\*\*[^*]+\*\*|\[[^\]]+\]\([^)\s]+\))/g
 const LINK = /^\[([^\]]+)\]\(([^)\s]+)\)$/
 
 /** A piece of a line. `offset` is where it starts in the line, and is its React key. */
-export type InlinePart =
+type InlinePart =
   | { type: "text"; text: string; offset: number }
   | { type: "bold"; text: string; offset: number }
   | { type: "link"; text: string; href: string; offset: number }

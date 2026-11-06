@@ -1,9 +1,9 @@
 import type { Metadata } from "next"
-import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { ContactCards } from "@/components/content/contact-cards"
 import { FaqList } from "@/components/content/faq-list"
+import { HelpPagesNav } from "@/components/content/help-pages-nav"
 import { RichText } from "@/components/content/rich-text"
 import { ShippingTable } from "@/components/content/shipping-table"
 import { Breadcrumbs } from "@/components/shared/breadcrumbs"
@@ -12,7 +12,6 @@ import { getContentPage, getContentPages } from "@/lib/content/pages"
 import { parseFaq } from "@/lib/content/text-format"
 import { contentPagePath } from "@/lib/routes"
 import { breadcrumbJsonLd, faqJsonLd, openGraph } from "@/lib/seo"
-import { cn } from "@/lib/utils"
 
 // Every page is prepared at build time from the src/content/pages files, and any other URL shows the 404 page
 export const dynamicParams = false
@@ -54,28 +53,7 @@ export default async function ContentPageRoute({
       <Breadcrumbs items={[{ name: page.title }]} />
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start">
-        <nav
-          aria-label="صفحات المساعدة"
-          className="hidden rounded-xl border bg-card p-2 lg:sticky lg:top-32 lg:block"
-        >
-          <ul>
-            {getContentPages().map((item) => (
-              <li key={item.slug}>
-                <Link
-                  href={contentPagePath(item.slug)}
-                  aria-current={item.slug === page.slug ? "page" : undefined}
-                  className={cn(
-                    "flex h-11 items-center rounded-lg px-3 text-sm outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50",
-                    item.slug === page.slug &&
-                      "bg-primary/10 font-bold text-primary hover:bg-primary/15"
-                  )}
-                >
-                  {item.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <HelpPagesNav currentSlug={page.slug} />
 
         <article className="max-w-3xl min-w-0 space-y-6">
           <h1 className="text-2xl font-bold md:text-3xl">{page.title}</h1>

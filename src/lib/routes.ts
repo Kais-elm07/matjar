@@ -7,6 +7,8 @@ import type { CategoryLink } from "@/lib/catalog/types"
 export const productPath = (slug: string) => `/product/${slug}/`
 export const categoryPath = (slug: string) => `/category/${slug}/`
 export const contentPagePath = (slug: string) => `/pages/${slug}/`
+export const searchPath = (query: string) =>
+  `/search/?q=${encodeURIComponent(query)}`
 
 /** The links of a category path, from the top category down, for the breadcrumbs and their search engine data. */
 export function categoryTrail(path: CategoryLink[]) {

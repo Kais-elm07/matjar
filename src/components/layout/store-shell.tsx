@@ -4,10 +4,12 @@ import { LazyCartSheet } from "@/components/cart/lazy-cart-sheet"
 import { CartWishlistRestorer } from "@/components/global/cart-wishlist-restorer"
 import { ListingUrlListener } from "@/components/global/listing-url-listener"
 import { AnnouncementBar } from "@/components/layout/announcement-bar"
+import { LazyMobileNavSheet } from "@/components/layout/lazy-mobile-nav-sheet"
 import { MobileTabBar } from "@/components/layout/mobile-tab-bar"
 import { SiteFooter } from "@/components/layout/site-footer"
 import { SiteHeader } from "@/components/layout/site-header"
 import { WhatsAppButton } from "@/components/layout/whatsapp-button"
+import { getNavCategories } from "@/lib/catalog/catalog"
 import { cn } from "@/lib/utils"
 
 interface StoreShellProps {
@@ -17,10 +19,12 @@ interface StoreShellProps {
 
 /**
  * The shell of every store page: the announcement bar, header and footer, the mobile bottom bar,
- * the WhatsApp button and the cart panel, and restoring the cart and wishlist from the browser.
+ * the WhatsApp button, the cart panel and the mobile menu, and restoring the cart and wishlist from the browser.
  * Used by the store layout and the 404 page, so the cart and counters work on every page.
  */
 export function StoreShell({ children, mainClassName }: StoreShellProps) {
+  const categories = getNavCategories()
+
   return (
     <>
       {/* The first thing the Tab key reaches: skips the announcement and header to the content */}
@@ -32,7 +36,7 @@ export function StoreShell({ children, mainClassName }: StoreShellProps) {
       </a>
       {/* Outside the sticky header, so it disappears on scroll */}
       <AnnouncementBar />
-      <SiteHeader />
+      <SiteHeader categories={categories} />
       <main id="main-content" className={cn("flex-1", mainClassName)}>
         {children}
       </main>
@@ -44,6 +48,7 @@ export function StoreShell({ children, mainClassName }: StoreShellProps) {
       <MobileTabBar />
       <WhatsAppButton />
       <LazyCartSheet />
+      <LazyMobileNavSheet categories={categories} />
       <CartWishlistRestorer />
       {/* Tells listing pages when the URL changes (filters and sorting) */}
       <Suspense fallback={null}>
