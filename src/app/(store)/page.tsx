@@ -11,7 +11,6 @@ import { SpotlightGrid } from "@/components/home/spotlight-grid"
 import { Testimonials } from "@/components/home/testimonials"
 import { TrendingTabs } from "@/components/home/trending-tabs"
 import { TrustStrip } from "@/components/home/trust-strip"
-import { WhyUs } from "@/components/home/why-us"
 import { WideBanner } from "@/components/home/wide-banner"
 import { JsonLd } from "@/components/shared/json-ld"
 import { siteConfig } from "@/config/site"
@@ -50,7 +49,6 @@ export default function HomePage() {
       {/* Every section here is rendered only when it comes near the screen (section-later in
           globals.css), so a phone shows the hero sooner; the sections have no style of their own */}
       <div className="page-container flex flex-col gap-14 py-10 *:section-later md:gap-20 md:py-14">
-        <WhyUs />
         <PromoGrid promos={promos} maxDiscount={maxDiscount} />
 
         <BestSellers products={bestSellers} />

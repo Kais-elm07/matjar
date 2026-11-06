@@ -260,8 +260,8 @@ Home / Search / Category
 
 - The sticky dark header: the logo, a wide search field with suggestions that show the image and the price, the wishlist and cart icons with orange counters, and a "Shop now" button.
 - The navigation row on desktop: an "All categories" button with a mega menu, and shopping links. On mobile, a sliding side menu and a fixed bottom navigation bar.
-- The hero slides (swiped by touch, with no autoplay), then a trust strip: fast shipping, cash on delivery, easy returns, WhatsApp support.
-- "Why choose us?" with three circles, then the deals grid (two image tiles, a tall tile, and a discount card whose percentage is computed from the real deals), then "Best sellers".
+- The hero slides (swiped by touch, with no autoplay), then a trust strip: fast shipping, cash on delivery, easy returns, WhatsApp support, hand-picked products and ongoing deals.
+- The promo grid (two image tiles, a tall tile, and a discount card whose percentage is computed from the real deals), then "Best sellers".
 - Two featured category cards with photos, then "New arrivals" with a large banner, a row of products and a button, then "Trending now" with a tab for each category.
 - "Limited-time deals" with a real countdown to the deal's end date in the data, then a wide photo banner, then the category tiles with photos, then customer reviews (shown only once real reviews are added).
 - The "Contact us" section with a card for each channel, then the dark footer: the logo, the store's tagline, the contact button and the link columns, ending in an orange bar.

@@ -187,11 +187,6 @@ components:
     textColor: "{colors.foreground}"
     typography: "{typography.label-md}"
     padding: 20px
-  feature-circle:
-    backgroundColor: "{colors.surface-muted}"
-    textColor: "{colors.primary}"
-    rounded: "{rounded.full}"
-    size: 88px
   promo-tag:
     backgroundColor: "{colors.primary}"
     textColor: "{colors.on-primary}"
@@ -380,7 +375,7 @@ The reference design uses Segoe UI, a Windows system font that cannot be embedde
 The font has static weights, and only three are available: 400 for text, 500 for names and buttons, and 700 for headings and prices.
 
 - **Hero headline (headline-display):** 60 px on desktop and 36 on mobile, white, in the middle of the photo, in two lines at most.
-- **Headings (headline):** bold (700), with comfortable line spacing for Arabic letters. Every heading has a mobile value and a desktop value, and the headings of centered sections ("Why choose us?" and "Contact us") are centered.
+- **Headings (headline):** bold (700), with comfortable line spacing for Arabic letters. Every heading has a mobile value and a desktop value, and the heading of the centered "Contact us" section is centered.
 - **Body text (body):** at least 16 px for the main text, with a line height of 1.75, because Arabic letters need more vertical space than Latin ones.
 - **Names and buttons (label):** medium weight (500), and small badges at 12 px in weight 700.
 - **Prices (price):** always bold and orange, with Western digits (0-9) to avoid confusion, and the currency after the number: "129 ر.س" (129 SAR).
@@ -393,7 +388,7 @@ The font has static weights, and only three are available: 400 for text, 500 for
 - **Header on desktop:** two rows fixed to the top of the screen. The first, 64 px tall, has the logo at the start, a wide search field in the middle, and the wishlist, the cart and the orange "Shop now" button at the end. The second, 44 px tall, has the shopping and help links in the middle, and "Categories" opens a large panel with columns.
 - **Header on mobile:** one row, 64 px tall: the menu button at the start, the logo, and the search button and the cart at the end. The search button opens the search field in a row under the header.
 - **Bottom navigation bar on mobile:** fixed and 64 px tall: Home, Categories, Search, Wishlist, Cart. Every page leaves room for it at the bottom.
-- **Home page order:** the full-width hero, then the dark trust strip directly under it, then "Why choose us?" with three circles, then the promo grid (two image tiles, a tall tile and the discount card), then best sellers, then the two category spotlight cards, then new arrivals with a large banner, a row of products and a centered button, then trending with category tabs, then deals with a countdown, then the wide banner, then the category tiles, then customer reviews if there are any, then Contact us, then the footer.
+- **Home page order:** the full-width hero, then the dark trust strip directly under it, then the promo grid (two image tiles, a tall tile and the discount card), then best sellers, then the two category spotlight cards, then new arrivals with a large banner, a row of products and a centered button, then trending with category tabs, then deals with a countdown, then the wide banner, then the category tiles, then customer reviews if there are any, then Contact us, then the footer.
 - **Product rows:** swiped horizontally on every screen, with a gap of 12 to 16 px, and two round scroll buttons in the section heading on desktop.
 - **Product grid in listings:** two columns on mobile, 3 on tablets and 4 on desktop (3 when the filter sidebar is shown), with separate cards and gaps between them.
 - **Spacing scale:** multiples of 4 px. The space between page sections is 56 to 80 px, and inside cards 10 to 16 px.
@@ -414,7 +409,7 @@ Depth comes from **background shades**, not from shadows: the background is the 
 - **Buttons:** 8 px corners (`lg`), and the same for fields and for the image boxes inside cards.
 - **Cards, photo tiles and dialogs:** 12 px (`xl`).
 - **Pills (full):** the search field, tabs, filter chips, section badges and the deals countdown.
-- **Circles stay circles:** the cart button on the card, the wishlist button on the photo, scroll buttons, counters, the "Why choose us?" and contact circles, and the color swatches in filters and variants.
+- **Circles stay circles:** the cart button on the card, the wishlist button on the photo, scroll buttons, counters, the contact circles, and the color swatches in filters and variants.
 - **Small badges, such as the discount:** 4 px (`sm`).
 - **The hero, the trust strip and the footer:** no corners, because they span the full screen width.
 
@@ -426,8 +421,7 @@ Depth comes from **background shades**, not from shadows: the background is the 
 - **Header:** dark (surface), fixed to the top of the screen, with a thin bottom border. The logo is an orange square with a dark bag icon, followed by the store name in white. The search field is a pill in the light surface color, 36 rem wide. The wishlist and cart counters are small orange circles that are hidden at zero. The links in the second row are white and turn orange on hover.
 - **Announcement bar:** a thin orange line at the top of every page, above the header, that disappears on scroll, with short dark text and an optional link.
 - **Hero:** a full-width photo, 72% of the screen height on desktop and 32 rem on mobile, under a darkening layer in the background color and a darker gradient from the bottom. In its middle: a small orange badge, a large headline, a line of description, the price and one orange button. Several slides are swiped by touch, with dots (the active one orange) and arrows, and no autoplay.
-- **Trust strip (trust-strip):** a full-width strip in the surface color directly under the hero: four features, each with an orange icon, a short title and a gray description, in two columns on mobile and four on desktop.
-- **Why choose us? (feature-circle):** a centered heading and three circles in the light surface color with a thin border, each holding an orange icon, with a bold title and a gray description under it.
+- **Trust strip (trust-strip):** a full-width strip in the surface color directly under the hero: six reasons to shop here, each with an orange icon, a short title and a gray description, in two columns on mobile, three on tablets and six on wide screens. Each description is balanced across its lines, so no word is left alone on the second line. It is the only list of these reasons on the site, so no other section, such as a "Why choose us?", repeats them.
 - **Promo grid:** two image tiles stacked on top of each other and a tall tile next to them. Each tile is a product photo with 12 px corners and a thin border, with an orange badge, a title and a price at its bottom over a dark gradient. Next to them, a card in the surface color with "Discounts up to N%" in orange and a "Shop the deals" button. The discount percentage is computed from the products that have real deals.
 - **Category tiles (category-tile):** the category photo at a 4:5 ratio, with 12 px corners and a thin border, and the category name and product count in white at its bottom over a dark gradient.
 - **Product card (product-card):** the surface color, 12 px corners and no shadow. Inside it, the image box has 8 px corners, with the orange discount badge in its start corner and the round orange heart button in its end corner. Under the image: the category name in gray, then the product name in bold, then the price in orange. In the card's bottom corner on the end side sits a round orange cart button (48 px) surrounded by a ring in the background color: it adds a single-option product directly, and opens the product page to choose a size or color for a product with several options. A sold-out product has no button and carries an "Out of stock" badge.

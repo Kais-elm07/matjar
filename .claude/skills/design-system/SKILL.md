@@ -80,7 +80,7 @@ The values are applied in `src/app/globals.css` as shadcn variables with the sam
 ## Ready-made components to check before creating a new one
 
 - `ProductCard`, `ProductGrid` and `ProductRail` in `src/components/product`: the dark product card with the round cart button, its grid and its horizontal row. Their data has the type `ProductCardData`, and the search index uses `SearchCardData` (the card plus the search text).
-- The home page sections in `src/components/home`, each one a separate component: `TrustStrip`, `WhyUs`, `PromoGrid`, `BestSellers`, `SpotlightGrid`, `NewArrivals`, `TrendingTabs`, `DealsRail`, `CategoryRail`, `Testimonials` and `ContactSection`. The page itself only puts them in order.
+- The home page sections in `src/components/home`, each one a separate component: `TrustStrip`, `PromoGrid`, `BestSellers`, `SpotlightGrid`, `NewArrivals`, `TrendingTabs`, `DealsRail`, `CategoryRail`, `Testimonials` and `ContactSection`. The page itself only puts them in order.
 - `Carousel` and `SectionHeading` in `src/components/shared`: a swiped row with round scroll buttons, and a section heading with an optional orange "View all" link.
 - `PromoTile`, `DiscountCard`, `SpotlightCard` and `WideBanner` in `src/components/home`, one file each: the photo tiles of the promo grid, the discount card, the category spotlight cards and the wide banner. Their shared dark gradient over photos is `IMAGE_SHADE` in `banner-styles.ts`.
 - `HeroSlider` in `src/components/home`: the full-width hero, with centered text over a darkening layer and a gradient.
