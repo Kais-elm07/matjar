@@ -107,17 +107,21 @@ function toCategories(
   const counts = new Map<string, number>()
   // The first photo of the most popular product in each category and its parents, the default cover
   const covers = new Map<string, CoverPhoto>()
+  // Every product photo with its look, so a cover set to one of them keeps the tone set for it
+  const productPhotos = new Map<string, CoverPhoto>()
   for (const product of [...products].sort(byPopularity)) {
+    for (const image of product.images) {
+      productPhotos.set(image.src, {
+        src: image.src,
+        tone: image.tone,
+        cutout: image.cutout,
+      })
+    }
     const [photo] = product.images
     for (const link of product.categoryPath) {
       counts.set(link.slug, (counts.get(link.slug) ?? 0) + 1)
-      if (photo && !covers.has(link.slug)) {
-        covers.set(link.slug, {
-          src: photo.src,
-          tone: photo.tone,
-          cutout: photo.cutout,
-        })
-      }
+      const cover = photo && productPhotos.get(photo.src)
+      if (cover && !covers.has(link.slug)) covers.set(link.slug, cover)
     }
   }
 
@@ -126,7 +130,10 @@ function toCategories(
     name: category.name,
     description: category.description || null,
     image: category.image
-      ? { src: category.image, ...photoLook(meta, category.image) }
+      ? (productPhotos.get(category.image) ?? {
+          src: category.image,
+          ...photoLook(meta, category.image),
+        })
       : (covers.get(category.slug) ?? null),
     parentSlug: category.parent ?? null,
     childSlugs: children.get(category.slug) ?? [],

@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 /**
- * Downloads the real demo photos listed in assets/images/sources.json from Pexels
- * into assets/images/products and assets/images/categories; after that, pnpm images is enough to prepare them.
+ * Downloads the original Pexels photos behind the demo product photos, listed in assets/images/sources.json,
+ * into assets/images/products; after that, pnpm images is enough to prepare them.
+ *
+ * The demo photos in the project are cut-outs: these photos with their backgrounds removed (DESIGN.md: Product
+ * photos). So a photo is downloaded only when no photo with its name exists yet, whatever its extension, and a
+ * cut-out is never replaced by its original.
  *
  *   node scripts/fetch-demo-photos.mjs            downloads only the missing photos
- *   node scripts/fetch-demo-photos.mjs --force    downloads all of them again
+ *   node scripts/fetch-demo-photos.mjs --force    also downloads again the photos that are still original JPEGs
  *
  * The photos are licensed by Pexels for free use without attribution, and they are for display until they are replaced with photos of your products.
  */
@@ -15,8 +19,11 @@ import path from "node:path"
 const ROOT = process.cwd()
 const force = process.argv.includes("--force")
 const SOURCES_FILE = path.join(ROOT, "assets", "images", "sources.json")
+const PHOTOS_DIR = path.join(ROOT, "assets", "images", "products")
+/** The extensions pnpm images reads; a photo with any of them already exists. */
+const EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".avif", ".svg"]
 
-/** The photo list: the file name without an extension and the photo's ID on Pexels, for products and categories. */
+/** The photo list: the file name without an extension and the photo's ID on Pexels. */
 async function readSources() {
   let sources
   try {
@@ -27,23 +34,21 @@ async function readSources() {
     )
     process.exit(1)
   }
-  for (const key of ["products", "categories"]) {
-    const entries = sources[key]
-    const valid =
-      entries &&
-      typeof entries === "object" &&
-      Object.values(entries).every((id) => Number.isInteger(id) && id > 0)
-    if (!valid) {
-      console.error(
-        `assets/images/sources.json: الحقل "${key}" يجب أن يكون قائمة أسماء وأرقام صور، مثل { "shirt-1": 5746087 }.`
-      )
-      process.exit(1)
-    }
+  const entries = sources.products
+  const valid =
+    entries &&
+    typeof entries === "object" &&
+    Object.values(entries).every((id) => Number.isInteger(id) && id > 0)
+  if (!valid) {
+    console.error(
+      'assets/images/sources.json: الحقل "products" يجب أن يكون قائمة أسماء وأرقام صور، مثل { "shirt-1": 5746087 }.'
+    )
+    process.exit(1)
   }
-  return sources
+  return entries
 }
 
-const sources = await readSources()
+const photos = await readSources()
 
 const url = (id) =>
   `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=1600`
@@ -66,28 +71,29 @@ async function download(id, file, attempt = 1) {
   }
 }
 
+/** The extension of the photo with this name in the folder, or null when there is none. */
+const existingExtension = (name) =>
+  EXTENSIONS.find((extension) =>
+    existsSync(path.join(PHOTOS_DIR, `${name}${extension}`))
+  ) ?? null
+
 let done = 0
 let skipped = 0
 const failed = []
-for (const [folder, entries] of Object.entries({
-  products: sources.products,
-  categories: sources.categories,
-})) {
-  const dir = path.join(ROOT, "assets", "images", folder)
-  await mkdir(dir, { recursive: true })
-  for (const [name, id] of Object.entries(entries)) {
-    const file = path.join(dir, `${name}.jpg`)
-    if (!force && existsSync(file)) {
-      skipped++
-      continue
-    }
-    try {
-      const size = await download(id, file)
-      done++
-      console.log(`${folder}/${name}.jpg ← pexels ${id} (${size})`)
-    } catch (error) {
-      failed.push(`${folder}/${name}.jpg (pexels ${id}): ${error.message}`)
-    }
+await mkdir(PHOTOS_DIR, { recursive: true })
+for (const [name, id] of Object.entries(photos)) {
+  const existing = existingExtension(name)
+  if (existing && !(force && existing === ".jpg")) {
+    skipped++
+    continue
+  }
+  const file = path.join(PHOTOS_DIR, `${name}.jpg`)
+  try {
+    const size = await download(id, file)
+    done++
+    console.log(`products/${name}.jpg ← pexels ${id} (${size})`)
+  } catch (error) {
+    failed.push(`products/${name}.jpg (pexels ${id}): ${error.message}`)
   }
 }
 

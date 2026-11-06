@@ -134,6 +134,8 @@ describe("product and category files", () => {
       categories: [
         { slug: "men", name: "رجالي" },
         { slug: "shoes", name: "أحذية", parent: "men" },
+        // A cover set to a product photo keeps the tone set for that photo
+        { slug: "sale", name: "عروض", image: "/images/products/red-1" },
       ],
     }))
     vi.doMock("@/data/products", () => ({
@@ -161,6 +163,11 @@ describe("product and category files", () => {
     expect(catalog.getCategory("shoes")?.image?.tone).toEqual(
       toneFromHex("#dc2626")
     )
+    expect(catalog.getCategory("sale")?.image).toEqual({
+      src: "/images/products/red-1",
+      tone: toneFromHex("#dc2626"),
+      cutout: false,
+    })
   })
 
   it("resets a product whose sale has ended to its price before the discount", async () => {

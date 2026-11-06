@@ -69,7 +69,21 @@ export const products: ProductInput[] = [
       { label: "الطول", value: "متوسط" },
       { label: "الأكمام", value: "قصيرة" },
     ],
-    images: productImages("floral-summer-dress", ["وردي", "أزرق"]),
+    // The color measured from these photos is brownish, because the skin and the basket weigh more than the
+    // small pink flowers of the first dress and the light flowers around the navy of the second one.
+    // So the light behind each photo (tone) is set here instead
+    images: [
+      {
+        src: "/images/products/floral-summer-dress-1",
+        color: "وردي",
+        tone: "#db2777",
+      },
+      {
+        src: "/images/products/floral-summer-dress-2",
+        color: "أزرق",
+        tone: "#1d4ed8",
+      },
+    ],
     variants: optionMatrix(
       { المقاس: ["S", "M", "L"], اللون: ["وردي", "أزرق"] },
       { sku: "DRESS", price: 249, compareAtPrice: 299, stock: 5 },
@@ -124,10 +138,10 @@ export const products: ProductInput[] = [
     name: "سماعة رأس للألعاب",
     category: "audio",
     description:
-      "سماعة رأس مريحة للجلسات الطويلة، بصوت محيطي وميكروفون واضح قابل للطي.\n\n- وسائد أذن ناعمة\n- ميكروفون بعزل للضوضاء\n- تعمل مع الحاسوب وأجهزة الألعاب",
+      "سماعة رأس مريحة للجلسات الطويلة، بصوت محيطي وميكروفون واضح قابل للفصل.\n\n- وسائد أذن ناعمة\n- ميكروفون بعزل للضوضاء\n- تعمل مع الحاسوب وأجهزة الألعاب",
     specs: [
       { label: "التوصيل", value: "سلك 3.5 ملم و USB" },
-      { label: "الميكروفون", value: "قابل للطي" },
+      { label: "الميكروفون", value: "قابل للفصل" },
       { label: "الوزن", value: "280 غراماً" },
     ],
     images: productImages("gaming-headset", ["أسود", "أحمر"]),
@@ -150,11 +164,10 @@ export const products: ProductInput[] = [
       { label: "مقاومة الماء", value: "IP67" },
       { label: "الاتصال", value: "بلوتوث 5.3" },
     ],
-    images: productImages("portable-speaker", ["أسود", "أزرق", "أخضر"]),
+    images: productImages("portable-speaker", ["أسود", "أزرق"]),
     variants: optionMatrix(
-      { اللون: ["أسود", "أزرق", "أخضر"] },
-      { sku: "SPEAKER", price: 189, compareAtPrice: 229, stock: 10 },
-      { أخضر: { stock: 0 } }
+      { اللون: ["أسود", "أزرق"] },
+      { sku: "SPEAKER", price: 189, compareAtPrice: 229, stock: 10 }
     ),
     popularity: 170,
     createdAt: "2026-10-10",
@@ -266,9 +279,18 @@ export const products: ProductInput[] = [
       { label: "الحشوة", value: "إسفنج بسماكة 1 سم" },
       { label: "يشمل", value: "حقيبة حمل" },
     ],
-    images: productImages("luxury-prayer-rug", ["أخضر", "كحلي", "عنابي"]),
+    // The green rug's light patterns weigh more than its dark green, so the color measured from its photo
+    // is brownish; the light behind it (tone) is set here instead
+    images: [
+      {
+        src: "/images/products/luxury-prayer-rug-1",
+        color: "أخضر",
+        tone: "#15803d",
+      },
+      { src: "/images/products/luxury-prayer-rug-2", color: "عنابي" },
+    ],
     variants: optionMatrix(
-      { اللون: ["أخضر", "كحلي", "عنابي"] },
+      { اللون: ["أخضر", "عنابي"] },
       { sku: "RUG", price: 89, stock: 20 }
     ),
     popularity: 230,
@@ -279,11 +301,11 @@ export const products: ProductInput[] = [
     name: "صانعة قهوة منزلية",
     category: "home-kitchen",
     description:
-      "صانعة قهوة سهلة الاستخدام تحضّر حتى 10 أكواب، مع خاصية إبقاء القهوة دافئة.\n\n- خزان ماء بسعة 1.25 لتر\n- فلتر دائم قابل للغسيل\n- إيقاف تلقائي للأمان",
+      "صانعة قهوة إسبريسو بتصميم كلاسيكي أنيق، تحضّر فنجانك في دقيقة وتضيف لمسة جميلة إلى المطبخ.\n\n- مضخة بضغط 15 بار\n- مؤشر لدرجة الحرارة على الواجهة\n- خزان ماء جانبي سهل الملء",
     specs: [
-      { label: "السعة", value: "10 أكواب" },
-      { label: "القدرة", value: "900 واط" },
-      { label: "الخزان", value: "1.25 لتر" },
+      { label: "الضغط", value: "15 بار" },
+      { label: "القدرة", value: "1050 واط" },
+      { label: "الخزان", value: "1.2 لتر" },
     ],
     images: productImages("coffee-maker", 2),
     variants: singleVariant({
@@ -342,9 +364,9 @@ export const products: ProductInput[] = [
       { label: "الإعدادات", value: "3 درجات حرارة وسرعتان" },
       { label: "طول السلك", value: "1.8 متر" },
     ],
-    images: productImages("pro-hair-dryer", ["أسود", "وردي"]),
+    images: productImages("pro-hair-dryer", ["أسود", "أحمر"]),
     variants: optionMatrix(
-      { اللون: ["أسود", "وردي"] },
+      { اللون: ["أسود", "أحمر"] },
       { sku: "DRYER", price: 259, compareAtPrice: 299, stock: 3 }
     ),
     popularity: 75,
@@ -377,11 +399,11 @@ export const products: ProductInput[] = [
       { label: "الخامة", value: "بوليستر مقاوم للماء" },
       { label: "الحاسوب", value: "حتى 15.6 بوصة" },
     ],
-    images: productImages("travel-backpack", ["أسود", "رمادي", "كحلي"]),
+    images: productImages("travel-backpack", ["أسود", "أسود", "أزرق"]),
     variants: optionMatrix(
-      { اللون: ["أسود", "رمادي", "كحلي"] },
+      { اللون: ["أسود", "أزرق"] },
       { sku: "BACKPACK", price: 219, stock: 11 },
-      { كحلي: { stock: 2 } }
+      { أزرق: { stock: 2 } }
     ),
     popularity: 145,
     createdAt: "2026-10-20",
