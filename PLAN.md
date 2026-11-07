@@ -1,8 +1,8 @@
-# Online Store Plan (Frontend-Only Showcase)
+# Online Store Plan
 
-**Version:** 3.2
+**Version:** 3.3
 **Date:** November 7, 2026
-**Status:** Approved up to phase 9. Phases 1 to 7 are complete except the items that need the owner (a review on a real phone and testing with real people). The phase 8 files are ready, and the owner postponed the deployment itself. A full review of code quality, performance and load capacity has been carried out. The project is on GitHub and the GitHub Actions checks pass. Phase 10, a design-only evolution to the "Spotlight" identity, was proposed, prototyped and built on November 6, 2026, on the Git branch `phase-10-spotlight`; the owner's look on a real phone remains. Phase 11, Najm the 3D mascot, was prototyped on November 6 and built on November 7, 2026, on the branch `phase-11-mascot`, which starts from phase 10.
+**Status:** Approved up to phase 9. Phases 1 to 7 are complete except the items that need the owner (a review on a real phone and testing with real people). The phase 8 files are ready, and the owner postponed the deployment itself. A full review of code quality, performance and load capacity has been carried out. The project is on GitHub and the GitHub Actions checks pass. Phase 10, a design-only evolution to the "Spotlight" identity, was proposed, prototyped and built on November 6, 2026, on the Git branch `phase-10-spotlight`; the owner's look on a real phone remains. Phase 11, Najm the 3D mascot, was prototyped on November 6 and built on November 7, 2026, on the branch `phase-11-mascot`, which starts from phase 10. Phase 12, built on November 7, 2026 on the branch `server-mode`, runs the store on a Next.js server, with a products API and the orders saved in PostgreSQL; the deployment on Netlify is the owner's next step.
 
 ---
 
@@ -10,6 +10,7 @@
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 3.3 | November 7, 2026 | Phase 12 was built at the owner's request on the branch `server-mode`: the store runs on a Next.js server instead of a static export, with the security headers in `next.config.ts`, a products API (`/api/products/`), PostgreSQL through Prisma for the orders, a Server Action that checks and saves each order, a page for every order, and coupons that stay on the server. Decision 7 is answered for the host: Netlify. |
 | 3.2 | November 7, 2026 | Phase 11 was built on the branch `phase-11-mascot`: Najm, a 3D blue dog drawn with three.js from simple shapes, stands in the corner of every page with no background, and behaves differently on the home page, the shopping pages, the cart, checkout and the order confirmation. He catches every product added to the cart, takes out deleted ones, celebrates an order, and suggests similar products from a new static file, `similar-products.json`. While he is on screen he replaces the cart panel as the add confirmation; a footer button hides him. His code loads only after the visitor's first move. `DESIGN.md`, the README, unit tests and two browser tests were added for him. |
 | 3.1 | November 6, 2026 | Phase 10 was built on the branch `phase-10-spotlight`: `DESIGN.md` and the design skill were rewritten for the "Spotlight" identity; the colors, the pill buttons and the corners changed in the code; every demo product photo became a cut-out, made with an open-source background-removal model on the developer's computer, with other Pexels photos where a photo could not be cut cleanly or was too small (and the black headset recolored from the red one); the color options of four products now follow their photos, and the category covers are product photos; `pnpm images` measures each photo's color, and the catalog gives every photo its tone; the hero and the product gallery became stages whose light follows the product and whose photos turn in 3D, with no new dependency; the cards, the category tiles, the banners and the share images took the same look. Unit tests for the tone, its contrast on every hue and the swipe arithmetic, and two browser tests for the gallery, were added. |
 | 3.0 | November 6, 2026 | Phase 10 was proposed at the owner's request: a design-only evolution toward two concept designs the owner chose (a page whose background takes the product's color, and a dark tech storefront with one electric blue). It defines the "Spotlight" identity, a backdrop that follows the product's color, a 3D turn between photos in CSS only, and a restyle of every component with no change to the structure, the data or the features. It waits for decisions 9 to 11 in section 17. |
@@ -36,10 +37,10 @@
 
 > **Assumptions behind the plan:**
 >
-> 1. The site is a frontend-only showcase: every page is prepared in advance as a static HTML file, and no server handles requests.
+> 1. The catalog pages are prepared in advance at build time. Until phase 12 the whole site was static files; since then a Next.js server sends those pages and answers the rest (the products API and the orders).
 > 2. Product and category data is written in files inside the project, and any change to it requires rebuilding and redeploying the site.
 > 3. The cart and the wishlist are saved only in the visitor's browser.
-> 4. "Place order" is a demo: it validates the details and shows a confirmation page, with no payment and no stored order. Sending the order over WhatsApp is an option (section 8).
+> 4. "Place order" is a demo with no payment. Until phase 12 nothing was stored; since then the server checks the order and saves it in a database, and each order has its own page. Sending the order over WhatsApp is still an option (section 8).
 > 5. Arabic first (right to left), with the Saudi riyal as a temporary currency until the country is decided.
 > 6. The team: one developer, with help from Claude Code.
 
@@ -160,6 +161,8 @@ An online store with an Arabic interface that is **easy to use**, fast and excel
 ## 3. Technology choices
 
 ### 3.1 Why a static site built with Next.js?
+
+> Since phase 12 the same Next.js code runs on a server: the pages that were static are still prepared at build time, and a server now answers the API and the orders. The comparison below is the reasoning of the first version.
 
 | Option | Pros | Cons | Decision |
 | --- | --- | --- | --- |
@@ -324,6 +327,8 @@ Phase 10 replaced the "Warm Night" identity (dark with orange, November 4, 2026)
 ## 5. Technical architecture
 
 ### 5.1 Overview
+
+> This diagram shows the static version of phases 1 to 11. Phase 12 adds a running Next.js server in front of the same build: it sends the prepared pages and files, answers `/api/products/`, and saves the orders in PostgreSQL (see phase 12 and the README).
 
 ```
       Data files (src/data)             Original images (assets/images)
@@ -745,29 +750,63 @@ Each step is one commit that passes `pnpm verify`, and the site is reviewed at 3
 | Moving too much for some visitors | With reduced motion he stands still and products appear in his basket at once. |
 | The browser tests expect the cart panel after an add | Every test except his own starts with him hidden, through a saved choice in `playwright.config.ts`. |
 
+### Phase 12: Running on a Next.js server ✅ (built November 7, 2026)
+
+**Status:** asked for by the owner on November 7, 2026: run the store on a Next.js server and continue the project from there. The store was already built with Next.js (App Router); what changed is how it runs: instead of a static export (`output: "export"`), `pnpm build` prepares the site and `pnpm start` runs the server. Built on the branch `server-mode`, which starts from phase 11.
+
+**Scope:** the way the site is built and served, a products API, a database for orders, and the checkout's last step. The design, the catalog pages, the cart, the wishlist, search, Najm and the static pages stay as they were.
+
+#### 12.1 Decisions
+
+- **Hosting:** Netlify, with its own Next.js integration (`@netlify/plugin-nextjs`), which runs the server on Netlify's functions. The code doesn't depend on it: a Node.js server (`next start`, or Docker) works the same.
+- **Database:** PostgreSQL through Prisma 7, for the orders only. Products and categories stay in `src/data`, built into the catalog in memory.
+- **Rendering:** the classic model of Next.js. The catalog and help pages are still prepared at build time (`generateStaticParams` with `dynamicParams = false`), and the data files, share images, sitemap and robots.txt are route handlers marked `force-static`. Cache Components is not turned on: the upgrade guide warns that it is not a rename-only change, and the catalog in memory needs no cache.
+- **Addresses:** they keep their trailing slash (`trailingSlash`), so links and search engine entries don't change. The server redirects an address without it with a 308, the API included.
+- **Security headers:** in `next.config.ts` (`headers()`), so every host sends the same ones. The content security policy keeps `'unsafe-inline'`, because a nonce would make every page render on each request.
+- **Orders:** a Server Action checks the form again, rebuilds the lines from the catalog (the server's prices and stock, never the browser's), and saves the order; each order has its own page. The coupons stay on the server.
+
+#### 12.2 Steps
+
+- [x] **The server instead of the static export:** `headers()` instead of `public/_headers`, no build output fixes for `out/`, `sharp` as a runtime dependency, the browser tests against `next start`, and Netlify's plugin.
+- [x] **Products API:** `GET /api/products/` (with `q` and `category`) and `GET /api/products/<slug>/`; search and the wishlist load it instead of `search-index.json`. The server's file tracing no longer takes the whole project.
+- [x] **Database:** `prisma/schema.prisma` with the orders and their lines, the first migration, `pnpm db:start` for a local PostgreSQL, `GET /api/health/`, and a PostgreSQL service in GitHub Actions.
+- [x] **Orders on the server:** the `placeOrder` and `lookupCoupon` Server Actions, the order page `/orders/<id>/` with its error view, and the privacy, about and terms texts updated.
+- [x] **Documentation:** the README, `DEPLOYMENT.md`, `AGENTS.md` and this plan.
+- [ ] **Deployment by the owner:** connect the repository on Netlify, create the database, set the variables, then check the live site (`DEPLOYMENT.md`).
+
+#### 12.3 Risks
+
+| Risk | How it is avoided |
+| --- | --- |
+| Netlify's integration is not yet a verified adapter for this version of Next.js | The features it needs are few (a Server Action, one dynamic page, route handlers, headers); they are checked on the first deploy preview. A Node.js server or Docker is the fallback, with no code change. |
+| The database is out of reach | Every page except an order's works without it; the order page shows a message with a retry button, and placing an order shows a clear message. `/api/health/` tells the owner. |
+| A visitor's browser sends changed prices | The server ignores them: it prices the order from the catalog and refuses a total other than the one the visitor saw. |
+| A deal ends while the server runs | The catalog is built when the server starts, as the pages are built at build time; as before, the site is rebuilt after a deal ends. |
+
 ---
 
 ## 8. Checkout without a server
 
 | Option | How it works | When it fits |
 | --- | --- | --- |
-| **A. Demo confirmation (default)** | Validate the details, then show a confirmation page with an order number generated in the browser, then empty the cart. Nothing is sent anywhere | A showcase site, or a prototype shown to clients |
+| **A. Demo confirmation (phases 4 to 11)** | Validate the details, then show a confirmation page with an order number generated in the browser, then empty the cart. Nothing is sent anywhere | A showcase site, or a prototype shown to clients |
 | **B. Send over WhatsApp** | A button opens WhatsApp with a ready message containing the products, the total and the customer's details, and the customer sends it to the store's number | Receiving real orders without a server |
-| C. A real server (later) | Stored orders, online payment, notifications | When it becomes a full, real store |
+| **C. A real server (phase 12, stored orders)** | The server checks and stores the order, and the order has its own page. Online payment and notifications are still for later | When it becomes a full, real store |
 
 - **Shipping:** zones with a fixed price per zone, and free shipping above a set amount, written in the settings file.
 - **Payment:** "Cash on delivery" is the only method shown. Any online payment needs a server.
-- **Coupons:** demo codes and discounts in the settings file. Note: on a static site anyone can see the codes in the code, so they are for display only.
+- **Coupons:** demo codes and discounts in the settings file. Since phase 12 the codes stay on the server, which checks a code when the visitor applies it.
 
 ---
 
 ## 9. Security and privacy
 
-- No secret keys in the code, because everything in the project reaches the visitor's browser.
-- With option A, the order form data is not sent to any server; it stays in the visitor's browser.
+- No secret keys in the code. The database address lives only in the host's environment variables, and variables starting with `NEXT_PUBLIC_` (which reach the browser) never hold a secret.
+- Since phase 12 the order form data is sent to the server and stored with the order; the privacy page says so. An order's page opens only with its long, unguessable id.
+- The Server Actions check every argument again, and price the order from the server's own data.
 - localStorage holds only the cart and the wishlist, with no sensitive data.
 - HTTPS is enforced in the hosting settings.
-- Security headers (such as CSP) are set for the host in `public/_headers`, since the site is static.
+- Security headers (such as CSP) are set in `next.config.ts` (`headers()`).
 - Update the packages regularly, and check for vulnerabilities with `pnpm audit`.
 
 ---
@@ -797,7 +836,7 @@ Each step is one commit that passes `pnpm verify`, and the site is reviewed at 3
 | Type | Tool | What is covered | When it runs |
 | --- | --- | --- | --- |
 | Unit | Vitest | Prices, Arabic search, filters, cart and shipping calculations, data validation | With `pnpm test` or `pnpm verify`, and in GitHub Actions on every push and pull request |
-| End-to-end (E2E) | Playwright | User journeys on the static build, at mobile and desktop sizes | In GitHub Actions on every push and pull request |
+| End-to-end (E2E) | Playwright | User journeys on the production server (with a PostgreSQL database), at mobile and desktop sizes | In GitHub Actions on every push and pull request |
 | Manual | A checklist | The look, the copy, real devices | Before every deployment |
 | Users | Observation | Ease of use | Before launch |
 
@@ -807,16 +846,17 @@ Each step is one commit that passes `pnpm verify`, and the site is reviewed at 3
 
 ### 12.1 Build output
 
-`pnpm build` creates the `out/` folder, which contains the whole site: HTML pages, images, and CSS and JavaScript files. This folder is all that gets uploaded to the host.
+Since phase 12, `pnpm build` prepares the site in `.next/` and `pnpm start` runs the Next.js server. The host runs that server; on Netlify its integration does it. Until phase 12, the build was an `out/` folder of static files.
 
 ### 12.2 Hosting options
 
+Since phase 12 the host must run a Node.js server, so file-only hosts (GitHub Pages, cPanel uploads, Cloudflare Pages without a Workers adapter) no longer fit. The owner chose **Netlify** (decision 7).
+
 | Host | Cost | Automatic deployment from GitHub | Notes |
 | --- | --- | --- | --- |
-| Netlify | Free to start | Yes | Easy, and the 404 page works automatically |
-| Cloudflare Pages | Free | Yes | A very large CDN |
-| GitHub Pages | Free | Yes, through Actions | Suits a repository on GitHub, but does not support custom headers |
-| Regular hosting (cPanel) | Depends on the plan | No, manual upload | Uploading the contents of the `out` folder is enough |
+| **Netlify (chosen)** | Free to start | Yes | Runs Next.js through its own integration; the database is created separately (Netlify DB or another PostgreSQL host) |
+| A Node.js server (VPS) or Docker | Depends on the server | Through Actions | The fallback with no code change: `pnpm build` then `pnpm start`, or `output: "standalone"` in a container |
+| Vercel | Free to start | Yes | The verified Next.js platform, but connections from the owner's network to it failed during the work |
 
 > **Important:** during the work, connections from your network to some services were intermittent. Before choosing, open the host's website in your browser and make sure it works, and make sure visitors in your country can open the deployed site.
 
@@ -893,7 +933,7 @@ Ordered by expected impact:
 2. **Sending orders over WhatsApp**, if it was not enabled in phase 4.
 3. **English for the store**, with an easy language switch.
 4. **An installable web app (PWA)** that works offline for pages already visited.
-5. **Adding a server when needed:** a database, stored orders, online payment, accounts, an admin dashboard. The current architecture allows it, because data reading is isolated in `src/lib/catalog`, and the earlier server code is kept in the Git history.
+5. **Building on the server (phase 12):** the server, the database and stored orders are done. Next could come online payment, accounts, an admin dashboard for the orders, and stock that goes down with every order.
 
 ---
 
@@ -907,14 +947,15 @@ Ordered by expected impact:
 | 4 | Should visitors see that the store is for display only? | The text on the confirmation page and in the footer |
 | 5 | Are the store name and the logo ready? (The colors and the font are approved.) | Replacing the placeholder name «متجري» (Matjari) |
 | 6 | Should the store be in Arabic only, or in English too? | Translating from the start is easier |
-| 7 | Which host and which domain? | Phase 8 |
+| 7 | Which host and which domain? ✅ The host: Netlify (November 7, 2026). The domain is still open | Phase 8, phase 12 |
 | 8 | Who will edit the product data? Do you want an Excel import tool? | The priority of the import tool in the roadmap |
 | 9 | The accent color of phase 10: ✅ the electric blue of the second reference (November 6, 2026) | Phase 10, before any code is written |
 | 10 | Product photos: ✅ every product photo is a cut-out (November 6, 2026, after the prototype): the demo photos are cut out once with a segmentation model run locally, and the owner's real photos must come as cut-outs | Phase 10 (10.6) |
 | 11 | Buttons: ✅ pills, as in both references (November 6, 2026) | Phase 10 (10.2) |
+| 12 | A server and a database: ✅ a Next.js server and PostgreSQL through Prisma, with the orders stored (November 7, 2026) | Phase 12 |
 
 ---
 
 ## Next step
 
-Review the site on your phone, and test it with 3 to 5 people following `USER-TESTING.md`. Then, when you decide to go ahead, start **phase 8**: deployment, which needs decision 7 (the host and the domain); the steps are in `DEPLOYMENT.md`. At any time: send the real contact details to replace the placeholders, answer decision 4 (keep or remove the "demo version" notice on the About us and Terms pages), and answer decisions 1 and 2 so the demo data can be replaced. For the new design (phase 10): look at it on your phone, then push the branch `phase-10-spotlight` and merge it into `main` once you approve it. For Najm (phase 11): try him on your phone too; his branch `phase-11-mascot` starts from phase 10, so it merges after it.
+Review the site on your phone, and test it with 3 to 5 people following `USER-TESTING.md`. Then deploy on Netlify (phase 12, decision 7): create the database, connect the repository and set the variables, following `DEPLOYMENT.md`; the domain is still to choose. At any time: send the real contact details to replace the placeholders, answer decision 4 (keep or remove the "demo version" notice on the About us and Terms pages), and answer decisions 1 and 2 so the demo data can be replaced. For the new design (phase 10): look at it on your phone, then push the branch `phase-10-spotlight` and merge it into `main` once you approve it. For Najm (phase 11): try him on your phone too; his branch `phase-11-mascot` starts from phase 10, so it merges after it.

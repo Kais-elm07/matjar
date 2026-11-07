@@ -16,12 +16,22 @@ The skill `design-taste-frontend` (Taste Skill, from github.com/Leonxlnx/taste-s
 
 ## Code rules
 
-- No `any`, no type assertions (`as`, including `as const`) and no non-null assertions (`!`). Use a type annotation, `satisfies`, or a type guard from `src/lib/guards.ts` (general checks) or `src/lib/catalog/guards.ts` (the catalog's shapes). Data read at runtime (the JSON files the browser downloads, browser storage) is checked with a guard before it is used. ESLint enforces these rules.
+- No `any`, no type assertions (`as`, including `as const`) and no non-null assertions (`!`). Use a type annotation, `satisfies`, or a type guard from `src/lib/guards.ts` (general checks) or `src/lib/catalog/guards.ts` (the catalog's shapes). Data read at runtime (what the browser downloads, browser storage, JSON columns in the database) is checked with a guard before it is used. ESLint enforces these rules.
 - List keys come from the data (a slug, SKU or id), never from the position in the array. Loading placeholders take their keys from `placeholderIds()` in `src/lib/placeholders.ts`.
 - One component per file, named after it in kebab-case (`PromoTile` in `promo-tile.tsx`). The exception is the compound components in `src/components/ui` (Dialog, Sheet, Tabs, Breadcrumb, NativeSelect), whose parts only work together. Shared class strings go in a styles file such as `product-styles.ts`.
-- Every component that takes props has a `<Component>Props` interface right above it. When the props are a union, which an interface can't express, it is a type alias with the same name (`ListingViewProps`). Route files use Next.js's generated `PageProps<"/route">` and `LayoutProps<"/route">` types.
+- Every component that takes props has a `<Component>Props` interface right above it. When the props are a union, which an interface can't express, it is a type alias with the same name (`ListingViewProps`). Route files use Next.js's generated `PageProps<"/route">` and `LayoutProps<"/route">` types, and `ErrorInfo` from `next/error` for `error.tsx`.
 - For React performance and component structure, follow the project skills `vercel-react-best-practices` and `vercel-composition-patterns` in `.claude/skills`, copied from github.com/vercel-labs/agent-skills.
+
+## Server and data
+
+- The store runs on a Next.js server with the classic rendering model (Cache Components is off). The catalog and help pages keep `generateStaticParams` with `dynamicParams = false`, and the prepared files (data JSON, share images, sitemap, robots) keep `export const dynamic = "force-static"`. A page that reads the database says so with `export const dynamic = "force-dynamic"`.
+- Code that runs only on the server imports `server-only`. The database is reached only through `getDb()` in `src/lib/db.ts`, and the orders through `src/lib/checkout/orders.ts`.
+- Server Actions (`"use server"`, such as `src/lib/checkout/actions.ts`) can be called by anyone with a POST request: check every argument with Zod, and take prices, stock and coupons from the server's own data, never from the browser.
+- A `"use client"` module can't hand functions or constants to server code, so logic both sides need lives in a plain module (`src/lib/checkout/totals.ts`, `quantity.ts`).
+- Server code reads files only by a literal path. A computed path makes Turbopack copy the whole project into the server's files; a check that runs only during `next build` is guarded by `NEXT_PHASE` and marked `turbopackIgnore` (`src/lib/catalog/build.ts`).
+- Addresses end with `/` (`trailingSlash`), API routes included, and are built in `src/lib/routes.ts`.
+- After changing `prisma/schema.prisma`, run `pnpm db:migrate` and then `pnpm db:generate`, and commit the migration. The browser tests run against `next start`: they need `pnpm build` and the local database (`pnpm db:start`).
 
 ## Language
 
-The project documentation (`README.md`, `PLAN.md`, `DESIGN.md`, `DEPLOYMENT.md`, `USER-TESTING.md` and the design skill), code comments, test names, CI step names and commit messages are written in English. A comment that refers to interface text quotes it in Arabic with its English meaning, such as "تصفية" (Filter). The storefront stays in Arabic: interface text, product and category data, the static pages in `src/content/pages`, and the validation and error messages the store owner reads, including the output of the scripts in `scripts/`.
+The project documentation (`README.md`, `PLAN.md`, `DESIGN.md`, `DEPLOYMENT.md`, `USER-TESTING.md` and the design skill), code comments, test names, CI step names and commit messages are written in English. A comment that refers to interface text quotes it in Arabic with its English meaning, such as "تصفية" (Filter). The storefront stays in Arabic: interface text, product and category data, the static pages in `src/content/pages`, and the validation and error messages the store owner and the visitors read, including the output of the scripts in `scripts/`.
