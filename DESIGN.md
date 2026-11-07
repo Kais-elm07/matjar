@@ -26,6 +26,9 @@ colors:
   whatsapp: "#15803d"
   stage-tone: "oklch(0.4 0.1 262)"
   stage-glow: "oklch(0.78 0.1 262)"
+  mascot-fur: "#3572f5"
+  mascot-tag: "#f6c343"
+  mascot-ear: "#ff7fa8"
 typography:
   headline-display:
     fontFamily: IBM Plex Sans Arabic
@@ -186,6 +189,24 @@ components:
     textColor: "{colors.foreground}"
     rounded: "{rounded.full}"
     size: 56px
+  mascot:
+    backgroundColor: "{colors.mascot-fur}"
+    width: 200px
+    height: 208px
+  mascot-mobile:
+    backgroundColor: "{colors.mascot-fur}"
+    width: 136px
+    height: 144px
+  mascot-tag:
+    backgroundColor: "{colors.mascot-tag}"
+  mascot-ear:
+    backgroundColor: "{colors.mascot-ear}"
+  mascot-bubble:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.body-sm}"
+    rounded: "{rounded.2xl}"
+    padding: 12px
   stage:
     backgroundColor: "{colors.background}"
     textColor: "{colors.foreground}"
@@ -373,6 +394,7 @@ An Arabic store in a **Spotlight** style: the store is a dark stage, every produ
 - **Personality:** confident, modern and a little theatrical, like today's electronics stores, while staying calm enough for clothes, perfume and home goods.
 - **Audience:** Arab shoppers who mostly browse on their phones, some of them with little online shopping experience.
 - **Intended feel:** the hero shows one product at a time on a stage whose light takes its color. Swiping turns the photo away in 3D and brings the next one in, and the light changes color with it at the same moment. Dark cards with a thin border hold the products, and blue alone means "press here" or "this is the price".
+- **Mascot:** Najm (نجم, "star", for the spotlight), a small glossy blue dog in 3D who stands in the corner of every page, follows the visitor with his eyes and carries what they buy (see Mascot under Components).
 - **Direction:** the whole interface is right to left. Alignment, arrows, sliding menus and the 3D turn start from the right.
 - **Mobile first:** every design starts at a width of 375 px, with a navigation bar fixed to the bottom of the screen.
 
@@ -393,6 +415,7 @@ A dark background with a blue tint in three shades, white text, a single brand c
 - **Yellow (warning, #fbbf24):** the "Only a few left" notice.
 - **Green (success, #4ade80):** the "In stock" status. The floating WhatsApp button uses WhatsApp's darker green (whatsapp, #15803d), because the white icon on it needs a contrast of 5:1.
 - **The product's tone (stage-tone and stage-glow):** the light behind a product photo. `pnpm images` measures the main color of every photo, and the site turns it into a hue and a strength (chroma) in the OKLCH color space. The light behind the product is always drawn at the same lightness (0.40), so white text on it keeps a contrast of at least 7:1 whatever the hue, and the glowing platform under the product at a lightness of 0.78. A photo without a clear color, such as a black speaker, takes the store's blue (hue 262, the values in the tokens), and the owner can set the tone of any photo in the products file. Text never sits on the bright middle of the light: it sits on the dark side of a stage, or under a dark gradient.
+- **Najm's colors (mascot-fur, mascot-tag, mascot-ear):** only on the mascot, drawn in 3D: his fur is a deeper shade of the store's blue (#3572f5), so it keeps its color under the lights, with a gold heart tag (#f6c343) and pink inside his ears (#ff7fa8). The rim of his basket is the store's blue, and its wheels and handle the gray of secondary text. No interface element uses these three colors.
 
 ## Typography
 
@@ -430,7 +453,8 @@ Depth comes from **background shades, thin borders and one light per screen**, n
 - The background is the darkest, the header, the footer and the cards are one shade lighter, and fields and photo boxes are one shade lighter still.
 - Cards, tiles and photo boxes have a thin border in the border color. On hover a card rises by 2 px, its border takes a hint of blue, and its photo grows by 5%.
 - **One light per screen:** the stage. Behind the product, a radial light in its tone; under it, a glowing ellipse (the platform) with a soft dark center where the product stands. Product cards and category tiles carry a small version of the same light: a wash of the product's tone in the photo box and a short glow under the product. No other glows.
-- No shadows on cards or buttons, and no blur effects, because they are slow on phones. A shadow is allowed only on floating elements: the categories panel, the search suggestions, the cart panel, notifications and the WhatsApp button, with a black overlay (60%) behind dialogs.
+- No shadows on cards or buttons, and no blur effects, because they are slow on phones. A shadow is allowed only on floating elements: the categories panel, the search suggestions, the cart panel, notifications, the WhatsApp button and Najm's speech bubble, with a black overlay (60%) behind dialogs.
+- Najm adds no light and no background: his canvas is transparent, and only a soft round shadow under his feet and his cart, which fades before its edge, ties him to the ground.
 - The round cart button in the corner of the card is surrounded by a ring in the background color (6 px), so the card looks cut out around it.
 - **3D:** the photos on a stage turn as they move. The photo that leaves turns away by up to 34 degrees around its vertical axis, moves back, shrinks and fades, and the next one turns into place, with the platform narrowing and widening with them. The turn follows the swipe itself, so it works with a finger, the arrows, the thumbnails and the keyboard. On a computer with a mouse, the photo under the pointer also tilts a few degrees toward it. Anyone who asked for reduced motion in their device settings sees no turn and no tilt.
 
@@ -467,6 +491,14 @@ Depth comes from **background shades, thin borders and one light per screen**, n
 - **Checkout:** one page with steps numbered in blue circles, each step in a card with 16 px corners and a thin border. Fields are 44 px tall, with a gray border and the page background; the label sits above the field and the error message under it in light red. The summary is in a surface card, sticky on desktop and collapsible on mobile, and the blue confirm button carries the total. A "demo store" notice shows before and after confirming.
 - **Contact us:** a centered heading, then a surface card for each channel: a light-surface circle with a blue icon, the channel's name in gray and its value in white. It appears on the home page and on the "Contact us" page.
 - **WhatsApp button:** a green circle with a white icon in the corner of the screen on the end side, above the mobile bottom bar. It shows only when a WhatsApp number is set.
+- **Mascot (mascot, mascot-bubble):** Najm stands in the corner of the screen on the start side, the opposite corner from the WhatsApp button: 200×208 px on a tablet or desktop and 136×144 px on a phone, just above the mobile bottom bar. His canvas has no background and lets every tap and click through, so he never blocks the page; only his speech bubble takes clicks. The bubble is a surface card with 16 px corners, a thin border and a shadow, with a tail that points at him, white text at 14 px and a close button; it closes by itself after a few seconds and when the visitor moves to another page, but stays open while the pointer or the keyboard focus is on it. He changes with the page:
+  - **Home page:** without his cart, he waves and says hello once per visit, with a "Hide Najm" button in the greeting.
+  - **Product lists, search, product pages and the wishlist:** his cart stands beside him, and he says once per visit that he will carry what the visitor picks. When a product is added, its photo flies in an arc from the pressed button into his paws, he turns and throws it into his basket, the cart bounces and he hops; then his bubble names the product, suggests two similar products that are not in the cart yet (with "Add" for a single-option product, which he catches too, and "Choose" for a product with options), and offers "View cart". While he is on screen he replaces the cart panel as the add confirmation; when he is hidden, not loaded yet, or the browser can't draw him, the cart panel opens as before.
+  - **Cart page:** he says how many pieces the cart holds. When a product is deleted, he takes it out of his basket and throws it away.
+  - **Checkout:** he stays quiet, so his bubble never covers the form.
+  - **Order confirmation:** he cheers, his cart rolls off with the order and comes back empty, he waves, and he congratulates the visitor, once per order.
+  - **Help pages and the 404 page:** he just keeps the visitor company, without his cart.
+- **Hiding Najm:** "Hide Najm" in his greeting, and a button with a dog icon in the footer's bottom row ("Hide Najm" or "Show Najm"), save the visitor's choice in the browser.
 - **Static pages:** a text column at most 768 px wide with bold headings, and a side list of the pages in a surface card on desktop. FAQ answers open and close, and the shipping table is built from the shipping file.
 - **Footer:** full width in the surface color: the logo, the store's tagline in gray and the blue "Contact us" button on the start side, and the link columns in gray (blue on hover) on the end side, then the copyright line with a thin top border, and at the very end a 3 px blue line that fades toward both edges (footer-line).
 - **Share images (share-image):** they appear when a link is shared on WhatsApp and social networks, and are generated at build time at 1200×630: one image per product, one per category, and a general image for the store. A dark background, the product on the left in a square with rounded corners, and the text column on the right: the logo and the store name, then the category name in gray, then the product name in bold white, with the price in blue at the bottom and the pre-discount price struck through next to it. A cut-out stands in the square on its tone and its platform glow, like on the stage. The discount badge is blue, over the photo. The category images and the general image show only two facts from the store data: cash on delivery and the free-shipping threshold.
@@ -483,6 +515,8 @@ Depth comes from **background shades, thin borders and one light per screen**, n
 - Do: write counts with the correct Arabic plural forms: "منتج واحد" (one product), "منتجان" (two products), "5 منتجات" (5 products), "20 منتجاً" (20 products).
 - Do: show shipping and the total before any confirmation, and never surprise the visitor with an amount.
 - Do: tie motion to what the visitor does (a swipe, the pointer) or keep it short (300 ms or less) and purposeful, such as panels sliding in, the heartbeat when saving to the wishlist, and FAQ answers opening. Anyone who asked for reduced motion in their device settings sees no motion at all.
+- Do: let Najm move only in answer to the visitor: his catch, throw and celebration follow an add, a removal or an order, and his breathing, blinking and tail run only for a few seconds after the visitor moves, then he stands still and nothing is drawn. With reduced motion he stands still, doesn't follow the pointer, and products appear in his basket at once; his bubbles still speak.
+- Do: load Najm's code (three.js) only after the page has loaded and the visitor first moves, touches or scrolls, so he never slows down the first screen.
 - Don't: put white text on blue, or blue text on blue. Text on blue is always dark.
 - Don't: use blue for large backgrounds other than the announcement bar, and don't put two blue cards next to each other.
 - Don't: put text on the bright middle of a stage's light or of a photo box; text sits on the dark side, or under a dark gradient.
