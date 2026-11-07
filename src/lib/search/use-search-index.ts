@@ -2,12 +2,16 @@
 
 import { useCallback, useEffect, useState } from "react"
 
-import { isSearchIndex } from "@/lib/catalog/guards"
+import { isProductsResponse } from "@/lib/catalog/guards"
 import type { SearchCardData } from "@/lib/catalog/types"
-import { staticJsonLoader } from "@/lib/static-json"
+import { jsonLoader } from "@/lib/json-loader"
+import { productsApiPath } from "@/lib/routes"
 
-/** Loads the search index only once and shares it between all search boxes on the page. */
-const loadSearchIndex = staticJsonLoader("/search-index.json", isSearchIndex)
+/**
+ * Loads every product card from the products API only once and shares it between all search boxes on
+ * the page; matching then runs in the browser at every key press, without waiting for the network.
+ */
+const loadProducts = jsonLoader(productsApiPath, isProductsResponse)
 
 type IndexState = { data: SearchCardData[] | null; error: boolean }
 
@@ -19,8 +23,8 @@ export function useSearchIndex(enabled = true) {
   useEffect(() => {
     if (!enabled) return
     let active = true
-    loadSearchIndex().then(
-      (data) => active && setState({ data, error: false }),
+    loadProducts().then(
+      ({ items }) => active && setState({ data: items, error: false }),
       () => active && setState({ data: null, error: true })
     )
     return () => {

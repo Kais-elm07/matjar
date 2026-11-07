@@ -1,9 +1,9 @@
 import { isSimilarProducts } from "@/lib/catalog/guards"
 import type { SimilarProduct, SimilarProducts } from "@/lib/catalog/types"
-import { staticJsonLoader } from "@/lib/static-json"
+import { jsonLoader } from "@/lib/json-loader"
 
 /** The similar products of every product, loaded once per visit when Najm first appears. */
-export const loadSimilarProducts = staticJsonLoader(
+export const loadSimilarProducts = jsonLoader(
   "/similar-products.json",
   isSimilarProducts
 )

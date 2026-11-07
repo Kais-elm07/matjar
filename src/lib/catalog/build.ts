@@ -1,5 +1,6 @@
 import "server-only"
 
+import { PHASE_PRODUCTION_BUILD } from "next/constants"
 import { existsSync } from "node:fs"
 import path from "node:path"
 
@@ -22,7 +23,8 @@ import { IMAGE_WIDTHS, imageFile } from "@/lib/image-loader"
 import { discountPercent, toMinorUnits } from "@/lib/money"
 
 /**
- * Builds the catalog once at build time from the src/data files, after validating them:
+ * Builds the catalog once from the src/data files, after validating them, both while pages are prepared
+ * at build time and when the server starts:
  * prices in the smallest unit, each category's path and product count, and ready-sorted lists.
  * Neither this file nor the full data files reach the visitor's browser.
  * The catalog is built when this module is first imported, so a mistake in the data throws there
@@ -142,9 +144,13 @@ function toCategories(
   }))
 }
 
-/** In the production build, every image in the data must be prepared in public/images. */
+/**
+ * While the site is built (next build), every image in the data must be prepared in public/images.
+ * The running server builds the catalog too but never reads public/images, so the check is skipped there,
+ * and turbopackIgnore keeps the whole folder out of the server's file tracing.
+ */
 function assertImagesExist(products: Product[], categories: Category[]) {
-  if (process.env.NODE_ENV !== "production") return
+  if (process.env.NEXT_PHASE !== PHASE_PRODUCTION_BUILD) return
   const missing: string[] = []
   const check = (src: string | null, owner: string) => {
     if (!src || /^https?:\/\//.test(src)) return
@@ -153,7 +159,8 @@ function assertImagesExist(products: Product[], categories: Category[]) {
       "public",
       imageFile(src, IMAGE_WIDTHS[0])
     )
-    if (!existsSync(file)) missing.push(`${owner}: الصورة "${src}"`)
+    if (!existsSync(/* turbopackIgnore: true */ file))
+      missing.push(`${owner}: الصورة "${src}"`)
   }
   for (const product of products) {
     for (const image of product.images) {

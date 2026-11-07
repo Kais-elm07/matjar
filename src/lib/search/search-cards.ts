@@ -3,7 +3,7 @@ import { normalizeForSearch, toSearchTerms } from "@/lib/search/normalize"
 
 /**
  * Search results sorted by relevance: matches in the name first, then best sellers.
- * Runs in the browser, on the search index (src/app/search-index.json).
+ * Runs in the browser on the cards from the products API, and on the server for the API's q parameter.
  */
 export function searchCards<T extends SearchCardData>(
   cards: T[],

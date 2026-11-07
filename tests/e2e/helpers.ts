@@ -1,6 +1,8 @@
 import { expect, type APIRequestContext, type Page } from "@playwright/test"
 
+import { isProductsResponse } from "../../src/lib/catalog/guards"
 import type { SearchCardData } from "../../src/lib/catalog/types"
+import { productsApiPath } from "../../src/lib/routes"
 
 /**
  * Opens the page and waits until it is interactive and the cart and wishlist are restored,
@@ -11,13 +13,16 @@ export async function open(page: Page, path: string) {
   await expect(page.locator("html[data-stores-ready]")).toBeAttached()
 }
 
-/** The site's products from the published search index, so the tests aren't tied to a specific product. */
+/** The site's products from the products API, so the tests aren't tied to a specific product. */
 export async function loadProducts(
   request: APIRequestContext
 ): Promise<SearchCardData[]> {
-  const response = await request.get("/search-index.json")
+  const response = await request.get(productsApiPath)
   expect(response.ok()).toBe(true)
-  return response.json()
+  const body: unknown = await response.json()
+  if (!isProductsResponse(body))
+    throw new Error("Unexpected products API answer")
+  return body.items
 }
 
 /** An in-stock product with a single variant, added to the cart in one click, with enough stock for the requested quantity. */

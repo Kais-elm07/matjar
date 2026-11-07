@@ -5,13 +5,13 @@ import { useEffect, useState } from "react"
 import { isCartCatalog } from "@/lib/catalog/guards"
 import { useCartStore, type CartNotice } from "@/lib/state/cart"
 import { useCartRestored } from "@/lib/state/hydration"
-import { staticJsonLoader } from "@/lib/static-json"
+import { jsonLoader } from "@/lib/json-loader"
 
 /**
  * Loads the published site's prices and stock once per visit. no-cache asks the site for its copy every
  * time, so old prices do not stay in the browser cache after an update is published.
  */
-const loadCartCatalog = staticJsonLoader("/cart-catalog.json", isCartCatalog, {
+const loadCartCatalog = jsonLoader("/cart-catalog.json", isCartCatalog, {
   cache: "no-cache",
 })
 

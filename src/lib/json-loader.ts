@@ -1,10 +1,11 @@
 /**
- * A loader for one of the static JSON files the build writes (search-index.json, cart-catalog.json).
- * The file is requested once per visit and shared by every caller, and its shape is checked with a
+ * A loader for JSON the browser downloads from the site: the products API, and the files prepared at
+ * build time (cart-catalog.json, similar-products.json).
+ * It is requested once per visit and shared by every caller, and its shape is checked with a
  * type guard, because a broken deploy or an old cached copy shouldn't break the page.
  * A failed request is forgotten, so the next call tries again.
  */
-export function staticJsonLoader<T>(
+export function jsonLoader<T>(
   url: string,
   isValid: (value: unknown) => value is T,
   init?: RequestInit

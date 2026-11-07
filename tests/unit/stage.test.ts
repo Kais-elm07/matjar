@@ -1,11 +1,7 @@
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs"
-import os from "node:os"
-import path from "node:path"
-
-import { afterAll, describe, expect, it } from "vitest"
+import { describe, expect, it } from "vitest"
 
 import { isImageMeta } from "@/lib/catalog/guards"
-import { photoLook, readImageMeta } from "@/lib/catalog/image-meta"
+import { parseImageMeta, photoLook } from "@/lib/catalog/image-meta"
 import { slidePosition, slideTurn, toneBlend } from "@/lib/slider"
 import {
   BRAND_TONE,
@@ -86,9 +82,6 @@ describe("the product's tone", () => {
 })
 
 describe("the photo colors that pnpm images measures", () => {
-  const dir = mkdtempSync(path.join(os.tmpdir(), "matjar-meta-"))
-  afterAll(() => rmSync(dir, { recursive: true, force: true }))
-
   const meta = {
     "/images/products/wallet-1": { color: "#a35a2c", cutout: true },
     "/images/products/speaker-1": { color: null, cutout: true },
@@ -101,13 +94,10 @@ describe("the photo colors that pnpm images measures", () => {
     expect(isImageMeta([])).toBe(false)
   })
 
-  it("reads the file, or nothing when pnpm images hasn't run, and stops at a broken file", () => {
-    const file = path.join(dir, "image-meta.json")
-    expect(readImageMeta(file)).toEqual({})
-    writeFileSync(file, JSON.stringify(meta))
-    expect(readImageMeta(file)).toEqual(meta)
-    writeFileSync(file, "{ not json")
-    expect(() => readImageMeta(file)).toThrow("pnpm images")
+  it("reads the file's colors, and stops at a broken file", () => {
+    expect(parseImageMeta(JSON.stringify(meta))).toEqual(meta)
+    expect(() => parseImageMeta("{ not json")).toThrow("pnpm images")
+    expect(() => parseImageMeta("[]")).toThrow("pnpm images")
   })
 
   it("gives each photo its measured tone, the owner's tone first, and the store's blue without a color", () => {

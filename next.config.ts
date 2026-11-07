@@ -49,6 +49,9 @@ const nextConfig: NextConfig = {
     // would map to a file that already exists and repeat it in every image's list of sizes
     imageSizes: [200],
   },
+  // The server builds the catalog in memory and reads only public/images/image-meta.json from that folder
+  // (src/lib/catalog/image-meta.ts). The photos are served as files, so they stay out of the server's code.
+  outputFileTracingExcludes: { "/*": ["./public/images/**/*.webp"] },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

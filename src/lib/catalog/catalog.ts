@@ -13,8 +13,9 @@ import type {
 import { optionsKey } from "@/lib/catalog/variant-key"
 
 /**
- * The site's only data layer: every page reads categories and products from here.
- * It runs at build time only; if a server is added later, replacing the data source in build.ts is enough.
+ * The site's only data layer: every page and the products API read categories and products from here.
+ * The catalog is built once in memory from src/data (build.ts), both while pages are prepared at build
+ * time and in the running server.
  * The home page content is in home.ts.
  */
 
@@ -143,7 +144,7 @@ export function getSimilarProducts(limit = 4): SimilarProducts {
   )
 }
 
-/** The search index: every product card with its search text, published as a JSON file loaded on the first search. */
+/** The search index: every product card with its search text, served by the products API (src/lib/api/products.ts). */
 export function getSearchIndex() {
   return catalog.products.map(toSearchCard)
 }

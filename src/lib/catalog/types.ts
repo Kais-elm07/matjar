@@ -203,8 +203,11 @@ export type ProductCardData = {
   createdAt: string
 }
 
-/** A card in the search index (search-index.json): the card plus normalized text for Arabic search. */
+/** A card in the search index (the products API): the card plus normalized text for Arabic search. */
 export type SearchCardData = ProductCardData & { searchText: string }
+
+/** The answer of GET /api/products/: the matching cards and how many there are. */
+export type ProductsResponse = { items: SearchCardData[]; total: number }
 
 /** The card of a deal with a real end date, for "عروض لفترة محدودة" (Limited-time deals) and its countdown. */
 export type DealCard = ProductCardData & { saleEndsAt: string }

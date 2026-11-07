@@ -91,6 +91,20 @@ Najm (نجم, "star") is a small glossy blue dog in 3D, drawn with [three.js](ht
 - **Reduced motion:** he stands still, doesn't follow the pointer, and products appear in his basket at once; his bubbles still speak.
 - **Renaming him or changing what he says:** `mascotName` in `src/config/site.ts`, and his sentences in `src/lib/mascot/messages.ts`.
 
+## Products API
+
+The server answers JSON about the catalog on every request (`src/app/api/products`, built by `src/lib/api/products.ts`). Prices are in halalas (1 riyal = 100 halalas), and every address ends with `/`: without it the server answers with a 308 redirect to the address with the slash.
+
+| Request                                   | Answer                                                                                 |
+| ----------------------------------------- | -------------------------------------------------------------------------------------- |
+| `GET /api/products/`                      | `{ items, total }`: every product card with its search text                            |
+| `GET /api/products/?q=قميص`               | Only the products that match the words, in the same order as the store's search box    |
+| `GET /api/products/?category=men`         | Only the products of a category and its subcategories; 404 for an unknown category     |
+| `GET /api/products/classic-cotton-shirt/` | The full product: description, specs, photos, options and every variant with its stock |
+| `GET /api/products/no-such-product/`      | 404 with `{ "error": "المنتج غير موجود" }`                                             |
+
+The store's own search box, search page and wishlist load `GET /api/products/` once per visit and match in the browser at every key press. A cache may keep an answer only while it checks with the server (`Cache-Control: public, max-age=0, must-revalidate`).
+
 ## Checkout (demo)
 
 A single page with four steps: contact details, address, shipping method, and cash on delivery, with an order summary and a coupon field.
@@ -200,7 +214,7 @@ src/app/                       the pages (Next.js App Router)
                                checkout, static pages
   not-found.tsx                the 404 page, inside the store shell
   sitemap.ts, robots.ts        the sitemap and robots file
-  search-index.json/           the search index, a static JSON file written at build time
+  api/products/                the products API: the product list and one product by its slug
   cart-catalog.json/           the current price and stock of every variant, a static JSON file
   similar-products.json/       the similar products Najm suggests, a static JSON file
   og/                          share images for every product, category and the site (JPEG, written at build time)
@@ -238,7 +252,8 @@ src/lib/
   og/                          share image layout and drawing
   routes.ts                    the addresses of the product, category and static pages
   zod.ts                       Zod, set up once (Arabic messages, no eval): import z from here
-  static-json.ts               loads a JSON file the build writes, once per visit, and checks its shape
+  json-loader.ts               loads JSON from the site once per visit, and checks its shape
+  api/                         the answers of the API routes in src/app/api
   money.ts                     prices in halalas, and formatting them
   dates.ts                     today's date and deal end times in the store's time zone
   arabic-plural.ts             Arabic plural forms for counts
@@ -273,39 +288,39 @@ netlify.toml                   Netlify build settings
 .claude/skills/                skills for Claude: the design system, and Vercel's React guides
 ```
 
-`src/lib/catalog` holds everything about products and categories. Files that run only while the site is built import `server-only`, so importing them from browser code fails the build:
+`src/lib/catalog` holds everything about products and categories. Files that run only on the server (while pages are built, and in the running server) import `server-only`, so importing them from browser code fails the build:
 
-| File                   | Job                                                                                                         | Runs                  |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------- | --------------------- |
-| `types.ts`             | The types of the data files and of the built catalog                                                        | Both                  |
-| `define.ts`            | Helpers for writing the products file (`productImages`, `optionMatrix`)                                     | Build                 |
-| `schema.ts`            | Rules for every field in the category and product files, with Arabic messages                               | Build                 |
-| `validate.ts`          | Checks the two files together (duplicate slugs, missing categories, duplicate variants)                     | Build                 |
-| `build.ts`             | Builds the catalog once: prices in halalas, category paths and covers, sorted lists, expired deals          | Build (`server-only`) |
-| `image-meta.ts`        | Reads the photo colors `pnpm images` measured, and gives every photo its tone and whether it is a cut-out   | Build (`server-only`) |
-| `catalog.ts`           | The read functions the pages use                                                                            | Build (`server-only`) |
-| `home.ts`              | Home page sections and promo cards                                                                          | Build (`server-only`) |
-| `cards.ts`             | The card data that reaches the browser, with as few fields as possible                                      | Build                 |
-| `options.ts`           | Option names and color swatches                                                                             | Both                  |
-| `variant-key.ts`       | The key that ties a cart line to its options                                                                | Both                  |
-| `guards.ts`            | Checks the two JSON files the browser downloads, and the photo colors file                                  | Both                  |
-| `variant-selection.ts` | Choosing a variant on the product page: the matching variant, which values can be chosen, the color's photo | Browser               |
+| File                   | Job                                                                                                         | Runs                   |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------- |
+| `types.ts`             | The types of the data files and of the built catalog                                                        | Both                   |
+| `define.ts`            | Helpers for writing the products file (`productImages`, `optionMatrix`)                                     | Server                 |
+| `schema.ts`            | Rules for every field in the category and product files, with Arabic messages                               | Server                 |
+| `validate.ts`          | Checks the two files together (duplicate slugs, missing categories, duplicate variants)                     | Server                 |
+| `build.ts`             | Builds the catalog once: prices in halalas, category paths and covers, sorted lists, expired deals          | Server (`server-only`) |
+| `image-meta.ts`        | Reads the photo colors `pnpm images` measured, and gives every photo its tone and whether it is a cut-out   | Server (`server-only`) |
+| `catalog.ts`           | The read functions the pages and the products API use                                                       | Server (`server-only`) |
+| `home.ts`              | Home page sections and promo cards                                                                          | Server (`server-only`) |
+| `cards.ts`             | The card data that reaches the browser, with as few fields as possible                                      | Server                 |
+| `options.ts`           | Option names and color swatches                                                                             | Both                   |
+| `variant-key.ts`       | The key that ties a cart line to its options                                                                | Both                   |
+| `guards.ts`            | Checks the JSON the browser downloads (the products API and two data files), and the photo colors file      | Both                   |
+| `variant-selection.ts` | Choosing a variant on the product page: the matching variant, which values can be chosen, the color's photo | Browser                |
 
 ## How the code fits together
 
-The site is built once (`pnpm build`) into plain files. Most of the work happens then, and the browser only adds what depends on the visitor.
+Most pages are prepared once by `pnpm build`. The server then sends them as they are and answers the products API, and the browser only adds what depends on the visitor.
 
-**At build time** (server components, and the files that import `server-only`):
+**On the server** (server components, route handlers, and the files that import `server-only`), at build time and in the running server:
 
 1. `src/data` holds the products, categories, home page, shipping and coupons, with prices in riyals.
 2. `src/lib/catalog/build.ts` checks the category and product files (`schema.ts`, `validate.ts`) and builds the catalog once: prices in halalas, category paths and covers, expired deals back to their old price, every photo's tone (`image-meta.ts`), and a check that every image exists. Any mistake stops the build with an Arabic message. The shipping and coupon files go through the same kind of check in `src/lib/checkout/config.ts`.
 3. The pages in `src/app/(store)` read the catalog through `src/lib/catalog/catalog.ts` and `home.ts`, and pass client components only the fields they need (`cards.ts`).
-4. Three routes write static JSON files: `/search-index.json` (every product's card and search text), `/cart-catalog.json` (the current price and stock of every variant) and `/similar-products.json` (Najm's suggestions). The share images in `src/app/og` are drawn the same way.
+4. The products API (`src/app/api/products`) answers from the same catalog on every request. Two routes write JSON files at build time: `/cart-catalog.json` (the current price and stock of every variant) and `/similar-products.json` (Najm's suggestions). The share images in `src/app/og` are drawn the same way.
 
 **In the browser** (client components, marked `"use client"`):
 
 - Listing pages arrive with every product of the category in the HTML. Filters, sorting and pages then run in the browser (`src/lib/listing`), reading the URL through `useListingQuery()`.
-- Search downloads `/search-index.json` the first time it is needed and matches products in Arabic (`src/lib/search`).
+- Search downloads every product card from the products API (`/api/products/`) the first time it is needed, and matches products in Arabic in the browser (`src/lib/search`). The API runs on the server, on the same catalog the pages were built from.
 - The cart and wishlist are Zustand stores saved in localStorage (`src/lib/state`). When the cart or checkout opens, the cart is checked against `/cart-catalog.json`, so prices and stock are current.
 - Checkout checks the form (`src/lib/checkout/form-schema.ts`), calculates the totals (`totals.ts`) from the shipping and coupon settings the page received at build time, and keeps the demo order in sessionStorage for the confirmation page (`last-order.ts`).
 - Panels that open on a tap (the cart, the mobile menu, image zoom, the filter sheet and toast messages) load their code once the page has loaded (`src/hooks/use-idle.ts`).
@@ -335,15 +350,15 @@ The site is built once (`pnpm build`) into plain files. Most of the work happens
 
 **Most of the site is prepared once.** The home, listing, category, product and help pages, the share images and the data files below are built once with `pnpm build`. The server sends them as they are, without rendering them again for each visitor, and a content delivery network such as Netlify's can keep copies close to visitors. Only what depends on the request runs on each visit.
 
-**The data the browser requests** comes from three files prepared at build time:
+**The data the browser requests** comes from the products API and two files prepared at build time:
 
-| File                     | Size   | When it loads                                                                    |
+| Address                  | Size   | When it loads                                                                    |
 | ------------------------ | ------ | -------------------------------------------------------------------------------- |
-| `/search-index.json`     | 15 KB  | On the first focus of the search field, and on the search and wishlist pages     |
+| `/api/products/`         | 15 KB  | On the first focus of the search field, and on the search and wishlist pages     |
 | `/cart-catalog.json`     | 5.3 KB | Only when the cart or the checkout page opens, to check current prices and stock |
 | `/similar-products.json` | 21 KB  | When Najm appears, for his suggestions (1.5 KB compressed)                       |
 
-Each file loads once per visit and is shared by every part of the page. A network failure does not break the cart: it stays as it was saved, and search shows a message with a retry button.
+Each one loads once per visit and is shared by every part of the page. A network failure does not break the cart: it stays as it was saved, and search shows a message with a retry button.
 
 **Local load test** (November 4, 2026, when the store was still a static site): a simple single-process file server on the development machine itself, with mixed simultaneous requests for pages, scripts, images and the two data files. This is far weaker than a real delivery network; what matters is that the site needs no computation per visit:
 

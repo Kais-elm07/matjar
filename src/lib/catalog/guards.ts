@@ -4,6 +4,7 @@ import type {
   CardPhoto,
   CartCatalog,
   ImageMeta,
+  ProductsResponse,
   SearchCardData,
   SimilarProduct,
   SimilarProducts,
@@ -19,8 +20,8 @@ import {
 import type { Tone } from "@/lib/tone"
 
 /**
- * Checks for the catalog's shapes in data read at runtime: the JSON files the browser downloads
- * (search-index.json, cart-catalog.json and similar-products.json), the product parts kept in the saved cart and order,
+ * Checks for the catalog's shapes in data read at runtime: what the browser downloads
+ * (the products API, cart-catalog.json and similar-products.json), the product parts kept in the saved cart and order,
  * and the photo colors that pnpm images writes (image-meta.json).
  * The general checks they build on are in src/lib/guards.ts.
  */
@@ -99,9 +100,13 @@ function isSearchCard(value: unknown): value is SearchCardData {
   )
 }
 
-/** The product cards in search-index.json. */
-export function isSearchIndex(value: unknown): value is SearchCardData[] {
-  return isArrayOf(value, isSearchCard)
+/** The answer of the products API: the product cards and their count. */
+export function isProductsResponse(value: unknown): value is ProductsResponse {
+  return (
+    isRecord(value) &&
+    isArrayOf(value.items, isSearchCard) &&
+    isFiniteNumber(value.total)
+  )
 }
 
 function isCartCatalogEntry(value: unknown): value is CartCatalog[string] {
