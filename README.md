@@ -4,7 +4,7 @@ An Arabic (right-to-left), mobile-first online storefront that runs as a fully s
 The storefront itself is in Arabic for Arabic-speaking shoppers. The project documentation is in English.
 The full plan and implementation phases are in [PLAN.md](PLAN.md).
 
-**Current status:** Phases 1 to 7 are complete: the project scaffold, the full catalog (categories, products, search, filters), the cart and wishlist in the browser, the demo checkout, the static pages, polish (share images, performance, copy and accessibility review, light motion, optional analytics) and automated tests. Items that only the owner can do are still open: a review on a real phone, testing with real people, and real contact details. On November 4, 2026 the interface was redesigned at the owner's request in the "Warm Night" style: a dark background, a single orange accent for actions and prices, dark product cards with a round cart button in the corner, a dark header with a wide search field, a footer ending in an orange bar, and real product photos from Pexels instead of drawn placeholders (details in `DESIGN.md`). For phase 8 (deployment) the hosting files (`public/_headers` and `netlify.toml`) and the [DEPLOYMENT.md](DEPLOYMENT.md) guide are ready, and the owner postponed the deployment itself. On November 4 and 5, 2026 the code was reviewed for quality, performance and load capacity: strict types, one component per file, English code comments, a design polish, a faster first screen on phones, and folders and names that say what they hold (see "Project structure", "How the code fits together" and "Performance and load capacity"). On November 6, 2026 the interface moved to the "Spotlight" identity at the owner's request (phase 10 of the plan): a dark stage with a blue tint and a single electric blue, every product photo cut out of its background, a light behind each product that takes the product's own color, photos that turn in 3D as they move, and the same look on the cards, the category tiles and the product page (details in `DESIGN.md`). The GitHub Actions checks pass.
+**Current status:** Phases 1 to 7 are complete: the project scaffold, the full catalog (categories, products, search, filters), the cart and wishlist in the browser, the demo checkout, the static pages, polish (share images, performance, copy and accessibility review, light motion, optional analytics) and automated tests. Items that only the owner can do are still open: a review on a real phone, testing with real people, and real contact details. On November 4, 2026 the interface was redesigned at the owner's request in the "Warm Night" style: a dark background, a single orange accent for actions and prices, dark product cards with a round cart button in the corner, a dark header with a wide search field, a footer ending in an orange bar, and real product photos from Pexels instead of drawn placeholders (details in `DESIGN.md`). For phase 8 (deployment) the hosting files (`public/_headers` and `netlify.toml`) and the [DEPLOYMENT.md](DEPLOYMENT.md) guide are ready, and the owner postponed the deployment itself. On November 4 and 5, 2026 the code was reviewed for quality, performance and load capacity: strict types, one component per file, English code comments, a design polish, a faster first screen on phones, and folders and names that say what they hold (see "Project structure", "How the code fits together" and "Performance and load capacity"). On November 6, 2026 the interface moved to the "Spotlight" identity at the owner's request (phase 10 of the plan): a dark stage with a blue tint and a single electric blue, every product photo cut out of its background, a light behind each product that takes the product's own color, photos that turn in 3D as they move, and the same look on the cards, the category tiles and the product page (details in `DESIGN.md`). On November 6 and 7, 2026 the store got a 3D mascot at the owner's request (phase 11 of the plan): Najm (نجم), a small blue dog in the corner of every page, who follows the visitor with his eyes, carries what they add to the cart and suggests similar products (see "Najm, the mascot"). The GitHub Actions checks pass.
 
 ## Requirements
 
@@ -78,6 +78,18 @@ Both are saved in the visitor's browser (localStorage), so they survive closing 
 - A visitor cannot add more than the stock written in the products file, or more than 10 pieces of a single variant.
 - If the browser blocks storage, the cart keeps working in memory for the visit, and corrupted saved data is discarded instead of breaking the page.
 - After every new deployment the cart is matched against `/cart-catalog.json`, which is generated at build time: prices and stock are refreshed, sold-out or removed items are dropped, and the visitor sees a notice describing what changed.
+- Adding a product is confirmed at once: Najm catches it when he is on screen, otherwise the cart panel opens.
+
+## Najm, the mascot
+
+Najm (نجم, "star") is a small glossy blue dog in 3D, drawn with [three.js](https://threejs.org) from simple shapes in code, so there is no model file to download. He stands in the corner of every page on the start side (the WhatsApp button is on the other side), with no background, and lets every tap through to the page. His look and rules are in `DESIGN.md` (Mascot).
+
+- **On each page:** he greets the visitor on the home page once per visit. On product lists, search, product pages and the wishlist his cart stands beside him: when a product is added, its photo flies from the pressed button into his paws, he throws it into his basket, and his speech bubble names it and suggests two similar products that aren't in the cart yet, with "View cart". On the cart page he says how many pieces the cart holds, and takes out whatever the visitor deletes. On the checkout form he stays quiet, and on the confirmation page he celebrates and sends his cart off with the order.
+- **Suggestions** come from `/similar-products.json`, written at build time from the same "similar products" the product page shows (up to four in-stock products per product).
+- **Hiding him:** "Hide Najm" in his greeting, and a button in the footer that hides him or brings him back. The choice is saved in the browser.
+- **Speed:** his code (about 150 KB compressed, mostly three.js) downloads only after the page has loaded and the visitor first moves, touches or scrolls, and only if the browser can draw WebGL 2. Drawing stops a few seconds after the visitor stops moving, and while the tab is hidden.
+- **Reduced motion:** he stands still, doesn't follow the pointer, and products appear in his basket at once; his bubbles still speak.
+- **Renaming him or changing what he says:** `mascotName` in `src/config/site.ts`, and his sentences in `src/lib/mascot/messages.ts`.
 
 ## Checkout (demo)
 
@@ -149,22 +161,23 @@ The whole visual identity is described in [DESIGN.md](DESIGN.md), in [Google's D
 
 ## Where to change...
 
-| What you want to change                  | File                                                        |
-| ---------------------------------------- | ----------------------------------------------------------- |
-| Store name, description, currency, links | `src/config/site.ts`                                        |
-| Home slides and promo cards              | `src/data/home.ts`                                          |
-| Shipping cities, prices, free shipping   | `src/data/shipping.ts`                                      |
-| Discount coupons                         | `src/data/coupons.ts`                                       |
-| Static page text                         | `src/content/pages`                                         |
-| Contact details and announcement bar     | `src/config/site.ts` (`contact` and `announcement`)         |
-| Analytics                                | `src/config/site.ts` (`analytics`)                          |
-| Share image layout                       | `src/lib/og/share-images.ts`                                |
-| Brand colors and corner radii            | `DESIGN.md`, then the files listed under "Design system"    |
-| Option swatch colors (red, blue...)      | `src/lib/catalog/options.ts`                                |
-| Arabic font                              | `assets/fonts`, then `pnpm fonts`, and `src/app/layout.tsx` |
-| Site icon                                | `src/app/icon.svg`                                          |
-| A category's cover photo                 | `image` in `src/data/categories.ts`                         |
-| The light behind one product photo       | `tone` on the image in `src/data/products.ts`               |
+| What you want to change                  | File                                                              |
+| ---------------------------------------- | ----------------------------------------------------------------- |
+| Store name, description, currency, links | `src/config/site.ts`                                              |
+| Home slides and promo cards              | `src/data/home.ts`                                                |
+| Shipping cities, prices, free shipping   | `src/data/shipping.ts`                                            |
+| Discount coupons                         | `src/data/coupons.ts`                                             |
+| Static page text                         | `src/content/pages`                                               |
+| Contact details and announcement bar     | `src/config/site.ts` (`contact` and `announcement`)               |
+| Analytics                                | `src/config/site.ts` (`analytics`)                                |
+| Share image layout                       | `src/lib/og/share-images.ts`                                      |
+| Brand colors and corner radii            | `DESIGN.md`, then the files listed under "Design system"          |
+| Option swatch colors (red, blue...)      | `src/lib/catalog/options.ts`                                      |
+| Arabic font                              | `assets/fonts`, then `pnpm fonts`, and `src/app/layout.tsx`       |
+| Site icon                                | `src/app/icon.svg`                                                |
+| A category's cover photo                 | `image` in `src/data/categories.ts`                               |
+| The light behind one product photo       | `tone` on the image in `src/data/products.ts`                     |
+| Najm's name and what he says             | `src/config/site.ts` (`mascotName`), `src/lib/mascot/messages.ts` |
 
 ## Changing the country
 
@@ -189,6 +202,7 @@ src/app/                       the pages (Next.js App Router)
   sitemap.ts, robots.ts        the sitemap and robots file
   search-index.json/           the search index, a static JSON file written at build time
   cart-catalog.json/           the current price and stock of every variant, a static JSON file
+  similar-products.json/       the similar products Najm suggests, a static JSON file
   og/                          share images for every product, category and the site (JPEG, written at build time)
 
 src/components/
@@ -207,12 +221,17 @@ src/components/
   cart/                        cart panel, cart and wishlist pages, quantity stepper
   checkout/                    checkout form (one component per step), order summary, confirmation page
   content/                     static pages: their text, contact cards, shipping table, FAQ
+  mascot/                      Najm: his lazy loader, his canvas and speech bubble, his suggestions, the footer
+                               button that hides him, and the hooks that tie him to the cart and the pages
 
 src/lib/
   catalog/                     products and categories (see the table below)
   listing/                     filtering, sorting and pages in the browser, and the listing pages' URL
   search/                      Arabic search: normalizing text, matching products, loading the search index
-  state/                       what the browser remembers: the cart, the wishlist and open panels (Zustand stores)
+  state/                       what the browser remembers: the cart, the wishlist, open panels and whether Najm
+                               is hidden (Zustand stores)
+  mascot/                      Najm's logic: his behavior on each page, his sentences, the suggestions, and
+                               scene/, his 3D drawing with three.js (his body, his cart, his poses and moves)
   checkout/                    shipping, coupons, totals, the checkout form rules, building and keeping the demo order
   content/                     the static pages: reading and checking them, their text format, and the values
                                such as {store} that fill them
@@ -235,8 +254,9 @@ src/lib/
   motion.ts                    smooth scrolling that respects the "reduce motion" setting
   placeholders.ts              keys for loading placeholders
   utils.ts                     cn(), which merges Tailwind classes
-src/hooks/                     general React hooks: useIdle (after the page has loaded), useMediaQuery, and
-                               useStageMotion (the 3D turn of a stage's photos and its light during a swipe)
+src/hooks/                     general React hooks: useIdle (after the page has loaded), useFirstInteraction
+                               (the visitor's first move after that), useMediaQuery, and useStageMotion (the 3D
+                               turn of a stage's photos and its light during a swipe)
 
 src/data/                      the store's data: categories, products, home page, reviews, shipping, coupons
 src/config/site.ts             general store settings
@@ -279,7 +299,7 @@ The site is built once (`pnpm build`) into plain files. Most of the work happens
 1. `src/data` holds the products, categories, home page, shipping and coupons, with prices in riyals.
 2. `src/lib/catalog/build.ts` checks the category and product files (`schema.ts`, `validate.ts`) and builds the catalog once: prices in halalas, category paths and covers, expired deals back to their old price, every photo's tone (`image-meta.ts`), and a check that every image exists. Any mistake stops the build with an Arabic message. The shipping and coupon files go through the same kind of check in `src/lib/checkout/config.ts`.
 3. The pages in `src/app/(store)` read the catalog through `src/lib/catalog/catalog.ts` and `home.ts`, and pass client components only the fields they need (`cards.ts`).
-4. Two routes write static JSON files: `/search-index.json` (every product's card and search text) and `/cart-catalog.json` (the current price and stock of every variant). The share images in `src/app/og` are drawn the same way.
+4. Three routes write static JSON files: `/search-index.json` (every product's card and search text), `/cart-catalog.json` (the current price and stock of every variant) and `/similar-products.json` (Najm's suggestions). The share images in `src/app/og` are drawn the same way.
 
 **In the browser** (client components, marked `"use client"`):
 
@@ -289,11 +309,12 @@ The site is built once (`pnpm build`) into plain files. Most of the work happens
 - Checkout checks the form (`src/lib/checkout/form-schema.ts`), calculates the totals (`totals.ts`) from the shipping and coupon settings the page received at build time, and keeps the demo order in sessionStorage for the confirmation page (`last-order.ts`).
 - Panels that open on a tap (the cart, the mobile menu, image zoom, the filter sheet and toast messages) load their code once the page has loaded (`src/hooks/use-idle.ts`).
 - The hero and the product gallery are stages: during a swipe, `useStageMotion` writes each photo's 3D turn and the blend of the light straight to CSS variables on every frame, without rendering React again (`src/hooks/use-stage-motion.ts`, with the arithmetic in `src/lib/slider.ts`).
+- Najm is loaded by `LazyMascot` in the store shell. `MascotScene` (`src/lib/mascot/scene`) draws him with three.js and queues his moves; React only holds his speech bubble. The add-to-cart buttons tell him about a new product through `announceAddedProduct` (`src/lib/mascot/events.ts`), which doesn't import three.js, and open the cart panel when he isn't listening. He watches the cart store for removals, and the page address for his behavior on each page (`src/lib/mascot/persona.ts`).
 
 ## Tests
 
-- **Unit tests** (`pnpm test`, in `tests/unit`): price formatting, Arabic search (hamza forms, taa marbuta, Arabic and Persian digits and letters), plural forms, filters and sorting and their URLs, the cart, its matching with current prices and its safe storage, shipping and coupons, the checkout form and order building, the product-writing helpers, deal expiry, data file validation, the product's tone (with a check that white text keeps a contrast of 7:1 on the light of every hue), the photo colors file, and the stage's swipe arithmetic. They run in seconds, so run them after any change in `src/lib` or `src/data`.
-- **Browser tests** (`pnpm test:e2e`, in `tests/e2e`): open the built site and act like a visitor: browsing, search, filtering and sorting, picking a size and color, the gallery's arrows and thumbnails, the light of the product page's stage following the chosen color, the cart, checkout with a coupon and express delivery, the wishlist, the mobile menu, and the 404 page. Run `pnpm build` first.
+- **Unit tests** (`pnpm test`, in `tests/unit`): price formatting, Arabic search (hamza forms, taa marbuta, Arabic and Persian digits and letters), plural forms, filters and sorting and their URLs, the cart, its matching with current prices and its safe storage, shipping and coupons, the checkout form and order building, the product-writing helpers, deal expiry, data file validation, the product's tone (with a check that white text keeps a contrast of 7:1 on the light of every hue), the photo colors file, the stage's swipe arithmetic, and Najm's logic (his behavior on each page, his suggestions, his sentences and the saved choice to hide him). They run in seconds, so run them after any change in `src/lib` or `src/data`.
+- **Browser tests** (`pnpm test:e2e`, in `tests/e2e`): open the built site and act like a visitor: browsing, search, filtering and sorting, picking a size and color, the gallery's arrows and thumbnails, the light of the product page's stage following the chosen color, the cart, checkout with a coupon and express delivery, the wishlist, the mobile menu, the 404 page, and Najm catching an added product, suggesting similar ones and hiding from the footer. Every other test starts with Najm hidden (`storageState` in `playwright.config.ts`), so adding to the cart opens the cart panel there. Najm's tests are skipped in a browser without WebGL 2. Run `pnpm build` first.
 - **Devices:** a desktop with Chrome, a Galaxy S24 phone with the Chrome engine (like Samsung Internet), an iPhone 15 with the Safari engine, and a desktop with Firefox. Locally the installed Chrome is used, and Firefox is added with `E2E_FIREFOX=1 pnpm test:e2e`. The first time on a new machine: `pnpm exec playwright install webkit firefox`.
 - The tests do not depend on specific product names, so they stay valid when the demo data is replaced.
 - **Testing with real people:** the tasks and the feedback table are in [USER-TESTING.md](USER-TESTING.md).
@@ -313,12 +334,13 @@ The site is built once (`pnpm build`) into plain files. Most of the work happens
 
 **There is no server that can go down.** The site is ready-made files (HTML, images and JSON) built once with `pnpm build`. When someone visits, no code runs on a server and there is no database, so every visitor only requests files. On a content delivery network such as Cloudflare Pages or Netlify, these files are copied to many servers around the world, so the site handles very large numbers of simultaneous visitors without any extra setup.
 
-**The data the browser requests** comes from two static files generated at build time. They are not an API running on a server:
+**The data the browser requests** comes from three static files generated at build time. They are not an API running on a server:
 
-| File                 | Size   | When it loads                                                                    |
-| -------------------- | ------ | -------------------------------------------------------------------------------- |
-| `/search-index.json` | 15 KB  | On the first focus of the search field, and on the search and wishlist pages     |
-| `/cart-catalog.json` | 5.6 KB | Only when the cart or the checkout page opens, to check current prices and stock |
+| File                     | Size   | When it loads                                                                    |
+| ------------------------ | ------ | -------------------------------------------------------------------------------- |
+| `/search-index.json`     | 15 KB  | On the first focus of the search field, and on the search and wishlist pages     |
+| `/cart-catalog.json`     | 5.3 KB | Only when the cart or the checkout page opens, to check current prices and stock |
+| `/similar-products.json` | 21 KB  | When Najm appears, for his suggestions (1.5 KB compressed)                       |
 
 Each file loads once per visit and is shared by every part of the page. A network failure does not break the cart: it stays as it was saved, and search shows a message with a retry button.
 
@@ -344,6 +366,7 @@ With 1,000 visitors the wait gets longer but no request fails, because the serve
 - **Images:** every image is prepared in four WebP sizes (200, 400, 800 and 1200 pixels wide), and the browser takes the smallest size that fits the screen. Images further down the page load as the visitor approaches them. Only the first photo of the hero and of the product gallery is in the page's HTML, with high priority; the other slides load once the page has loaded, or as soon as they are shown.
 - **Sections further down:** on the home and product pages, the sections below the first screen and the footer are laid out and painted only when they come near the screen (`section-later` and `render-later` in `src/app/globals.css`). After a reload, back or forward, or a move inside the store, everything renders at once, so the browser returns to the same place (`src/lib/render-later.ts`).
 - **Drawers and panels:** the cart, the mobile menu, the image zoom, the filter sheet and the toast messages load their code after the page appears or on the first tap (`src/hooks/use-idle.ts`). The phone filter sheet never loads on desktop, and vice versa.
+- **Najm:** his code with three.js (607 KB, 152 KB compressed) is a separate file that no page loads with its HTML. It downloads only after the page has loaded and the visitor first moves, touches or scrolls (`src/hooks/use-first-interaction.ts`), so it doesn't count against the first screen, and not at all for a visitor who hid him or a browser without WebGL 2. He draws only while something moves, and stops a few seconds after the visitor does.
 - **As little JavaScript as possible:** components are rendered ahead of time, only the interactive part runs in the browser, and it receives only the fields it needs (the cart button on a card does not carry the whole product). Buttons and inputs are native elements without a library.
 - **Font:** a subset with only the store's characters (66 KB for the three weights).
 - **Caching:** JavaScript and CSS files are cached in the browser for a year (their names change with every edit), images for a day, and the two data files are revalidated after every deployment (`public/_headers`).

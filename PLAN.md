@@ -1,8 +1,8 @@
 # Online Store Plan (Frontend-Only Showcase)
 
-**Version:** 3.1
-**Date:** November 6, 2026
-**Status:** Approved up to phase 9. Phases 1 to 7 are complete except the items that need the owner (a review on a real phone and testing with real people). The phase 8 files are ready, and the owner postponed the deployment itself. A full review of code quality, performance and load capacity has been carried out. The project is on GitHub and the GitHub Actions checks pass. Phase 10, a design-only evolution to the "Spotlight" identity, was proposed, prototyped and built on November 6, 2026, on the Git branch `phase-10-spotlight`; the owner's look on a real phone remains.
+**Version:** 3.2
+**Date:** November 7, 2026
+**Status:** Approved up to phase 9. Phases 1 to 7 are complete except the items that need the owner (a review on a real phone and testing with real people). The phase 8 files are ready, and the owner postponed the deployment itself. A full review of code quality, performance and load capacity has been carried out. The project is on GitHub and the GitHub Actions checks pass. Phase 10, a design-only evolution to the "Spotlight" identity, was proposed, prototyped and built on November 6, 2026, on the Git branch `phase-10-spotlight`; the owner's look on a real phone remains. Phase 11, Najm the 3D mascot, was prototyped on November 6 and built on November 7, 2026, on the branch `phase-11-mascot`, which starts from phase 10.
 
 ---
 
@@ -10,6 +10,7 @@
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 3.2 | November 7, 2026 | Phase 11 was built on the branch `phase-11-mascot`: Najm, a 3D blue dog drawn with three.js from simple shapes, stands in the corner of every page with no background, and behaves differently on the home page, the shopping pages, the cart, checkout and the order confirmation. He catches every product added to the cart, takes out deleted ones, celebrates an order, and suggests similar products from a new static file, `similar-products.json`. While he is on screen he replaces the cart panel as the add confirmation; a footer button hides him. His code loads only after the visitor's first move. `DESIGN.md`, the README, unit tests and two browser tests were added for him. |
 | 3.1 | November 6, 2026 | Phase 10 was built on the branch `phase-10-spotlight`: `DESIGN.md` and the design skill were rewritten for the "Spotlight" identity; the colors, the pill buttons and the corners changed in the code; every demo product photo became a cut-out, made with an open-source background-removal model on the developer's computer, with other Pexels photos where a photo could not be cut cleanly or was too small (and the black headset recolored from the red one); the color options of four products now follow their photos, and the category covers are product photos; `pnpm images` measures each photo's color, and the catalog gives every photo its tone; the hero and the product gallery became stages whose light follows the product and whose photos turn in 3D, with no new dependency; the cards, the category tiles, the banners and the share images took the same look. Unit tests for the tone, its contrast on every hue and the swipe arithmetic, and two browser tests for the gallery, were added. |
 | 3.0 | November 6, 2026 | Phase 10 was proposed at the owner's request: a design-only evolution toward two concept designs the owner chose (a page whose background takes the product's color, and a dark tech storefront with one electric blue). It defines the "Spotlight" identity, a backdrop that follows the product's color, a 3D turn between photos in CSS only, and a restyle of every component with no change to the structure, the data or the features. It waits for decisions 9 to 11 in section 17. |
 | 2.9 | November 5, 2026 | At the owner's request, the project documentation was translated to English and given English file names: this plan (`PLAN.md`), `README.md`, `DESIGN.md`, the design-system skill, the deployment guide (`DEPLOYMENT.md`) and the user-testing guide (`USER-TESTING.md`). The storefront and its content stay in Arabic. The status was also brought up to date: the project is on GitHub, and the checks pass there on Chrome, Firefox and Safari (WebKit). |
@@ -707,6 +708,43 @@ Each step is one commit that passes `pnpm verify`, and the site is reviewed at 3
 | Too many glows make the page busy and slow | One light source per screen (the stage), low-alpha washes elsewhere, radial gradients only, and no blur filters or card shadows. |
 | The redesign quietly changes behavior | Each step touches styles and the two new visual behaviors only, and the browser tests of every flow must stay green at each commit. |
 
+### Phase 11: Najm, the 3D mascot ✅ (built November 7, 2026)
+
+**Status:** asked for by the owner on November 6, 2026: a 3D character that follows the visitor and carries the products they add into a cart. The owner chose a reference (a glossy blue 3D dog mascot on Dribbble, "toto" by Samuel Briskar) and asked for a character in the same style. Two interactive prototypes, kept outside the project, settled the details the same day: the first was too big, so the character shrank to a corner; then the owner asked for a different behavior on each page and for similar-product suggestions after an add, and for no background behind him. The phase was built on November 7, 2026 on the branch `phase-11-mascot`.
+
+**Scope:** one new feature, in its own folders (`src/components/mascot` and `src/lib/mascot`), with small changes where it plugs in: the add-to-cart buttons, the store shell, the footer, and one new static file. No change to the pages, the data files or the purchase journey.
+
+#### 11.1 Decisions
+
+- **The look:** a small round blue dog with a big head, pointy ears with pink insides, his tongue out and a gold heart tag, in the style of the reference but not a copy of it, in a deeper shade of the store's blue. He is built in code from simple shapes (spheres, cones, capsules), so there is no model file to download, and his colors are in `DESIGN.md`.
+- **The library:** three.js, in one class (`MascotScene`) that queues his moves. React Three Fiber was considered and left out: the scene is one character with timed moves, and it would add a second renderer that must match the exact React version, for no gain.
+- **No background:** a transparent canvas that lets every tap through, with only a soft shadow under him that fades before its edge, so he never covers the page and adds no second light to the screen.
+- **Size and place:** 200×208 px on a tablet or desktop and 136×144 px on a phone, in the corner on the start side, above the mobile bottom bar; the WhatsApp button keeps the other corner.
+- **A behavior per page:** a greeting on the home page; his cart on the shopping pages, where he catches every added product and suggests two similar ones; a count on the cart page, where he takes out deleted products; silence on the checkout form; a celebration on the order confirmation.
+- **He replaces the cart panel** as the add confirmation while he is on screen, because the panel would cover him and his suggestions; his bubble opens the panel with "View cart". Without him (hidden, not loaded yet, or no WebGL 2), the panel opens as before.
+- **Hiding him:** a button in his greeting and in the footer, saved in the browser.
+- **Performance:** his code loads only after the page has loaded and the visitor first moves, touches or scrolls, and drawing stops a few seconds after the visitor stops moving. With reduced motion he stands still.
+
+#### 11.2 Steps
+
+- [x] **Data:** `getSimilarProducts()` and the static file `/similar-products.json` (up to four in-stock similar products per product), with its type guard.
+- [x] **The scene:** his body, his cart, his poses, his moves (catch, throw, take out, celebrate, wave), following the pointer, and a drawing loop that stops when nothing moves.
+- [x] **The React side:** `LazyMascot` in the store shell, his canvas and speech bubble, the suggestions, the footer button, and the hooks that tie him to the cart and the pages.
+- [x] **Plugging in:** `useAddToCart` tells him about an add (with the pressed button, so the photo flies from there) and opens the cart panel when he isn't listening.
+- [x] **Tests:** unit tests for his logic and the new data file, and two browser tests on Chrome, an Android phone and an iPhone; every other browser test starts with him hidden.
+- [x] **Documentation:** `DESIGN.md` (Mascot, his colors and his motion rules), the README and this plan.
+- [ ] **Verification by the owner:** a look on a real phone, GitHub Actions once the branch is pushed, and Lighthouse on mobile after the deployment.
+
+#### 11.3 Risks
+
+| Risk | How it is avoided |
+| --- | --- |
+| He slows the first screen on phones | His code is a separate file that loads only after the visitor's first move, and never for a visitor who hid him or a browser without WebGL 2. |
+| He covers products or buttons | He is small, in a corner, and lets every tap through; only his bubble takes clicks, and it closes by itself and on every page change. The visitor can hide him for good. |
+| He drains the battery | Drawing stops a few seconds after the visitor stops moving, and while the tab is hidden. |
+| Moving too much for some visitors | With reduced motion he stands still and products appear in his basket at once. |
+| The browser tests expect the cart panel after an add | Every test except his own starts with him hidden, through a saved choice in `playwright.config.ts`. |
+
 ---
 
 ## 8. Checkout without a server
@@ -803,8 +841,9 @@ The steps for each host are in `DEPLOYMENT.md`.
 | 6 | 6 + 7 | Improvements and testing |
 | 7 | 8 | Deployment |
 | 8 | 10 ✅ | The "Spotlight" design evolution |
+| 8 | 11 ✅ | Najm, the 3D mascot |
 
-**Total: about 7 weeks**, instead of 12 in the previous plan, because the server and the admin dashboard were removed, plus phase 10, which was built in a day.
+**Total: about 7 weeks**, instead of 12 in the previous plan, because the server and the admin dashboard were removed, plus phases 10 and 11, which were built in a day each.
 
 ---
 
@@ -878,4 +917,4 @@ Ordered by expected impact:
 
 ## Next step
 
-Review the site on your phone, and test it with 3 to 5 people following `USER-TESTING.md`. Then, when you decide to go ahead, start **phase 8**: deployment, which needs decision 7 (the host and the domain); the steps are in `DEPLOYMENT.md`. At any time: send the real contact details to replace the placeholders, answer decision 4 (keep or remove the "demo version" notice on the About us and Terms pages), and answer decisions 1 and 2 so the demo data can be replaced. For the new design (phase 10): look at it on your phone, then push the branch `phase-10-spotlight` and merge it into `main` once you approve it.
+Review the site on your phone, and test it with 3 to 5 people following `USER-TESTING.md`. Then, when you decide to go ahead, start **phase 8**: deployment, which needs decision 7 (the host and the domain); the steps are in `DEPLOYMENT.md`. At any time: send the real contact details to replace the placeholders, answer decision 4 (keep or remove the "demo version" notice on the About us and Terms pages), and answer decisions 1 and 2 so the demo data can be replaced. For the new design (phase 10): look at it on your phone, then push the branch `phase-10-spotlight` and merge it into `main` once you approve it. For Najm (phase 11): try him on your phone too; his branch `phase-11-mascot` starts from phase 10, so it merges after it.
