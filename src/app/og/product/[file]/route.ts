@@ -2,7 +2,7 @@ import { getProduct, getProducts } from "@/lib/catalog/catalog"
 import { jpegResponse } from "@/lib/og/render"
 import { productShareImage } from "@/lib/og/share-images"
 
-// A share image for each product, generated at build time: out/og/product/<slug>.jpg
+// A share image for each product, drawn at build time: /og/product/<slug>.jpg
 export const dynamic = "force-static"
 export const dynamicParams = false
 

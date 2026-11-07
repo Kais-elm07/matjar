@@ -18,7 +18,7 @@ const SHOPPING_PAGES = [
   "/wishlist",
 ]
 
-/** The persona for a page address. The static site's addresses end with a slash, which is ignored. */
+/** The persona for a page address. The store's addresses end with a slash, which is ignored. */
 export function personaFor(pathname: string): Persona {
   const path = pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname
   if (path === "/") return "welcome"

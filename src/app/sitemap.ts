@@ -5,7 +5,7 @@ import { getContentPages } from "@/lib/content/pages"
 import { categoryPath, contentPagePath, productPath } from "@/lib/routes"
 import { absoluteImageUrl, absoluteUrl } from "@/lib/seo"
 
-// Generated as a static file at build time: out/sitemap.xml
+// Prerendered at build time and served as a file: /sitemap.xml
 export const dynamic = "force-static"
 
 type SitemapEntry = MetadataRoute.Sitemap[number]

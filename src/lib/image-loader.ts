@@ -1,5 +1,5 @@
 /**
- * Image loader for the static site (there is no server to resize images).
+ * Image loader for prepared images: the server never resizes them, so no request waits for an image to be drawn.
  *
  * Local images are prepared ahead of time in four sizes by the pnpm images command; here we pick the smallest size that fits the screen.
  * The path in the data is written without an extension:

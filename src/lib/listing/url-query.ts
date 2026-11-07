@@ -6,7 +6,7 @@ import { useSyncExternalStore } from "react"
  * The query string of the listing pages' URL (such as "?sale=1&sort=newest"), shared by the
  * product list, the filters and the heading.
  *
- * Why not use useSearchParams directly? On a static site, useSearchParams makes the list
+ * Why not use useSearchParams directly? On a page prepared at build time, useSearchParams makes the list
  * render only in the browser, so the products are missing from the HTML file and the images load late.
  * Here the list is prepared at build time without filters, then the URL filters apply as soon as the page loads.
  * ListingUrlListener (src/components/global/listing-url-listener.tsx) reports every URL change here.

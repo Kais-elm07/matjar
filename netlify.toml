@@ -1,11 +1,14 @@
-# Netlify settings: builds the static site and publishes the out folder.
-# The headers are in public/_headers, and the 404 page is taken from out/404.html automatically.
+# Netlify settings: builds the site and runs it as a Next.js server on Netlify's functions.
+# The security and caching headers are in next.config.ts, and the server answers unknown pages with the 404 page.
 # The real site URL (NEXT_PUBLIC_SITE_URL) is set in the Netlify dashboard:
 # Site configuration → Environment variables, so the domain isn't written in the code.
 
 [build]
   command = "pnpm build"
-  publish = "out"
 
 [build.environment]
   NODE_VERSION = "24"
+
+# Netlify's own Next.js integration: it turns the build into the pages, functions and files Netlify serves
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

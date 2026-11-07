@@ -1,10 +1,10 @@
 # Matjari (متجري): a demo Arabic online store
 
-An Arabic (right-to-left), mobile-first online storefront that runs as a fully static site, with no server and no database.
+An Arabic (right-to-left), mobile-first online storefront built with Next.js and run by a Next.js server. The catalog pages are prepared at build time, and the server answers everything else.
 The storefront itself is in Arabic for Arabic-speaking shoppers. The project documentation is in English.
 The full plan and implementation phases are in [PLAN.md](PLAN.md).
 
-**Current status:** Phases 1 to 7 are complete: the project scaffold, the full catalog (categories, products, search, filters), the cart and wishlist in the browser, the demo checkout, the static pages, polish (share images, performance, copy and accessibility review, light motion, optional analytics) and automated tests. Items that only the owner can do are still open: a review on a real phone, testing with real people, and real contact details. On November 4, 2026 the interface was redesigned at the owner's request in the "Warm Night" style: a dark background, a single orange accent for actions and prices, dark product cards with a round cart button in the corner, a dark header with a wide search field, a footer ending in an orange bar, and real product photos from Pexels instead of drawn placeholders (details in `DESIGN.md`). For phase 8 (deployment) the hosting files (`public/_headers` and `netlify.toml`) and the [DEPLOYMENT.md](DEPLOYMENT.md) guide are ready, and the owner postponed the deployment itself. On November 4 and 5, 2026 the code was reviewed for quality, performance and load capacity: strict types, one component per file, English code comments, a design polish, a faster first screen on phones, and folders and names that say what they hold (see "Project structure", "How the code fits together" and "Performance and load capacity"). On November 6, 2026 the interface moved to the "Spotlight" identity at the owner's request (phase 10 of the plan): a dark stage with a blue tint and a single electric blue, every product photo cut out of its background, a light behind each product that takes the product's own color, photos that turn in 3D as they move, and the same look on the cards, the category tiles and the product page (details in `DESIGN.md`). On November 6 and 7, 2026 the store got a 3D mascot at the owner's request (phase 11 of the plan): Najm (نجم), a small blue dog in the corner of every page, who follows the visitor with his eyes, carries what they add to the cart and suggests similar products (see "Najm, the mascot"). The GitHub Actions checks pass.
+**Current status:** Phases 1 to 7 are complete: the project scaffold, the full catalog (categories, products, search, filters), the cart and wishlist in the browser, the demo checkout, the static pages, polish (share images, performance, copy and accessibility review, light motion, optional analytics) and automated tests. Items that only the owner can do are still open: a review on a real phone, testing with real people, and real contact details. On November 4, 2026 the interface was redesigned at the owner's request in the "Warm Night" style: a dark background, a single orange accent for actions and prices, dark product cards with a round cart button in the corner, a dark header with a wide search field, a footer ending in an orange bar, and real product photos from Pexels instead of drawn placeholders (details in `DESIGN.md`). For phase 8 (deployment) the hosting settings (`netlify.toml`) and the [DEPLOYMENT.md](DEPLOYMENT.md) guide are ready, and the owner postponed the deployment itself. On November 4 and 5, 2026 the code was reviewed for quality, performance and load capacity: strict types, one component per file, English code comments, a design polish, a faster first screen on phones, and folders and names that say what they hold (see "Project structure", "How the code fits together" and "Performance and load capacity"). On November 6, 2026 the interface moved to the "Spotlight" identity at the owner's request (phase 10 of the plan): a dark stage with a blue tint and a single electric blue, every product photo cut out of its background, a light behind each product that takes the product's own color, photos that turn in 3D as they move, and the same look on the cards, the category tiles and the product page (details in `DESIGN.md`). On November 6 and 7, 2026 the store got a 3D mascot at the owner's request (phase 11 of the plan): Najm (نجم), a small blue dog in the corner of every page, who follows the visitor with his eyes, carries what they add to the cart and suggests similar products (see "Najm, the mascot"). The GitHub Actions checks pass.
 
 ## Requirements
 
@@ -27,20 +27,20 @@ The route types that pages and layouts use (`PageProps`, `LayoutProps`) are gene
 
 ```bash
 pnpm build
-pnpm preview
+pnpm start
 ```
 
-The first command creates the `out/` folder with the whole site, which is everything a host needs. The second serves it on http://localhost:3000 exactly as it will look once deployed.
+The first command builds the site into `.next/`: the catalog pages, the share images and the data files are prepared there once. The second runs the production server on http://localhost:3000, exactly as it will run once deployed.
 
-Deployment steps for Cloudflare Pages, Netlify or regular hosting, and what to do after deploying (domain, HTTPS, sitemap, header checks), are in [DEPLOYMENT.md](DEPLOYMENT.md). Security and caching headers live in `public/_headers`, and both hosts read them automatically.
+Deployment steps and what to do after deploying are in [DEPLOYMENT.md](DEPLOYMENT.md). Security and caching headers are set in `next.config.ts` (`headers()`), so every host gets the same ones.
 
 ## Commands
 
 | Command              | What it does                                                                |
 | -------------------- | --------------------------------------------------------------------------- |
 | `pnpm dev`           | Run the site for development with instant reload on every change            |
-| `pnpm build`         | Build the static site into `out/`                                           |
-| `pnpm preview`       | Serve the built site locally before deploying                               |
+| `pnpm build`         | Build the site for production into `.next/`                                 |
+| `pnpm start`         | Run the production server on the build, as it runs once deployed            |
 | `pnpm images`        | Process images and measure each photo's color (runs before `dev`, `build`)  |
 | `pnpm images:photos` | Download the original Pexels photos behind the demo cut-outs, if missing    |
 | `pnpm fonts`         | Subset the font files from `assets/fonts` into `src/fonts`                  |
@@ -50,7 +50,7 @@ Deployment steps for Cloudflare Pages, Netlify or regular hosting, and what to d
 | `pnpm check`         | Check formatting, lint errors, types, the design file and unused code       |
 | `pnpm verify`        | `pnpm check` plus the unit tests: the full check before saving or deploying |
 | `pnpm test`          | Unit tests (Vitest), in seconds                                             |
-| `pnpm test:e2e`      | Browser tests (Playwright) against the built site                           |
+| `pnpm test:e2e`      | Browser tests (Playwright) against the production server                    |
 | `pnpm design:lint`   | Validate `DESIGN.md` and its color contrast                                 |
 | `pnpm format`        | Format every file automatically                                             |
 
@@ -117,7 +117,7 @@ Each page is a text file in `src/content/pages`, and the file name is its URL: `
 
 When a link is shared on WhatsApp or social networks, a 1200×630 image appears: each product has an image with its photo, name, price and discount badge, each category has one with its name and product count, and the rest of the site uses a general store image. A cut-out stands on its platform in the light of its tone, as on the site's stage.
 
-- JPEG files are generated at build time into `out/og` (the routes live in `src/app/og`), so they always follow the current prices and names.
+- JPEG files are drawn at build time by the routes in `src/app/og` and served at `/og/...`, so they always follow the prices and names of the deployed build.
 - The layout is in `src/lib/og/share-images.ts` and the drawing helpers are in `src/lib/og/render.ts`. Colors and font come from `DESIGN.md`.
 - Text is drawn with TTF copies of the store font, generated by `pnpm fonts`.
 - **Important when deploying:** set the real site URL in `NEXT_PUBLIC_SITE_URL` before building, because image links must be absolute. Without it they point to `localhost` and do not show up when shared.
@@ -265,9 +265,10 @@ src/fonts/                     the font files cut to the store's characters (wri
 src/types/                     type declarations (CSS variables in style props)
 
 assets/                        original images and fonts, before processing
-scripts/                       image and font processing, demo photo download, build output fixes
+scripts/                       image and font processing, demo photo download
 tests/unit/, tests/e2e/        unit tests (Vitest) and browser tests (Playwright)
-public/_headers, netlify.toml  hosting settings: security and caching headers, Netlify build
+next.config.ts                 Next.js settings: image sizes, security and caching headers
+netlify.toml                   Netlify build settings
 .github/workflows/ci.yml       automated checks in GitHub Actions
 .claude/skills/                skills for Claude: the design system, and Vercel's React guides
 ```
@@ -328,13 +329,13 @@ The site is built once (`pnpm build`) into plain files. Most of the work happens
 - Claude follows Vercel's React guides for performance and component structure: the skills `vercel-react-best-practices` and `vercel-composition-patterns` in `.claude/skills`, copied unchanged from [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) (MIT).
 - knip (`pnpm knip`, part of `pnpm check` and GitHub Actions) fails when a file, an export or a package is no longer used. `knip.jsonc` lists the two it cannot see because only a config file uses them.
 - `pnpm verify` runs every check plus the unit tests in one command.
-- On every push to `main` and every pull request, GitHub Actions checks formatting, lint errors, types and unused code, runs the unit tests, builds the site, then runs the browser tests on Chrome, Firefox and Safari (WebKit). It keeps the built `out` folder for a week, and the test report when something fails.
+- On every push to `main` and every pull request, GitHub Actions checks formatting, lint errors, types and unused code, runs the unit tests, builds the site, then runs the browser tests against the production server on Chrome, Firefox and Safari (WebKit). It keeps the test report for a week when something fails.
 
 ## Performance and load capacity
 
-**There is no server that can go down.** The site is ready-made files (HTML, images and JSON) built once with `pnpm build`. When someone visits, no code runs on a server and there is no database, so every visitor only requests files. On a content delivery network such as Cloudflare Pages or Netlify, these files are copied to many servers around the world, so the site handles very large numbers of simultaneous visitors without any extra setup.
+**Most of the site is prepared once.** The home, listing, category, product and help pages, the share images and the data files below are built once with `pnpm build`. The server sends them as they are, without rendering them again for each visitor, and a content delivery network such as Netlify's can keep copies close to visitors. Only what depends on the request runs on each visit.
 
-**The data the browser requests** comes from three static files generated at build time. They are not an API running on a server:
+**The data the browser requests** comes from three files prepared at build time:
 
 | File                     | Size   | When it loads                                                                    |
 | ------------------------ | ------ | -------------------------------------------------------------------------------- |
@@ -344,7 +345,7 @@ The site is built once (`pnpm build`) into plain files. Most of the work happens
 
 Each file loads once per visit and is shared by every part of the page. A network failure does not break the cart: it stays as it was saved, and search shows a message with a retry button.
 
-**Local load test** (November 4, 2026): a simple single-process file server on the development machine itself (`serve out`), with mixed simultaneous requests for pages, scripts, images and the two data files. This is far weaker than a real delivery network; what matters is that the site needs no computation per visit:
+**Local load test** (November 4, 2026, when the store was still a static site): a simple single-process file server on the development machine itself, with mixed simultaneous requests for pages, scripts, images and the two data files. This is far weaker than a real delivery network; what matters is that the site needs no computation per visit:
 
 | Simultaneous visitors | Duration   | Requests | Requests per second | 95% of requests within | Errors |
 | --------------------- | ---------- | -------- | ------------------- | ---------------------- | ------ |
@@ -369,17 +370,17 @@ With 1,000 visitors the wait gets longer but no request fails, because the serve
 - **Najm:** his code with three.js (607 KB, 152 KB compressed) is a separate file that no page loads with its HTML. It downloads only after the page has loaded and the visitor first moves, touches or scrolls (`src/hooks/use-first-interaction.ts`), so it doesn't count against the first screen, and not at all for a visitor who hid him or a browser without WebGL 2. He draws only while something moves, and stops a few seconds after the visitor does.
 - **As little JavaScript as possible:** components are rendered ahead of time, only the interactive part runs in the browser, and it receives only the fields it needs (the cart button on a card does not carry the whole product). Buttons and inputs are native elements without a library.
 - **Font:** a subset with only the store's characters (66 KB for the three weights).
-- **Caching:** JavaScript and CSS files are cached in the browser for a year (their names change with every edit), images for a day, and the two data files are revalidated after every deployment (`public/_headers`).
+- **Caching:** JavaScript and CSS files are cached in the browser for a year (their names change with every edit, and Next.js sets this itself), images for a day and share images for an hour (`headers()` in `next.config.ts`).
 
 **As the store grows:** listing pages send the cards of every product in the category with the page so filters work instantly without a server. That is fine up to a few hundred products per category. The search index grows by about 0.75 KB per product (about 150 KB compressed for a thousand products). Beyond that, the index and listing data should be split into smaller files loaded on demand, or a search server added (section 16 of the plan).
 
 ## Important technical notes
 
-- **Static site:** `output: "export"` in `next.config.ts`. Features that need a server, such as Server Actions, cookies or dynamic APIs, cannot be used.
+- **Prepared pages and a server:** the catalog and help pages list every address they serve (`generateStaticParams` with `dynamicParams = false`), so they are built once and any other address gets the 404 page. The data files, the share images, the sitemap and robots.txt are route handlers marked `force-static`, built once too. The site uses the classic rendering model of Next.js, not Cache Components.
+- **Trailing slash:** every address ends with `/` (`trailingSlash` in `next.config.ts`), and the server redirects an address without it with a 308. Addresses of files with an extension, such as `/cart-catalog.json`, are left alone.
 - **Search and filters run in the browser:** listing pages are prepared as HTML without filters for search engines, then the URL's filters apply right after loading (`src/lib/listing/url-query.ts`).
-- **Images:** a custom loader (`src/lib/image-loader.ts`) picks from the prepared copies, because a static site has no server to resize images.
+- **Images:** a custom loader (`src/lib/image-loader.ts`) picks from the copies `pnpm images` prepares, so the server never resizes images and no request waits for one to be drawn.
 - **Drawers load after the page:** the cart drawer, the mobile menu, the image zoom, the filter sheet and the toast messages load their code after the content appears (`src/hooks/use-idle.ts`), or immediately if requested earlier. This is what lifted mobile performance above 90. Tabs are a light component without a library (`src/components/ui/tabs.tsx`).
 - **Drawing share images:** runs on a single thread and a single queue per build, because the font library inside sharp sometimes crashed on Windows when drawing in parallel.
-- **Next.js on Windows:** version 16.4 writes the client navigation files into nested folders when building on Windows. `scripts/fix-export-segments.mjs` fixes this after every build and does nothing on Linux.
 - **Long Windows command lines:** the project folder has a long Arabic name, so the pre-commit hook passes files to lint-staged in batches (`--max-arg-length` in `.husky/pre-commit`).
 - **Documentation for this exact Next.js version** is in `node_modules/next/dist/docs`.

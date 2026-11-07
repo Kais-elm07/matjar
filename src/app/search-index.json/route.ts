@@ -1,6 +1,6 @@
 import { getSearchIndex } from "@/lib/catalog/catalog"
 
-// Generated as a static file at build time: out/search-index.json
+// Prerendered at build time and served as a file
 export const dynamic = "force-static"
 
 /** The search index: every product card, loaded by the browser the first time search is used. */

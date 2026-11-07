@@ -2,7 +2,7 @@ import { getCategories, getCategory } from "@/lib/catalog/catalog"
 import { jpegResponse } from "@/lib/og/render"
 import { categoryShareImage } from "@/lib/og/share-images"
 
-// A share image for each category, generated at build time: out/og/category/<slug>.jpg
+// A share image for each category, drawn at build time: /og/category/<slug>.jpg
 export const dynamic = "force-static"
 export const dynamicParams = false
 

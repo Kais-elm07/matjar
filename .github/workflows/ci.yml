@@ -1,6 +1,6 @@
 # Automatic checks on every pull request and every push to the main branch:
-# formatting, ESLint, types, unused code (knip), the design file and unit tests, then a full build of the site,
-# then browser tests on the built site with Chrome, Firefox and Safari (WebKit).
+# formatting, ESLint, types, unused code (knip), the design file and unit tests, then a production build,
+# then browser tests on the production server (next start) with Chrome, Firefox and Safari (WebKit).
 name: CI
 
 on:
@@ -55,7 +55,7 @@ jobs:
       - name: Unit tests (Vitest)
         run: pnpm test
 
-      - name: Build the static site
+      - name: Build the site
         run: pnpm build
 
       # The test browsers are cached between runs by Playwright version, so they aren't downloaded every time
@@ -88,11 +88,4 @@ jobs:
           path: |
             playwright-report
             test-results
-          retention-days: 7
-
-      - name: Save the built site
-        uses: actions/upload-artifact@v7
-        with:
-          name: site
-          path: out
           retention-days: 7

@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next"
 
 import { absoluteUrl } from "@/lib/seo"
 
-// Generated as a static file at build time: out/robots.txt
+// Prerendered at build time and served as a file: /robots.txt
 export const dynamic = "force-static"
 
 export default function robots(): MetadataRoute.Robots {

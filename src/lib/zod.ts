@@ -5,8 +5,8 @@ import { z } from "zod"
  * from "zod" (ESLint enforces it).
  * - Arabic messages for the rules that have no message of their own, because the store owner and the
  *   visitors read them.
- * - No `new Function`: Zod tries it to check data faster, and the published site's content security
- *   policy (public/_headers) blocks eval, so the browser would report a violation.
+ * - No `new Function`: Zod tries it to check data faster, and the site's content security policy
+ *   (next.config.ts) blocks eval outside development, so the browser would report a violation.
  */
 z.config(z.locales.ar())
 z.config({ jitless: true })

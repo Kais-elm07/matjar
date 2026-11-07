@@ -2,7 +2,7 @@ import type { CategoryLink } from "@/lib/catalog/types"
 
 /**
  * The addresses of the store's product, category and static pages, in one place. They end with a
- * slash, the form the static site serves (trailingSlash in next.config.ts).
+ * slash, the form the site serves (trailingSlash in next.config.ts); without it, the server answers with a redirect.
  */
 export const productPath = (slug: string) => `/product/${slug}/`
 export const categoryPath = (slug: string) => `/category/${slug}/`

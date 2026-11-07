@@ -12,13 +12,13 @@ const chrome = isCI ? {} : { channel: "chrome" }
 const withFirefox = isCI || Boolean(process.env.E2E_FIREFOX)
 
 /**
- * Browser tests (pnpm test:e2e) on the static build in out/, as it will be published,
+ * Browser tests (pnpm test:e2e) on the production server (next start), as it will be published,
  * so run pnpm build before them. Four devices: a desktop with Chrome and Firefox,
  * an Android phone with the Chrome engine (like Samsung Internet), and an iPhone with the Safari engine.
  */
 export default defineConfig({
   testDir: "tests/e2e",
-  // Stops the run with a clear message when there is no build in out/
+  // Stops the run with a clear message when there is no production build in .next/
   globalSetup: "./tests/e2e/global-setup.ts",
   fullyParallel: true,
   forbidOnly: isCI,
@@ -48,7 +48,7 @@ export default defineConfig({
     },
   },
   webServer: {
-    command: `node node_modules/serve/build/main.js out --listen ${PORT} --no-clipboard`,
+    command: `node node_modules/next/dist/bin/next start --port ${PORT}`,
     // Ready as soon as the port answers. Waiting for the home page instead would time out
     // without a build, before global-setup.ts can say what is missing
     port: PORT,
