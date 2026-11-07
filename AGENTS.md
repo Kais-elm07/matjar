@@ -30,6 +30,7 @@ The skill `design-taste-frontend` (Taste Skill, from github.com/Leonxlnx/taste-s
 - A `"use client"` module can't hand functions or constants to server code, so logic both sides need lives in a plain module (`src/lib/checkout/totals.ts`, `quantity.ts`).
 - Server code reads files only by a literal path. A computed path makes Turbopack copy the whole project into the server's files; a check that runs only during `next build` is guarded by `NEXT_PHASE` and marked `turbopackIgnore` (`src/lib/catalog/build.ts`).
 - Addresses end with `/` (`trailingSlash`), API routes included, and are built in `src/lib/routes.ts`.
+- The root layout writes nothing into `<head>` by hand; Next fills it from `metadata` and `viewport`. Hosts add text there (Netlify puts a line break and a comment after `<meta charSet>`), and React then throws away the server's HTML and renders the whole page again in the browser. An inline script that must run before the page is drawn goes at the start of `<body>` (`RENDER_ALL_SCRIPT` in `src/lib/render-later.ts`).
 - After changing `prisma/schema.prisma`, run `pnpm db:migrate` and then `pnpm db:generate`, and commit the migration. The browser tests run against `next start`: they need `pnpm build` and the local database (`pnpm db:start`).
 
 ## Language

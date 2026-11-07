@@ -40,6 +40,39 @@ test("An unknown URL shows a 404 page in Arabic", async ({ page }) => {
   await expect(page).toHaveURL(/\/$/)
 })
 
+test("A line break the host adds to <head> doesn't break the page in the browser", async ({
+  page,
+}) => {
+  // Netlify adds a line break and a comment after <meta charSet> in every page it serves
+  const meta = '<meta charSet="utf-8"/>'
+  let changed = false
+  await page.route(
+    (url) => url.pathname === "/",
+    async (route) => {
+      // The same address also answers the page's RSC requests
+      if (route.request().resourceType() !== "document") return route.fallback()
+      const response = await route.fetch()
+      const html = await response.text()
+      changed = html.includes(meta)
+      await route.fulfill({
+        response,
+        body: html.replace(meta, `${meta}\n<!-- Added by the host -->`),
+      })
+    }
+  )
+  const errors: string[] = []
+  page.on("pageerror", (error) => errors.push(error.message))
+  page.on("console", (message) => {
+    if (message.type() === "error") errors.push(message.text())
+  })
+
+  await open(page, "/")
+  expect(changed).toBe(true)
+  // React reports the mismatch after hydrating, so give it a moment
+  await page.waitForTimeout(500)
+  expect(errors).toEqual([])
+})
+
 test("FAQ items open when the question is clicked", async ({ page }) => {
   await open(page, "/pages/faq/")
   const question = page.locator("details.faq-item").first()

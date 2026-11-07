@@ -90,10 +90,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       // The script below may add data-render-all before React starts
       suppressHydrationWarning
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: RENDER_ALL_SCRIPT }} />
-      </head>
       <body className="flex min-h-full flex-col">
+        {/* At the start of <body>, not in <head>: see RENDER_ALL_SCRIPT */}
+        <script dangerouslySetInnerHTML={{ __html: RENDER_ALL_SCRIPT }} />
         <DirectionProvider direction="rtl">
           {children}
           <LazyToaster />
