@@ -239,6 +239,18 @@ export type ImageMeta = Record<
 >
 
 /**
+ * A product Najm, the store's mascot, suggests after something is added to the cart: only what his
+ * speech bubble shows and what adding it in one click needs (quickAdd, for a single-variant product).
+ */
+export type SimilarProduct = Pick<
+  ProductCardData,
+  "slug" | "name" | "price" | "compareAtPrice" | "priceVaries" | "quickAdd"
+> & { image: CardImage | null }
+
+/** The in-stock products similar to each product, by its slug (similar-products.json). */
+export type SimilarProducts = Record<string, SimilarProduct[]>
+
+/**
  * Prices and stock of every variant by SKU, which the cart saved in the browser is compared against.
  * options is the option combination key (optionsKey), to catch a SKU that now points to other options.
  */

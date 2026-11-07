@@ -5,6 +5,8 @@ import type {
   CartCatalog,
   ImageMeta,
   SearchCardData,
+  SimilarProduct,
+  SimilarProducts,
 } from "@/lib/catalog/types"
 import {
   isArrayOf,
@@ -17,8 +19,8 @@ import {
 import type { Tone } from "@/lib/tone"
 
 /**
- * Checks for the catalog's shapes in data read at runtime: the two JSON files the browser downloads
- * (search-index.json and cart-catalog.json), the product parts kept in the saved cart and order,
+ * Checks for the catalog's shapes in data read at runtime: the JSON files the browser downloads
+ * (search-index.json, cart-catalog.json and similar-products.json), the product parts kept in the saved cart and order,
  * and the photo colors that pnpm images writes (image-meta.json).
  * The general checks they build on are in src/lib/guards.ts.
  */
@@ -115,4 +117,25 @@ function isCartCatalogEntry(value: unknown): value is CartCatalog[string] {
 /** The current price and stock of every variant in cart-catalog.json, by SKU. */
 export function isCartCatalog(value: unknown): value is CartCatalog {
   return isRecord(value) && Object.values(value).every(isCartCatalogEntry)
+}
+
+function isSimilarProduct(value: unknown): value is SimilarProduct {
+  return (
+    isRecord(value) &&
+    isString(value.slug) &&
+    isString(value.name) &&
+    isFiniteNumber(value.price) &&
+    isNullOr(value.compareAtPrice, isFiniteNumber) &&
+    isBoolean(value.priceVaries) &&
+    isNullOr(value.quickAdd, isQuickAdd) &&
+    isNullOr(value.image, isCardImage)
+  )
+}
+
+/** The similar products of every product in similar-products.json, by its slug. */
+export function isSimilarProducts(value: unknown): value is SimilarProducts {
+  return (
+    isRecord(value) &&
+    Object.values(value).every((list) => isArrayOf(list, isSimilarProduct))
+  )
 }

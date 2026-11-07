@@ -13,7 +13,9 @@ import {
   getProducts,
   getRelatedProducts,
   getSearchIndex,
+  getSimilarProducts,
 } from "@/lib/catalog/catalog"
+import { isSimilarProducts } from "@/lib/catalog/guards"
 import { getHomeContent, getHomeSections } from "@/lib/catalog/home"
 import { optionsKey } from "@/lib/catalog/variant-key"
 import { getCheckoutConfig } from "@/lib/checkout/config"
@@ -115,6 +117,25 @@ describe("actual store data", () => {
         getRelatedProducts(product).map((related) => related.slug),
         product.slug
       ).not.toContain(product.slug)
+    }
+  })
+
+  it("publishes up to four in-stock similar products for every product, for Najm's suggestions", () => {
+    const similar = getSimilarProducts()
+    expect(isSimilarProducts(similar)).toBe(true)
+    expect(Object.keys(similar).sort()).toEqual(
+      products.map((product) => product.slug).sort()
+    )
+    for (const [slug, list] of Object.entries(similar)) {
+      expect(list.length, slug).toBeLessThanOrEqual(4)
+      expect(list.length, slug).toBeGreaterThan(0)
+      expect(
+        list.map((item) => item.slug),
+        slug
+      ).not.toContain(slug)
+      for (const item of list) {
+        expect(getProduct(item.slug)?.inStock, item.slug).toBe(true)
+      }
     }
   })
 

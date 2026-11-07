@@ -8,6 +8,7 @@ import type {
   CategoryOption,
   NavCategory,
   Product,
+  SimilarProducts,
 } from "@/lib/catalog/types"
 import { optionsKey } from "@/lib/catalog/variant-key"
 
@@ -113,6 +114,32 @@ export function getCartCatalog(): CartCatalog {
         },
       ])
     )
+  )
+}
+
+/**
+ * For every product, up to `limit` similar products that are in stock (the same order as getRelatedProducts),
+ * published as similar-products.json for Najm's suggestions after something is added to the cart.
+ */
+export function getSimilarProducts(limit = 4): SimilarProducts {
+  return Object.fromEntries(
+    catalog.products.map((product) => [
+      product.slug,
+      getRelatedProducts(product, catalog.products.length)
+        .filter((card) => card.inStock)
+        .slice(0, limit)
+        .map((card) => ({
+          slug: card.slug,
+          name: card.name,
+          price: card.price,
+          compareAtPrice: card.compareAtPrice,
+          priceVaries: card.priceVaries,
+          quickAdd: card.quickAdd,
+          image: card.image
+            ? { src: card.image.src, alt: card.image.alt }
+            : null,
+        })),
+    ])
   )
 }
 
