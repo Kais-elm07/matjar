@@ -1,7 +1,11 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema-jsonc.json",
   // knip (pnpm knip) fails when a file, an export or a package is no longer used.
-  // These two are used only by a config file, which knip cannot see.
+  // The entries below are used only by tools or generated files, which knip cannot see.
+  "entry": [
+    // The Prisma CLI reads this file by name (Prisma 7 looks for prisma7.config.ts)
+    "prisma7.config.ts",
+  ],
   "ignore": [
     // vitest.config.mts maps "server-only" to this empty file in the unit tests
     "tests/unit/support/empty.ts",
@@ -9,5 +13,7 @@
   "ignoreDependencies": [
     // next.config.ts names it as the Turbopack loader for the CSS files
     "@tailwindcss/turbopack",
+    // Imported by the Prisma client generated in src/generated/prisma, which is not in Git
+    "@prisma/client",
   ],
 }

@@ -1,0 +1,65 @@
+// The store's database: the orders placed at checkout (src/lib/checkout/actions.ts).
+// Products and categories stay in src/data and are built into the catalog in memory.
+// Amounts are in halalas (1 riyal = 100 halalas), as everywhere in the code.
+// After changing this file: pnpm db:migrate, which writes a migration in prisma/migrations.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ShippingMethod {
+  standard
+  express
+}
+
+model Order {
+  /// Long and unguessable: the confirmation page's address (/orders/<id>/)
+  id             String         @id @default(cuid())
+  /// Short, for the customer to quote, such as 261107-4827
+  number         String         @unique
+  placedAt       DateTime       @default(now())
+  customerName   String
+  phone          String
+  email          String?
+  city           String
+  /// The district and the street, as the confirmation shows them
+  address        String
+  notes          String?
+  shippingMethod ShippingMethod
+  /// When the order should arrive, as shown at checkout, such as "2-4 أيام عمل"
+  deliveryTime   String
+  couponCode     String?
+  subtotal       Int
+  discount       Int
+  shippingFee    Int
+  total          Int
+  lines          OrderLine[]
+
+  @@map("orders")
+}
+
+model OrderLine {
+  id       Int    @id @default(autoincrement())
+  orderId  String
+  order    Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  sku      String
+  /// The product's slug and name when ordered, so the line still reads well if the product changes later
+  slug     String
+  name     String
+  /// The chosen options, such as { "المقاس": "M", "اللون": "أبيض" }
+  options  Json
+  quantity Int
+  /// The price of one piece when ordered
+  price    Int
+  /// The product photo's path without a size, such as /images/products/shirt-1
+  imageSrc String?
+  imageAlt String?
+
+  @@index([orderId])
+  @@map("order_lines")
+}

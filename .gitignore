@@ -47,6 +47,9 @@ next-env.d.ts
 # Processed WebP images: generated automatically by pnpm images
 /public/images/
 
+# The Prisma client: generated from prisma/schema.prisma by pnpm install (postinstall) and pnpm db:generate
+/src/generated/
+
 # Playwright test results
 /playwright-report/
 /test-results/

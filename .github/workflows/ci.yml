@@ -21,8 +21,23 @@ jobs:
     name: Check code and build
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # A PostgreSQL database for the orders, the same major version as the local one (pnpm db:start)
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: matjar
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     env:
       NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/matjar
     steps:
       - uses: actions/checkout@v7
 
@@ -36,6 +51,9 @@ jobs:
 
       - name: Install packages
         run: pnpm install --frozen-lockfile
+
+      - name: Create the database tables (Prisma migrations)
+        run: pnpm db:deploy
 
       - name: Check formatting (Prettier)
         run: pnpm format:check

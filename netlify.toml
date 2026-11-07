@@ -1,10 +1,12 @@
 # Netlify settings: builds the site and runs it as a Next.js server on Netlify's functions.
 # The security and caching headers are in next.config.ts, and the server answers unknown pages with the 404 page.
-# The real site URL (NEXT_PUBLIC_SITE_URL) is set in the Netlify dashboard:
-# Site configuration → Environment variables, so the domain isn't written in the code.
+# The real site URL (NEXT_PUBLIC_SITE_URL) and the database address (DATABASE_URL) are set in the Netlify
+# dashboard: Site configuration → Environment variables, so neither is written in the code.
 
+# The migrations update the database's tables before the new build goes live,
+# so DATABASE_URL must be set for builds too, not only for the functions.
 [build]
-  command = "pnpm build"
+  command = "pnpm db:deploy && pnpm build"
 
 [build.environment]
   NODE_VERSION = "24"

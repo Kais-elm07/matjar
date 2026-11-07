@@ -10,16 +10,21 @@ The full plan and implementation phases are in [PLAN.md](PLAN.md).
 
 - Node.js 22 or later
 - pnpm 12: `npm install -g pnpm`
+- PostgreSQL 16 installed on the machine, for the orders database (only the tools are needed: `pnpm db:start` runs its own instance)
 
 ## Running locally
 
 ```bash
 pnpm install
 cp .env.example .env
+pnpm db:start
+pnpm db:deploy
 pnpm dev
 ```
 
 Then open http://localhost:3000
+
+`pnpm db:start` starts a local PostgreSQL for the store on port 5433, and `pnpm db:deploy` creates its tables. Every page works without the database; only orders need it.
 
 The route types that pages and layouts use (`PageProps`, `LayoutProps`) are generated into `.next/types`, which is not in Git. After cloning, run `pnpm dev` or `pnpm typecheck` once, or the editor reports them as missing.
 
@@ -44,6 +49,12 @@ Deployment steps and what to do after deploying are in [DEPLOYMENT.md](DEPLOYMEN
 | `pnpm images`        | Process images and measure each photo's color (runs before `dev`, `build`)  |
 | `pnpm images:photos` | Download the original Pexels photos behind the demo cut-outs, if missing    |
 | `pnpm fonts`         | Subset the font files from `assets/fonts` into `src/fonts`                  |
+| `pnpm db:start`      | Start the local PostgreSQL database (set up the first time), port 5433      |
+| `pnpm db:stop`       | Stop it; `pnpm db:status` says whether it runs                              |
+| `pnpm db:migrate`    | After changing `prisma/schema.prisma`: write a migration and apply it       |
+| `pnpm db:deploy`     | Apply the migrations that haven't run yet (on the host, before each build)  |
+| `pnpm db:generate`   | Generate the Prisma client (runs by itself after `pnpm install`)            |
+| `pnpm db:studio`     | Browse and edit the database's tables in the browser                        |
 | `pnpm lint`          | ESLint, where any warning counts as an error                                |
 | `pnpm typecheck`     | Check types, after generating the route types (`next typegen`)              |
 | `pnpm knip`          | Find files, exports and packages that nothing uses any more                 |
@@ -53,6 +64,15 @@ Deployment steps and what to do after deploying are in [DEPLOYMENT.md](DEPLOYMEN
 | `pnpm test:e2e`      | Browser tests (Playwright) against the production server                    |
 | `pnpm design:lint`   | Validate `DESIGN.md` and its color contrast                                 |
 | `pnpm format`        | Format every file automatically                                             |
+
+## Database
+
+PostgreSQL, through [Prisma](https://www.prisma.io) 7. It keeps the orders; products and categories stay in `src/data`.
+
+- The tables are described in `prisma/schema.prisma`, and every change to them is a migration in `prisma/migrations`, kept in Git. After editing the schema, run `pnpm db:migrate`, which writes the migration and applies it locally, then `pnpm db:generate` (Prisma 7 no longer regenerates the client during a migration).
+- The client is generated into `src/generated/prisma` (not in Git), and the code reaches it only through `getDb()` in `src/lib/db.ts`, on the server. It is created on first use, so the store runs without a database until an order is placed.
+- `GET /api/health/` answers `{ "status": "ok", "database": "up" }`, or 503 when the server can't reach the database.
+- The Prisma CLI reads `prisma7.config.ts` (the name Prisma 7 looks for), which loads `DATABASE_URL` from `.env`.
 
 ## Editing products and categories
 
@@ -215,6 +235,7 @@ src/app/                       the pages (Next.js App Router)
   not-found.tsx                the 404 page, inside the store shell
   sitemap.ts, robots.ts        the sitemap and robots file
   api/products/                the products API: the product list and one product by its slug
+  api/health/                  whether the server reaches the database
   cart-catalog.json/           the current price and stock of every variant, a static JSON file
   similar-products.json/       the similar products Najm suggests, a static JSON file
   og/                          share images for every product, category and the site (JPEG, written at build time)
@@ -251,6 +272,7 @@ src/lib/
                                such as {store} that fill them
   og/                          share image layout and drawing
   routes.ts                    the addresses of the product, category and static pages
+  db.ts                        the database client (Prisma), on the server only
   zod.ts                       Zod, set up once (Arabic messages, no eval): import z from here
   json-loader.ts               loads JSON from the site once per visit, and checks its shape
   api/                         the answers of the API routes in src/app/api
@@ -280,7 +302,9 @@ src/fonts/                     the font files cut to the store's characters (wri
 src/types/                     type declarations (CSS variables in style props)
 
 assets/                        original images and fonts, before processing
-scripts/                       image and font processing, demo photo download
+scripts/                       image and font processing, demo photo download, the local database
+prisma/                        the database tables (schema.prisma) and their migrations
+src/generated/prisma/          the Prisma client, generated (not in Git)
 tests/unit/, tests/e2e/        unit tests (Vitest) and browser tests (Playwright)
 next.config.ts                 Next.js settings: image sizes, security and caching headers
 netlify.toml                   Netlify build settings
