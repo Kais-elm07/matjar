@@ -2,12 +2,14 @@ import Link from "next/link"
 import { BanknoteIcon } from "lucide-react"
 
 import { Logo } from "@/components/layout/logo"
+import { MascotToggle } from "@/components/mascot/mascot-toggle"
 import { buttonVariants } from "@/components/ui/button"
 import { siteConfig } from "@/config/site"
 
 /**
  * The dark full-width footer: the logo, the store statement and the "تواصل معنا" (Contact us)
- * button on the start side, the link columns on the end side, then the copyright line, and it
+ * button on the start side, the link columns on the end side, then the copyright line with the button
+ * that hides or shows Najm the mascot, and it
  * ends in a thin blue line that fades toward both edges (DESIGN.md: footer-line).
  */
 export function SiteFooter() {
@@ -55,10 +57,13 @@ export function SiteFooter() {
           <p>
             © {new Date().getFullYear()} {siteConfig.name}. جميع الحقوق محفوظة.
           </p>
-          <p className="flex items-center gap-1.5">
-            <BanknoteIcon className="size-4 text-primary" aria-hidden />
-            الدفع عند الاستلام متاح
-          </p>
+          <div className="flex flex-wrap items-center gap-x-6">
+            <MascotToggle />
+            <p className="flex items-center gap-1.5">
+              <BanknoteIcon className="size-4 text-primary" aria-hidden />
+              الدفع عند الاستلام متاح
+            </p>
+          </div>
         </div>
       </div>
       <div

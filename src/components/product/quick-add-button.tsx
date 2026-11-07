@@ -4,18 +4,16 @@ import Link from "next/link"
 import { ShoppingBagIcon } from "lucide-react"
 
 import { useAddToCart } from "@/components/cart/use-add-to-cart"
-import type { CardImage, ProductCardData } from "@/lib/catalog/types"
+import type { ProductCardData } from "@/lib/catalog/types"
 import { productPath } from "@/lib/routes"
+import { quickAddLine, type QuickAddSource } from "@/lib/state/cart"
 import { cn } from "@/lib/utils"
 
 /**
  * Only what the button needs, so the full card data isn't sent with every button on the page,
  * and of the photo only what the cart keeps.
  */
-type QuickAddProduct = Pick<
-  ProductCardData,
-  "slug" | "name" | "price" | "compareAtPrice" | "inStock" | "quickAdd"
-> & { image: CardImage | null }
+type QuickAddProduct = QuickAddSource & Pick<ProductCardData, "inStock">
 
 /**
  * A round blue button in the card's bottom corner on the end side, ringed in the background
@@ -38,8 +36,8 @@ export function QuickAddButton({ product, className }: QuickAddButtonProps) {
   const addToCart = useAddToCart()
   if (!product.inStock) return null
 
-  const quick = product.quickAdd
-  if (!quick) {
+  const line = quickAddLine(product)
+  if (!line) {
     return (
       <Link
         href={productPath(product.slug)}
@@ -56,21 +54,7 @@ export function QuickAddButton({ product, className }: QuickAddButtonProps) {
       type="button"
       aria-label={`أضف للسلة: ${product.name}`}
       className={cn(CIRCLE, className)}
-      onClick={() =>
-        addToCart(
-          {
-            sku: quick.sku,
-            slug: product.slug,
-            name: product.name,
-            image: product.image,
-            options: {},
-            price: product.price,
-            compareAtPrice: product.compareAtPrice,
-            stock: quick.stock,
-          },
-          1
-        )
-      }
+      onClick={(event) => addToCart(line, 1, { origin: event.currentTarget })}
     >
       <ShoppingBagIcon aria-hidden />
     </button>

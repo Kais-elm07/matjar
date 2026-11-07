@@ -3,13 +3,31 @@
 import { useEffect, useSyncExternalStore } from "react"
 
 import { useCartStore } from "@/lib/state/cart"
+import { useMascotPreferences } from "@/lib/state/mascot"
 import { useWishlistStore } from "@/lib/state/wishlist"
 
-const stores = [useCartStore, useWishlistStore]
+const stores = [useCartStore, useWishlistStore, useMascotPreferences]
+
+/** What useRestored needs from a store saved in the browser with zustand's persist. */
+type SavedStore = {
+  persist: {
+    hasHydrated: () => boolean
+    onFinishHydration: (listener: () => void) => () => void
+  }
+}
+
+/** Whether a saved store has been restored from the browser. False in prerendered HTML. */
+function useRestored(store: SavedStore) {
+  return useSyncExternalStore(
+    (onChange) => store.persist.onFinishHydration(onChange),
+    () => store.persist.hasHydrated(),
+    () => false
+  )
+}
 
 /**
- * Restores the cart and wishlist from the browser after the page's first render, and updates them when another tab changes them.
- * Called once, by CartWishlistRestorer in StoreShell.
+ * Restores the cart, the wishlist and the mascot setting from the browser after the page's first render,
+ * and updates them when another tab changes them. Called once, by CartWishlistRestorer in StoreShell.
  */
 export function useRestoreStores() {
   useEffect(() => {
@@ -42,18 +60,15 @@ export function useRestoreStores() {
  * Until then, loading skeletons show instead of "السلة فارغة" (the cart is empty).
  */
 export function useCartRestored() {
-  return useSyncExternalStore(
-    (onChange) => useCartStore.persist.onFinishHydration(onChange),
-    () => useCartStore.persist.hasHydrated(),
-    () => false
-  )
+  return useRestored(useCartStore)
 }
 
 /** Whether the wishlist has been restored from the browser. */
 export function useWishlistRestored() {
-  return useSyncExternalStore(
-    (onChange) => useWishlistStore.persist.onFinishHydration(onChange),
-    () => useWishlistStore.persist.hasHydrated(),
-    () => false
-  )
+  return useRestored(useWishlistStore)
+}
+
+/** Whether the visitor's choice to show or hide Najm has been restored from the browser. */
+export function useMascotRestored() {
+  return useRestored(useMascotPreferences)
 }

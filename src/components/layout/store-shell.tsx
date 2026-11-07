@@ -9,6 +9,7 @@ import { MobileTabBar } from "@/components/layout/mobile-tab-bar"
 import { SiteFooter } from "@/components/layout/site-footer"
 import { SiteHeader } from "@/components/layout/site-header"
 import { WhatsAppButton } from "@/components/layout/whatsapp-button"
+import { LazyMascot } from "@/components/mascot/lazy-mascot"
 import { getNavCategories } from "@/lib/catalog/catalog"
 import { cn } from "@/lib/utils"
 
@@ -19,7 +20,8 @@ interface StoreShellProps {
 
 /**
  * The shell of every store page: the announcement bar, header and footer, the mobile bottom bar,
- * the WhatsApp button, the cart panel and the mobile menu, and restoring the cart and wishlist from the browser.
+ * the WhatsApp button, Najm the mascot, the cart panel and the mobile menu, and restoring the cart and wishlist
+ * from the browser.
  * Used by the store layout and the 404 page, so the cart and counters work on every page.
  */
 export function StoreShell({ children, mainClassName }: StoreShellProps) {
@@ -47,6 +49,7 @@ export function StoreShell({ children, mainClassName }: StoreShellProps) {
       </div>
       <MobileTabBar />
       <WhatsAppButton />
+      <LazyMascot />
       <LazyCartSheet />
       <LazyMobileNavSheet categories={categories} />
       <CartWishlistRestorer />

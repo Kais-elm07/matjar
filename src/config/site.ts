@@ -18,6 +18,7 @@ type Announcement = { text: string; href?: string }
 
 interface SiteConfig {
   name: string
+  mascotName: string
   tagline: string
   statement: string
   description: string
@@ -46,6 +47,8 @@ interface SiteConfig {
  */
 export const siteConfig: SiteConfig = {
   name: "متجري",
+  /** The name of the store's 3D mascot, the blue dog in the corner of the screen (DESIGN.md: Mascot) */
+  mascotName: "نجم",
   /** A short phrase after the name in the home page title, and in the general share image */
   tagline: "تسوّق أونلاين بسهولة",
   /** The large sentence in the footer */

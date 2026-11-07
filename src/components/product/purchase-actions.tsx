@@ -12,7 +12,8 @@ interface PurchaseActionsProps {
   quantity: number
   maxQuantity: number
   onQuantityChange: (quantity: number) => void
-  onAddToCart: () => void
+  /** Gets the pressed button, so the product's photo flies to Najm from there */
+  onAddToCart: (origin: HTMLButtonElement) => void
   onBuyNow: () => void
 }
 
@@ -41,7 +42,7 @@ export function PurchaseActions({
           size="xl"
           className="flex-1"
           disabled={!canBuy}
-          onClick={onAddToCart}
+          onClick={(event) => onAddToCart(event.currentTarget)}
         >
           <ShoppingCartIcon data-icon="inline-start" aria-hidden />
           {canBuy ? "أضف للسلة" : "غير متوفر حالياً"}

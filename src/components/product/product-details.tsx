@@ -32,8 +32,11 @@ export function ProductDetails({ product }: ProductDetailsProps) {
     ? variant.compareAtPrice
     : product.compareAtPrice
 
-  /** Adds the chosen variant in the chosen quantity and returns the number of items added. */
-  function add(openCart: boolean) {
+  /**
+   * Adds the chosen variant in the chosen quantity and returns the number of items added. `confirm` shows
+   * Najm catching it, or the cart panel; `origin` is the pressed button.
+   */
+  function add(confirm: boolean, origin?: Element) {
     if (!variant || stock === 0) return 0
     const image = product.images[choice.imageIndex] ?? product.images[0]
     return addToCart(
@@ -48,7 +51,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
         stock: variant.stock,
       },
       choice.quantity,
-      { openCart }
+      { confirm, origin }
     )
   }
 
@@ -91,7 +94,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
           quantity={choice.quantity}
           maxQuantity={choice.maxQuantity}
           onQuantityChange={choice.setQuantity}
-          onAddToCart={() => add(true)}
+          onAddToCart={(origin) => add(true, origin)}
           onBuyNow={buyNow}
         />
 

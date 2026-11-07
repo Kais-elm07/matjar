@@ -4,7 +4,11 @@ import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
 import type { VariantOptions } from "@/lib/catalog/options"
-import type { CardImage, CartCatalog } from "@/lib/catalog/types"
+import type {
+  CardImage,
+  CartCatalog,
+  ProductCardData,
+} from "@/lib/catalog/types"
 import { isCardImage, isVariantOptions } from "@/lib/catalog/guards"
 import { optionsKey } from "@/lib/catalog/variant-key"
 import { isFiniteNumber, isNullOr, isRecord, isString } from "@/lib/guards"
@@ -44,6 +48,29 @@ type CartState = {
   clear: () => void
   /** Applies the current prices and stock to the cart, and returns a list of what changed. */
   sync: (cartCatalog: CartCatalog) => CartNotice[]
+}
+
+/** What a product needs to be added to the cart in one click, from a card or from Najm's suggestions. */
+export type QuickAddSource = Pick<
+  ProductCardData,
+  "slug" | "name" | "price" | "compareAtPrice" | "quickAdd"
+> & { image: CardImage | null }
+
+/** The cart line of a single-variant product, or null when it has options to choose on its page. */
+export function quickAddLine(
+  product: QuickAddSource
+): Omit<CartLine, "quantity"> | null {
+  if (!product.quickAdd) return null
+  return {
+    sku: product.quickAdd.sku,
+    slug: product.slug,
+    name: product.name,
+    image: product.image,
+    options: {},
+    price: product.price,
+    compareAtPrice: product.compareAtPrice,
+    stock: product.quickAdd.stock,
+  }
 }
 
 /** Maximum quantity allowed for a line, given its stock. */

@@ -30,6 +30,22 @@ export default defineConfig({
     // A trace only on a retry and a screenshot on failure, so the report stays light
     trace: "on-first-retry",
     screenshot: "only-on-failure",
+    // Every test starts with Najm, the mascot, hidden (the visitor's saved choice), so adding to the cart
+    // opens the cart panel; tests/e2e/mascot.spec.ts starts without it, to test Najm himself
+    storageState: {
+      cookies: [],
+      origins: [
+        {
+          origin: `http://localhost:${PORT}`,
+          localStorage: [
+            {
+              name: "matjar-mascot",
+              value: JSON.stringify({ state: { hidden: true }, version: 1 }),
+            },
+          ],
+        },
+      ],
+    },
   },
   webServer: {
     command: `node node_modules/serve/build/main.js out --listen ${PORT} --no-clipboard`,
