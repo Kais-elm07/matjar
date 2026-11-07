@@ -1,5 +1,5 @@
-// The store's database: the orders placed at checkout (src/lib/checkout/actions.ts).
-// Products and categories stay in src/data and are built into the catalog in memory.
+// The store's database: the orders placed at checkout (src/lib/checkout/actions.ts), and the catalog
+// (categories, products, their photos and variants), filled from src/data by pnpm db:seed (prisma/seed.ts).
 // Amounts are in halalas (1 riyal = 100 halalas), as everywhere in the code.
 // After changing this file: pnpm db:migrate, which writes a migration in prisma/migrations.
 
@@ -62,4 +62,93 @@ model OrderLine {
 
   @@index([orderId])
   @@map("order_lines")
+}
+
+model Category {
+  id          Int        @id @default(autoincrement())
+  /// The category's address, such as men in /category/men/
+  slug        String     @unique
+  name        String
+  description String?
+  /// The cover photo's path without a size, such as /images/products/shirt-1; null picks the photo of
+  /// the category's most popular product
+  imageSrc    String?
+  parentId    Int?
+  parent      Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryTree")
+  /// The order in menus and lists, from 0
+  position    Int        @default(0)
+  products    Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          Int            @id @default(autoincrement())
+  /// The product's address, such as classic-cotton-shirt in /product/classic-cotton-shirt/
+  slug        String         @unique
+  name        String
+  categoryId  Int
+  category    Category       @relation(fields: [categoryId], references: [id])
+  description String         @default("")
+  /// The specifications table: [{ "label": "الخامة", "value": "قطن" }]
+  specs       Json           @default("[]")
+  /// Higher sells more: the order of "الأكثر مبيعاً" (best selling)
+  popularity  Int            @default(0)
+  /// The day the product was added, for "الأحدث" (newest)
+  createdAt   DateTime       @db.Date
+  /// The deal's last day, in the store's time zone; after it, each variant goes back to compareAtPrice
+  saleEndsAt  DateTime?      @db.Date
+  /// Hidden products are kept for the orders that name them, but no page shows them
+  hidden      Boolean        @default(false)
+  /// The order products were written in, which the default lists keep
+  position    Int            @default(0)
+  updatedAt   DateTime       @updatedAt
+  images      ProductImage[]
+  variants    Variant[]
+
+  @@index([categoryId])
+  @@map("products")
+}
+
+model ProductImage {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  /// The order in the gallery, from 0; the first is the product's main photo
+  position  Int
+  /// The path without a size, such as /images/products/shirt-1 (the loader adds -400.webp and so on)
+  src       String
+  /// The description for screen readers; null builds it from the product's name and the photo's color
+  alt       String?
+  /// The color option this photo shows, such as "أبيض" (white), or null for any color
+  color     String?
+  /// The color of the light behind the photo, such as #c2410c: the owner's choice, or else the color
+  /// pnpm images measured in it; null takes the store's blue
+  tone      String?
+  /// A cut-out photo (transparent background) stands on the stage; others get a frame
+  cutout    Boolean @default(false)
+
+  @@unique([productId, position])
+  @@map("product_images")
+}
+
+model Variant {
+  id             Int     @id @default(autoincrement())
+  productId      Int
+  product        Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sku            String  @unique
+  /// The chosen value of each option, such as { "المقاس": "M", "اللون": "أبيض" }, or {} for none
+  options        Json    @default("{}")
+  /// The same options as one sorted text (optionsKey), so a product can't have one combination twice
+  optionsKey     String
+  price          Int
+  /// The price before the discount, when the variant is on sale
+  compareAtPrice Int?
+  stock          Int
+  /// The order in the options picker, from 0
+  position       Int
+
+  @@unique([productId, optionsKey])
+  @@map("variants")
 }

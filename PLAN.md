@@ -1,6 +1,6 @@
 # Online Store Plan
 
-**Version:** 3.3
+**Version:** 3.4
 **Date:** November 7, 2026
 **Status:** Approved up to phase 9. Phases 1 to 7 are complete except the items that need the owner (a review on a real phone and testing with real people). The phase 8 files are ready, and the owner postponed the deployment itself. A full review of code quality, performance and load capacity has been carried out. The project is on GitHub and the GitHub Actions checks pass. Phase 10, a design-only evolution to the "Spotlight" identity, was proposed, prototyped and built on November 6, 2026, on the Git branch `phase-10-spotlight`; the owner's look on a real phone remains. Phase 11, Najm the 3D mascot, was prototyped on November 6 and built on November 7, 2026, on the branch `phase-11-mascot`, which starts from phase 10. Phase 12, built on November 7, 2026 on the branch `server-mode`, runs the store on a Next.js server, with a products API and the orders saved in PostgreSQL; the deployment on Netlify is the owner's next step.
 
@@ -10,6 +10,7 @@
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 3.4 | November 7, 2026 | Phase 12 was deployed on Netlify with a Supabase database. Phase 13 was planned at the owner's request (the products in the database, refreshed on demand, an admin panel, stock lowered by orders) and its first step built: the catalog tables and the seed. |
 | 3.3 | November 7, 2026 | Phase 12 was built at the owner's request on the branch `server-mode`: the store runs on a Next.js server instead of a static export, with the security headers in `next.config.ts`, a products API (`/api/products/`), PostgreSQL through Prisma for the orders, a Server Action that checks and saves each order, a page for every order, and coupons that stay on the server. Decision 7 is answered for the host: Netlify. |
 | 3.2 | November 7, 2026 | Phase 11 was built on the branch `phase-11-mascot`: Najm, a 3D blue dog drawn with three.js from simple shapes, stands in the corner of every page with no background, and behaves differently on the home page, the shopping pages, the cart, checkout and the order confirmation. He catches every product added to the cart, takes out deleted ones, celebrates an order, and suggests similar products from a new static file, `similar-products.json`. While he is on screen he replaces the cart panel as the add confirmation; a footer button hides him. His code loads only after the visitor's first move. `DESIGN.md`, the README, unit tests and two browser tests were added for him. |
 | 3.1 | November 6, 2026 | Phase 10 was built on the branch `phase-10-spotlight`: `DESIGN.md` and the design skill were rewritten for the "Spotlight" identity; the colors, the pill buttons and the corners changed in the code; every demo product photo became a cut-out, made with an open-source background-removal model on the developer's computer, with other Pexels photos where a photo could not be cut cleanly or was too small (and the black headset recolored from the red one); the color options of four products now follow their photos, and the category covers are product photos; `pnpm images` measures each photo's color, and the catalog gives every photo its tone; the hero and the product gallery became stages whose light follows the product and whose photos turn in 3D, with no new dependency; the cards, the category tiles, the banners and the share images took the same look. Unit tests for the tone, its contrast on every hue and the swipe arithmetic, and two browser tests for the gallery, were added. |
@@ -772,7 +773,7 @@ Each step is one commit that passes `pnpm verify`, and the site is reviewed at 3
 - [x] **Database:** `prisma/schema.prisma` with the orders and their lines, the first migration, `pnpm db:start` for a local PostgreSQL, `GET /api/health/`, and a PostgreSQL service in GitHub Actions.
 - [x] **Orders on the server:** the `placeOrder` and `lookupCoupon` Server Actions, the order page `/orders/<id>/` with its error view, and the privacy, about and terms texts updated.
 - [x] **Documentation:** the README, `DEPLOYMENT.md`, `AGENTS.md` and this plan.
-- [ ] **Deployment by the owner:** connect the repository on Netlify, create the database, set the variables, then check the live site (`DEPLOYMENT.md`).
+- [x] **Deployment by the owner:** done on November 7, 2026: Netlify (`https://matjrii.netlify.app`) with a Supabase database through its session pooler. The lessons (the connection string, the secret variables, the project's visibility, the Prisma client in the build, Netlify's line break in `<head>`) are in `DEPLOYMENT.md`.
 
 #### 12.3 Risks
 
@@ -782,6 +783,44 @@ Each step is one commit that passes `pnpm verify`, and the site is reviewed at 3
 | The database is out of reach | Every page except an order's works without it; the order page shows a message with a retry button, and placing an order shows a clear message. `/api/health/` tells the owner. |
 | A visitor's browser sends changed prices | The server ignores them: it prices the order from the catalog and refuses a total other than the one the visitor saw. |
 | A deal ends while the server runs | The catalog is built when the server starts, as the pages are built at build time; as before, the site is rebuilt after a deal ends. |
+
+### Phase 13: The products in the database (in progress since November 7, 2026)
+
+**Status:** asked for by the owner on November 7, 2026: keep the products the way large stores do. The plan was written in a separate session and reviewed before the work started.
+
+**Goal:** the store owner adds a product or changes a price or a stock count from an admin panel, and the change shows on the site within seconds, with no code change and no new deployment. Every confirmed order lowers the stock.
+
+**What must not break:** the pages are not built from the database on every visit (the live mobile Lighthouse scores: home 95–96, product 90–94, list 93–94, and the free Supabase project has few connections); the site keeps working while the database is down (a free Supabase project pauses after a week without activity), and only placing an order and the admin panel stop; the classic rendering model stays; prices, stock and coupons come from the server; `/api/products/` keeps its shape.
+
+#### 13.1 Decisions
+
+- **Where the catalog lives:** PostgreSQL (the same Supabase database), read through one cached function tagged `catalog` (`unstable_cache`, revalidated daily so ended deals reprice). The pages stay prepared at build time and are refreshed on demand (`revalidateTag("catalog", "max")` after every change and every order); the product and category pages switch to `dynamicParams = true`, so a new product renders on its first visit. Rebuilding the whole site on each change (a Netlify build hook) is the fallback if on-demand refresh fails on Netlify.
+- **The cache holds the rows, not the built catalog:** `unstable_cache` stores its result as JSON, and the built catalog has `Map`s (`categoryBySlug`, `productBySlug`) that JSON drops. The cached value is the plain rows of `src/lib/catalog/rows.ts`; the catalog is built from them after reading.
+- **Stock:** lowered inside the order's transaction (`updateMany` where the stock is still enough), so the last piece can't be sold twice. The order is priced from the database rows with the same rule for ended deals as the catalog.
+- **Admin panel:** under `/admin/`, behind one password (a scrypt hash and a signed cookie in environment variables), decided by the owner. The session is checked in every admin page and every admin Server Action (Next.js recommends checks next to the data over `proxy.ts`).
+- **Uploaded photos:** Supabase Storage, in a public bucket, decided by the owner; sharp makes the five sizes and measures the tone, with the measuring moved out of `scripts/images.mjs` into a shared module.
+- **Seeding:** `pnpm db:seed` fills an empty catalog from `src/data` and does nothing once products exist; the Netlify build runs it, so the owner never handles the production database address. `--force` rewrites the `src/data` products for the local database and the tests, whose orders lower the stock.
+- **Kept in the code for now:** the home page content, the coupons, shipping and testimonials.
+
+#### 13.2 Steps
+
+Each step is merged into `main` and deployed on its own, once the checks and the browser tests pass (each production deploy costs 15 of the free plan's 300 monthly Netlify credits).
+
+- [x] **The tables and the seed:** categories, products, product photos and variants in `prisma/schema.prisma` (dates as `@db.Date`, prices in halalas, unique slugs, SKUs and option combinations), `prisma/seed.ts` run through `tsx`, the rows in `src/lib/catalog/rows.ts` with their unit test, and the seed in GitHub Actions and the Netlify build. The site doesn't read the tables yet.
+- [ ] **The catalog read from the database:** the cached loader, `async` catalog functions, `dynamicParams` on the product and category pages, a small connection pool, and a check on Netlify that a tag refresh reaches the pages and that the site survives a stopped database.
+- [ ] **Stock lowered by orders**, with a browser test for the last piece; the browser tests reseed before they run.
+- [ ] **The admin panel:** sign-in, the product and category forms, quick stock edits; deleting hides.
+- [ ] **Uploading photos** to Supabase Storage, with the image loader and the content security policy updated.
+- [ ] **The prepared files and the documentation:** `cart-catalog.json`, `similar-products.json`, the sitemap and share images for new products, the README, `DEPLOYMENT.md` and the new variables.
+
+#### 13.3 Risks
+
+| Risk | How it is avoided |
+| --- | --- |
+| On-demand refresh by tag doesn't reach the pages on Netlify | Checked on the live site right after the catalog step, before anything builds on it; the fallback is a build hook called by the admin actions. |
+| sharp or the share-image fonts don't work inside a Netlify function | Checked before the upload step; the fallbacks are resizing in the browser before upload, and the site's share image for new products. |
+| Supabase's connections run out | A pool of one or two connections per function; the transaction pooler is the next step. |
+| Deploy previews share the production database | Their builds run the migrations too, so migrations only add, and previews are not used to test writes. |
 
 ---
 

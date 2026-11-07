@@ -7,6 +7,8 @@ export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
     path: "prisma/migrations",
+    // Run by prisma migrate reset, after it empties the local database
+    seed: "pnpm db:seed",
   },
   datasource: {
     url: process.env.DATABASE_URL,

@@ -5,14 +5,14 @@ This guide covers the steps you do from your own accounts (database, hosting, do
 
 ## What is ready in the project
 
-| File                       | Purpose                                                                                                                                             |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `netlify.toml`             | The build command (`pnpm db:generate && pnpm db:deploy && pnpm build`), the Node version, and Netlify's Next.js plugin.                             |
-| `next.config.ts`           | Security headers (CSP, HSTS and others) and caching rules, sent by the server on every host.                                                        |
-| `prisma/migrations/`       | The database tables. `pnpm db:deploy` applies the ones that haven't run yet, before every build.                                                    |
-| `src/app/api/health/`      | `GET /api/health/` answers `{ "status": "ok", "database": "up" }`, or 503 when the server can't reach the database.                                 |
-| `.github/workflows/ci.yml` | On every push to the `main` branch and every pull request: the checks, the unit tests, the build and the browser tests, with a PostgreSQL database. |
-| `.env.example`             | The variables below, with what each one is for.                                                                                                     |
+| File                       | Purpose                                                                                                                                                                         |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `netlify.toml`             | The build command (`pnpm db:generate && pnpm db:deploy && pnpm db:seed && pnpm build`), the Node version, and Netlify's Next.js plugin.                                         |
+| `next.config.ts`           | Security headers (CSP, HSTS and others) and caching rules, sent by the server on every host.                                                                                    |
+| `prisma/migrations/`       | The database tables. `pnpm db:deploy` applies the ones that haven't run yet, before every build. `pnpm db:seed` (`prisma/seed.ts`) then fills an empty catalog from `src/data`. |
+| `src/app/api/health/`      | `GET /api/health/` answers `{ "status": "ok", "database": "up" }`, or 503 when the server can't reach the database.                                                             |
+| `.github/workflows/ci.yml` | On every push to the `main` branch and every pull request: the checks, the unit tests, the build and the browser tests, with a PostgreSQL database.                             |
+| `.env.example`             | The variables below, with what each one is for.                                                                                                                                 |
 
 ### The variables
 
@@ -34,7 +34,7 @@ Any PostgreSQL host that gives a connection string works, such as Supabase (used
 2. Copy its connection string. If the provider offers a "pooled" connection, use that one: the server runs as short-lived functions, and each one opens its own connection.
 3. Before choosing, open the provider's website in your browser and make sure it works from your network; during the work, connections to some services were intermittent.
 
-The tables are created by the first deploy (`pnpm db:deploy` in the build command), so nothing has to be done in the database by hand.
+The tables are created and the catalog is filled from `src/data` by the first deploy (`pnpm db:deploy` and `pnpm db:seed` in the build command), so nothing has to be done in the database by hand. Later deploys leave the catalog alone: the seed writes only into a database with no products.
 
 ### With Supabase
 
@@ -86,6 +86,7 @@ The same project runs on any machine with Node.js 22 or later, behind a web serv
 ```bash
 pnpm install --frozen-lockfile
 pnpm db:deploy
+pnpm db:seed
 pnpm build
 pnpm start
 ```

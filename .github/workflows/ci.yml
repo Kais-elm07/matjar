@@ -55,6 +55,9 @@ jobs:
       - name: Create the database tables (Prisma migrations)
         run: pnpm db:deploy
 
+      - name: Fill the catalog tables from src/data
+        run: pnpm db:seed
+
       - name: Check formatting (Prettier)
         run: pnpm format:check
 

@@ -1,7 +1,9 @@
 # Build scripts that packages may run during install (pnpm refuses any script not listed here).
-# false = skip the script without stopping the install: sharp and unrs-resolver work with prebuilt files.
+# false = skip the script without stopping the install: sharp, unrs-resolver and esbuild (used by tsx)
+# work with prebuilt files.
 # Prisma's scripts check the Node.js version and download the schema engine that runs migrations.
 allowBuilds:
+  esbuild: false
   "@prisma/engines": true
   prisma: true
   sharp: false

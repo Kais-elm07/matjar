@@ -7,8 +7,10 @@
 # so DATABASE_URL must be set for builds too, not only for the functions.
 # The Prisma client (src/generated, not in Git) is generated first: Netlify keeps node_modules between
 # builds, and pnpm then finds nothing to install and skips the postinstall script that generates it.
+# pnpm db:seed fills the catalog from src/data when the database has no products yet (the first deploy),
+# and changes nothing after that.
 [build]
-  command = "pnpm db:generate && pnpm db:deploy && pnpm build"
+  command = "pnpm db:generate && pnpm db:deploy && pnpm db:seed && pnpm build"
 
 [build.environment]
   NODE_VERSION = "24"
