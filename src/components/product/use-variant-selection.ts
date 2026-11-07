@@ -11,7 +11,7 @@ import {
   selectOption,
   type PurchasableProduct,
 } from "@/lib/catalog/variant-selection"
-import { lineLimit } from "@/lib/state/cart"
+import { lineLimit } from "@/lib/checkout/quantity"
 
 /**
  * The choice on the product page: the chosen options and the variant they make, the quantity (kept

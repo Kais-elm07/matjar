@@ -2,8 +2,8 @@ import type { CouponInput } from "@/lib/checkout/types"
 
 /**
  * Demo discount coupons. Amounts are in riyals.
- * Note: on a static site any visitor can see these codes in the page's code,
- * so they are for demonstration only, not for real secret offers.
+ * The codes stay on the server: the checkout asks the server about a code (lookupCoupon in
+ * src/lib/checkout/actions.ts), so visitors can't read the list in the page's code.
  */
 export const coupons: CouponInput[] = [
   {

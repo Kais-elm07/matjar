@@ -1,21 +1,32 @@
 import { toWesternDigits } from "@/lib/arabic-digits"
 import type {
-  CheckoutConfig,
   Coupon,
   OrderTotals,
   ShippingCity,
+  ShippingConfig,
   ShippingMethod,
 } from "@/lib/checkout/types"
+import { formatPrice } from "@/lib/money"
 
-/** Finds a coupon by its code, ignoring letter case and spaces. */
-export function findCoupon(config: CheckoutConfig, code: string) {
+/** Sum of the lines' prices in the smallest unit. */
+export function cartSubtotal(lines: { price: number; quantity: number }[]) {
+  return lines.reduce((sum, line) => sum + line.price * line.quantity, 0)
+}
+
+/** Finds a coupon by its code, ignoring letter case, spaces and Arabic-Indic digits. */
+export function findCoupon(coupons: Coupon[], code: string) {
   const wanted = toWesternDigits(code).trim().toUpperCase()
-  return config.coupons.find((coupon) => coupon.code === wanted)
+  return coupons.find((coupon) => coupon.code === wanted)
 }
 
 /** Why the coupon does not apply to the order, or null if it is valid. */
 export function couponProblem(coupon: Coupon, subtotal: number) {
   return subtotal < coupon.minSubtotal ? "minimum" : null
+}
+
+/** What the visitor reads when the subtotal is below the coupon's minimum. */
+export function couponMinimumMessage(coupon: Coupon) {
+  return `هذا الكوبون للطلبات من ${formatPrice(coupon.minSubtotal)} فأكثر`
 }
 
 function couponDiscount(coupon: Coupon | null, subtotal: number) {
@@ -32,7 +43,7 @@ function couponDiscount(coupon: Coupon | null, subtotal: number) {
 export function shippingFee(
   city: ShippingCity,
   method: ShippingMethod,
-  config: CheckoutConfig
+  config: ShippingConfig
 ) {
   return city.fee + (method === "express" ? config.express.extraFee : 0)
 }
@@ -52,7 +63,7 @@ export function calculateTotals({
   city: ShippingCity | undefined
   method: ShippingMethod
   coupon: Coupon | null
-  config: CheckoutConfig
+  config: ShippingConfig
 }): OrderTotals {
   const discount = couponDiscount(coupon, subtotal)
   const afterDiscount = subtotal - discount

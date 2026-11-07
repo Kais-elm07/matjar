@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button"
 import { formatOptions } from "@/lib/catalog/options"
 import { formatPrice } from "@/lib/money"
 import { productPath } from "@/lib/routes"
-import { lineLimit, useCartStore, type CartLine } from "@/lib/state/cart"
+import { lineLimit } from "@/lib/checkout/quantity"
+import { useCartStore, type CartLine } from "@/lib/state/cart"
 import { cn } from "@/lib/utils"
 
 interface CartLineItemProps {

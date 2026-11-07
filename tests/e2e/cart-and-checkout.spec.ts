@@ -86,12 +86,28 @@ test("Placing a demo order with a mobile number in Arabic-Indic digits and a dis
   ).toBeVisible()
 
   await confirm.click()
-  await expect(page).toHaveURL(/\/checkout\/success\/$/)
+  // The server saved the order, and the order has a page of its own
+  await expect(page).toHaveURL(/\/orders\/[a-z0-9]+\/$/)
   await expect(page.getByText(/رقم الطلب/)).toBeVisible()
   await expect(page.getByText(/طلب تجريبي/).first()).toBeVisible()
+  await expect(page.getByText(`الخصم (${percentCoupon.code})`)).toBeVisible()
   // The cart is empty after confirming: the cart button in the header has no counter
   await expect(
     page.getByRole("button", { name: "السلة", exact: true }).first()
+  ).toBeVisible()
+
+  // The order is read from the database, so its page still shows it after a reload
+  await page.reload()
+  await expect(page.getByText("أحمد محمد")).toBeVisible()
+})
+
+test("An order address that doesn't exist shows the 404 page", async ({
+  page,
+}) => {
+  const response = await page.goto("/orders/no-such-order/")
+  expect(response?.status()).toBe(404)
+  await expect(
+    page.getByRole("heading", { name: "عذراً، لم نجد هذه الصفحة" })
   ).toBeVisible()
 })
 

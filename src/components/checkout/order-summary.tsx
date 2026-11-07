@@ -8,7 +8,7 @@ import { ChevronDownIcon } from "lucide-react"
 import { CouponField } from "@/components/checkout/coupon-field"
 import { PIECE_FORMS, pluralize } from "@/lib/arabic-plural"
 import { formatOptions } from "@/lib/catalog/options"
-import type { CheckoutConfig, Coupon, OrderTotals } from "@/lib/checkout/types"
+import type { Coupon, OrderTotals } from "@/lib/checkout/types"
 import { formatPrice, formatShipping } from "@/lib/money"
 import type { CartLine } from "@/lib/state/cart"
 import { cn } from "@/lib/utils"
@@ -18,7 +18,6 @@ interface OrderSummaryProps {
   totals: OrderTotals
   coupon: Coupon | null
   onCouponChange: (coupon: Coupon | null) => void
-  config: CheckoutConfig
   className?: string
 }
 
@@ -32,7 +31,6 @@ export function OrderSummary({
   totals,
   coupon,
   onCouponChange,
-  config,
   className,
 }: OrderSummaryProps) {
   const [open, setOpen] = useState(false)
@@ -120,7 +118,6 @@ export function OrderSummary({
           coupon={coupon}
           subtotal={totals.subtotal}
           onChange={onCouponChange}
-          config={config}
         />
 
         <dl className="space-y-2 border-t pt-4 text-sm">

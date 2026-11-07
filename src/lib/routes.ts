@@ -10,6 +10,9 @@ export const contentPagePath = (slug: string) => `/pages/${slug}/`
 export const searchPath = (query: string) =>
   `/search/?q=${encodeURIComponent(query)}`
 
+/** An order's confirmation page, by the order's long id. */
+export const orderPath = (id: string) => `/orders/${id}/`
+
 /** The products API (src/app/api/products), with the slash the server expects. */
 export const productsApiPath = "/api/products/"
 export const productApiPath = (slug: string) => `/api/products/${slug}/`

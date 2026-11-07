@@ -9,15 +9,15 @@ import { errorId } from "@/components/checkout/use-checkout-field"
 import { deliveryTime } from "@/lib/checkout/delivery"
 import type { CheckoutInput } from "@/lib/checkout/form-schema"
 import type {
-  CheckoutConfig,
   ShippingCity,
+  ShippingConfig,
   ShippingMethod,
 } from "@/lib/checkout/types"
 
 interface ShippingStepProps {
   /** The chosen city, or undefined before one is chosen */
   city: ShippingCity | undefined
-  config: CheckoutConfig
+  config: ShippingConfig
   /** Each method's shipping price for this order, from the same totals as the order summary */
   shippingPrice: (method: ShippingMethod) => number | null
 }

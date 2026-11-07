@@ -1,52 +1,48 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { TagIcon, XIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { couponProblem, findCoupon } from "@/lib/checkout/totals"
-import type { CheckoutConfig, Coupon } from "@/lib/checkout/types"
-import { formatPrice } from "@/lib/money"
+import { lookupCoupon } from "@/lib/checkout/actions"
+import { couponMinimumMessage, couponProblem } from "@/lib/checkout/totals"
+import type { Coupon } from "@/lib/checkout/types"
 import { cn } from "@/lib/utils"
 
 interface CouponFieldProps {
   coupon: Coupon | null
   subtotal: number
   onChange: (coupon: Coupon | null) => void
-  config: CheckoutConfig
 }
 
 /**
- * Coupon field: checks the code and the order minimum, and shows the applied discount
- * with a button to remove it. If the subtotal drops below the coupon's minimum after it
- * is applied, the coupon stays visible with a notice that it no longer applies.
+ * Coupon field: the server checks the code and the order minimum (lookupCoupon), so the list of codes
+ * never reaches the browser. It shows the applied discount with a button to remove it. If the subtotal
+ * drops below the coupon's minimum after it is applied, the coupon stays visible with a notice that it no
+ * longer applies.
  */
-export function CouponField({
-  coupon,
-  subtotal,
-  onChange,
-  config,
-}: CouponFieldProps) {
+export function CouponField({ coupon, subtotal, onChange }: CouponFieldProps) {
   const [code, setCode] = useState("")
   const [error, setError] = useState<string | null>(null)
-  const minimumText = (found: Coupon) =>
-    `هذا الكوبون للطلبات من ${formatPrice(found.minSubtotal)} فأكثر`
+  const [checking, startChecking] = useTransition()
 
   function apply() {
-    if (!code.trim()) return
-    const found = findCoupon(config, code)
-    if (!found) {
-      setError("رمز الكوبون غير صحيح")
-      return
-    }
-    if (couponProblem(found, subtotal)) {
-      setError(minimumText(found))
-      return
-    }
-    setError(null)
-    setCode("")
-    onChange(found)
+    if (!code.trim() || checking) return
+    startChecking(async () => {
+      try {
+        const result = await lookupCoupon(code, subtotal)
+        if (!result.ok) {
+          setError(result.message)
+          return
+        }
+        setError(null)
+        setCode("")
+        onChange(result.coupon)
+      } catch {
+        setError("تعذّر التحقق من الكوبون. تأكد من اتصالك ثم حاول مرة أخرى.")
+      }
+    })
   }
 
   if (coupon) {
@@ -88,7 +84,7 @@ export function CouponField({
         </div>
         {belowMinimum && (
           <p role="status" className="mt-1 text-xs font-medium text-warning">
-            لم يعد الكوبون ينطبق: {minimumText(coupon)}.
+            لم يعد الكوبون ينطبق: {couponMinimumMessage(coupon)}.
           </p>
         )}
       </div>
@@ -123,8 +119,14 @@ export function CouponField({
           aria-describedby={error ? "coupon-error" : undefined}
           className="text-end uppercase"
         />
-        <Button type="button" variant="default" size="xl" onClick={apply}>
-          تطبيق
+        <Button
+          type="button"
+          variant="default"
+          size="xl"
+          onClick={apply}
+          aria-disabled={checking}
+        >
+          {checking ? "جارٍ التحقق..." : "تطبيق"}
         </Button>
       </div>
       {error && (

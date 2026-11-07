@@ -11,11 +11,9 @@ import type {
 } from "@/lib/catalog/types"
 import { isCardImage, isVariantOptions } from "@/lib/catalog/guards"
 import { optionsKey } from "@/lib/catalog/variant-key"
+import { lineLimit } from "@/lib/checkout/quantity"
 import { isFiniteNumber, isNullOr, isRecord, isString } from "@/lib/guards"
 import { safeStorage } from "@/lib/state/storage"
-
-/** Maximum quantity of a single variant in the cart, even if the stock is larger. */
-export const MAX_LINE_QUANTITY = 10
 
 /** A cart line: the chosen variant with a copy of its data when added, to show it at once without loading. */
 export type CartLine = {
@@ -71,11 +69,6 @@ export function quickAddLine(
     compareAtPrice: product.compareAtPrice,
     stock: product.quickAdd.stock,
   }
-}
-
-/** Maximum quantity allowed for a line, given its stock. */
-export function lineLimit(stock: number) {
-  return Math.max(0, Math.min(stock, MAX_LINE_QUANTITY))
 }
 
 /** A well-formed saved line. Others are ignored so old or hand-edited data cannot break the cart. */
@@ -223,9 +216,4 @@ export function useCartCount() {
   return useCartStore((state) =>
     state.lines.reduce((sum, line) => sum + line.quantity, 0)
   )
-}
-
-/** Sum of the cart's prices in the smallest unit. */
-export function cartSubtotal(lines: CartLine[]) {
-  return lines.reduce((sum, line) => sum + line.price * line.quantity, 0)
 }

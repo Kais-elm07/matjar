@@ -2,14 +2,14 @@ import type { Metadata } from "next"
 
 import { CheckoutView } from "@/components/checkout/checkout-view"
 import { Breadcrumbs } from "@/components/shared/breadcrumbs"
-import { getCheckoutConfig } from "@/lib/checkout/config"
+import { getShippingConfig } from "@/lib/checkout/config"
 
 export const metadata: Metadata = {
   title: "إتمام الطلب",
   robots: { index: false, follow: false },
 }
 
-/** The demo checkout: shipping and coupon settings are read at build time and passed to the form. */
+/** The checkout: the shipping settings are passed to the form; the coupons stay on the server. */
 export default function CheckoutPage() {
   return (
     <div className="page-container py-5 md:py-8">
@@ -17,7 +17,7 @@ export default function CheckoutPage() {
         items={[{ name: "سلة التسوق", href: "/cart" }, { name: "إتمام الطلب" }]}
       />
       <h1 className="mb-6 text-2xl font-bold md:text-3xl">إتمام الطلب</h1>
-      <CheckoutView config={getCheckoutConfig()} />
+      <CheckoutView config={getShippingConfig()} />
     </div>
   )
 }

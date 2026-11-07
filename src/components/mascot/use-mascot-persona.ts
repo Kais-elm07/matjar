@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation"
 import { useEffect, type RefObject } from "react"
 
-import { useLastOrder } from "@/lib/checkout/last-order"
 import { basketItems } from "@/lib/mascot/basket"
 import { mascotPhrases, type MessageContent } from "@/lib/mascot/messages"
 import { personaFor, showsCart } from "@/lib/mascot/persona"
@@ -21,20 +20,15 @@ export function useMascotPersona(
   say: (content: MessageContent) => void
 ) {
   const pathname = usePathname()
-  const order = useLastOrder()
-  const orderNumber = order && order !== "pending" ? order.number : null
 
   useEffect(() => {
     const scene = sceneRef.current
     if (!scene) return
     const persona = personaFor(pathname)
 
-    // The cart was emptied when the order was placed: he sends it off with the products still in his basket
-    if (
-      persona === "order-placed" &&
-      orderNumber &&
-      firstTimeThisVisit(`order-${orderNumber}`)
-    ) {
+    // The cart was emptied when the order was placed: he sends it off with the products still in his basket,
+    // once per order (each order has its own address)
+    if (persona === "order-placed" && firstTimeThisVisit(pathname)) {
       void scene
         .celebrate()
         .then(() => say({ kind: "note", text: mascotPhrases.orderPlaced }))
@@ -57,5 +51,5 @@ export function useMascotPersona(
         say({ kind: "note", text: mascotPhrases.cart(pieces) })
       )
     }
-  }, [pathname, orderNumber, sceneRef, say])
+  }, [pathname, sceneRef, say])
 }

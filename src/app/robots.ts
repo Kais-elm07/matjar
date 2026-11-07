@@ -11,8 +11,15 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // Pages specific to each visitor or without static content, and the API's JSON, so there is no point indexing them
-        disallow: ["/search/", "/cart/", "/checkout/", "/wishlist/", "/api/"],
+        // Pages specific to each visitor or without static content, the private order pages, and the API's JSON
+        disallow: [
+          "/search/",
+          "/cart/",
+          "/checkout/",
+          "/wishlist/",
+          "/orders/",
+          "/api/",
+        ],
       },
     ],
     sitemap: absoluteUrl("/sitemap.xml"),

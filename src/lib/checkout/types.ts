@@ -58,12 +58,15 @@ export type Coupon = {
   description: string
 }
 
-export type CheckoutConfig = {
+/** The shipping settings: everything the checkout page needs to show prices, sent to the browser. */
+export type ShippingConfig = {
   freeShippingFrom: number
   cities: ShippingCity[]
   express: { extraFee: number; deliveryTime: string }
-  coupons: Coupon[]
 }
+
+/** The shipping settings and the coupons. The coupons stay on the server, so no visitor can read their codes. */
+export type CheckoutConfig = ShippingConfig & { coupons: Coupon[] }
 
 export type ShippingMethod = "standard" | "express"
 

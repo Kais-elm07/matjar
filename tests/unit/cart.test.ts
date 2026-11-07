@@ -1,12 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest"
 
-import {
-  cartSubtotal,
-  lineLimit,
-  MAX_LINE_QUANTITY,
-  useCartStore,
-  type CartLine,
-} from "@/lib/state/cart"
+import { lineLimit, MAX_LINE_QUANTITY } from "@/lib/checkout/quantity"
+import { cartSubtotal } from "@/lib/checkout/totals"
+import { useCartStore, type CartLine } from "@/lib/state/cart"
 
 type NewLine = Omit<CartLine, "quantity">
 

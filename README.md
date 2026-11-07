@@ -125,14 +125,15 @@ The server answers JSON about the catalog on every request (`src/app/api/product
 
 The store's own search box, search page and wishlist load `GET /api/products/` once per visit and match in the browser at every key press. A cache may keep an answer only while it checks with the server (`Cache-Control: public, max-age=0, must-revalidate`).
 
-## Checkout (demo)
+## Checkout and orders
 
 A single page with four steps: contact details, address, shipping method, and cash on delivery, with an order summary and a coupon field.
 
-- **Demo only:** confirming generates an order number in the browser, shows a confirmation page and empties the cart. Nothing is sent anywhere, and the visitor is told so before and after confirming.
-- **Data:** the order is kept only in the current tab (sessionStorage) to show the confirmation page, and is erased when the tab closes.
+- **Placing an order:** confirming calls the Server Action `placeOrder` (`src/lib/checkout/actions.ts`). The server checks the form again with the same rules, rebuilds the lines from the catalog by SKU (its own names, prices and stock, never the browser's), applies the coupon, and refuses the order if the total differs from the one the visitor saw. It then saves the order and its lines in the database with a short number such as `261107-4827`, the cart is emptied, and the visitor goes to the order's page.
+- **The order's page:** `/orders/<id>/`, read from the database on every request. The id is long and can't be guessed, so only whoever has the link sees the order; an unknown id gets the 404 page, and a database that can't be reached shows a message with "حاول مرة أخرى" (Try again). Najm celebrates once per order there.
+- **Still a demo:** nothing is shipped and nobody pays, and the visitor is told so before and after confirming. The orders are in the database, where `pnpm db:studio` shows them.
 - **Shipping:** `src/data/shipping.ts`: cities, delivery price and time in working days, the free shipping threshold, and the cities with express delivery.
-- **Coupons:** `src/data/coupons.ts`: a percentage (with an optional cap), a fixed amount, or free shipping, with an optional order minimum. On a static site any visitor can see the codes in the page source, so they are for demonstration only.
+- **Coupons:** `src/data/coupons.ts`: a percentage (with an optional cap), a fixed amount, or free shipping, with an optional order minimum. The codes stay on the server: the coupon field asks it about a code (`lookupCoupon`), and the checkout page receives only the shipping settings.
 - **Validation:** Arabic messages under each field. The phone number uses the 05xxxxxxxx format and accepts Arabic digits, +966 and 00966.
 - Any mistake in the shipping or coupon files, such as a duplicate city or a percentage above 100, stops the build with an Arabic message.
 
@@ -254,7 +255,7 @@ src/components/
   listing/                     product lists: filters, sorting, pagination, active filters
   search/                      the search box with its suggestions, and the search results page
   cart/                        cart panel, cart and wishlist pages, quantity stepper
-  checkout/                    checkout form (one component per step), order summary, confirmation page
+  checkout/                    checkout form (one component per step), order summary, an order's confirmation
   content/                     static pages: their text, contact cards, shipping table, FAQ
   mascot/                      Najm: his lazy loader, his canvas and speech bubble, his suggestions, the footer
                                button that hides him, and the hooks that tie him to the cart and the pages
@@ -267,7 +268,8 @@ src/lib/
                                is hidden (Zustand stores)
   mascot/                      Najm's logic: his behavior on each page, his sentences, the suggestions, and
                                scene/, his 3D drawing with three.js (his body, his cart, his poses and moves)
-  checkout/                    shipping, coupons, totals, the checkout form rules, building and keeping the demo order
+  checkout/                    shipping, coupons, totals, the checkout form rules, the Server Actions, and
+                               building, saving and reading orders
   content/                     the static pages: reading and checking them, their text format, and the values
                                such as {store} that fill them
   og/                          share image layout and drawing
@@ -346,7 +348,7 @@ Most pages are prepared once by `pnpm build`. The server then sends them as they
 - Listing pages arrive with every product of the category in the HTML. Filters, sorting and pages then run in the browser (`src/lib/listing`), reading the URL through `useListingQuery()`.
 - Search downloads every product card from the products API (`/api/products/`) the first time it is needed, and matches products in Arabic in the browser (`src/lib/search`). The API runs on the server, on the same catalog the pages were built from.
 - The cart and wishlist are Zustand stores saved in localStorage (`src/lib/state`). When the cart or checkout opens, the cart is checked against `/cart-catalog.json`, so prices and stock are current.
-- Checkout checks the form (`src/lib/checkout/form-schema.ts`), calculates the totals (`totals.ts`) from the shipping and coupon settings the page received at build time, and keeps the demo order in sessionStorage for the confirmation page (`last-order.ts`).
+- Checkout checks the form (`src/lib/checkout/form-schema.ts`) and calculates the totals (`totals.ts`) from the shipping settings the page received. Coupons and orders go through Server Actions (`actions.ts`): the server checks everything again, prices the order from the catalog and saves it (`orders.ts`), and the order's page reads it back.
 - Panels that open on a tap (the cart, the mobile menu, image zoom, the filter sheet and toast messages) load their code once the page has loaded (`src/hooks/use-idle.ts`).
 - The hero and the product gallery are stages: during a swipe, `useStageMotion` writes each photo's 3D turn and the blend of the light straight to CSS variables on every frame, without rendering React again (`src/hooks/use-stage-motion.ts`, with the arithmetic in `src/lib/slider.ts`).
 - Najm is loaded by `LazyMascot` in the store shell. `MascotScene` (`src/lib/mascot/scene`) draws him with three.js and queues his moves; React only holds his speech bubble. The add-to-cart buttons tell him about a new product through `announceAddedProduct` (`src/lib/mascot/events.ts`), which doesn't import three.js, and open the cart panel when he isn't listening. He watches the cart store for removals, and the page address for his behavior on each page (`src/lib/mascot/persona.ts`).

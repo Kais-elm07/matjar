@@ -2,14 +2,14 @@ import "server-only"
 
 import { coupons as couponData } from "@/data/coupons"
 import { shipping as shippingData } from "@/data/shipping"
-import type { CheckoutConfig } from "@/lib/checkout/types"
+import type { CheckoutConfig, ShippingConfig } from "@/lib/checkout/types"
 import { toMinorUnits } from "@/lib/money"
 import { z } from "@/lib/zod"
 
 /**
- * Checkout settings, validated at build time: shipping and coupons.
- * Any error in the two files stops the build with an Arabic message, and the result is passed to the checkout page.
- * The files are read and checked when this module is first imported.
+ * Checkout settings: shipping and coupons, read and checked when this module is first imported (while the
+ * site is built, and when the server starts). Any error in the two files stops the build with an Arabic message.
+ * The checkout page receives only the shipping part (getShippingConfig); the coupons never leave the server.
  */
 
 const amount = z.number().min(0, { error: "المبلغ لا يمكن أن يكون سالباً" })
@@ -127,6 +127,13 @@ function buildConfig(): CheckoutConfig {
 
 const config = buildConfig()
 
+/** Shipping and coupons, for the server: totals, orders and coupon checks. */
 export function getCheckoutConfig() {
   return config
+}
+
+/** The shipping settings without the coupons, for pages that send them to the browser. */
+export function getShippingConfig(): ShippingConfig {
+  const { freeShippingFrom, cities, express } = config
+  return { freeShippingFrom, cities, express }
 }

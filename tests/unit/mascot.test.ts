@@ -31,7 +31,7 @@ describe("Najm's persona on each page", () => {
     expect(personaFor("/wishlist/")).toBe("shopping")
     expect(personaFor("/cart/")).toBe("cart")
     expect(personaFor("/checkout")).toBe("checkout")
-    expect(personaFor("/checkout/success/")).toBe("order-placed")
+    expect(personaFor("/orders/cm1a2b3c4d5e6f7g8h9/")).toBe("order-placed")
     expect(personaFor("/pages/faq/")).toBe("elsewhere")
   })
 
@@ -40,7 +40,7 @@ describe("Najm's persona on each page", () => {
     expect(showsCart(personaFor("/pages/about/"))).toBe(false)
     expect(showsCart(personaFor("/products/"))).toBe(true)
     expect(showsCart(personaFor("/cart/"))).toBe(true)
-    expect(showsCart(personaFor("/checkout/success/"))).toBe(true)
+    expect(showsCart(personaFor("/orders/cm1a2b3c4d5e6f7g8h9/"))).toBe(true)
   })
 })
 

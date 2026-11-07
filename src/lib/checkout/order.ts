@@ -2,85 +2,110 @@ import type { VariantOptions } from "@/lib/catalog/options"
 import type { CardImage } from "@/lib/catalog/types"
 import { deliveryTime } from "@/lib/checkout/delivery"
 import type { CheckoutValues } from "@/lib/checkout/form-schema"
-import { calculateTotals, couponProblem } from "@/lib/checkout/totals"
-import type { CheckoutConfig, Coupon, OrderTotals } from "@/lib/checkout/types"
-import { cartSubtotal, type CartLine } from "@/lib/state/cart"
+import {
+  calculateTotals,
+  cartSubtotal,
+  couponProblem,
+} from "@/lib/checkout/totals"
+import type {
+  Coupon,
+  ShippingConfig,
+  ShippingMethod,
+} from "@/lib/checkout/types"
+import { storeToday } from "@/lib/dates"
 
-/** The demo order as the confirmation page shows it. It is not sent anywhere. */
-export type PlacedOrder = {
-  number: string
-  placedAt: string
-  customer: { name: string; phone: string; city: string; address: string }
-  shipping: { label: string; days: string }
+/** One product of an order, with the catalog's name, photo and price when it was ordered. */
+export type OrderLine = {
+  sku: string
+  slug: string
+  name: string
+  options: VariantOptions
+  quantity: number
+  price: number
+  image: CardImage | null
+}
+
+/** An order before it is saved: what the server writes to the database. Amounts are in halalas. */
+export type OrderDraft = {
+  customerName: string
+  phone: string
+  email: string | null
+  city: string
+  address: string
+  notes: string | null
+  shippingMethod: ShippingMethod
+  deliveryTime: string
   couponCode: string | null
-  lines: {
-    sku: string
-    name: string
-    options: VariantOptions
-    quantity: number
-    price: number
-    image: CardImage | null
-  }[]
-  totals: OrderTotals
+  subtotal: number
+  discount: number
+  shippingFee: number
+  total: number
+  lines: OrderLine[]
 }
 
-/** A nearly unique demo order number from the date on the visitor's device, such as 261031-4827. */
-function createOrderNumber(date = new Date()) {
-  const pad = (value: number) => value.toString().padStart(2, "0")
-  const stamp = `${pad(date.getFullYear() % 100)}${pad(date.getMonth() + 1)}${pad(date.getDate())}`
-  const random = crypto.getRandomValues(new Uint16Array(1))[0] % 10000
-  return `${stamp}-${random.toString().padStart(4, "0")}`
+/** A saved order, as its confirmation page shows it. */
+export type PlacedOrder = OrderDraft & { id: string; number: string }
+
+const SHIPPING_LABELS: Record<ShippingMethod, string> = {
+  standard: "توصيل عادي",
+  express: "توصيل سريع",
 }
+
+/** The shipping method's name, as the checkout shows it. */
+export const shippingLabel = (method: ShippingMethod) => SHIPPING_LABELS[method]
 
 /**
- * The demo order from the form values and the cart, with the same amounts the visitor saw before confirming.
- * null if the city is not among the shipping cities (this does not happen after the form is validated).
+ * The order from the checked form values, the lines the server priced, and the coupon, with the same
+ * amounts as the checkout's summary. null if the city is not among the shipping cities.
  */
 export function buildOrder({
   values,
   lines,
   coupon,
   config,
-  now = new Date(),
 }: {
   values: CheckoutValues
-  lines: CartLine[]
+  lines: OrderLine[]
   coupon: Coupon | null
-  config: CheckoutConfig
-  now?: Date
-}): PlacedOrder | null {
+  config: ShippingConfig
+}): OrderDraft | null {
   const city = config.cities.find((item) => item.name === values.city)
   if (!city) return null
   const subtotal = cartSubtotal(lines)
+  const totals = calculateTotals({
+    subtotal,
+    city,
+    method: values.shippingMethod,
+    coupon,
+    config,
+  })
   return {
-    number: createOrderNumber(now),
-    placedAt: now.toISOString(),
-    customer: {
-      name: values.fullName,
-      phone: values.phone,
-      city: values.city,
-      address: `${values.district}، ${values.street}`,
-    },
-    shipping:
+    customerName: values.fullName,
+    phone: values.phone,
+    email: values.email || null,
+    city: values.city,
+    address: `${values.district}، ${values.street}`,
+    notes: values.notes || null,
+    shippingMethod: values.shippingMethod,
+    deliveryTime:
       values.shippingMethod === "express"
-        ? { label: "توصيل سريع", days: config.express.deliveryTime }
-        : { label: "توصيل عادي", days: deliveryTime(city.days) },
+        ? config.express.deliveryTime
+        : deliveryTime(city.days),
     // A coupon that no longer applies (subtotal below its minimum) is not recorded in the order
     couponCode: coupon && !couponProblem(coupon, subtotal) ? coupon.code : null,
-    lines: lines.map(({ sku, name, options, quantity, price, image }) => ({
-      sku,
-      name,
-      options,
-      quantity,
-      price,
-      image,
-    })),
-    totals: calculateTotals({
-      subtotal,
-      city,
-      method: values.shippingMethod,
-      coupon,
-      config,
-    }),
+    subtotal,
+    discount: totals.discount,
+    shippingFee: totals.shipping ?? 0,
+    total: totals.total,
+    lines,
   }
+}
+
+/**
+ * The short number the customer quotes: the date in store time and four digits, such as 261107-4827.
+ * `random` is a whole number from 0 to 9999; the database refuses a number that is already taken.
+ */
+export function orderNumber(now: Date, random: number) {
+  const day = storeToday(now.getTime()).slice(2).replaceAll("-", "")
+  return `${day}-${random.toString().padStart(4, "0")}`
 }

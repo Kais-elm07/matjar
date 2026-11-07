@@ -6,7 +6,7 @@ import {
   normalizePhone,
   type CheckoutValues,
 } from "@/lib/checkout/form-schema"
-import { buildOrder } from "@/lib/checkout/order"
+import { buildOrder, orderNumber, type OrderLine } from "@/lib/checkout/order"
 import {
   calculateTotals,
   couponProblem,
@@ -81,9 +81,9 @@ function totals(
 
 describe("numbers and coupons", () => {
   it("finds the coupon regardless of letter case, spaces and Arabic-Indic digits", () => {
-    expect(findCoupon(config, " welcome10 ")).toBe(WELCOME10)
-    expect(findCoupon(config, "WELCOME١٠")).toBe(WELCOME10)
-    expect(findCoupon(config, "NOPE")).toBeUndefined()
+    expect(findCoupon(config.coupons, " welcome10 ")).toBe(WELCOME10)
+    expect(findCoupon(config.coupons, "WELCOME١٠")).toBe(WELCOME10)
+    expect(findCoupon(config.coupons, "NOPE")).toBeUndefined()
   })
 
   it("rejects the coupon below the minimum order", () => {
@@ -257,18 +257,15 @@ describe("buildOrder", () => {
     notes: "",
     shippingMethod: "standard",
   }
-  const line = {
+  const line: OrderLine = {
     sku: "SHIRT-01",
     slug: "classic-cotton-shirt",
     name: "قميص قطني كلاسيكي",
-    image: null,
     options: { المقاس: "M" },
-    price: 12900,
-    compareAtPrice: null,
-    stock: 5,
     quantity: 2,
+    price: 12900,
+    image: null,
   }
-  const now = new Date("2026-11-04T10:00:00Z")
 
   it("builds the order with the amounts the visitor saw before confirming", () => {
     const order = buildOrder({
@@ -276,30 +273,29 @@ describe("buildOrder", () => {
       lines: [line],
       coupon: WELCOME10,
       config,
-      now,
     })
-    expect(order).not.toBeNull()
-    expect(order?.number).toMatch(/^261104-\d{4}$/)
-    expect(order?.customer).toEqual({
-      name: "أحمد محمد",
+    const expected = totals(25800, { city: riyadh, coupon: WELCOME10 })
+    expect(order).toEqual({
+      customerName: "أحمد محمد",
       phone: "0501234567",
+      email: null,
       city: "الرياض",
       address: "النرجس، شارع الملك فهد 12",
+      notes: null,
+      shippingMethod: "standard",
+      deliveryTime: "خلال يوم إلى يومين",
+      couponCode: "WELCOME10",
+      subtotal: expected.subtotal,
+      discount: expected.discount,
+      shippingFee: expected.shipping,
+      total: expected.total,
+      lines: [line],
     })
-    expect(order?.couponCode).toBe("WELCOME10")
-    expect(order?.shipping).toEqual({
-      label: "توصيل عادي",
-      days: "خلال يوم إلى يومين",
-    })
-    expect(order?.totals).toEqual(
-      totals(25800, { city: riyadh, coupon: WELCOME10 })
-    )
   })
 
   it("does not record a coupon that no longer applies, and rejects a city outside the shipping cities", () => {
     expect(
-      buildOrder({ values, lines: [line], coupon: SAVE50, config, now })
-        ?.couponCode
+      buildOrder({ values, lines: [line], coupon: SAVE50, config })?.couponCode
     ).toBeNull()
     expect(
       buildOrder({
@@ -307,9 +303,18 @@ describe("buildOrder", () => {
         lines: [line],
         coupon: null,
         config,
-        now,
       })
     ).toBeNull()
+  })
+})
+
+describe("orderNumber", () => {
+  it("starts with the date in store time and ends with four digits", () => {
+    expect(orderNumber(new Date("2026-11-04T10:00:00Z"), 4827)).toBe(
+      "261104-4827"
+    )
+    // 22:30 UTC is already the next day in the store's time zone (UTC+3)
+    expect(orderNumber(new Date("2026-11-04T22:30:00Z"), 7)).toBe("261105-0007")
   })
 })
 

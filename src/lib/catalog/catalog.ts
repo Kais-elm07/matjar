@@ -9,6 +9,7 @@ import type {
   NavCategory,
   Product,
   SimilarProducts,
+  Variant,
 } from "@/lib/catalog/types"
 import { optionsKey } from "@/lib/catalog/variant-key"
 
@@ -64,6 +65,22 @@ export function getProducts() {
 
 export function getProduct(slug: string) {
   return catalog.productBySlug.get(slug)
+}
+
+const variantBySku = new Map(
+  catalog.products.flatMap((product) =>
+    product.variants.map(
+      (variant): [string, { product: Product; variant: Variant }] => [
+        variant.sku,
+        { product, variant },
+      ]
+    )
+  )
+)
+
+/** A variant by its SKU, with its product: the server rebuilds an order's lines from it. */
+export function getVariant(sku: string) {
+  return variantBySku.get(sku)
 }
 
 const inCategory = (slug: string | undefined) => (product: Product) =>
