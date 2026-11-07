@@ -15,6 +15,14 @@
 [build.environment]
   NODE_VERSION = "24"
 
+# Netlify serves the files in public itself, so the Cache-Control for /images in next.config.ts never
+# reaches them, and browsers asked again for every photo on every page. The same value is set here:
+# one day, because a photo may be replaced under the same name.
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
 # Netlify's own Next.js integration: it turns the build into the pages, functions and files Netlify serves
 [[plugins]]
   package = "@netlify/plugin-nextjs"

@@ -57,6 +57,8 @@ const nextConfig: NextConfig = {
     return [
       { source: "/:path*", headers: securityHeaders },
       // Images may be replaced under the same name, so they are cached for one day.
+      // This rule reaches next start and a Node.js server; Netlify serves the files in public itself,
+      // so netlify.toml sets the same value there.
       // Scripts, styles and fonts carry a hash in their names, and Next.js caches them for a year itself.
       {
         source: "/images/:path*",
