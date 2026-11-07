@@ -69,11 +69,6 @@ export async function getProduct(slug: string) {
   return (await getCatalog()).productBySlug.get(slug)
 }
 
-/** A variant by its SKU, with its product: the server rebuilds an order's lines from it. */
-export async function getVariant(sku: string) {
-  return (await getCatalog()).variantBySku.get(sku)
-}
-
 const inCategory = (slug: string | undefined) => (product: Product) =>
   product.categoryPath.some((link) => link.slug === slug)
 

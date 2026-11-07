@@ -7,9 +7,11 @@ import { existsSync } from "node:fs"
 import path from "node:path"
 import { cache } from "react"
 
-import { buildCatalog, type Catalog } from "@/lib/catalog/build"
+import type { Prisma } from "@/generated/prisma/client"
+import { buildCatalog, productFromRow, type Catalog } from "@/lib/catalog/build"
 import { isSpecs, isVariantOptions } from "@/lib/catalog/guards"
 import type { CatalogRows, ProductRow } from "@/lib/catalog/rows"
+import type { Product } from "@/lib/catalog/types"
 import { storeToday } from "@/lib/dates"
 import { getDb } from "@/lib/db"
 import { IMAGE_WIDTHS, imageFile } from "@/lib/image-loader"
@@ -27,12 +29,53 @@ import { IMAGE_WIDTHS, imageFile } from "@/lib/image-loader"
  * them, once per cached copy and day.
  */
 
-const CATALOG_TAG = "catalog"
+export const CATALOG_TAG = "catalog"
 
 /** One day, in seconds */
 const REFRESH_EVERY = 86_400
 
 const day = (date: Date) => date.toISOString().slice(0, 10)
+
+/** What a product is read with: its category's slug, its photos and its variants, in order */
+const PRODUCT_INCLUDE = {
+  category: { select: { slug: true } },
+  images: { orderBy: { position: "asc" } },
+  variants: { orderBy: { position: "asc" } },
+} satisfies Prisma.ProductInclude
+
+function productRow(
+  product: Prisma.ProductGetPayload<{ include: typeof PRODUCT_INCLUDE }>
+): ProductRow {
+  return {
+    slug: product.slug,
+    name: product.name,
+    categorySlug: product.category.slug,
+    description: product.description,
+    specs: isSpecs(product.specs) ? product.specs : [],
+    popularity: product.popularity,
+    createdAt: day(product.createdAt),
+    saleEndsAt: product.saleEndsAt ? day(product.saleEndsAt) : null,
+    hidden: product.hidden,
+    position: product.position,
+    images: product.images.map((image) => ({
+      position: image.position,
+      src: image.src,
+      alt: image.alt,
+      color: image.color,
+      tone: image.tone,
+      cutout: image.cutout,
+    })),
+    variants: product.variants.map((variant) => ({
+      sku: variant.sku,
+      options: isVariantOptions(variant.options) ? variant.options : {},
+      optionsKey: variant.optionsKey,
+      price: variant.price,
+      compareAtPrice: variant.compareAtPrice,
+      stock: variant.stock,
+      position: variant.position,
+    })),
+  }
+}
 
 async function readRows(): Promise<CatalogRows & { version: string }> {
   const db = getDb()
@@ -44,11 +87,7 @@ async function readRows(): Promise<CatalogRows & { version: string }> {
     db.product.findMany({
       where: { hidden: false },
       orderBy: { position: "asc" },
-      include: {
-        category: { select: { slug: true } },
-        images: { orderBy: { position: "asc" } },
-        variants: { orderBy: { position: "asc" } },
-      },
+      include: PRODUCT_INCLUDE,
     }),
   ])
 
@@ -63,35 +102,7 @@ async function readRows(): Promise<CatalogRows & { version: string }> {
       parentSlug: category.parent?.slug ?? null,
       position: category.position,
     })),
-    products: products.map((product): ProductRow => ({
-      slug: product.slug,
-      name: product.name,
-      categorySlug: product.category.slug,
-      description: product.description,
-      specs: isSpecs(product.specs) ? product.specs : [],
-      popularity: product.popularity,
-      createdAt: day(product.createdAt),
-      saleEndsAt: product.saleEndsAt ? day(product.saleEndsAt) : null,
-      hidden: product.hidden,
-      position: product.position,
-      images: product.images.map((image) => ({
-        position: image.position,
-        src: image.src,
-        alt: image.alt,
-        color: image.color,
-        tone: image.tone,
-        cutout: image.cutout,
-      })),
-      variants: product.variants.map((variant) => ({
-        sku: variant.sku,
-        options: isVariantOptions(variant.options) ? variant.options : {},
-        optionsKey: variant.optionsKey,
-        price: variant.price,
-        compareAtPrice: variant.compareAtPrice,
-        stock: variant.stock,
-        position: variant.position,
-      })),
-    })),
+    products: products.map(productRow),
   }
 }
 
@@ -151,3 +162,31 @@ export const getCatalog = cache(async (): Promise<Catalog> => {
   }
   return built.catalog
 })
+
+/**
+ * The products that own these SKUs, read from the database now, not from the cache: an order is priced
+ * and its stock checked from the current rows, with the same rule for ended deals as the pages.
+ */
+export async function readLiveProducts(skus: string[]): Promise<Product[]> {
+  const products = await getDb().product.findMany({
+    where: { hidden: false, variants: { some: { sku: { in: skus } } } },
+    include: PRODUCT_INCLUDE,
+  })
+  const today = storeToday()
+  return products.map((product) => productFromRow(productRow(product), today))
+}
+
+let buildCatalogOnce: Promise<Catalog> | undefined
+
+/**
+ * The catalog read straight from the database, outside the data cache and its tag, for the share
+ * images only. They are drawn by next build from the photos in public/images, which the server's
+ * functions don't carry, so they must never be drawn again at runtime: without the cache's tag and
+ * its day, they stay as built until the next deploy. Read once per build process.
+ */
+export function getBuildCatalog(): Promise<Catalog> {
+  buildCatalogOnce ??= readRows().then((rows) =>
+    buildCatalog(rows, storeToday())
+  )
+  return buildCatalogOnce
+}

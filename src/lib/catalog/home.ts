@@ -29,7 +29,8 @@ function toDealCard(product: Product & { saleEndsAt: string }): DealCard {
   return { ...toProductCard(product), saleEndsAt: product.saleEndsAt }
 }
 
-function buildSections(catalog: Catalog) {
+/** The product sections of the home page for a catalog. */
+export function homeSections(catalog: Catalog) {
   const { products, byNewest, byPopularity } = catalog
   const onSale = products.filter((product) => product.compareAtPrice !== null)
   return {
@@ -62,14 +63,14 @@ function buildSections(catalog: Catalog) {
   }
 }
 
-const sections = new WeakMap<Catalog, ReturnType<typeof buildSections>>()
+const sections = new WeakMap<Catalog, ReturnType<typeof homeSections>>()
 
 /** The product sections of the home page, computed once for each catalog. */
 export async function getHomeSections() {
   const catalog = await getCatalog()
   const cached = sections.get(catalog)
   if (cached) return cached
-  const built = buildSections(catalog)
+  const built = homeSections(catalog)
   sections.set(catalog, built)
   return built
 }

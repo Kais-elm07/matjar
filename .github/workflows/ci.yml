@@ -58,6 +58,9 @@ jobs:
       - name: Fill the catalog tables from src/data
         run: pnpm db:seed
 
+      - name: Database tests (Vitest)
+        run: pnpm test:db
+
       - name: Check formatting (Prettier)
         run: pnpm format:check
 

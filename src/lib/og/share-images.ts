@@ -4,7 +4,8 @@ import type { OverlayOptions } from "sharp"
 
 import { siteConfig } from "@/config/site"
 import { PRODUCT_FORMS, pluralize } from "@/lib/arabic-plural"
-import { getHomeSections } from "@/lib/catalog/home"
+import type { Catalog } from "@/lib/catalog/build"
+import { homeSections } from "@/lib/catalog/home"
 import type { Category, Product } from "@/lib/catalog/types"
 import { getCheckoutConfig } from "@/lib/checkout/config"
 import { discountPercent, formatPrice } from "@/lib/money"
@@ -112,9 +113,9 @@ async function storeFacts() {
  * The general image: the home page and every page without its own image.
  * Four products from different categories.
  */
-export async function siteShareImage() {
-  const products = (await getHomeSections()).trending
-    .map((group) => group.products[0])
+export async function siteShareImage(catalog: Catalog) {
+  const products = homeSections(catalog)
+    .trending.map((group) => group.products[0])
     .slice(0, 4)
   const gap = 16
   const cell = (IMAGE_SIZE - gap) / 2

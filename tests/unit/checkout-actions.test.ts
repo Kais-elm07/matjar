@@ -4,16 +4,18 @@ import { getProducts } from "@/lib/catalog/catalog"
 import { lookupCoupon, placeOrder } from "@/lib/checkout/actions"
 import { getCheckoutConfig } from "@/lib/checkout/config"
 import type { CheckoutInput } from "@/lib/checkout/form-schema"
-import { linesFromCatalog } from "@/lib/checkout/orders"
+import { linesFromProducts, orderLines } from "@/lib/checkout/orders"
 
 /**
- * What the server checks before it saves anything: these paths answer without reaching the database.
- * Saving itself is covered by the browser tests, which run against a real database.
+ * What the server checks before it saves anything. The unit tests read the products from src/data
+ * instead of the database (tests/unit/support/catalog-load.ts); saving and lowering the stock are
+ * covered by the database tests (tests/db) and the browser tests.
  */
 
 const config = getCheckoutConfig()
 const city = config.cities[0]
-const variant = (await getProducts())
+const products = await getProducts()
+const variant = products
   .flatMap((product) => product.variants)
   .find((candidate) => candidate.stock >= 2)
 if (!variant) throw new Error("No variant with at least two pieces in stock")
@@ -29,9 +31,9 @@ const values: CheckoutInput = {
   shippingMethod: "standard",
 }
 
-describe("linesFromCatalog", () => {
-  it("takes the name and price from the catalog, never from the browser", async () => {
-    const lines = await linesFromCatalog([{ sku: variant.sku, quantity: 2 }])
+describe("order lines", () => {
+  it("takes the name and price from the products, never from the browser", async () => {
+    const lines = await orderLines([{ sku: variant.sku, quantity: 2 }])
     expect(lines).toHaveLength(1)
     expect(lines?.[0]).toMatchObject({
       sku: variant.sku,
@@ -43,12 +45,13 @@ describe("linesFromCatalog", () => {
 
   it("refuses an unknown SKU and a quantity above the stock", async () => {
     expect(
-      await linesFromCatalog([{ sku: "NO-SUCH-SKU", quantity: 1 }])
+      linesFromProducts([{ sku: "NO-SUCH-SKU", quantity: 1 }], products)
     ).toBeNull()
     expect(
-      await linesFromCatalog([
-        { sku: variant.sku, quantity: variant.stock + 1 },
-      ])
+      linesFromProducts(
+        [{ sku: variant.sku, quantity: variant.stock + 1 }],
+        products
+      )
     ).toBeNull()
   })
 })

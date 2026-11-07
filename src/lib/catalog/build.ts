@@ -34,10 +34,14 @@ function photoLook(image: Pick<ProductImageRow, "tone" | "cutout">): PhotoLook {
   }
 }
 
-function toProduct(
+/**
+ * One product as the pages show it on the given day. The orders build their products the same way
+ * from the database (src/lib/checkout/orders.ts), so a deal that has ended is priced alike everywhere.
+ */
+export function productFromRow(
   row: ProductRow,
-  pathOf: (slug: string) => CategoryLink[],
-  today: string
+  today: string,
+  pathOf: (slug: string) => CategoryLink[] = () => []
 ): Product {
   // A deal whose last day has passed: every variant goes back to its price before the discount
   const expired = row.saleEndsAt !== null && row.saleEndsAt < today
@@ -157,7 +161,7 @@ export function buildCatalog(rows: CatalogRows, today: string) {
   const products = rows.products
     .filter((row) => !row.hidden)
     .sort((a, b) => a.position - b.position)
-    .map((row) => toProduct(row, pathOf, today))
+    .map((row) => productFromRow(row, today, pathOf))
   const categories = toCategories(categoryRows, products, pathOf)
 
   return {
@@ -165,16 +169,6 @@ export function buildCatalog(rows: CatalogRows, today: string) {
     categoryBySlug: new Map(categories.map((c) => [c.slug, c])),
     products,
     productBySlug: new Map(products.map((p) => [p.slug, p])),
-    variantBySku: new Map(
-      products.flatMap((product) =>
-        product.variants.map(
-          (variant): [string, { product: Product; variant: Variant }] => [
-            variant.sku,
-            { product, variant },
-          ]
-        )
-      )
-    ),
     /** Products from best selling down */
     byPopularity: [...products].sort(byPopularity),
     /** Products from newest */

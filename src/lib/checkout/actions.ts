@@ -2,11 +2,15 @@
 
 import "server-only"
 
+import { revalidateTag } from "next/cache"
+
+import { CATALOG_TAG } from "@/lib/catalog/load"
 import { getCheckoutConfig } from "@/lib/checkout/config"
 import { checkoutSchema, type CheckoutInput } from "@/lib/checkout/form-schema"
 import { buildOrder } from "@/lib/checkout/order"
 import {
-  linesFromCatalog,
+  orderLines,
+  OutOfStockError,
   saveOrder,
   type RequestedLine,
 } from "@/lib/checkout/orders"
@@ -53,7 +57,14 @@ const requestSchema = z.object({
   expectedTotal: z.number().int(),
 })
 
-/** Checks the order again, prices it from the catalog, and saves it with its lines. */
+const STOCK_CHANGED =
+  "تغيّر توفر بعض المنتجات في سلتك. راجع السلة ثم أكّد الطلب."
+
+/**
+ * Checks the order again, prices it from the database, and saves it with its lines while lowering the
+ * stock. The pages show the stock from a cache, so after an order the catalog is marked stale: the
+ * next visitors still get the saved pages while fresh ones are drawn behind them.
+ */
 export async function placeOrder(
   input: PlaceOrderInput
 ): Promise<PlaceOrderResult> {
@@ -73,13 +84,8 @@ export async function placeOrder(
     }
   }
 
-  const lines = await linesFromCatalog(request.data.lines)
-  if (!lines) {
-    return {
-      ok: false,
-      message: "تغيّر توفر بعض المنتجات في سلتك. راجع السلة ثم أكّد الطلب.",
-    }
-  }
+  const lines = await orderLines(request.data.lines)
+  if (!lines) return { ok: false, message: STOCK_CHANGED }
 
   let coupon: Coupon | null = null
   if (request.data.couponCode) {
@@ -106,8 +112,13 @@ export async function placeOrder(
   }
 
   try {
-    return { ok: true, id: await saveOrder(order) }
+    const id = await saveOrder(order)
+    revalidateTag(CATALOG_TAG, "max")
+    return { ok: true, id }
   } catch (error) {
+    if (error instanceof OutOfStockError) {
+      return { ok: false, message: STOCK_CHANGED }
+    }
     console.error("Saving an order failed", error)
     return {
       ok: false,

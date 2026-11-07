@@ -1,6 +1,6 @@
 import { expect, type APIRequestContext, type Page } from "@playwright/test"
 
-import { isProductsResponse } from "../../src/lib/catalog/guards"
+import { isCartCatalog, isProductsResponse } from "../../src/lib/catalog/guards"
 import type { SearchCardData } from "../../src/lib/catalog/types"
 import { productsApiPath } from "../../src/lib/routes"
 
@@ -66,4 +66,12 @@ export async function getWithRetry(
     }
   }
   throw lastError
+}
+
+/** A variant's stock as the store shows it, in /cart-catalog.json (drawn again when the catalog changes). */
+export async function shownStock(request: APIRequestContext, sku: string) {
+  const response = await getWithRetry(request, "/cart-catalog.json")
+  const body: unknown = await response.json()
+  if (!isCartCatalog(body)) throw new Error("Unexpected cart catalog shape")
+  return body[sku]?.stock ?? 0
 }

@@ -1,7 +1,8 @@
 import { expect, test, type Page } from "@playwright/test"
 
 import { coupons } from "../../src/data/coupons"
-import { isPhone, open, simpleProduct } from "./helpers"
+import { fileRows } from "../../src/lib/catalog/file-rows"
+import { isPhone, open, shownStock, simpleProduct } from "./helpers"
 
 /** The first percentage coupon in the store data, so the test isn't tied to a specific code. */
 const percentCoupon = coupons.find((coupon) => coupon.type === "percent")
@@ -45,6 +46,9 @@ test("Placing a demo order with a mobile number in Arabic-Indic digits and a dis
   request,
 }) => {
   const product = await simpleProduct(request, { minStock: 1 })
+  if (!product.quickAdd)
+    throw new Error("A single-variant product has quickAdd")
+  const { sku } = product.quickAdd
   await open(page, `/product/${product.slug}/`)
   await addToCart(page).click()
   await page
@@ -99,6 +103,15 @@ test("Placing a demo order with a mobile number in Arabic-Indic digits and a dis
   // The order is read from the database, so its page still shows it after a reload
   await page.reload()
   await expect(page.getByText("أحمد محمد")).toBeVisible()
+
+  // The order lowered the stock below what src/data starts it at (the tests write src/data into the
+  // database before they run), and the store's saved files are drawn again from the database and
+  // show it; the first request after an order may still get the old copy while the new one is drawn
+  const seeded = fileRows({}).products.find((row) => row.slug === product.slug)
+  const startingStock = seeded?.variants[0]?.stock ?? 0
+  await expect
+    .poll(() => shownStock(request, sku), { timeout: 15_000 })
+    .toBeLessThan(startingStock)
 })
 
 test("An order address that doesn't exist shows the 404 page", async ({

@@ -3,8 +3,9 @@ import "server-only"
 import { randomInt } from "node:crypto"
 
 import { Prisma } from "@/generated/prisma/client"
-import { getVariant } from "@/lib/catalog/catalog"
 import { isVariantOptions } from "@/lib/catalog/guards"
+import { readLiveProducts } from "@/lib/catalog/load"
+import type { Product, Variant } from "@/lib/catalog/types"
 import { imageIndexForOptions } from "@/lib/catalog/variant-selection"
 import {
   orderNumber,
@@ -16,21 +17,31 @@ import { lineLimit } from "@/lib/checkout/quantity"
 import { getDb } from "@/lib/db"
 
 /**
- * Orders in the database: rebuilding the lines from the catalog, saving an order and reading it back.
- * Server only; the checkout reaches it through the actions in actions.ts.
+ * Orders in the database: building the lines from the products as they are now, saving an order
+ * while lowering the stock, and reading an order back. Server only; the checkout reaches it through
+ * the actions in actions.ts.
  */
 
-/** What the visitor's cart asks for. Names, photos and prices come from the catalog, never from the browser. */
+/** What the visitor's cart asks for. Names, photos and prices come from the database, never from the browser. */
 export type RequestedLine = { sku: string; quantity: number }
 
 /**
- * The order's lines with the catalog's names, photos and prices, or null when a product is no longer
- * sold or its stock doesn't cover the quantity.
+ * The order's lines from the given products, or null when one of the SKUs is no longer sold or its
+ * stock doesn't cover the quantity.
  */
-export async function linesFromCatalog(requested: RequestedLine[]) {
+export function linesFromProducts(
+  requested: RequestedLine[],
+  products: Product[]
+) {
+  const bySku = new Map<string, { product: Product; variant: Variant }>()
+  for (const product of products) {
+    for (const variant of product.variants) {
+      bySku.set(variant.sku, { product, variant })
+    }
+  }
   const lines: OrderLine[] = []
   for (const { sku, quantity } of requested) {
-    const found = await getVariant(sku)
+    const found = bySku.get(sku)
     if (!found || quantity > lineLimit(found.variant.stock)) return null
     const { product, variant } = found
     const image =
@@ -48,6 +59,19 @@ export async function linesFromCatalog(requested: RequestedLine[]) {
   return lines
 }
 
+/** The order's lines priced from the database now: the cached pages may be a little behind. */
+export async function orderLines(requested: RequestedLine[]) {
+  const products = await readLiveProducts(requested.map((line) => line.sku))
+  return linesFromProducts(requested, products)
+}
+
+/** Another order took the last pieces between reading the stock and saving: nothing was saved. */
+export class OutOfStockError extends Error {
+  constructor(readonly sku: string) {
+    super(`Not enough stock left for ${sku}`)
+  }
+}
+
 /** How many numbers to try when the one drawn is taken (10,000 numbers per day). */
 const NUMBER_ATTEMPTS = 5
 
@@ -59,27 +83,48 @@ function isTakenNumber(error: unknown) {
   )
 }
 
-/** Saves the order and its lines together, with a new short number, and returns its long id. */
+/**
+ * Saves the order and its lines and lowers the stock of each variant, all in one transaction, with a
+ * new short number, and returns the order's long id. A variant's stock goes down only while it still
+ * covers the quantity, so two visitors can't both buy the last piece: the second one gets an
+ * OutOfStockError and nothing of that order is saved.
+ */
 export async function saveOrder(draft: OrderDraft, now = new Date()) {
   const { lines, ...order } = draft
   for (let attempt = 1; ; attempt++) {
     try {
-      const saved = await getDb().order.create({
-        data: {
-          ...order,
-          number: orderNumber(now, randomInt(10_000)),
-          placedAt: now,
-          lines: {
-            create: lines.map(({ image, ...line }) => ({
-              ...line,
-              imageSrc: image?.src ?? null,
-              imageAlt: image?.alt ?? null,
-            })),
+      return await getDb().$transaction(async (tx) => {
+        // Always in the same order of SKUs, so two orders that share variants can't wait on each
+        // other's locks
+        const bySku = [...lines].sort((a, b) => a.sku.localeCompare(b.sku))
+        for (const line of bySku) {
+          const { count } = await tx.variant.updateMany({
+            where: {
+              sku: line.sku,
+              stock: { gte: line.quantity },
+              product: { hidden: false },
+            },
+            data: { stock: { decrement: line.quantity } },
+          })
+          if (count === 0) throw new OutOfStockError(line.sku)
+        }
+        const saved = await tx.order.create({
+          data: {
+            ...order,
+            number: orderNumber(now, randomInt(10_000)),
+            placedAt: now,
+            lines: {
+              create: lines.map(({ image, ...line }) => ({
+                ...line,
+                imageSrc: image?.src ?? null,
+                imageAlt: image?.alt ?? null,
+              })),
+            },
           },
-        },
-        select: { id: true },
+          select: { id: true },
+        })
+        return saved.id
       })
-      return saved.id
     } catch (error) {
       if (attempt < NUMBER_ATTEMPTS && isTakenNumber(error)) continue
       throw error
