@@ -238,7 +238,8 @@ export function ListingView(props: ListingViewProps) {
             <h2 className="sr-only">قائمة المنتجات</h2>
             <ProductGrid
               products={result.items}
-              priorityCount={4}
+              // The first row on a phone: on wider screens the rest of the row loads at once anyway, as it is in view
+              priorityCount={2}
               className={LISTING_GRID}
             />
             <ListingPagination

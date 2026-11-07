@@ -40,11 +40,12 @@ const nextConfig: NextConfig = {
   // so links, canonical addresses and search engine entries stay the same
   trailingSlash: true,
   images: {
-    // Images are prepared in advance in four sizes (pnpm images), and the loader picks the right size for the screen,
+    // Images are prepared in advance in five sizes (pnpm images), and the loader picks the right size for the screen,
     // so the server never resizes them. The same sizes are in IMAGE_WIDTHS (src/lib/image-loader.ts) and scripts/images.mjs.
     loader: "custom",
     loaderFile: "./src/lib/image-loader.ts",
-    deviceSizes: [400, 800, 1200],
+    // 600 fits a photo on a stage on most phones, between the card size (400) and the full width (800)
+    deviceSizes: [400, 600, 800, 1200],
     // Only the size that has its own file, for the small thumbnails: any other small size
     // would map to a file that already exists and repeat it in every image's list of sizes
     imageSizes: [200],

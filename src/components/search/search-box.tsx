@@ -1,16 +1,23 @@
 "use client"
 
 import { useId, useMemo, useRef, useState } from "react"
+import dynamic from "next/dynamic"
 import { useRouter } from "next/navigation"
 import { SearchIcon } from "lucide-react"
 
-import { SearchSuggestions } from "@/components/search/search-suggestions"
 import { productPath, searchPath } from "@/lib/routes"
 import { searchCards } from "@/lib/search/search-cards"
 import { useSearchIndex } from "@/lib/search/use-search-index"
 import { cn } from "@/lib/utils"
 
 const MAX_SUGGESTIONS = 6
+
+// The suggestions list's code loads when the field gets focus, before the first letter, not with every page
+const loadSuggestions = () =>
+  import("@/components/search/search-suggestions").then(
+    (mod) => mod.SearchSuggestions
+  )
+const SearchSuggestions = dynamic(loadSuggestions, { ssr: false })
 
 interface SearchBoxProps {
   className?: string
@@ -141,6 +148,7 @@ export function SearchBox({
           onFocus={() => {
             setNeedsIndex(true)
             setOpen(true)
+            void loadSuggestions()
           }}
           onBlur={close}
           onKeyDown={onKeyDown}

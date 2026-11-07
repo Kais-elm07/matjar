@@ -5,7 +5,6 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
 import { HeroSlide } from "@/components/home/hero-slide"
 import { StageBackdrop } from "@/components/shared/stage-backdrop"
-import { useIdle } from "@/hooks/use-idle"
 import { useStageMotion } from "@/hooks/use-stage-motion"
 import type { ProductBanner } from "@/lib/catalog/types"
 import { scrollToSlide, visibleSlide } from "@/lib/slider"
@@ -30,9 +29,11 @@ export function HeroSlider({ slides }: HeroSliderProps) {
   const { trackRef, backdropRef } = useStageMotion<HTMLUListElement>()
   const slideRefs = useRef<(HTMLLIElement | null)[]>([])
   const [active, setActive] = useState(0)
-  // The other slides' photos wait until the page has loaded, or until their slide is shown,
-  // so on a slow phone they don't share the connection with the first photo
-  const idle = useIdle()
+  // The other slides' photos wait until the visitor reaches for the slider (a touch, the mouse over it,
+  // or the keyboard), or until their slide is shown: the first screen loads only the first photo, and
+  // drawing the others doesn't add work right after the page loads
+  const [reached, setReached] = useState(false)
+  const reach = () => setReached(true)
 
   function onScroll() {
     const list = trackRef.current
@@ -51,6 +52,9 @@ export function HeroSlider({ slides }: HeroSliderProps) {
     <section
       aria-roledescription="عرض شرائح"
       aria-label="أبرز العروض"
+      onPointerDown={reach}
+      onPointerEnter={reach}
+      onFocus={reach}
       className="relative isolate overflow-hidden bg-background"
     >
       <StageBackdrop
@@ -77,7 +81,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
             <HeroSlide
               slide={slide}
               photo={
-                index === 0 || index === active || idle ? slide.image : null
+                index === 0 || index === active || reached ? slide.image : null
               }
               priority={index === 0}
             />

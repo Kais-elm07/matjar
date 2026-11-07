@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils"
 
 interface HeroSlideProps {
   slide: ProductBanner
-  /** Whether the photo loads now: the first slide's at once, the others once the page has loaded */
+  /** Whether the photo loads now: the first slide's at once, the others once the visitor reaches for the slider */
   photo: ProductBanner["image"]
   /** The first slide's photo is the largest element on the first screen */
   priority: boolean
@@ -69,7 +69,8 @@ export function HeroSlide({ slide, photo, priority }: HeroSlideProps) {
       <StageVisual
         photo={photo}
         alt={slide.image?.alt ?? ""}
-        sizes="(min-width: 768px) 480px, 92vw"
+        // The photo is 84% of the stage, which is at most 30rem wide, and the page's width less its margins on a phone
+        sizes="(min-width: 768px) 404px, 78vw"
         priority={priority}
         className="order-first mx-auto w-[min(100%,46svh,30rem)] md:order-none md:w-full md:max-w-[30rem]"
       />

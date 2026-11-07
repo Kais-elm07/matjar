@@ -1,14 +1,14 @@
 /**
  * Image loader for prepared images: the server never resizes them, so no request waits for an image to be drawn.
  *
- * Local images are prepared ahead of time in four sizes by the pnpm images command; here we pick the smallest size that fits the screen.
+ * Local images are prepared ahead of time in five sizes by the pnpm images command; here we pick the smallest size that fits the screen.
  * The path in the data is written without an extension:
  *   /images/products/shirt-1  becomes  /images/products/shirt-1-800.webp
  * Full URLs (https://...) and paths that have an extension are used as they are.
  * The same sizes are in scripts/images.mjs (WIDTHS) and next.config.ts (deviceSizes).
  */
-export const IMAGE_WIDTHS: readonly [200, 400, 800, 1200] = [
-  200, 400, 800, 1200,
+export const IMAGE_WIDTHS: readonly [200, 400, 600, 800, 1200] = [
+  200, 400, 600, 800, 1200,
 ]
 
 const isExternal = (src: string) => /^https?:\/\//.test(src)

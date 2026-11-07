@@ -2,7 +2,7 @@
 /**
  * The store's images.
  *
- *   pnpm images        converts the original images in assets/images to WebP at widths of 200, 400, 800 and 1200 pixels
+ *   pnpm images        converts the original images in assets/images to WebP at widths of 200, 400, 600, 800 and 1200 pixels
  *                      in public/images. It runs automatically before pnpm dev and pnpm build,
  *                      and skips the images that haven't changed since the last run.
  *                      It also writes public/images/image-meta.json: each photo's main color and whether it is a cut-out,
@@ -30,7 +30,7 @@ const OUTPUT_DIR = path.join(ROOT, "public", "images")
 const META_FILE = path.join(OUTPUT_DIR, "image-meta.json")
 // 200 is for the small thumbnails (the gallery, the cart and the search suggestions);
 // the same sizes are in IMAGE_WIDTHS (src/lib/image-loader.ts) and next.config.ts
-const WIDTHS = [200, 400, 800, 1200]
+const WIDTHS = [200, 400, 600, 800, 1200]
 const SOURCE_EXTENSIONS = new Set([
   ".jpg",
   ".jpeg",

@@ -171,7 +171,7 @@ The script loads after the page has finished loading, so it does not slow it dow
 1. Remove the photo's background, so the product stands alone on a transparent background (a cut-out), and save it as PNG or WebP, at least 1200 pixels on its long side, with the product in the middle and no text on it. Any tool works: remove.bg, the "Remove Background" of photo editors, or the open-source [`@imgly/background-removal-node`](https://github.com/imgly/background-removal-js) model that cut out the demo photos on the developer's computer. A regular photo still works: it stands in a frame instead of floating.
 2. Put it in `assets/images/products/` with a name such as `classic-cotton-shirt-1.png`.
 3. In the products file, write the path without an extension, `/images/products/classic-cotton-shirt-1`, or use `productImages("classic-cotton-shirt", 2)`.
-4. When running or building, the image is converted automatically to WebP at 200, 400, 800 and 1200 pixels wide (WebP keeps the transparent background), and the browser picks the right size for the visitor's screen. `pnpm images` also measures the photo's main color into `public/images/image-meta.json`, and the site turns it into the light behind the product (DESIGN.md: the product's tone). A black or white product has no clear color and takes the store's blue. To choose the light yourself, give the image a color in the products file: `{ src: "/images/products/x-1", tone: "#c2410c" }`.
+4. When running or building, the image is converted automatically to WebP at 200, 400, 600, 800 and 1200 pixels wide (WebP keeps the transparent background), and the browser picks the right size for the visitor's screen. `pnpm images` also measures the photo's main color into `public/images/image-meta.json`, and the site turns it into the light behind the product (DESIGN.md: the product's tone). A black or white product has no clear color and takes the store's blue. To choose the light yourself, give the image a color in the products file: `{ src: "/images/products/x-1", tone: "#c2410c" }`.
 
 The `public/images` folder is generated automatically and is not committed to Git, so never put images there by hand. A category's cover is one of the product photos (see "Editing products and categories"). A production build stops with a list of any image that the data mentions but that does not exist.
 
@@ -395,17 +395,19 @@ Each one loads once per visit and is shared by every part of the page. A network
 
 With 1,000 visitors the wait gets longer but no request fails, because the server only sends ready-made files.
 
-**Lighthouse on mobile** (November 5, 2026, two runs on the built site, simulating a mid-range phone on a slow 4G network):
+**Lighthouse on mobile** (November 7, 2026, on the production server (`pnpm start`) on the development machine, simulating a mid-range phone on a slow 4G network; four runs per page):
 
 | Page         | Performance | Accessibility | Best practices | SEO |
 | ------------ | ----------- | ------------- | -------------- | --- |
-| Home         | 92-93       | 100           | 100            | 100 |
-| Product page | 91-92       | 100           | 100            | 100 |
-| All products | 88-89       | 100           | 100            | 100 |
+| Home         | 89-90       | 100           | 100            | 100 |
+| Product page | 87-89       | 100           | 100            | 100 |
+| All products | 86-87       | 100           | 100            | 100 |
+
+The same day, the last static version (phase 11) measured 90, 72-86 and 80-85 on the same pages, so the server is on par with it. On these three pages the largest element is a photo, and Lighthouse counts every file loaded and all the JavaScript run before it appears, most of it React and Next.js themselves; a page whose largest element is text, such as a help page or a category page, measures 97-100. Before the Spotlight design and Najm (November 5), the static site measured 92-93, 91-92 and 88-89.
 
 **Lazy loading and lighter pages:**
 
-- **Images:** every image is prepared in four WebP sizes (200, 400, 800 and 1200 pixels wide), and the browser takes the smallest size that fits the screen. Images further down the page load as the visitor approaches them. Only the first photo of the hero and of the product gallery is in the page's HTML, with high priority; the other slides load once the page has loaded, or as soon as they are shown.
+- **Images:** every image is prepared in five WebP sizes (200, 400, 600, 800 and 1200 pixels wide), and the browser takes the smallest size that fits the screen. Images further down the page load as the visitor approaches them. Only the first photo of the hero and of the product gallery is in the page's HTML, with high priority; the other slides load once the page has loaded, or as soon as they are shown.
 - **Sections further down:** on the home and product pages, the sections below the first screen and the footer are laid out and painted only when they come near the screen (`section-later` and `render-later` in `src/app/globals.css`). After a reload, back or forward, or a move inside the store, everything renders at once, so the browser returns to the same place (`src/lib/render-later.ts`).
 - **Drawers and panels:** the cart, the mobile menu, the image zoom, the filter sheet and the toast messages load their code after the page appears or on the first tap (`src/hooks/use-idle.ts`). The phone filter sheet never loads on desktop, and vice versa.
 - **Najm:** his code with three.js (607 KB, 152 KB compressed) is a separate file that no page loads with its HTML. It downloads only after the page has loaded and the visitor first moves, touches or scrolls (`src/hooks/use-first-interaction.ts`), so it doesn't count against the first screen, and not at all for a visitor who hid him or a browser without WebGL 2. He draws only while something moves, and stops a few seconds after the visitor does.

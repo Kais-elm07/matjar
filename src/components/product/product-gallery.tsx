@@ -47,7 +47,12 @@ export function ProductGallery({
   // The image an arrow, a thumbnail or a color asked for, while the row scrolls to it
   const requested = useRef<number | null>(null)
   const [zoomOpen, setZoomOpen] = useState(false)
+  // The zoom dialog's code loads after the page appears
   const idle = useIdle()
+  // The other photos wait until the visitor reaches for the gallery (a touch, the mouse over it, or the
+  // keyboard), or until their photo is shown, so the first screen loads only the first photo
+  const [reached, setReached] = useState(false)
+  const reach = () => setReached(true)
   const count = images.length
 
   // Find the visible image after the swipe stops, not during it: a smooth scroll to a far image
@@ -100,7 +105,12 @@ export function ProductGallery({
   return (
     // On desktop: the thumbnails run vertically beside the stage, on the start side
     <div className="space-y-3 lg:flex lg:items-start lg:gap-3 lg:space-y-0">
-      <div className="relative isolate overflow-hidden rounded-2xl border bg-background lg:min-w-0 lg:flex-1">
+      <div
+        onPointerDown={reach}
+        onPointerEnter={reach}
+        onFocus={reach}
+        className="relative isolate overflow-hidden rounded-2xl border bg-background lg:min-w-0 lg:flex-1"
+      >
         <StageBackdrop ref={backdropRef} tone={images[0]?.tone ?? BRAND_TONE} />
         <div
           ref={trackRef}
@@ -130,10 +140,13 @@ export function ProductGallery({
                     so on a slow phone they don't share the connection with the first photo */}
                 <StageVisual
                   photo={
-                    index === 0 || index === activeIndex || idle ? image : null
+                    index === 0 || index === activeIndex || reached
+                      ? image
+                      : null
                   }
                   alt={image.alt}
-                  sizes="(min-width: 1024px) 520px, (min-width: 768px) 46vw, 92vw"
+                  // The photo is 84% of the stage
+                  sizes="(min-width: 1024px) 440px, (min-width: 768px) 39vw, 78vw"
                   priority={index === 0}
                 />
               </button>
