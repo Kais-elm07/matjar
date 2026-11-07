@@ -13,7 +13,7 @@ import { linesFromCatalog } from "@/lib/checkout/orders"
 
 const config = getCheckoutConfig()
 const city = config.cities[0]
-const variant = getProducts()
+const variant = (await getProducts())
   .flatMap((product) => product.variants)
   .find((candidate) => candidate.stock >= 2)
 if (!variant) throw new Error("No variant with at least two pieces in stock")
@@ -30,8 +30,8 @@ const values: CheckoutInput = {
 }
 
 describe("linesFromCatalog", () => {
-  it("takes the name and price from the catalog, never from the browser", () => {
-    const lines = linesFromCatalog([{ sku: variant.sku, quantity: 2 }])
+  it("takes the name and price from the catalog, never from the browser", async () => {
+    const lines = await linesFromCatalog([{ sku: variant.sku, quantity: 2 }])
     expect(lines).toHaveLength(1)
     expect(lines?.[0]).toMatchObject({
       sku: variant.sku,
@@ -41,10 +41,14 @@ describe("linesFromCatalog", () => {
     })
   })
 
-  it("refuses an unknown SKU and a quantity above the stock", () => {
-    expect(linesFromCatalog([{ sku: "NO-SUCH-SKU", quantity: 1 }])).toBeNull()
+  it("refuses an unknown SKU and a quantity above the stock", async () => {
     expect(
-      linesFromCatalog([{ sku: variant.sku, quantity: variant.stock + 1 }])
+      await linesFromCatalog([{ sku: "NO-SUCH-SKU", quantity: 1 }])
+    ).toBeNull()
+    expect(
+      await linesFromCatalog([
+        { sku: variant.sku, quantity: variant.stock + 1 },
+      ])
     ).toBeNull()
   })
 })

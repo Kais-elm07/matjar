@@ -23,11 +23,11 @@ import { storeToday } from "@/lib/dates"
 import { discountPercent, toMinorUnits } from "@/lib/money"
 import { productPath } from "@/lib/routes"
 
+const products = await getProducts()
+const categories = await getCategories()
+
 /** Checks on the current store data: they fail if a product or category is added in a way that breaks the site. */
 describe("actual store data", () => {
-  const products = getProducts()
-  const categories = getCategories()
-
   it("has unique product slugs and variant SKUs", () => {
     const skus = products.flatMap((product) =>
       product.variants.map((variant) => variant.sku)
@@ -56,17 +56,17 @@ describe("actual store data", () => {
     }
   })
 
-  it("includes subcategories in each category's product count", () => {
+  it("includes subcategories in each category's product count", async () => {
     for (const category of categories) {
-      expect(getProductCards(category.slug), category.slug).toHaveLength(
+      expect(await getProductCards(category.slug), category.slug).toHaveLength(
         category.productCount
       )
     }
   })
 
-  it("covers every product and variant in the search index and the cart prices", () => {
-    const cartCatalog = getCartCatalog()
-    expect(getSearchIndex()).toHaveLength(products.length)
+  it("covers every product and variant in the search index and the cart prices", async () => {
+    const cartCatalog = await getCartCatalog()
+    expect(await getSearchIndex()).toHaveLength(products.length)
     for (const product of products) {
       for (const variant of product.variants) {
         expect(cartCatalog[variant.sku], variant.sku).toEqual({
@@ -79,8 +79,8 @@ describe("actual store data", () => {
     }
   })
 
-  it("points the home page cards to existing products", () => {
-    const { heroSlides, promos, wideBanner } = getHomeContent()
+  it("points the home page cards to existing products", async () => {
+    const { heroSlides, promos, wideBanner } = await getHomeContent()
     for (const banner of [
       ...heroSlides,
       ...promos,
@@ -89,18 +89,18 @@ describe("actual store data", () => {
       // The address is /product/<slug>/
       const slug = banner.href.split("/")[2]
       expect(banner.href).toBe(productPath(slug))
-      expect(getProduct(slug), banner.href).toBeDefined()
+      expect(await getProduct(slug), banner.href).toBeDefined()
     }
   })
 
-  it("resets expired sales to their regular price at build time, and suggestions never repeat the product itself", () => {
+  it("resets expired sales to their regular price, and suggestions never repeat the product itself", async () => {
     const today = storeToday()
     for (const product of products) {
       if (product.saleEndsAt === null) continue
       expect(product.saleEndsAt >= today, product.slug).toBe(true)
       expect(product.compareAtPrice, product.slug).not.toBeNull()
     }
-    const { deals, maxDiscount } = getHomeSections()
+    const { deals, maxDiscount } = await getHomeSections()
     expect(deals.every((deal) => deal.saleEndsAt !== null)).toBe(true)
     // "خصومات تصل إلى" ("discounts up to") equals the largest discount among all discounted products
     expect(maxDiscount).toBe(
@@ -114,14 +114,14 @@ describe("actual store data", () => {
     )
     for (const product of products) {
       expect(
-        getRelatedProducts(product).map((related) => related.slug),
+        (await getRelatedProducts(product)).map((related) => related.slug),
         product.slug
       ).not.toContain(product.slug)
     }
   })
 
-  it("publishes up to four in-stock similar products for every product, for Najm's suggestions", () => {
-    const similar = getSimilarProducts()
+  it("publishes up to four in-stock similar products for every product, for Najm's suggestions", async () => {
+    const similar = await getSimilarProducts()
     expect(isSimilarProducts(similar)).toBe(true)
     expect(Object.keys(similar).sort()).toEqual(
       products.map((product) => product.slug).sort()
@@ -134,7 +134,7 @@ describe("actual store data", () => {
         slug
       ).not.toContain(slug)
       for (const item of list) {
-        expect(getProduct(item.slug)?.inStock, item.slug).toBe(true)
+        expect((await getProduct(item.slug))?.inStock, item.slug).toBe(true)
       }
     }
   })
@@ -157,9 +157,9 @@ describe("actual store data", () => {
     }
   })
 
-  it("keeps the search text out of the listing cards and in the search index", () => {
-    expect(getProductCards()[0]).not.toHaveProperty("searchText")
-    expect(getSearchIndex()[0].searchText.length).toBeGreaterThan(0)
+  it("keeps the search text out of the listing cards and in the search index", async () => {
+    expect((await getProductCards())[0]).not.toHaveProperty("searchText")
+    expect((await getSearchIndex())[0].searchText.length).toBeGreaterThan(0)
   })
 
   it("converts the shipping and coupon settings to halalas", () => {

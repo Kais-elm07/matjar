@@ -5,12 +5,16 @@ import { getContentPages } from "@/lib/content/pages"
 import { categoryPath, contentPagePath, productPath } from "@/lib/routes"
 import { absoluteImageUrl, absoluteUrl } from "@/lib/seo"
 
-// Prerendered at build time and served as a file: /sitemap.xml
+// Prerendered at build time and served as a file: /sitemap.xml; drawn again when the catalog changes
 export const dynamic = "force-static"
 
 type SitemapEntry = MetadataRoute.Sitemap[number]
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [categories, products] = await Promise.all([
+    getCategories(),
+    getProducts(),
+  ])
   return [
     { url: absoluteUrl("/"), changeFrequency: "weekly", priority: 1 },
     {
@@ -18,12 +22,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.8,
     },
-    ...getCategories().map((category): SitemapEntry => ({
+    ...categories.map((category): SitemapEntry => ({
       url: absoluteUrl(categoryPath(category.slug)),
       changeFrequency: "weekly",
       priority: 0.7,
     })),
-    ...getProducts().map((product): SitemapEntry => ({
+    ...products.map((product): SitemapEntry => ({
       url: absoluteUrl(productPath(product.slug)),
       lastModified: product.createdAt,
       changeFrequency: "monthly",

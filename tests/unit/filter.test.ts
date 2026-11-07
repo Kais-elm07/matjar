@@ -269,9 +269,9 @@ describe("computeFacets", () => {
   })
 })
 
-describe("searching the actual store products", () => {
-  const all = getSearchIndex()
+const all = await getSearchIndex()
 
+describe("searching the actual store products", () => {
   it.each([
     ["ساعه", "classic-wrist-watch"],
     ["القميص", "classic-cotton-shirt"],

@@ -27,10 +27,10 @@ export type RequestedLine = { sku: string; quantity: number }
  * The order's lines with the catalog's names, photos and prices, or null when a product is no longer
  * sold or its stock doesn't cover the quantity.
  */
-export function linesFromCatalog(requested: RequestedLine[]) {
+export async function linesFromCatalog(requested: RequestedLine[]) {
   const lines: OrderLine[] = []
   for (const { sku, quantity } of requested) {
-    const found = getVariant(sku)
+    const found = await getVariant(sku)
     if (!found || quantity > lineLimit(found.variant.stock)) return null
     const { product, variant } = found
     const image =

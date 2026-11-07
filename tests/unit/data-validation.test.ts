@@ -56,7 +56,9 @@ describe("product and category files", () => {
       ],
     }))
 
-    const message = await errorOf(import("@/lib/catalog/catalog"))
+    const message = await errorOf(
+      import("@/lib/catalog/catalog").then((catalog) => catalog.getProducts())
+    )
     expect(message).toContain("ملفات بيانات المتجر فيها")
     expect(message).toContain('رابط المنتج "test-shirt" مكرر.')
     expect(message).toContain('المنتج "other-shirt": الفئة "women" غير موجودة.')
@@ -79,7 +81,9 @@ describe("product and category files", () => {
     }))
     vi.doMock("@/data/products", () => ({ products: [validProduct] }))
 
-    const message = await errorOf(import("@/lib/catalog/catalog"))
+    const message = await errorOf(
+      import("@/lib/catalog/catalog").then((catalog) => catalog.getProducts())
+    )
     expect(message).toContain('الفئة "kids": الفئة الأم "family" غير موجودة.')
     expect(message).toContain('الفئة "a": تسلسل الفئات الأم دائري.')
   })
@@ -119,7 +123,9 @@ describe("product and category files", () => {
       ],
     }))
 
-    const message = await errorOf(import("@/lib/catalog/catalog"))
+    const message = await errorOf(
+      import("@/lib/catalog/catalog").then((catalog) => catalog.getProducts())
+    )
     expect(message).toContain("الحقل createdAt: التاريخ غير موجود في التقويم")
     expect(message).toContain("الحقل variants[1].price")
     expect(message).toContain(`المتغير "T-4" يكرر خيارات متغير آخر`)
@@ -154,16 +160,16 @@ describe("product and category files", () => {
 
     const catalog = await import("@/lib/catalog/catalog")
     const { toneFromHex } = await import("@/lib/tone")
-    const sneakers = catalog.getProduct("red-sneakers")
+    const sneakers = await catalog.getProduct("red-sneakers")
     expect(sneakers?.images[0].tone).toEqual(toneFromHex("#dc2626"))
     // The parent category shows its most popular product, which is in the subcategory
-    expect(catalog.getCategory("men")?.image?.src).toBe(
+    expect((await catalog.getCategory("men"))?.image?.src).toBe(
       "/images/products/red-1"
     )
-    expect(catalog.getCategory("shoes")?.image?.tone).toEqual(
+    expect((await catalog.getCategory("shoes"))?.image?.tone).toEqual(
       toneFromHex("#dc2626")
     )
-    expect(catalog.getCategory("sale")?.image).toEqual({
+    expect((await catalog.getCategory("sale"))?.image).toEqual({
       src: "/images/products/red-1",
       tone: toneFromHex("#dc2626"),
       cutout: false,
@@ -185,7 +191,7 @@ describe("product and category files", () => {
     }))
 
     const catalog = await import("@/lib/catalog/catalog")
-    const [product] = catalog.getProducts()
+    const [product] = await catalog.getProducts()
     expect(product.price).toBe(10000)
     expect(product.compareAtPrice).toBeNull()
     expect(product.saleEndsAt).toBeNull()
@@ -198,9 +204,9 @@ describe("product and category files", () => {
     vi.doMock("@/data/products", () => ({ products: [validProduct] }))
 
     const catalog = await import("@/lib/catalog/catalog")
-    expect(catalog.getProducts().map((product) => product.slug)).toEqual([
-      "test-shirt",
-    ])
+    expect(
+      (await catalog.getProducts()).map((product) => product.slug)
+    ).toEqual(["test-shirt"])
   })
 })
 

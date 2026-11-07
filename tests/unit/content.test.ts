@@ -166,9 +166,9 @@ describe("search engine and sharing data", () => {
     ])
   })
 
-  it("writes the product offer with a single price or a price range", () => {
-    const watch = getProduct("classic-wrist-watch")
-    const charger = getProduct("fast-charger-65w")
+  it("writes the product offer with a single price or a price range", async () => {
+    const watch = await getProduct("classic-wrist-watch")
+    const charger = await getProduct("fast-charger-65w")
     expect(watch && charger).toBeTruthy()
     if (!watch || !charger) return
     expect(watch.maxPrice).toBeGreaterThan(watch.price)

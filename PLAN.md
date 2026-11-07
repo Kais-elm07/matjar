@@ -807,7 +807,7 @@ Each step is one commit that passes `pnpm verify`, and the site is reviewed at 3
 Each step is merged into `main` and deployed on its own, once the checks and the browser tests pass (each production deploy costs 15 of the free plan's 300 monthly Netlify credits).
 
 - [x] **The tables and the seed:** categories, products, product photos and variants in `prisma/schema.prisma` (dates as `@db.Date`, prices in halalas, unique slugs, SKUs and option combinations), `prisma/seed.ts` run through `tsx`, the rows in `src/lib/catalog/rows.ts` with their unit test, and the seed in GitHub Actions and the Netlify build. The site doesn't read the tables yet.
-- [ ] **The catalog read from the database:** the cached loader, `async` catalog functions, `dynamicParams` on the product and category pages, a small connection pool, and a check on Netlify that a tag refresh reaches the pages and that the site survives a stopped database.
+- [x] **The catalog read from the database:** `src/lib/catalog/load.ts` caches the rows (tag `catalog`, one day) and `build.ts` builds the catalog from them; the catalog functions are `async`; the product and category pages take `dynamicParams = true`; two connections per server process. Locally, with the database stopped, every page, file and API answer still came from the cache. The check that a tag refresh reaches the pages on Netlify comes with the next step, whose orders revalidate the tag.
 - [ ] **Stock lowered by orders**, with a browser test for the last piece; the browser tests reseed before they run.
 - [ ] **The admin panel:** sign-in, the product and category forms, quick stock edits; deleting hides.
 - [ ] **Uploading photos** to Supabase Storage, with the image loader and the content security policy updated.

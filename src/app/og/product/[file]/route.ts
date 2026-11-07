@@ -6,8 +6,10 @@ import { productShareImage } from "@/lib/og/share-images"
 export const dynamic = "force-static"
 export const dynamicParams = false
 
-export function generateStaticParams() {
-  return getProducts().map((product) => ({ file: `${product.slug}.jpg` }))
+export async function generateStaticParams() {
+  return (await getProducts()).map((product) => ({
+    file: `${product.slug}.jpg`,
+  }))
 }
 
 export async function GET(
@@ -15,7 +17,7 @@ export async function GET(
   { params }: RouteContext<"/og/product/[file]">
 ) {
   const { file } = await params
-  const product = getProduct(file.replace(/\.jpg$/, ""))
+  const product = await getProduct(file.replace(/\.jpg$/, ""))
   if (!product) return new Response(null, { status: 404 })
   return jpegResponse(await productShareImage(product))
 }

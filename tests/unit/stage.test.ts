@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest"
 
+import { buildCatalog } from "@/lib/catalog/build"
 import { isImageMeta } from "@/lib/catalog/guards"
-import { parseImageMeta, photoLook } from "@/lib/catalog/image-meta"
+import { parseImageMeta } from "@/lib/catalog/image-meta"
+import { productRows } from "@/lib/catalog/rows"
+import { productSchema } from "@/lib/catalog/schema"
 import { slidePosition, slideTurn, toneBlend } from "@/lib/slider"
 import {
   BRAND_TONE,
@@ -101,22 +104,44 @@ describe("the photo colors that pnpm images measures", () => {
   })
 
   it("gives each photo its measured tone, the owner's tone first, and the store's blue without a color", () => {
-    expect(photoLook(meta, "/images/products/wallet-1")).toEqual({
-      tone: toneFromHex("#a35a2c"),
-      cutout: true,
+    const product = productSchema.parse({
+      slug: "photos",
+      name: "صور",
+      category: "men",
+      images: [
+        { src: "/images/products/wallet-1" },
+        { src: "/images/products/speaker-1" },
+        { src: "/images/products/speaker-1", tone: "#16a34a" },
+        // A photo pnpm images hasn't measured is framed, in the store's blue
+        { src: "https://cdn.example.com/a.jpg" },
+      ],
+      variants: [{ sku: "P-1", price: 10, stock: 1 }],
+      createdAt: "2026-10-01",
     })
-    expect(photoLook(meta, "/images/products/speaker-1")).toEqual({
-      tone: BRAND_TONE,
-      cutout: true,
-    })
+    const catalog = buildCatalog(
+      {
+        categories: [
+          {
+            slug: "men",
+            name: "رجالي",
+            description: null,
+            imageSrc: null,
+            parentSlug: null,
+            position: 0,
+          },
+        ],
+        products: productRows([product], meta),
+      },
+      "2026-11-07"
+    )
     expect(
-      photoLook(meta, "/images/products/speaker-1", "#16a34a").tone
-    ).toEqual(toneFromHex("#16a34a"))
-    // A photo pnpm images hasn't measured is framed, in the store's blue
-    expect(photoLook(meta, "https://cdn.example.com/a.jpg")).toEqual({
-      tone: BRAND_TONE,
-      cutout: false,
-    })
+      catalog.products[0].images.map(({ tone, cutout }) => ({ tone, cutout }))
+    ).toEqual([
+      { tone: toneFromHex("#a35a2c"), cutout: true },
+      { tone: BRAND_TONE, cutout: true },
+      { tone: toneFromHex("#16a34a"), cutout: true },
+      { tone: BRAND_TONE, cutout: false },
+    ])
   })
 })
 

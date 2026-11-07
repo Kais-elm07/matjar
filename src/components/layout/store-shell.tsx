@@ -24,8 +24,8 @@ interface StoreShellProps {
  * from the browser.
  * Used by the store layout and the 404 page, so the cart and counters work on every page.
  */
-export function StoreShell({ children, mainClassName }: StoreShellProps) {
-  const categories = getNavCategories()
+export async function StoreShell({ children, mainClassName }: StoreShellProps) {
+  const categories = await getNavCategories()
 
   return (
     <>

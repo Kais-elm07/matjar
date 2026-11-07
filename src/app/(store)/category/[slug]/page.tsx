@@ -16,18 +16,19 @@ import {
 import { categoryPath, categoryTrail } from "@/lib/routes"
 import { breadcrumbJsonLd, openGraph, shareImages } from "@/lib/seo"
 
-// Every category page is prepared at build time, and any other URL shows the 404 page
-export const dynamicParams = false
+// Every category page is prepared at build time; a category added later is drawn on its first visit
+// and kept (dynamicParams), and an unknown slug shows the 404 page (notFound below)
+export const dynamicParams = true
 
-export function generateStaticParams() {
-  return getCategories().map((category) => ({ slug: category.slug }))
+export async function generateStaticParams() {
+  return (await getCategories()).map((category) => ({ slug: category.slug }))
 }
 
 export async function generateMetadata({
   params,
 }: PageProps<"/category/[slug]">): Promise<Metadata> {
   const { slug } = await params
-  const category = getCategory(slug)
+  const category = await getCategory(slug)
   if (!category) return {}
 
   const description =
@@ -50,11 +51,13 @@ export default async function CategoryPage({
   params,
 }: PageProps<"/category/[slug]">) {
   const { slug } = await params
-  const category = getCategory(slug)
+  const category = await getCategory(slug)
   if (!category) notFound()
 
-  const products = getProductCards(category.slug)
-  const children = getChildCategories(category)
+  const [products, children] = await Promise.all([
+    getProductCards(category.slug),
+    getChildCategories(category),
+  ])
   const trail = categoryTrail(category.path)
 
   return (

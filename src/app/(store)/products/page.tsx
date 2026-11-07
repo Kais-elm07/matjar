@@ -17,14 +17,17 @@ export const metadata: Metadata = {
   openGraph: openGraph({ title, description, path: "/products/" }),
 }
 
-export default function ProductsPage() {
-  const products = getProductCards()
+export default async function ProductsPage() {
+  const [products, categories] = await Promise.all([
+    getProductCards(),
+    getCategoryOptions(),
+  ])
 
   return (
     <div className="page-container py-5 md:py-8">
       <Breadcrumbs items={[{ name: "كل المنتجات" }]} />
       <ProductsHeading />
-      <ListingView products={products} categories={getCategoryOptions()} />
+      <ListingView products={products} categories={categories} />
     </div>
   )
 }

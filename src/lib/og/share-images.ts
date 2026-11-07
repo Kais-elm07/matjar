@@ -113,8 +113,8 @@ async function storeFacts() {
  * Four products from different categories.
  */
 export async function siteShareImage() {
-  const products = getHomeSections()
-    .trending.map((group) => group.products[0])
+  const products = (await getHomeSections()).trending
+    .map((group) => group.products[0])
     .slice(0, 4)
   const gap = 16
   const cell = (IMAGE_SIZE - gap) / 2

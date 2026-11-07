@@ -8,8 +8,8 @@ import { PrismaClient } from "@/generated/prisma/client"
 const shared: typeof globalThis & { matjarDb?: PrismaClient } = globalThis
 
 /**
- * The database client (PostgreSQL through Prisma). It is created on first use, so every page of the
- * store works without a database; only what reads or writes orders needs DATABASE_URL.
+ * The database client (PostgreSQL through Prisma), created on first use. The catalog reads it through
+ * Next.js's cache (src/lib/catalog/load.ts), and the orders directly.
  */
 export function getDb() {
   if (shared.matjarDb) return shared.matjarDb
@@ -20,7 +20,13 @@ export function getDb() {
     )
   }
   shared.matjarDb = new PrismaClient({
-    adapter: new PrismaPg({ connectionString }),
+    adapter: new PrismaPg({
+      connectionString,
+      // On Netlify every function opens its own connections, and the free Supabase pooler has few:
+      // two are enough for one request at a time, and an idle one is closed after ten seconds
+      max: 2,
+      idleTimeoutMillis: 10_000,
+    }),
   })
   return shared.matjarDb
 }

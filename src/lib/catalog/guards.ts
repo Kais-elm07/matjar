@@ -63,6 +63,17 @@ export function isVariantOptions(value: unknown): value is VariantOptions {
   return isRecord(value) && Object.values(value).every(isString)
 }
 
+function isSpec(value: unknown): value is { label: string; value: string } {
+  return isRecord(value) && isString(value.label) && isString(value.value)
+}
+
+/** A product's specifications table, as the products table keeps it (a JSON column). */
+export function isSpecs(
+  value: unknown
+): value is { label: string; value: string }[] {
+  return isArrayOf(value, isSpec)
+}
+
 function isVariantSummary(
   value: unknown
 ): value is SearchCardData["variants"][number] {

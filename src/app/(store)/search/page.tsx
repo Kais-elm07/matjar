@@ -12,7 +12,8 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 }
 
-export default function SearchPage() {
+export default async function SearchPage() {
+  const categories = await getCategoryOptions()
   return (
     <div className="page-container py-5 md:py-8">
       <Suspense
@@ -23,7 +24,7 @@ export default function SearchPage() {
           </>
         }
       >
-        <SearchView categories={getCategoryOptions()} />
+        <SearchView categories={categories} />
       </Suspense>
     </div>
   )

@@ -25,7 +25,7 @@ pnpm dev
 
 Then open http://localhost:3000
 
-`pnpm db:start` starts a local PostgreSQL for the store on port 5433, `pnpm db:deploy` creates its tables, and `pnpm db:seed` fills the catalog tables from `src/data`. The pages still read the catalog from `src/data` (phase 13 moves them to the database step by step, see `PLAN.md`); only orders need the database today.
+`pnpm db:start` starts a local PostgreSQL for the store on port 5433, `pnpm db:deploy` creates its tables, and `pnpm db:seed` fills the catalog tables from `src/data`. The pages read the catalog from the database, so the store pages need it running.
 
 The route types that pages and layouts use (`PageProps`, `LayoutProps`) are generated into `.next/types`, which is not in Git. After cloning, run `pnpm dev` or `pnpm typecheck` once, or the editor reports them as missing.
 
@@ -74,13 +74,14 @@ PostgreSQL, through [Prisma](https://www.prisma.io) 7. It keeps the orders, and 
 - `pnpm db:seed` (`prisma/seed.ts`) validates `src/data` with the build's rules and writes it to the catalog tables, in one transaction, with prices in halalas and each photo's measured tone from `public/images/image-meta.json` (it runs `pnpm images` first). It does nothing when the database already has products, so it never overwrites the store owner's changes; `pnpm db:seed --force` writes the `src/data` products over the ones with the same slug, for the local database and the tests. The Netlify build runs it, so a new database is filled on its first deploy.
 
 - The tables are described in `prisma/schema.prisma`, and every change to them is a migration in `prisma/migrations`, kept in Git. After editing the schema, run `pnpm db:migrate`, which writes the migration and applies it locally, then `pnpm db:generate` (Prisma 7 no longer regenerates the client during a migration).
-- The client is generated into `src/generated/prisma` (not in Git), and the code reaches it only through `getDb()` in `src/lib/db.ts`, on the server. It is created on first use, so the store runs without a database until an order is placed.
+- The client is generated into `src/generated/prisma` (not in Git), and the code reaches it only through `getDb()` in `src/lib/db.ts`, on the server, with at most two connections per server process.
+- The pages don't ask the database on every visit. `src/lib/catalog/load.ts` reads the whole catalog in one go and keeps the rows in Next.js's data cache under the tag `catalog`; the pages, `/cart-catalog.json`, `/similar-products.json`, the sitemap and the share images built from it are kept too. They are prepared by `pnpm build`, refreshed after a day (so ended deals reprice) or when the tag is revalidated, and a product or category added later is drawn on its first visit. While the database is down, the saved pages and the products API keep answering; only placing an order and `/api/health/` need it.
 - `GET /api/health/` answers `{ "status": "ok", "database": "up" }`, or 503 when the server can't reach the database.
 - The Prisma CLI reads `prisma7.config.ts` (the name Prisma 7 looks for), which loads `DATABASE_URL` from `.env`.
 
 ## Editing products and categories
 
-All data lives in `src/data`. Changes show up immediately with `pnpm dev`, and need `pnpm build` plus a new deployment to reach visitors.
+The products and categories live in the database; `src/data` holds the store's starting catalog, which `pnpm db:seed` writes into an empty database, and the home page, shipping, coupons and reviews, which the code reads directly. After editing the products or categories in `src/data`, run `pnpm db:seed --force` to write them into the local database. The live database keeps its own copy: an admin panel to edit it is the next steps of phase 13 (`PLAN.md`).
 
 - **Categories:** `src/data/categories.ts`. A subcategory names its parent's slug in `parent`. A category's cover on its tile is a product photo: set it in `image`, such as `/images/products/portable-speaker-2`, or leave it out to show the first photo of the category's most popular product.
 - **Products:** `src/data/products.ts`. Prices are in riyals, and `optionMatrix` generates every size and color combination automatically, with optional price or stock overrides for a single value or a full combination.
@@ -326,8 +327,11 @@ netlify.toml                   Netlify build settings
 | `define.ts`            | Helpers for writing the products file (`productImages`, `optionMatrix`)                                     | Server                 |
 | `schema.ts`            | Rules for every field in the category and product files, with Arabic messages                               | Server                 |
 | `validate.ts`          | Checks the two files together (duplicate slugs, missing categories, duplicate variants)                     | Server                 |
-| `build.ts`             | Builds the catalog once: prices in halalas, category paths and covers, sorted lists, expired deals          | Server (`server-only`) |
-| `image-meta.ts`        | Reads the photo colors `pnpm images` measured, and gives every photo its tone and whether it is a cut-out   | Server (`server-only`) |
+| `rows.ts`              | The catalog as the database keeps it, and the conversion from the files (prices in halalas, photo tones)    | Both                   |
+| `file-rows.ts`         | The rows from `src/data`, validated: what `pnpm db:seed` writes and the unit tests read                     | Server                 |
+| `image-meta.ts`        | Reads the photo colors `pnpm images` measured, for the seed                                                 | Seed (Node)            |
+| `load.ts`              | Reads the catalog from the database once, through Next.js's data cache (tag `catalog`)                      | Server (`server-only`) |
+| `build.ts`             | Builds the catalog from the rows: category paths and covers, sorted lists, expired deals, photo looks       | Server                 |
 | `catalog.ts`           | The read functions the pages and the products API use                                                       | Server (`server-only`) |
 | `home.ts`              | Home page sections and promo cards                                                                          | Server (`server-only`) |
 | `cards.ts`             | The card data that reaches the browser, with as few fields as possible                                      | Server                 |
@@ -342,10 +346,10 @@ Most pages are prepared once by `pnpm build`. The server then sends them as they
 
 **On the server** (server components, route handlers, and the files that import `server-only`), at build time and in the running server:
 
-1. `src/data` holds the products, categories, home page, shipping and coupons, with prices in riyals.
-2. `src/lib/catalog/build.ts` checks the category and product files (`schema.ts`, `validate.ts`) and builds the catalog once: prices in halalas, category paths and covers, expired deals back to their old price, every photo's tone (`image-meta.ts`), and a check that every image exists. Any mistake stops the build with an Arabic message. The shipping and coupon files go through the same kind of check in `src/lib/checkout/config.ts`.
+1. The database holds the categories and products, with prices in halalas; `pnpm db:seed` fills it from `src/data` after checking the files (`schema.ts`, `validate.ts`), so any mistake there stops with an Arabic message. `src/data` also holds the home page, shipping and coupons, which the code reads directly; the shipping and coupon files go through the same kind of check in `src/lib/checkout/config.ts`.
+2. `src/lib/catalog/load.ts` reads the catalog's rows through Next.js's data cache, and `build.ts` builds the catalog from them: category paths and covers, expired deals back to their old price, every photo's look, and, during `next build`, a check that every image exists.
 3. The pages in `src/app/(store)` read the catalog through `src/lib/catalog/catalog.ts` and `home.ts`, and pass client components only the fields they need (`cards.ts`).
-4. The products API (`src/app/api/products`) answers from the same catalog on every request. Two routes write JSON files at build time: `/cart-catalog.json` (the current price and stock of every variant) and `/similar-products.json` (Najm's suggestions). The share images in `src/app/og` are drawn the same way.
+4. The products API (`src/app/api/products`) answers from the same cached catalog on every request. Two routes write JSON files at build time and again when the catalog changes: `/cart-catalog.json` (the current price and stock of every variant) and `/similar-products.json` (Najm's suggestions). The share images in `src/app/og` are drawn the same way.
 
 **In the browser** (client components, marked `"use client"`):
 

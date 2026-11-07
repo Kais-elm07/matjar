@@ -8,6 +8,11 @@ const fromRoot = (path: string) => fileURLToPath(new URL(path, import.meta.url))
 export default defineConfig({
   resolve: {
     alias: [
+      // The catalog comes from the database through Next.js's cache; the tests build it from src/data
+      {
+        find: /^@\/lib\/catalog\/load$/,
+        replacement: fromRoot("./tests/unit/support/catalog-load.ts"),
+      },
       { find: /^@\//, replacement: fromRoot("./src/") },
       // server-only blocks importing build-time code in the browser; in tests an empty file is enough
       {

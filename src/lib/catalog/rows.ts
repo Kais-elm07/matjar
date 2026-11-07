@@ -9,7 +9,7 @@ import { toMinorUnits } from "@/lib/money"
  * pnpm db:seed (prisma/seed.ts) turns the src/data files into these rows and writes them.
  */
 
-interface CategoryRow {
+export interface CategoryRow {
   slug: string
   name: string
   description: string | null
@@ -19,7 +19,7 @@ interface CategoryRow {
   position: number
 }
 
-interface ProductImageRow {
+export interface ProductImageRow {
   position: number
   src: string
   /** null builds it from the product's name and the photo's color */
@@ -31,7 +31,7 @@ interface ProductImageRow {
   cutout: boolean
 }
 
-interface VariantRow {
+export interface VariantRow {
   sku: string
   options: Record<string, string>
   optionsKey: string
@@ -41,7 +41,7 @@ interface VariantRow {
   position: number
 }
 
-interface ProductRow {
+export interface ProductRow {
   slug: string
   name: string
   categorySlug: string
@@ -54,6 +54,12 @@ interface ProductRow {
   position: number
   images: ProductImageRow[]
   variants: VariantRow[]
+}
+
+/** The whole catalog as rows: what the server caches (src/lib/catalog/load.ts) and the seed writes. */
+export interface CatalogRows {
+  categories: CategoryRow[]
+  products: ProductRow[]
 }
 
 export function categoryRows(categories: ParsedCategory[]): CategoryRow[] {

@@ -21,18 +21,19 @@ import {
   shareImages,
 } from "@/lib/seo"
 
-// Every product page is prepared at build time, and any other URL shows the 404 page
-export const dynamicParams = false
+// Every product page is prepared at build time; a product added later is drawn on its first visit
+// and kept (dynamicParams), and an unknown slug shows the 404 page (notFound below)
+export const dynamicParams = true
 
-export function generateStaticParams() {
-  return getProducts().map((product) => ({ slug: product.slug }))
+export async function generateStaticParams() {
+  return (await getProducts()).map((product) => ({ slug: product.slug }))
 }
 
 export async function generateMetadata({
   params,
 }: PageProps<"/product/[slug]">): Promise<Metadata> {
   const { slug } = await params
-  const product = getProduct(slug)
+  const product = await getProduct(slug)
   if (!product) return {}
 
   const description = plainDescription(product.description)
@@ -53,10 +54,10 @@ export default async function ProductPage({
   params,
 }: PageProps<"/product/[slug]">) {
   const { slug } = await params
-  const product = getProduct(slug)
+  const product = await getProduct(slug)
   if (!product) notFound()
 
-  const related = getRelatedProducts(product)
+  const related = await getRelatedProducts(product)
   const trail = categoryTrail(product.categoryPath)
 
   return (

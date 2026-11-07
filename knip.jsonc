@@ -9,6 +9,8 @@
   "ignore": [
     // vitest.config.mts maps "server-only" to this empty file in the unit tests
     "tests/unit/support/empty.ts",
+    // vitest.config.mts puts it in place of src/lib/catalog/load.ts, to build the catalog from src/data
+    "tests/unit/support/catalog-load.ts",
   ],
   "ignoreDependencies": [
     // next.config.ts names it as the Turbopack loader for the CSS files

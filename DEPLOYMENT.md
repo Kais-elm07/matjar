@@ -106,7 +106,7 @@ Set the three variables in the server's environment before these commands. `pnpm
 
 ## Day-to-day workflow after launch
 
-1. Edit the products in `src/data/products.ts`, and put the images in `assets/images/products/` (see the README).
+1. The live products and categories are in the database, which the site reads through a cache: a change there shows after the cache is refreshed (a day at most, or at once once the admin panel of phase 13 revalidates it). `src/data/products.ts` only fills a new, empty database; its images go in `assets/images/products/` (see the README).
 2. To change the database's tables: edit `prisma/schema.prisma`, run `pnpm db:migrate` locally (it writes a migration in `prisma/migrations`), then `pnpm db:generate`, and commit the migration with the code.
 3. Run `pnpm verify` locally (all the checks plus the unit tests).
 4. Run `git commit`, then `git push`. GitHub Actions checks the change, and Netlify applies the migrations and deploys it within minutes.

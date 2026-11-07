@@ -14,17 +14,11 @@
 import "dotenv/config"
 
 import { PrismaPg } from "@prisma/adapter-pg"
-import { existsSync, readFileSync } from "node:fs"
-import path from "node:path"
 
-import { categories } from "@/data/categories"
-import { products } from "@/data/products"
 import { PrismaClient } from "@/generated/prisma/client"
 import { pluralize, PRODUCT_FORMS, type PluralForms } from "@/lib/arabic-plural"
-import { isImageMeta } from "@/lib/catalog/guards"
-import { categoryRows, productRows } from "@/lib/catalog/rows"
-import type { ImageMeta } from "@/lib/catalog/types"
-import { validateCatalogData } from "@/lib/catalog/validate"
+import { fileRows } from "@/lib/catalog/file-rows"
+import { readImageMeta } from "@/lib/catalog/image-meta"
 
 /** A date column (@db.Date) from 2026-10-30 */
 const day = (value: string) => new Date(`${value}T00:00:00Z`)
@@ -47,22 +41,6 @@ const VARIANT_FORMS: PluralForms = {
   other: "{n} متغير",
 }
 
-function readImageMeta(): ImageMeta {
-  const file = path.join(process.cwd(), "public", "images", "image-meta.json")
-  if (!existsSync(file)) {
-    throw new Error(
-      "ملف ألوان الصور public/images/image-meta.json غير موجود. شغّل pnpm images أولاً."
-    )
-  }
-  const data: unknown = JSON.parse(readFileSync(file, "utf8"))
-  if (!isImageMeta(data)) {
-    throw new Error(
-      "ملف ألوان الصور public/images/image-meta.json غير صالح. احذفه ثم شغّل pnpm images من جديد."
-    )
-  }
-  return data
-}
-
 async function main() {
   const force = process.argv.includes("--force")
   const connectionString = process.env.DATABASE_URL
@@ -72,9 +50,8 @@ async function main() {
     )
   }
 
-  const parsed = validateCatalogData(categories, products)
-  const categoryList = categoryRows(parsed.categories)
-  const productList = productRows(parsed.products, readImageMeta())
+  const { categories: categoryList, products: productList } =
+    fileRows(readImageMeta())
 
   const db = new PrismaClient({
     adapter: new PrismaPg({ connectionString }),

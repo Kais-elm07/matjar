@@ -31,11 +31,14 @@ export const metadata: Metadata = {
  * The home page in the order of DESIGN.md: the hero and the trust strip at full screen width,
  * then the sections inside the page container. Each section is its own component in src/components/home.
  */
-export default function HomePage() {
-  const { newArrivals, bestSellers, deals, trending, maxDiscount } =
-    getHomeSections()
-  const { heroSlides, promos, spotlights, wideBanner, testimonials } =
-    getHomeContent()
+export default async function HomePage() {
+  const [sections, content, categories] = await Promise.all([
+    getHomeSections(),
+    getHomeContent(),
+    getCategories(),
+  ])
+  const { newArrivals, bestSellers, deals, trending, maxDiscount } = sections
+  const { heroSlides, promos, spotlights, wideBanner, testimonials } = content
 
   return (
     <>
@@ -58,7 +61,7 @@ export default function HomePage() {
         <TrendingTabs groups={trending} />
         <DealsRail products={deals} />
         {wideBanner && <WideBanner banner={wideBanner} />}
-        <CategoryRail categories={getCategories()} />
+        <CategoryRail categories={categories} />
         <Testimonials testimonials={testimonials} />
         <ContactSection />
       </div>

@@ -73,7 +73,7 @@ export async function placeOrder(
     }
   }
 
-  const lines = linesFromCatalog(request.data.lines)
+  const lines = await linesFromCatalog(request.data.lines)
   if (!lines) {
     return {
       ok: false,

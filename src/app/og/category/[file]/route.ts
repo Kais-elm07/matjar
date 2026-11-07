@@ -6,8 +6,10 @@ import { categoryShareImage } from "@/lib/og/share-images"
 export const dynamic = "force-static"
 export const dynamicParams = false
 
-export function generateStaticParams() {
-  return getCategories().map((category) => ({ file: `${category.slug}.jpg` }))
+export async function generateStaticParams() {
+  return (await getCategories()).map((category) => ({
+    file: `${category.slug}.jpg`,
+  }))
 }
 
 export async function GET(
@@ -15,7 +17,7 @@ export async function GET(
   { params }: RouteContext<"/og/category/[file]">
 ) {
   const { file } = await params
-  const category = getCategory(file.replace(/\.jpg$/, ""))
+  const category = await getCategory(file.replace(/\.jpg$/, ""))
   if (!category) return new Response(null, { status: 404 })
   return jpegResponse(await categoryShareImage(category))
 }

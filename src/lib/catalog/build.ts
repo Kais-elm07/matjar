@@ -1,80 +1,72 @@
-import "server-only"
-
-import { PHASE_PRODUCTION_BUILD } from "next/constants"
-import { existsSync } from "node:fs"
-import path from "node:path"
-
-import { categories as categoryData } from "@/data/categories"
-import { products as productData } from "@/data/products"
-import { photoLook, readImageMeta } from "@/lib/catalog/image-meta"
 import { getOptionGroups } from "@/lib/catalog/options"
-import type { ParsedCategory, ParsedProduct } from "@/lib/catalog/schema"
+import type {
+  CatalogRows,
+  CategoryRow,
+  ProductImageRow,
+  ProductRow,
+} from "@/lib/catalog/rows"
 import type {
   Category,
   CategoryLink,
   CoverPhoto,
-  ImageMeta,
+  PhotoLook,
   Product,
   Variant,
 } from "@/lib/catalog/types"
-import { validateCatalogData } from "@/lib/catalog/validate"
-import { storeToday } from "@/lib/dates"
-import { IMAGE_WIDTHS, imageFile } from "@/lib/image-loader"
-import { discountPercent, toMinorUnits } from "@/lib/money"
+import { discountPercent } from "@/lib/money"
+import { BRAND_TONE, toneFromHex } from "@/lib/tone"
 
 /**
- * Builds the catalog once from the src/data files, after validating them, both while pages are prepared
- * at build time and when the server starts:
- * prices in the smallest unit, each category's path and product count, and ready-sorted lists.
- * Neither this file nor the full data files reach the visitor's browser.
- * The catalog is built when this module is first imported, so a mistake in the data throws there
- * and stops the build with its Arabic message.
+ * Builds the catalog the pages read from its rows (the database's, or the src/data files' in the unit
+ * tests): each category's path and product count, the prices of deals that have ended, the look of
+ * every photo, and ready-sorted lists. Pure: the same rows and day give the same catalog.
  */
 
 const byPopularity = (a: Product, b: Product) => b.popularity - a.popularity
 const byNewest = (a: Product, b: Product) =>
   b.createdAt.localeCompare(a.createdAt)
 
+/** A photo's look: the tone stored with it, or the store's blue for a photo without a clear color. */
+function photoLook(image: Pick<ProductImageRow, "tone" | "cutout">): PhotoLook {
+  return {
+    tone: (image.tone ? toneFromHex(image.tone) : null) ?? BRAND_TONE,
+    cutout: image.cutout,
+  }
+}
+
 function toProduct(
-  input: ParsedProduct,
+  row: ProductRow,
   pathOf: (slug: string) => CategoryLink[],
-  meta: ImageMeta,
   today: string
 ): Product {
-  // A sale that ended before the build day: every variant goes back to its price before discount.
-  // That is why the site is rebuilt after any sale ends, so its prices update.
-  const expired = input.saleEndsAt !== undefined && input.saleEndsAt < today
+  // A deal whose last day has passed: every variant goes back to its price before the discount
+  const expired = row.saleEndsAt !== null && row.saleEndsAt < today
 
-  const variants: Variant[] = input.variants.map((variant) => {
-    const price =
-      expired && variant.compareAtPrice !== undefined
+  const variants: Variant[] = row.variants.map((variant) => ({
+    sku: variant.sku,
+    options: variant.options,
+    price:
+      expired && variant.compareAtPrice !== null
         ? variant.compareAtPrice
-        : variant.price
-    const compareAtPrice = expired ? undefined : variant.compareAtPrice
-    return {
-      sku: variant.sku,
-      options: variant.options,
-      price: toMinorUnits(price),
-      compareAtPrice:
-        compareAtPrice === undefined ? null : toMinorUnits(compareAtPrice),
-      stock: variant.stock,
-    }
-  })
+        : variant.price,
+    compareAtPrice: expired ? null : variant.compareAtPrice,
+    stock: variant.stock,
+  }))
   const cheapest = variants.reduce((min, v) => (v.price < min.price ? v : min))
 
   return {
-    slug: input.slug,
-    name: input.name,
-    description: input.description,
-    specs: input.specs,
-    categoryPath: pathOf(input.category),
-    images: input.images.map((image) => ({
+    slug: row.slug,
+    name: row.name,
+    description: row.description,
+    specs: row.specs,
+    categoryPath: pathOf(row.categorySlug),
+    images: row.images.map((image) => ({
       src: image.src,
       alt:
         image.alt ??
-        (image.color ? `${input.name}، اللون ${image.color}` : input.name),
-      color: image.color ?? null,
-      ...photoLook(meta, image.src, image.tone),
+        (image.color ? `${row.name}، اللون ${image.color}` : row.name),
+      color: image.color,
+      ...photoLook(image),
     })),
     variants,
     optionGroups: getOptionGroups(variants),
@@ -85,23 +77,22 @@ function toProduct(
       : null,
     maxPrice: Math.max(...variants.map((v) => v.price)),
     inStock: variants.some((v) => v.stock > 0),
-    popularity: input.popularity,
-    createdAt: input.createdAt,
-    saleEndsAt: expired ? null : (input.saleEndsAt ?? null),
+    popularity: row.popularity,
+    createdAt: row.createdAt,
+    saleEndsAt: expired ? null : row.saleEndsAt,
   }
 }
 
 function toCategories(
-  parsed: ParsedCategory[],
+  rows: CategoryRow[],
   products: Product[],
-  pathOf: (slug: string) => CategoryLink[],
-  meta: ImageMeta
+  pathOf: (slug: string) => CategoryLink[]
 ): Category[] {
   const children = new Map<string, string[]>()
-  for (const category of parsed) {
-    if (!category.parent) continue
-    children.set(category.parent, [
-      ...(children.get(category.parent) ?? []),
+  for (const category of rows) {
+    if (!category.parentSlug) continue
+    children.set(category.parentSlug, [
+      ...(children.get(category.parentSlug) ?? []),
       category.slug,
     ])
   }
@@ -109,7 +100,7 @@ function toCategories(
   const counts = new Map<string, number>()
   // The first photo of the most popular product in each category and its parents, the default cover
   const covers = new Map<string, CoverPhoto>()
-  // Every product photo with its look, so a cover set to one of them keeps the tone set for it
+  // Every product photo with its look, so a cover set to one of them keeps that photo's tone
   const productPhotos = new Map<string, CoverPhoto>()
   for (const product of [...products].sort(byPopularity)) {
     for (const image of product.images) {
@@ -127,17 +118,17 @@ function toCategories(
     }
   }
 
-  return parsed.map((category) => ({
+  return rows.map((category) => ({
     slug: category.slug,
     name: category.name,
-    description: category.description || null,
-    image: category.image
-      ? (productPhotos.get(category.image) ?? {
-          src: category.image,
-          ...photoLook(meta, category.image),
+    description: category.description,
+    image: category.imageSrc
+      ? (productPhotos.get(category.imageSrc) ?? {
+          src: category.imageSrc,
+          ...photoLook({ tone: null, cutout: false }),
         })
       : (covers.get(category.slug) ?? null),
-    parentSlug: category.parent ?? null,
+    parentSlug: category.parentSlug,
     childSlugs: children.get(category.slug) ?? [],
     path: pathOf(category.slug),
     productCount: counts.get(category.slug) ?? 0,
@@ -145,70 +136,50 @@ function toCategories(
 }
 
 /**
- * While the site is built (next build), every image in the data must be prepared in public/images.
- * The running server builds the catalog too but never reads public/images, so the check is skipped there,
- * and turbopackIgnore keeps the whole folder out of the server's file tracing.
+ * The catalog for the given day (2026-11-07, in the store's time zone), which decides the deals that
+ * have ended. Hidden products are left out: no page, list or file shows them.
  */
-function assertImagesExist(products: Product[], categories: Category[]) {
-  if (process.env.NEXT_PHASE !== PHASE_PRODUCTION_BUILD) return
-  const missing: string[] = []
-  const check = (src: string | null, owner: string) => {
-    if (!src || /^https?:\/\//.test(src)) return
-    const file = path.join(
-      process.cwd(),
-      "public",
-      imageFile(src, IMAGE_WIDTHS[0])
-    )
-    if (!existsSync(/* turbopackIgnore: true */ file))
-      missing.push(`${owner}: الصورة "${src}"`)
-  }
-  for (const product of products) {
-    for (const image of product.images) {
-      check(image.src, `المنتج "${product.slug}"`)
-    }
-  }
-  for (const category of categories) {
-    check(category.image?.src ?? null, `الفئة "${category.slug}"`)
-  }
-  if (missing.length > 0) {
-    throw new Error(
-      `${missing.length} صورة غير موجودة. ضع الصورة الأصلية في assets/images بالاسم نفسه ثم شغّل pnpm images:\n- ${missing.join("\n- ")}`
-    )
-  }
-}
-
-function buildCatalog() {
-  const parsed = validateCatalogData(categoryData, productData)
-
-  const bySlug = new Map(parsed.categories.map((c) => [c.slug, c]))
+export function buildCatalog(rows: CatalogRows, today: string) {
+  const categoryRows = [...rows.categories].sort(
+    (a, b) => a.position - b.position
+  )
+  const bySlug = new Map(categoryRows.map((c) => [c.slug, c]))
   const pathOf = (slug: string): CategoryLink[] => {
     const links: CategoryLink[] = []
     let current = bySlug.get(slug)
     while (current) {
       links.unshift({ slug: current.slug, name: current.name })
-      current = current.parent ? bySlug.get(current.parent) : undefined
+      current = current.parentSlug ? bySlug.get(current.parentSlug) : undefined
     }
     return links
   }
 
-  const today = storeToday()
-  const meta = readImageMeta()
-  const products = parsed.products
-    .filter((product) => !product.hidden)
-    .map((input) => toProduct(input, pathOf, meta, today))
-  const categories = toCategories(parsed.categories, products, pathOf, meta)
-  assertImagesExist(products, categories)
+  const products = rows.products
+    .filter((row) => !row.hidden)
+    .sort((a, b) => a.position - b.position)
+    .map((row) => toProduct(row, pathOf, today))
+  const categories = toCategories(categoryRows, products, pathOf)
 
   return {
     categories,
     categoryBySlug: new Map(categories.map((c) => [c.slug, c])),
     products,
     productBySlug: new Map(products.map((p) => [p.slug, p])),
-    /** Products from best selling down, sorted once for all pages */
+    variantBySku: new Map(
+      products.flatMap((product) =>
+        product.variants.map(
+          (variant): [string, { product: Product; variant: Variant }] => [
+            variant.sku,
+            { product, variant },
+          ]
+        )
+      )
+    ),
+    /** Products from best selling down */
     byPopularity: [...products].sort(byPopularity),
     /** Products from newest */
     byNewest: [...products].sort(byNewest),
   }
 }
 
-export const catalog = buildCatalog()
+export type Catalog = ReturnType<typeof buildCatalog>
