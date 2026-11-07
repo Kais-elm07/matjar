@@ -21,10 +21,12 @@ This guide covers the steps you do from your own accounts (database, hosting, do
 | `NEXT_PUBLIC_SITE_URL`               | The build                | No                | The real site URL without a trailing `/`. Share links and the sitemap are built from it, so rebuild after changing it.          |
 | `DATABASE_URL`                       | The build and the server | Yes               | The PostgreSQL connection string. The build applies the migrations with it, and the server saves and reads orders with it.      |
 | `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` | The build (recommended)  | No                | A random key, made once with `openssl rand -base64 32` and kept. It keeps the checkout's Server Actions working across deploys. |
+| `ADMIN_PASSWORD_HASH`                | The server               | Yes               | The admin panel's password hash, printed by `pnpm admin:password` on your machine. Without it the panel stays off.              |
+| `ADMIN_SESSION_SECRET`               | The server               | Yes               | Signs the admin panel's sign-in cookie; printed by the same command. A new value signs everyone out.                            |
 
 > **Never** put a secret in a variable that starts with `NEXT_PUBLIC_`: those values are written into the pages and reach every visitor.
 
-Netlify scans the built site for the values of the variables marked as secret, and stops the deploy when it finds one. Mark only `DATABASE_URL`: the site URL is written into every page, and Next writes the encryption key into the server's own files (never into the pages), so marking either of them stops every deploy. Don't add variables the project doesn't read, such as a `DIRECT_URL` copied from a Prisma guide.
+Netlify scans the built site for the values of the variables marked as secret, and stops the deploy when it finds one. Mark only `DATABASE_URL` and the two `ADMIN_` variables, which the server reads at runtime and never writes anywhere: the site URL is written into every page, and Next writes the encryption key into the server's own files (never into the pages), so marking either of them stops every deploy. Don't add variables the project doesn't read, such as a `DIRECT_URL` copied from a Prisma guide.
 
 ## 1. Create the database
 
@@ -59,7 +61,8 @@ A free Supabase project pauses after a week with no activity. `/api/health/` the
 5. Set `NEXT_PUBLIC_SITE_URL` to exactly that address, in lowercase, and deploy again (**Deploys** → **Trigger deploy**). Open the address first to make sure it shows the store: a name typed from memory may belong to someone else's site, and then every share link and the sitemap point there.
 6. Open `https://<project-name>.netlify.app/api/health/`: it must answer `{"status":"ok","database":"up"}`. If it answers 503, the server can't reach the database: check `DATABASE_URL` and that the database accepts connections from outside.
 7. **Domain management** → **Add a domain**, and follow the DNS instructions. The HTTPS certificate is enabled automatically.
-8. After connecting the domain, change `NEXT_PUBLIC_SITE_URL` to `https://your-domain` and deploy again (**Trigger deploy**).
+8. **The admin panel:** on your machine, run `pnpm admin:password`, type the panel's password twice (12 characters or more), and add the two lines it prints as the variables `ADMIN_PASSWORD_HASH` and `ADMIN_SESSION_SECRET` (both secret). They reach the server with the next deploy (**Trigger deploy**). Then open `https://<project-name>.netlify.app/admin/` and sign in. Keep the password yourself: it is stored nowhere, and a forgotten one is replaced by running the command again.
+9. After connecting the domain, change `NEXT_PUBLIC_SITE_URL` to `https://your-domain` and deploy again (**Trigger deploy**).
 
 From then on, every push to the `main` branch deploys automatically, after applying any new migration.
 

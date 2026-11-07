@@ -11,7 +11,8 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // Pages specific to each visitor or without static content, the private order pages, and the API's JSON
+        // Pages specific to each visitor or without static content, the private order pages, the API's JSON,
+        // and the admin panel
         disallow: [
           "/search/",
           "/cart/",
@@ -19,6 +20,7 @@ export default function robots(): MetadataRoute.Robots {
           "/wishlist/",
           "/orders/",
           "/api/",
+          "/admin/",
         ],
       },
     ],

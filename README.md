@@ -42,31 +42,32 @@ Deployment steps on Netlify, the variables the server needs (`NEXT_PUBLIC_SITE_U
 
 ## Commands
 
-| Command              | What it does                                                                                    |
-| -------------------- | ----------------------------------------------------------------------------------------------- |
-| `pnpm dev`           | Run the site for development with instant reload on every change                                |
-| `pnpm build`         | Build the site for production into `.next/`                                                     |
-| `pnpm start`         | Run the production server on the build, as it runs once deployed                                |
-| `pnpm images`        | Process images and measure each photo's color (runs before `dev`, `build`)                      |
-| `pnpm images:photos` | Download the original Pexels photos behind the demo cut-outs, if missing                        |
-| `pnpm fonts`         | Subset the font files from `assets/fonts` into `src/fonts`                                      |
-| `pnpm db:start`      | Start the local PostgreSQL database (set up the first time), port 5433                          |
-| `pnpm db:stop`       | Stop it; `pnpm db:status` says whether it runs                                                  |
-| `pnpm db:migrate`    | After changing `prisma/schema.prisma`: write a migration and apply it                           |
-| `pnpm db:deploy`     | Apply the migrations that haven't run yet (on the host, before each build)                      |
-| `pnpm db:seed`       | Fill an empty catalog from `src/data`; `--force` writes it over the products with the same slug |
-| `pnpm db:generate`   | Generate the Prisma client (runs by itself after `pnpm install`)                                |
-| `pnpm db:studio`     | Browse and edit the database's tables in the browser                                            |
-| `pnpm lint`          | ESLint, where any warning counts as an error                                                    |
-| `pnpm typecheck`     | Check types, after generating the route types (`next typegen`)                                  |
-| `pnpm knip`          | Find files, exports and packages that nothing uses any more                                     |
-| `pnpm check`         | Check formatting, lint errors, types, the design file and unused code                           |
-| `pnpm verify`        | `pnpm check` plus the unit tests: the full check before saving or deploying                     |
-| `pnpm test`          | Unit tests (Vitest), in seconds                                                                 |
-| `pnpm test:db`       | Database tests: saving orders and lowering the stock, against the local database                |
-| `pnpm test:e2e`      | Browser tests (Playwright) against the production server                                        |
-| `pnpm design:lint`   | Validate `DESIGN.md` and its color contrast                                                     |
-| `pnpm format`        | Format every file automatically                                                                 |
+| Command               | What it does                                                                                    |
+| --------------------- | ----------------------------------------------------------------------------------------------- |
+| `pnpm dev`            | Run the site for development with instant reload on every change                                |
+| `pnpm build`          | Build the site for production into `.next/`                                                     |
+| `pnpm start`          | Run the production server on the build, as it runs once deployed                                |
+| `pnpm images`         | Process images and measure each photo's color (runs before `dev`, `build`)                      |
+| `pnpm images:photos`  | Download the original Pexels photos behind the demo cut-outs, if missing                        |
+| `pnpm fonts`          | Subset the font files from `assets/fonts` into `src/fonts`                                      |
+| `pnpm db:start`       | Start the local PostgreSQL database (set up the first time), port 5433                          |
+| `pnpm db:stop`        | Stop it; `pnpm db:status` says whether it runs                                                  |
+| `pnpm db:migrate`     | After changing `prisma/schema.prisma`: write a migration and apply it                           |
+| `pnpm db:deploy`      | Apply the migrations that haven't run yet (on the host, before each build)                      |
+| `pnpm db:seed`        | Fill an empty catalog from `src/data`; `--force` writes it over the products with the same slug |
+| `pnpm db:generate`    | Generate the Prisma client (runs by itself after `pnpm install`)                                |
+| `pnpm admin:password` | Make the admin panel's password hash and session secret, for `.env` and the host                |
+| `pnpm db:studio`      | Browse and edit the database's tables in the browser                                            |
+| `pnpm lint`           | ESLint, where any warning counts as an error                                                    |
+| `pnpm typecheck`      | Check types, after generating the route types (`next typegen`)                                  |
+| `pnpm knip`           | Find files, exports and packages that nothing uses any more                                     |
+| `pnpm check`          | Check formatting, lint errors, types, the design file and unused code                           |
+| `pnpm verify`         | `pnpm check` plus the unit tests: the full check before saving or deploying                     |
+| `pnpm test`           | Unit tests (Vitest), in seconds                                                                 |
+| `pnpm test:db`        | Database tests: saving orders and lowering the stock, against the local database                |
+| `pnpm test:e2e`       | Browser tests (Playwright) against the production server                                        |
+| `pnpm design:lint`    | Validate `DESIGN.md` and its color contrast                                                     |
+| `pnpm format`         | Format every file automatically                                                                 |
 
 ## Database
 
@@ -82,7 +83,18 @@ PostgreSQL, through [Prisma](https://www.prisma.io) 7. It keeps the orders, and 
 
 ## Editing products and categories
 
-The products and categories live in the database; `src/data` holds the store's starting catalog, which `pnpm db:seed` writes into an empty database, and the home page, shipping, coupons and reviews, which the code reads directly. After editing the products or categories in `src/data`, run `pnpm db:seed --force` to write them into the local database. The live database keeps its own copy: an admin panel to edit it is the next steps of phase 13 (`PLAN.md`).
+The products and categories live in the database; `src/data` holds the store's starting catalog, which `pnpm db:seed` writes into an empty database, and the home page, shipping, coupons and reviews, which the code reads directly. After editing the products or categories in `src/data`, run `pnpm db:seed --force` to write them into the local database. The live database keeps its own copy, which the store owner edits from the admin panel below.
+
+## Admin panel
+
+The store owner's pages, at `/admin/` (`src/app/admin`), where products and categories are changed without touching the code or deploying again:
+
+- **Products:** every product, hidden ones included, with its price range and stock. "تعديل المخزون" (Edit stock) changes the stock of each variant in place; "إخفاء" (Hide) takes a product out of the store and "إظهار" (Show) brings it back. A product is never deleted, because orders name its SKUs.
+- **Adding or editing a product:** its name, address, category, description and specifications; its photos in order, each with its color option; and its variants, one row per size and color combination with its options written as `المقاس: M، اللون: أبيض`, its price in riyals, its price before the discount and its stock. The server checks the form with the same rules as `src/data` and answers with the problems to fix, in Arabic.
+- **Categories:** adding one, and changing a category's name, address, parent, description and cover photo.
+- **When a change shows:** every save marks the catalog stale (`revalidateTag("catalog", "max")`), so the store shows it within seconds: the first visitor after a change may still get the saved page while the new one is drawn. A new product's page is drawn on its first visit; its share image appears with the next deploy.
+- **Signing in:** one password for the store owner. `pnpm admin:password` asks for it and prints two variables for `.env` and the host: `ADMIN_PASSWORD_HASH`, its scrypt hash (the password itself is stored nowhere), and `ADMIN_SESSION_SECRET`, which signs the sign-in cookie (seven days, `httpOnly`, only for `/admin`). Without them the panel stays off. Every admin page and every admin Server Action checks the session itself (`src/lib/admin/session.ts`), and the panel is out of the search engines (`noindex` and robots.txt).
+- **Photos:** a product photo is its path in `public/images` without a size, such as `/images/products/classic-cotton-shirt-1`. A photo another product already uses keeps its measured tone; any other takes the store's blue.
 
 - **Categories:** `src/data/categories.ts`. A subcategory names its parent's slug in `parent`. A category's cover on its tile is a product photo: set it in `image`, such as `/images/products/portable-speaker-2`, or leave it out to show the first photo of the category's most popular product.
 - **Products:** `src/data/products.ts`. Prices are in riyals, and `optionMatrix` generates every size and color combination automatically, with optional price or stock overrides for a single value or a full combination.

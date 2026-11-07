@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test"
 
+import { hashPassword, newSessionSecret } from "./src/lib/admin/password"
+import { ADMIN_TEST_PASSWORD } from "./tests/e2e/admin-password"
+
 const PORT = 3200
 const isCI = Boolean(process.env.CI)
 
@@ -53,6 +56,12 @@ export default defineConfig({
     // without a build, before global-setup.ts can say what is missing
     port: PORT,
     reuseExistingServer: !isCI,
+    // The admin panel's variables for this run only, made from the tests' own password, so no real
+    // password or hash is written anywhere in the project
+    env: {
+      ADMIN_PASSWORD_HASH: hashPassword(ADMIN_TEST_PASSWORD),
+      ADMIN_SESSION_SECRET: newSessionSecret(),
+    },
   },
   projects: [
     {

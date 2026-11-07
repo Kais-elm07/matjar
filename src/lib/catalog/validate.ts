@@ -162,6 +162,19 @@ function checkProduct(product: ParsedProduct, skus: Map<string, string>) {
   return problems
 }
 
+/** The categories' checks (repeated slugs, missing parents, cycles), for a category saved from the admin panel. */
+export function categoryProblems(categories: ParsedCategory[]) {
+  return checkCategories(categories)
+}
+
+/**
+ * One product's own checks (its options, image colors and deal), for a product saved from the admin
+ * panel; the database then refuses a slug or a SKU that another product already has.
+ */
+export function productProblems(product: ParsedProduct) {
+  return checkProduct(product, new Map())
+}
+
 /** Products that repeat a slug or name a category that does not exist, then each product's own checks. */
 function checkProducts(products: ParsedProduct[], categorySlugs: Set<string>) {
   const problems: string[] = []
