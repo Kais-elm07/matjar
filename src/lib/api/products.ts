@@ -9,7 +9,9 @@ import { searchCards } from "@/lib/search/search-cards"
  * (src/lib/catalog/load.ts), so every request is computed again in a few milliseconds, and a cache may
  * keep an answer only while it asks the server whether it is still current.
  */
-const API_HEADERS = { "Cache-Control": "public, max-age=0, must-revalidate" }
+export const API_HEADERS = {
+  "Cache-Control": "public, max-age=0, must-revalidate",
+}
 
 function apiError(status: number, message: string) {
   return Response.json({ error: message }, { status, headers: API_HEADERS })

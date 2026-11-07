@@ -1,10 +1,12 @@
+import { API_HEADERS } from "@/lib/api/products"
 import { getCartCatalog } from "@/lib/catalog/catalog"
 
-// Prerendered at build time and served as a file, then drawn again when the catalog changes
-// (its tag "catalog", see src/lib/catalog/load.ts)
-export const dynamic = "force-static"
+// Computed on every request from the cached catalog (src/lib/catalog/load.ts), which is cheap: a file
+// prepared at build time is not refreshed by the catalog's tag on Netlify, and the stock changes with
+// every order
+export const dynamic = "force-dynamic"
 
-/** Prices and stock of all variants; the cart saved in the browser is checked against them after each deploy. */
+/** Prices and stock of all variants; the cart saved in the browser is checked against them. */
 export async function GET() {
-  return Response.json(await getCartCatalog())
+  return Response.json(await getCartCatalog(), { headers: API_HEADERS })
 }

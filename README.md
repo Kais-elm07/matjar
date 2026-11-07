@@ -76,7 +76,7 @@ PostgreSQL, through [Prisma](https://www.prisma.io) 7. It keeps the orders, and 
 
 - The tables are described in `prisma/schema.prisma`, and every change to them is a migration in `prisma/migrations`, kept in Git. After editing the schema, run `pnpm db:migrate`, which writes the migration and applies it locally, then `pnpm db:generate` (Prisma 7 no longer regenerates the client during a migration).
 - The client is generated into `src/generated/prisma` (not in Git), and the code reaches it only through `getDb()` in `src/lib/db.ts`, on the server, with at most two connections per server process.
-- The pages don't ask the database on every visit. `src/lib/catalog/load.ts` reads the whole catalog in one go and keeps the rows in Next.js's data cache under the tag `catalog`; the pages, `/cart-catalog.json`, `/similar-products.json` and the sitemap built from it are kept too. They are prepared by `pnpm build`, refreshed after a day (so ended deals reprice) or when the tag is revalidated (after every order, since it lowers the stock), and a product or category added later is drawn on its first visit. The share images are the exception: they are drawn by `pnpm build` from the photos in `public/images`, which the server's functions don't carry, so they read the database outside the cache (`getBuildCatalog`) and stay as built until the next deploy. While the database is down, the saved pages and the products API keep answering; only placing an order and `/api/health/` need it.
+- The pages don't ask the database on every visit. `src/lib/catalog/load.ts` reads the whole catalog in one go and keeps the rows in Next.js's data cache under the tag `catalog`; the pages built from it are kept too. They are prepared by `pnpm build`, refreshed after a day (so ended deals reprice) or when the tag is revalidated (after every order, since it lowers the stock), and a product or category added later is drawn on its first visit. `/cart-catalog.json`, `/similar-products.json`, the sitemap and the products API are computed on every request from the cached rows instead, which takes milliseconds: on Netlify, a route handler prepared at build time is not refreshed by the tag (checked with a real order on November 7, 2026). The share images are the exception: they are drawn by `pnpm build` from the photos in `public/images`, which the server's functions don't carry, so they read the database outside the cache (`getBuildCatalog`) and stay as built until the next deploy. While the database is down, the saved pages and the products API keep answering; only placing an order and `/api/health/` need it.
 - `GET /api/health/` answers `{ "status": "ok", "database": "up" }`, or 503 when the server can't reach the database.
 - The Prisma CLI reads `prisma7.config.ts` (the name Prisma 7 looks for), which loads `DATABASE_URL` from `.env`.
 
@@ -103,7 +103,7 @@ Both are saved in the visitor's browser (localStorage), so they survive closing 
 
 - A visitor cannot add more than the variant's stock, or more than 10 pieces of a single variant.
 - If the browser blocks storage, the cart keeps working in memory for the visit, and corrupted saved data is discarded instead of breaking the page.
-- After every new deployment the cart is matched against `/cart-catalog.json`, which is generated at build time: prices and stock are refreshed, sold-out or removed items are dropped, and the visitor sees a notice describing what changed.
+- When the cart or the checkout opens, the cart is matched against `/cart-catalog.json`, which the server computes from the current catalog: prices and stock are refreshed, sold-out or removed items are dropped, and the visitor sees a notice describing what changed.
 - Adding a product is confirmed at once: Najm catches it when he is on screen, otherwise the cart panel opens.
 
 ## Najm, the mascot
@@ -111,7 +111,7 @@ Both are saved in the visitor's browser (localStorage), so they survive closing 
 Najm (نجم, "star") is a small glossy blue dog in 3D, drawn with [three.js](https://threejs.org) from simple shapes in code, so there is no model file to download. He stands in the corner of every page on the start side (the WhatsApp button is on the other side), with no background, and lets every tap through to the page. His look and rules are in `DESIGN.md` (Mascot).
 
 - **On each page:** he greets the visitor on the home page once per visit. On product lists, search, product pages and the wishlist his cart stands beside him: when a product is added, its photo flies from the pressed button into his paws, he throws it into his basket, and his speech bubble names it and suggests two similar products that aren't in the cart yet, with "View cart". On the cart page he says how many pieces the cart holds, and takes out whatever the visitor deletes. On the checkout form he stays quiet, and on the confirmation page he celebrates and sends his cart off with the order.
-- **Suggestions** come from `/similar-products.json`, written at build time from the same "similar products" the product page shows (up to four in-stock products per product).
+- **Suggestions** come from `/similar-products.json`, computed by the server from the same "similar products" the product page shows (up to four in-stock products per product).
 - **Hiding him:** "Hide Najm" in his greeting, and a button in the footer that hides him or brings him back. The choice is saved in the browser.
 - **Speed:** his code (about 150 KB compressed, mostly three.js) downloads only after the page has loaded and the visitor first moves, touches or scrolls, and only if the browser can draw WebGL 2. Drawing stops a few seconds after the visitor stops moving, and while the tab is hidden.
 - **Reduced motion:** he stands still, doesn't follow the pointer, and products appear in his basket at once; his bubbles still speak.
@@ -243,8 +243,8 @@ src/app/                       the pages (Next.js App Router)
   sitemap.ts, robots.ts        the sitemap and robots file
   api/products/                the products API: the product list and one product by its slug
   api/health/                  whether the server reaches the database
-  cart-catalog.json/           the current price and stock of every variant, a static JSON file
-  similar-products.json/       the similar products Najm suggests, a static JSON file
+  cart-catalog.json/           the current price and stock of every variant, as JSON
+  similar-products.json/       the similar products Najm suggests, as JSON
   og/                          share images for every product, category and the site (JPEG, written at build time)
 
 src/components/
@@ -350,7 +350,7 @@ Most pages are prepared once by `pnpm build`. The server then sends them as they
 1. The database holds the categories and products, with prices in halalas; `pnpm db:seed` fills it from `src/data` after checking the files (`schema.ts`, `validate.ts`), so any mistake there stops with an Arabic message. `src/data` also holds the home page, shipping and coupons, which the code reads directly; the shipping and coupon files go through the same kind of check in `src/lib/checkout/config.ts`.
 2. `src/lib/catalog/load.ts` reads the catalog's rows through Next.js's data cache, and `build.ts` builds the catalog from them: category paths and covers, expired deals back to their old price, every photo's look, and, during `next build`, a check that every image exists.
 3. The pages in `src/app/(store)` read the catalog through `src/lib/catalog/catalog.ts` and `home.ts`, and pass client components only the fields they need (`cards.ts`).
-4. The products API (`src/app/api/products`) answers from the same cached catalog on every request. Two routes write JSON files at build time and again when the catalog changes: `/cart-catalog.json` (the current price and stock of every variant) and `/similar-products.json` (Najm's suggestions). The share images in `src/app/og` are drawn at build time only, and kept until the next deploy.
+4. The products API (`src/app/api/products`) answers from the same cached catalog on every request. So do two JSON routes: `/cart-catalog.json` (the current price and stock of every variant) and `/similar-products.json` (Najm's suggestions). The share images in `src/app/og` are drawn at build time only, and kept until the next deploy.
 
 **In the browser** (client components, marked `"use client"`):
 
@@ -429,7 +429,7 @@ The same day, the last static version (phase 11) measured 90, 72-86 and 80-85 on
 
 ## Important technical notes
 
-- **Prepared pages and a server:** the catalog and help pages list the addresses they know (`generateStaticParams`), so they are built once; the product and category pages also draw a new slug on its first visit (`dynamicParams = true`), and any other address gets the 404 page. The data files, the share images, the sitemap and robots.txt are route handlers marked `force-static`, built once too; all but the share images and robots.txt are refreshed with the catalog. The site uses the classic rendering model of Next.js, not Cache Components.
+- **Prepared pages and a server:** the catalog and help pages list the addresses they know (`generateStaticParams`), so they are built once; the product and category pages also draw a new slug on its first visit (`dynamicParams = true`), and any other address gets the 404 page. The share images and robots.txt are route handlers marked `force-static`, built once too; the data files and the sitemap are computed on every request from the cached catalog. The site uses the classic rendering model of Next.js, not Cache Components.
 - **Trailing slash:** every address ends with `/` (`trailingSlash` in `next.config.ts`), and the server redirects an address without it with a 308. Addresses of files with an extension, such as `/cart-catalog.json`, are left alone.
 - **Search and filters run in the browser:** listing pages are prepared as HTML without filters for search engines, then the URL's filters apply right after loading (`src/lib/listing/url-query.ts`).
 - **Images:** a custom loader (`src/lib/image-loader.ts`) picks from the copies `pnpm images` prepares, so the server never resizes images and no request waits for one to be drawn.

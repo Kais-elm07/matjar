@@ -24,7 +24,7 @@ The skill `design-taste-frontend` (Taste Skill, from github.com/Leonxlnx/taste-s
 
 ## Server and data
 
-- The store runs on a Next.js server with the classic rendering model (Cache Components is off). The catalog and help pages keep `generateStaticParams` with `dynamicParams = false`, and the prepared files (data JSON, share images, sitemap, robots) keep `export const dynamic = "force-static"`. A page that reads the database says so with `export const dynamic = "force-dynamic"`.
+- The store runs on a Next.js server with the classic rendering model (Cache Components is off). The catalog and help pages keep `generateStaticParams` (the product and category pages with `dynamicParams = true`, the help pages with `false`). The share images and robots keep `export const dynamic = "force-static"`; the data JSON files and the sitemap are `force-dynamic`, computed from the cached catalog, because on Netlify the catalog's tag does not refresh a route handler prepared at build time. A page that reads the database says so with `export const dynamic = "force-dynamic"`.
 - Code that runs only on the server imports `server-only`. The database is reached only through `getDb()` in `src/lib/db.ts`, and the orders through `src/lib/checkout/orders.ts`.
 - Server Actions (`"use server"`, such as `src/lib/checkout/actions.ts`) can be called by anyone with a POST request: check every argument with Zod, and take prices, stock and coupons from the server's own data, never from the browser.
 - A `"use client"` module can't hand functions or constants to server code, so logic both sides need lives in a plain module (`src/lib/checkout/totals.ts`, `quantity.ts`).

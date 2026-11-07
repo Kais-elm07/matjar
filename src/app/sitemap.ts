@@ -5,8 +5,9 @@ import { getContentPages } from "@/lib/content/pages"
 import { categoryPath, contentPagePath, productPath } from "@/lib/routes"
 import { absoluteImageUrl, absoluteUrl } from "@/lib/seo"
 
-// Prerendered at build time and served as a file: /sitemap.xml; drawn again when the catalog changes
-export const dynamic = "force-static"
+// /sitemap.xml, computed on every request from the cached catalog, so a product added from the admin
+// panel is listed at once (a file prepared at build time is not refreshed by the catalog's tag on Netlify)
+export const dynamic = "force-dynamic"
 
 type SitemapEntry = MetadataRoute.Sitemap[number]
 
