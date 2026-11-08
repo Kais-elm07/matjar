@@ -43,8 +43,20 @@ describe("prepared image paths", () => {
     expect(absoluteImageUrl("/images/products/shirt-1")).toMatch(
       /^https?:\/\/[^/]+\/images\/products\/shirt-1-1200\.webp$/
     )
+    expect(absoluteImageUrl(UPLOADED)).toBe(`${UPLOADED}-1200.webp`)
+  })
+
+  it("picks the sizes of a photo uploaded to Supabase Storage like a local one", () => {
+    expect(imageFile(UPLOADED, 300)).toBe(`${UPLOADED}-400.webp`)
+    expect(imageLoader({ src: UPLOADED, width: 1500 })).toBe(
+      `${UPLOADED}-1200.webp`
+    )
   })
 })
+
+/** An uploaded photo's address, without its size (src/lib/admin/uploads.ts) */
+const UPLOADED =
+  "https://project.supabase.co/storage/v1/object/public/product-images/products/0b8e4f4c-7a51-4c11-9d0e-3f1f6f3d2a10"
 
 describe("store date", () => {
   // The store's time zone in the settings is +03:00

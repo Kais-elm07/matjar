@@ -5,6 +5,7 @@ import { adminCategories } from "@/lib/admin/catalog"
 import { categoryOptions } from "@/lib/admin/category-options"
 import { emptyProductForm } from "@/lib/admin/product-form"
 import { verifyAdmin } from "@/lib/admin/session"
+import { isUploadEnabled } from "@/lib/admin/uploads"
 import { storeToday } from "@/lib/dates"
 
 export const metadata: Metadata = { title: "إضافة منتج" }
@@ -23,6 +24,7 @@ export default async function NewProductPage() {
         id={null}
         initial={emptyProductForm(storeToday())}
         categories={categoryOptions(categories)}
+        uploadEnabled={isUploadEnabled()}
       />
     </div>
   )

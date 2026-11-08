@@ -63,8 +63,8 @@ export function absoluteUrl(path: string) {
 
 /** Full URL of the largest copy of an image, for share images and structured data. */
 export function absoluteImageUrl(src: string) {
-  if (/^https?:\/\//.test(src)) return src
-  return `${siteConfig.url}${imageFile(src, IMAGE_WIDTHS[IMAGE_WIDTHS.length - 1])}`
+  const file = imageFile(src, IMAGE_WIDTHS[IMAGE_WIDTHS.length - 1])
+  return /^https?:\/\//.test(file) ? file : `${siteConfig.url}${file}`
 }
 
 /** Short plain text from a description, for search result snippets. List items are joined by commas. */

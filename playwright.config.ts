@@ -2,6 +2,11 @@ import { defineConfig, devices } from "@playwright/test"
 
 import { hashPassword, newSessionSecret } from "./src/lib/admin/password"
 import { ADMIN_TEST_PASSWORD } from "./tests/e2e/admin-password"
+import {
+  FAKE_STORAGE_KEY,
+  FAKE_STORAGE_PORT,
+  FAKE_STORAGE_URL,
+} from "./tests/e2e/fake-storage-address"
 
 const PORT = 3200
 const isCI = Boolean(process.env.CI)
@@ -50,19 +55,29 @@ export default defineConfig({
       ],
     },
   },
-  webServer: {
-    command: `node node_modules/next/dist/bin/next start --port ${PORT}`,
-    // Ready as soon as the port answers. Waiting for the home page instead would time out
-    // without a build, before global-setup.ts can say what is missing
-    port: PORT,
-    reuseExistingServer: !isCI,
-    // The admin panel's variables for this run only, made from the tests' own password, so no real
-    // password or hash is written anywhere in the project
-    env: {
-      ADMIN_PASSWORD_HASH: hashPassword(ADMIN_TEST_PASSWORD),
-      ADMIN_SESSION_SECRET: newSessionSecret(),
+  webServer: [
+    {
+      command: `node node_modules/next/dist/bin/next start --port ${PORT}`,
+      // Ready as soon as the port answers. Waiting for the home page instead would time out
+      // without a build, before global-setup.ts can say what is missing
+      port: PORT,
+      reuseExistingServer: !isCI,
+      // The admin panel's variables for this run only, made from the tests' own password, so no real
+      // password or hash is written anywhere in the project; and the uploads go to the fake storage
+      env: {
+        ADMIN_PASSWORD_HASH: hashPassword(ADMIN_TEST_PASSWORD),
+        ADMIN_SESSION_SECRET: newSessionSecret(),
+        SUPABASE_URL: FAKE_STORAGE_URL,
+        SUPABASE_SECRET_KEY: FAKE_STORAGE_KEY,
+      },
     },
-  },
+    {
+      // A stand-in for Supabase Storage, for the photos uploaded in the admin panel's test
+      command: "node node_modules/tsx/dist/cli.mjs tests/e2e/fake-storage.ts",
+      port: FAKE_STORAGE_PORT,
+      reuseExistingServer: !isCI,
+    },
+  ],
   projects: [
     {
       name: "desktop-chrome",

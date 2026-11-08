@@ -78,7 +78,7 @@ PostgreSQL, through [Prisma](https://www.prisma.io) 7. It keeps the orders, and 
 - The tables are described in `prisma/schema.prisma`, and every change to them is a migration in `prisma/migrations`, kept in Git. After editing the schema, run `pnpm db:migrate`, which writes the migration and applies it locally, then `pnpm db:generate` (Prisma 7 no longer regenerates the client during a migration).
 - The client is generated into `src/generated/prisma` (not in Git), and the code reaches it only through `getDb()` in `src/lib/db.ts`, on the server, with at most two connections per server process.
 - The pages don't ask the database on every visit. `src/lib/catalog/load.ts` reads the whole catalog in one go and keeps the rows in Next.js's data cache under the tag `catalog`; the pages built from it are kept too. They are prepared by `pnpm build`, refreshed after a day (so ended deals reprice) or when the tag is revalidated (after every order, since it lowers the stock), and a product or category added later is drawn on its first visit. `/cart-catalog.json`, `/similar-products.json`, the sitemap and the products API are computed on every request from the cached rows instead, which takes milliseconds: on Netlify, a route handler prepared at build time is not refreshed by the tag (checked with a real order on November 7, 2026). The share images are the exception: they are drawn by `pnpm build` from the photos in `public/images`, which the server's functions don't carry, so they read the database outside the cache (`getBuildCatalog`) and stay as built until the next deploy. While the database is down, the saved pages and the products API keep answering; only placing an order and `/api/health/` need it.
-- `GET /api/health/` answers `{ "status": "ok", "database": "up" }`, or 503 when the server can't reach the database.
+- `GET /api/health/` answers `{ "status": "ok", "database": "up", "photos": "up", "storage": "up" }`: whether the server reaches the database, whether sharp can prepare an uploaded photo in it, and whether the photos' bucket exists and is public (`"off"` while the Supabase variables aren't set, which leaves uploading off). Anything else is a 503 with `"status": "error"`.
 - The Prisma CLI reads `prisma7.config.ts` (the name Prisma 7 looks for), which loads `DATABASE_URL` from `.env`.
 
 ## Editing products and categories
@@ -94,7 +94,7 @@ The store owner's pages, at `/admin/` (`src/app/admin`), where products and cate
 - **Categories:** adding one, and changing a category's name, address, parent, description and cover photo.
 - **When a change shows:** every save marks the catalog stale (`revalidateTag("catalog", "max")`), so the store shows it within seconds: the first visitor after a change may still get the saved page while the new one is drawn. A new product's page is drawn on its first visit; its share image appears with the next deploy.
 - **Signing in:** one password for the store owner. `pnpm admin:password` asks for it and prints two variables for `.env` and the host: `ADMIN_PASSWORD_HASH`, its scrypt hash (the password itself is stored nowhere), and `ADMIN_SESSION_SECRET`, which signs the sign-in cookie (seven days, `httpOnly`, only for `/admin`). Without them the panel stays off. Every admin page and every admin Server Action checks the session itself (`src/lib/admin/session.ts`), and the panel is out of the search engines (`noindex` and robots.txt).
-- **Photos:** a product photo is its path in `public/images` without a size, such as `/images/products/classic-cotton-shirt-1`. A photo another product already uses keeps its measured tone; any other takes the store's blue.
+- **Photos:** "رفع" (Upload) next to each photo sends a PNG, WebP or JPEG of up to 4 MB, at least 600 pixels wide, from the owner's device. The server checks it again, makes the same five WebP copies as `pnpm images` with `src/lib/images/prepare.ts`, measures its tone and whether it is a cut-out, and keeps the copies in a public bucket of Supabase Storage (`src/lib/admin/uploads.ts`), under a new name each time, so they are cached for a year. The form then holds the photo's address without a size, such as `https://<project>.supabase.co/storage/v1/object/public/product-images/products/<id>`, and the image loader picks its sizes like a local photo's; the measured look waits in the `uploaded_images` table until the product is saved. A photo can still be written as a path in `public/images`, such as `/images/products/classic-cotton-shirt-1`, which keeps the tone measured for it when another product uses it. Uploading needs `SUPABASE_URL` and `SUPABASE_SECRET_KEY` (DEPLOYMENT.md); without them the button doesn't show. The secret key stays on the server, and `SUPABASE_URL` is also added to the content security policy's `img-src` when the site is built.
 
 - **Categories:** `src/data/categories.ts`. A subcategory names its parent's slug in `parent`. A category's cover on its tile is a product photo: set it in `image`, such as `/images/products/portable-speaker-2`, or leave it out to show the first photo of the category's most popular product.
 - **Products:** `src/data/products.ts`. Prices are in riyals, and `optionMatrix` generates every size and color combination automatically, with optional price or stock overrides for a single value or a full combination.
@@ -186,10 +186,12 @@ The script loads after the page has finished loading, so it does not slow it dow
 
 ## Adding images
 
+On the live store, the store owner uploads a product's photos from the admin panel (see "Admin panel"), with no build. The steps below are for the photos of `src/data`, which ship with the code.
+
 1. Remove the photo's background, so the product stands alone on a transparent background (a cut-out), and save it as PNG or WebP, at least 1200 pixels on its long side, with the product in the middle and no text on it. Any tool works: remove.bg, the "Remove Background" of photo editors, or the open-source [`@imgly/background-removal-node`](https://github.com/imgly/background-removal-js) model that cut out the demo photos on the developer's computer. A regular photo still works: it stands in a frame instead of floating.
 2. Put it in `assets/images/products/` with a name such as `classic-cotton-shirt-1.png`.
 3. In the products file, write the path without an extension, `/images/products/classic-cotton-shirt-1`, or use `productImages("classic-cotton-shirt", 2)`.
-4. When running or building, the image is converted automatically to WebP at 200, 400, 600, 800 and 1200 pixels wide (WebP keeps the transparent background), and the browser picks the right size for the visitor's screen. `pnpm images` also measures the photo's main color into `public/images/image-meta.json`, and the site turns it into the light behind the product (DESIGN.md: the product's tone). A black or white product has no clear color and takes the store's blue. To choose the light yourself, give the image a color in the products file: `{ src: "/images/products/x-1", tone: "#c2410c" }`.
+4. When running or building, `pnpm images` (`scripts/images.ts`, through `src/lib/images/prepare.ts`) converts the image to WebP at 200, 400, 600, 800 and 1200 pixels wide (WebP keeps the transparent background), and the browser picks the right size for the visitor's screen. `pnpm images` also measures the photo's main color into `public/images/image-meta.json`, and the site turns it into the light behind the product (DESIGN.md: the product's tone). A black or white product has no clear color and takes the store's blue. To choose the light yourself, give the image a color in the products file: `{ src: "/images/products/x-1", tone: "#c2410c" }`.
 
 The `public/images` folder is generated automatically and is not committed to Git, so never put images there by hand. A category's cover is one of the product photos (see "Editing products and categories"). A production build stops with a list of any image that the data mentions but that does not exist.
 
@@ -291,6 +293,10 @@ src/lib/
   content/                     the static pages: reading and checking them, their text format, and the values
                                such as {store} that fill them
   og/                          share image layout and drawing
+  admin/                       the admin panel: its password and session, its reads and writes, its Server
+                               Actions, its forms, and the photo uploads to Supabase Storage
+  images/                      preparing a photo: the five WebP copies and its measured tone, for pnpm images
+                               and the uploads
   routes.ts                    the addresses of the product, category and static pages
   db.ts                        the database client (Prisma), on the server only
   zod.ts                       Zod, set up once (Arabic messages, no eval): import z from here
@@ -301,7 +307,7 @@ src/lib/
   arabic-plural.ts             Arabic plural forms for counts
   arabic-digits.ts             Arabic and Persian digits to 0-9
   seo.ts                       share metadata and structured data for search engines
-  image-loader.ts              picks the right prepared image size for the screen
+  image-loader.ts              picks the right prepared image size for the screen, local or uploaded
   guards.ts                    type guards for data read at runtime (JSON files, browser storage)
   toast.ts                     toast messages, whose library loads with the first message
   render-later.ts              the script that renders every section at once after a reload or "back"
@@ -444,7 +450,7 @@ The same day, the last static version (phase 11) measured 90, 72-86 and 80-85 on
 - **Prepared pages and a server:** the catalog and help pages list the addresses they know (`generateStaticParams`), so they are built once; the product and category pages also draw a new slug on its first visit (`dynamicParams = true`), and any other address gets the 404 page. The share images and robots.txt are route handlers marked `force-static`, built once too; the data files and the sitemap are computed on every request from the cached catalog. The site uses the classic rendering model of Next.js, not Cache Components.
 - **Trailing slash:** every address ends with `/` (`trailingSlash` in `next.config.ts`), and the server redirects an address without it with a 308. Addresses of files with an extension, such as `/cart-catalog.json`, are left alone.
 - **Search and filters run in the browser:** listing pages are prepared as HTML without filters for search engines, then the URL's filters apply right after loading (`src/lib/listing/url-query.ts`).
-- **Images:** a custom loader (`src/lib/image-loader.ts`) picks from the copies `pnpm images` prepares, so the server never resizes images and no request waits for one to be drawn.
+- **Images:** a custom loader (`src/lib/image-loader.ts`) picks from the copies `pnpm images` prepares, or the ones made when a photo is uploaded in the admin panel, so the server never resizes images and no request waits for one to be drawn.
 - **Drawers load after the page:** the cart drawer, the mobile menu, the image zoom, the filter sheet and the toast messages load their code after the content appears (`src/hooks/use-idle.ts`), or immediately if requested earlier. This is what lifted mobile performance above 90. Tabs are a light component without a library (`src/components/ui/tabs.tsx`).
 - **What the server carries:** server code reads files only by a literal path (`public/images/image-meta.json`), and the product photos are left out of the server's files (`outputFileTracingExcludes`), so a deployed function holds only the code it runs. The image check runs only during `next build`.
 - **Server and browser code:** a `"use client"` module can't hand functions to server code, so what both sides need (totals, the quantity limit) lives in plain modules in `src/lib/checkout`.

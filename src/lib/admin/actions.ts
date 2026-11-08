@@ -25,6 +25,12 @@ import {
   isAdminEnabled,
   startSession,
 } from "@/lib/admin/session"
+import {
+  MAX_UPLOAD_BYTES,
+  UPLOAD_MESSAGES,
+  UPLOAD_TYPES,
+} from "@/lib/admin/upload-rules"
+import { uploadPhoto, type UploadResult } from "@/lib/admin/uploads"
 import { CATALOG_TAG } from "@/lib/catalog/load"
 import { categorySchema, productSchema } from "@/lib/catalog/schema"
 import { categoryProblems, productProblems } from "@/lib/catalog/validate"
@@ -133,6 +139,33 @@ export async function saveProduct(
   const saved = await writeProduct(productId.data, parsed.data)
   revalidateTag(CATALOG_TAG, "max")
   return { ok: true, id: saved }
+}
+
+const photoRequest = z
+  .file({ error: UPLOAD_MESSAGES.missing })
+  .min(1, { error: UPLOAD_MESSAGES.missing })
+  .max(MAX_UPLOAD_BYTES, { error: UPLOAD_MESSAGES.tooLarge })
+  .mime(UPLOAD_TYPES, { error: UPLOAD_MESSAGES.wrongType })
+
+/**
+ * Uploads a product photo (the form's "photo" field) and answers with its address for the form. The
+ * photo is checked again on the server: its type and size here, and what it really holds in uploads.ts.
+ */
+export async function uploadProductPhoto(
+  form: FormData
+): Promise<UploadResult> {
+  if (!(await isAdmin())) return { ok: false, problem: NOT_SIGNED_IN }
+  if (!(form instanceof FormData)) {
+    return { ok: false, problem: UPLOAD_MESSAGES.missing }
+  }
+  const photo = photoRequest.safeParse(form.get("photo"))
+  if (!photo.success) {
+    return {
+      ok: false,
+      problem: photo.error.issues[0]?.message ?? UPLOAD_MESSAGES.missing,
+    }
+  }
+  return uploadPhoto(Buffer.from(await photo.data.arrayBuffer()))
 }
 
 const stocksRequest = z

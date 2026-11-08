@@ -1,7 +1,11 @@
 import Image from "next/image"
 import Link from "next/link"
 
-import { ADMIN_CARD } from "@/components/admin/admin-styles"
+import {
+  ADMIN_CARD,
+  ADMIN_THUMB,
+  ADMIN_THUMB_IMAGE,
+} from "@/components/admin/admin-styles"
 import { StockEditor } from "@/components/admin/stock-editor"
 import { VisibilityButton } from "@/components/admin/visibility-button"
 import { buttonVariants } from "@/components/ui/button"
@@ -38,14 +42,14 @@ export function AdminProductItem({ product }: AdminProductItemProps) {
   return (
     <li className={cn(ADMIN_CARD, "space-y-4")}>
       <div className="flex flex-wrap items-center gap-4">
-        <span className="relative size-16 shrink-0 rounded-xl border bg-muted">
+        <span className={ADMIN_THUMB}>
           {product.image && (
             <Image
               src={product.image}
               alt=""
               fill
               sizes="64px"
-              className="rounded-xl object-contain p-1"
+              className={ADMIN_THUMB_IMAGE}
             />
           )}
         </span>

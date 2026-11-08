@@ -16,3 +16,10 @@ export const ADMIN_FIELDS = "grid gap-4 md:grid-cols-2"
 /** A repeated row of fields (a photo, a variant), separated from the next by a border */
 export const ADMIN_ROW =
   "grid gap-3 border-b pb-4 last:border-b-0 last:pb-0 md:items-end"
+
+/** A product photo's small thumbnail on the light surface, without a tone (DESIGN.md: Admin panel) */
+export const ADMIN_THUMB =
+  "relative size-16 shrink-0 rounded-xl border bg-muted"
+
+/** The photo inside ADMIN_THUMB, whole and with a little padding */
+export const ADMIN_THUMB_IMAGE = "rounded-xl object-contain p-1"

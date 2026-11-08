@@ -8,16 +8,35 @@ import {
   ADMIN_ROW,
   ADMIN_SECTION_TITLE,
 } from "@/components/admin/admin-styles"
+import { PhotoPreview } from "@/components/admin/photo-preview"
+import { PhotoUploadButton } from "@/components/admin/photo-upload-button"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { emptyImage, type ProductFormValues } from "@/lib/admin/product-form"
 import { cn } from "@/lib/utils"
 
+interface ProductImagesFieldsProps {
+  /** Whether the server can keep uploaded photos (src/lib/admin/uploads.ts) */
+  uploadEnabled: boolean
+}
+
 /** The product's photos in order: the first is its main photo. */
-export function ProductImagesFields() {
-  const { register } = useFormContext<ProductFormValues>()
+export function ProductImagesFields({
+  uploadEnabled,
+}: ProductImagesFieldsProps) {
+  const { register, setValue } = useFormContext<ProductFormValues>()
   const { fields, append, remove } = useFieldArray<ProductFormValues, "images">(
     { name: "images" }
+  )
+  // How to fill a photo: upload it, or write the path of a photo the store already has
+  const example = <span dir="ltr">/images/products/classic-cotton-shirt-1</span>
+  const pathHint = uploadEnabled ? (
+    <>
+      ارفع صورة مفرّغة الخلفية (PNG أو WebP، حتى 4 ميغابايت)، أو اكتب مسار صورة
+      في المتجر دون مقاس أو امتداد، مثل {example}
+    </>
+  ) : (
+    <>دون مقاس أو امتداد، مثل {example}. رفع الصور غير مفعّل على هذا الخادم.</>
   )
 
   return (
@@ -31,26 +50,34 @@ export function ProductImagesFields() {
             key={field.id}
             className={cn(ADMIN_ROW, "md:grid-cols-[2fr_1fr_1fr_auto]")}
           >
-            <AdminField
-              id={`image-${index}-src`}
-              label={`مسار الصورة ${index + 1}`}
-              hint={
-                index === 0 ? (
-                  <>
-                    دون مقاس أو امتداد، مثل{" "}
-                    <span dir="ltr">
-                      /images/products/classic-cotton-shirt-1
-                    </span>
-                  </>
-                ) : undefined
-              }
-            >
-              <Input
+            <div className="flex items-start gap-3">
+              <PhotoPreview index={index} />
+              <AdminField
                 id={`image-${index}-src`}
-                dir="ltr"
-                {...register(`images.${index}.src`)}
-              />
-            </AdminField>
+                label={`مسار الصورة ${index + 1}`}
+                className="flex-1"
+                hint={index === 0 ? pathHint : undefined}
+              >
+                <div className="flex gap-2">
+                  <Input
+                    id={`image-${index}-src`}
+                    dir="ltr"
+                    className="min-w-0 flex-1"
+                    {...register(`images.${index}.src`)}
+                  />
+                  {uploadEnabled && (
+                    <PhotoUploadButton
+                      number={index + 1}
+                      onUploaded={(src) =>
+                        setValue(`images.${index}.src`, src, {
+                          shouldDirty: true,
+                        })
+                      }
+                    />
+                  )}
+                </div>
+              </AdminField>
+            </div>
             <AdminField id={`image-${index}-color`} label="لونها" optional>
               <Input
                 id={`image-${index}-color`}

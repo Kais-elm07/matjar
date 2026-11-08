@@ -5,6 +5,7 @@ import { ProductForm } from "@/components/admin/product-form"
 import { adminCategories, adminProductForm } from "@/lib/admin/catalog"
 import { categoryOptions } from "@/lib/admin/category-options"
 import { verifyAdmin } from "@/lib/admin/session"
+import { isUploadEnabled } from "@/lib/admin/uploads"
 
 export const metadata: Metadata = { title: "تعديل منتج" }
 
@@ -30,6 +31,7 @@ export default async function EditProductPage({
         id={id}
         initial={product}
         categories={categoryOptions(categories)}
+        uploadEnabled={isUploadEnabled()}
       />
     </div>
   )

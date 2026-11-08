@@ -1,17 +1,28 @@
 import type { NextConfig } from "next"
 
 // The content security policy: only the site's own files, plus the inline scripts and styles Next.js
-// needs. A nonce instead of 'unsafe-inline' would make every page render on each request
+// needs, and the uploaded photos. A nonce instead of 'unsafe-inline' would make every page render on each request
 // (node_modules/next/dist/docs/01-app/02-guides/content-security-policy.md), and the catalog pages are
 // prerendered. React uses eval only in development. When analytics is turned on (src/config/site.ts),
 // add the tool's domain to script-src and connect-src, such as https://plausible.io
-// No upgrade-insecure-requests: every file is the site's own, HSTS below keeps visitors on https, and
+// No upgrade-insecure-requests: every file is the site's own or on https, HSTS below keeps visitors on https, and
 // Safari applies it to http://localhost too, so the production server could not be tested locally.
+// The photos uploaded in the admin panel are served by Supabase Storage (src/lib/admin/uploads.ts), so
+// its address joins img-src; SUPABASE_URL is read when the site is built.
+function originOf(address: string | undefined) {
+  try {
+    return address ? new URL(address).origin : null
+  } catch {
+    return null
+  }
+}
+const storageOrigin = originOf(process.env.SUPABASE_URL)
+
 const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data:",
+  `img-src 'self' data:${storageOrigin ? ` ${storageOrigin}` : ""}`,
   "font-src 'self'",
   "connect-src 'self'",
   "frame-ancestors 'none'",
@@ -41,7 +52,8 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   images: {
     // Images are prepared in advance in five sizes (pnpm images), and the loader picks the right size for the screen,
-    // so the server never resizes them. The same sizes are in IMAGE_WIDTHS (src/lib/image-loader.ts) and scripts/images.mjs.
+    // so the server never resizes them. The same sizes are in IMAGE_WIDTHS (src/lib/image-loader.ts), which
+    // src/lib/images/prepare.ts makes for pnpm images and for the photos uploaded in the admin panel.
     loader: "custom",
     loaderFile: "./src/lib/image-loader.ts",
     // 600 fits a photo on a stage on most phones, between the card size (400) and the full width (800)
@@ -70,6 +82,13 @@ const nextConfig: NextConfig = {
         headers: [{ key: "Cache-Control", value: "public, max-age=3600" }],
       },
     ]
+  },
+  experimental: {
+    serverActions: {
+      // A photo uploaded in the admin panel goes to a Server Action: up to 4 MB (MAX_UPLOAD_BYTES in
+      // src/lib/admin/upload-rules.ts), plus the bytes the form adds around it
+      bodySizeLimit: "5mb",
+    },
   },
   turbopack: {
     rules: {

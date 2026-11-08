@@ -10,23 +10,25 @@ This guide covers the steps you do from your own accounts (database, hosting, do
 | `netlify.toml`             | The build command (`pnpm db:generate && pnpm db:deploy && pnpm db:seed && pnpm build`), the Node version, and Netlify's Next.js plugin.                                         |
 | `next.config.ts`           | Security headers (CSP, HSTS and others) and caching rules, sent by the server on every host.                                                                                    |
 | `prisma/migrations/`       | The database tables. `pnpm db:deploy` applies the ones that haven't run yet, before every build. `pnpm db:seed` (`prisma/seed.ts`) then fills an empty catalog from `src/data`. |
-| `src/app/api/health/`      | `GET /api/health/` answers `{ "status": "ok", "database": "up" }`, or 503 when the server can't reach the database.                                                             |
+| `src/app/api/health/`      | `GET /api/health/` answers `{ "status": "ok", "database": "up", "photos": "up", "storage": "up" }`, or 503 when the database, sharp or the photos' bucket doesn't answer.       |
 | `.github/workflows/ci.yml` | On every push to the `main` branch and every pull request: the checks, the unit tests, the build and the browser tests, with a PostgreSQL database.                             |
 | `.env.example`             | The variables below, with what each one is for.                                                                                                                                 |
 
 ### The variables
 
-| Variable                             | Needed by                | Secret in Netlify | Value                                                                                                                           |
-| ------------------------------------ | ------------------------ | ----------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SITE_URL`               | The build                | No                | The real site URL without a trailing `/`. Share links and the sitemap are built from it, so rebuild after changing it.          |
-| `DATABASE_URL`                       | The build and the server | Yes               | The PostgreSQL connection string. The build applies the migrations with it, and the server saves and reads orders with it.      |
-| `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` | The build (recommended)  | No                | A random key, made once with `openssl rand -base64 32` and kept. It keeps the checkout's Server Actions working across deploys. |
-| `ADMIN_PASSWORD_HASH`                | The server               | Yes               | The admin panel's password hash, printed by `pnpm admin:password` on your machine. Without it the panel stays off.              |
-| `ADMIN_SESSION_SECRET`               | The server               | Yes               | Signs the admin panel's sign-in cookie; printed by the same command. A new value signs everyone out.                            |
+| Variable                             | Needed by                | Secret in Netlify | Value                                                                                                                                                                                        |
+| ------------------------------------ | ------------------------ | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL`               | The build                | No                | The real site URL without a trailing `/`. Share links and the sitemap are built from it, so rebuild after changing it.                                                                       |
+| `DATABASE_URL`                       | The build and the server | Yes               | The PostgreSQL connection string. The build applies the migrations with it, and the server saves and reads orders with it.                                                                   |
+| `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` | The build (recommended)  | No                | A random key, made once with `openssl rand -base64 32` and kept. It keeps the checkout's Server Actions working across deploys.                                                              |
+| `ADMIN_PASSWORD_HASH`                | The server               | Yes               | The admin panel's password hash, printed by `pnpm admin:password` on your machine. Without it the panel stays off.                                                                           |
+| `ADMIN_SESSION_SECRET`               | The server               | Yes               | Signs the admin panel's sign-in cookie; printed by the same command. A new value signs everyone out.                                                                                         |
+| `SUPABASE_URL`                       | The build and the server | No                | The Supabase project's address, such as `https://<project-ref>.supabase.co`, for the uploaded photos (step 9 below). It appears in every photo's address and in the content security policy. |
+| `SUPABASE_SECRET_KEY`                | The server               | Yes               | A secret key of the same project (`sb_secret_...`), with which the server saves the uploaded photos. Without the two, uploading stays off.                                                   |
 
 > **Never** put a secret in a variable that starts with `NEXT_PUBLIC_`: those values are written into the pages and reach every visitor.
 
-Netlify scans the built site for the values of the variables marked as secret, and stops the deploy when it finds one. Mark only `DATABASE_URL` and the two `ADMIN_` variables, which the server reads at runtime and never writes anywhere: the site URL is written into every page, and Next writes the encryption key into the server's own files (never into the pages), so marking either of them stops every deploy. Don't add variables the project doesn't read, such as a `DIRECT_URL` copied from a Prisma guide.
+Netlify scans the built site for the values of the variables marked as secret, and stops the deploy when it finds one. Mark only `DATABASE_URL`, the two `ADMIN_` variables and `SUPABASE_SECRET_KEY`, which the server reads at runtime and never writes anywhere: the site URL and `SUPABASE_URL` are written into every page, and Next writes the encryption key into the server's own files (never into the pages), so marking either of them stops every deploy. Don't add variables the project doesn't read, such as a `DIRECT_URL` copied from a Prisma guide.
 
 ## 1. Create the database
 
@@ -56,13 +58,18 @@ A free Supabase project pauses after a week with no activity. `/api/health/` the
 
 1. Create a [Netlify](https://app.netlify.com/signup) account, then **Add new project** → **Import an existing project** → **GitHub** → choose `Kais-elm07/matjar`.
 2. The build settings are read from `netlify.toml` automatically. Don't set a publish directory: the Next.js plugin takes care of it.
-3. In **Project configuration** → **Environment variables**, add the three variables above. Make `DATABASE_URL` available to both **Builds** and **Functions** (on the free plan every variable has all scopes, which covers both). A secret variable has a separate value for each deploy context: fill it for **Production** and **Deploy Previews**, because an empty one stops the build.
+3. In **Project configuration** → **Environment variables**, add the variables above (the admin panel's and the photos' can wait for steps 8 and 9). Make `DATABASE_URL` available to both **Builds** and **Functions** (on the free plan every variable has all scopes, which covers both). A secret variable has a separate value for each deploy context: fill it for **Production** and **Deploy Previews**, because an empty one stops the build.
 4. **Deploy site**. The first build takes a few minutes, and then the project's address appears at the top of its page in Netlify, as `https://<project-name>.netlify.app`. Netlify picks the name; you can change it in **Project configuration**, but every Netlify user shares the same names, so a taken one is refused. If the address sends you to a Netlify login (status 401 for every page, the health check included), the project is **Private**, and only its owner can open it: open it to visitors in **Project configuration** → **General** → **Visitor access** → **Project visibility** → **Edit visibility** → **Public**.
 5. Set `NEXT_PUBLIC_SITE_URL` to exactly that address, in lowercase, and deploy again (**Deploys** → **Trigger deploy**). Open the address first to make sure it shows the store: a name typed from memory may belong to someone else's site, and then every share link and the sitemap point there.
-6. Open `https://<project-name>.netlify.app/api/health/`: it must answer `{"status":"ok","database":"up"}`. If it answers 503, the server can't reach the database: check `DATABASE_URL` and that the database accepts connections from outside.
+6. Open `https://<project-name>.netlify.app/api/health/`: it must answer `"status":"ok"` with `"database":"up"` and `"photos":"up"`, and `"storage":"off"` until step 9. If `database` is `down`, the server can't reach the database: check `DATABASE_URL` and that the database accepts connections from outside. If `photos` is `down`, sharp doesn't run in Netlify's functions, and uploading photos can't work there.
 7. **Domain management** → **Add a domain**, and follow the DNS instructions. The HTTPS certificate is enabled automatically.
 8. **The admin panel:** on your machine, run `pnpm admin:password`, type the panel's password twice (12 characters or more), and add the two lines it prints as the variables `ADMIN_PASSWORD_HASH` and `ADMIN_SESSION_SECRET` (both secret). They reach the server with the next deploy (**Trigger deploy**). Then open `https://<project-name>.netlify.app/admin/` and sign in. Keep the password yourself: it is stored nowhere, and a forgotten one is replaced by running the command again.
-9. After connecting the domain, change `NEXT_PUBLIC_SITE_URL` to `https://your-domain` and deploy again (**Trigger deploy**).
+9. **Uploading photos** (Supabase Storage, in the same Supabase project as the database):
+   1. In Supabase, **Storage** → **New bucket**: name it exactly `product-images` and turn on **Public bucket**, so visitors can see the photos. Keep the default size and type limits.
+   2. **Project Settings** → **API Keys**: copy a **secret key** (`sb_secret_...`), or create one. Never paste it anywhere else: it can change every file and table of the project.
+   3. In Netlify, add `SUPABASE_URL` (the project's address from **Project Settings** → **Data API**, such as `https://<project-ref>.supabase.co`, not secret) and `SUPABASE_SECRET_KEY` (secret), then deploy again (**Trigger deploy**). The content security policy takes `SUPABASE_URL` while the site is built, so the photos only show after that deploy.
+   4. Open `/api/health/`: `"storage"` must be `"up"`. `"private"` means the bucket isn't public, and `"down"` that the key or the bucket's name is wrong. Then, in the admin panel, open a product, press "رفع" (Upload) next to a photo, save, and check the photo on the product's page.
+10. After connecting the domain, change `NEXT_PUBLIC_SITE_URL` to `https://your-domain` and deploy again (**Trigger deploy**).
 
 From then on, every push to the `main` branch deploys automatically, after applying any new migration.
 
@@ -80,6 +87,8 @@ These are the errors met on the first deploy of this store, in the order they ap
 | `Secret env var "<NAME>"'s value detected`, then `Secrets scanning found secrets in build` | A variable marked as secret holds a value that appears in the built site, such as the site URL.                                            | Delete the variable if the project doesn't read it, or unmark it if its value is public. Don't turn the scanning off. |
 | `Module not found: Can't resolve '@/generated/prisma/client'` (from the second deploy on)  | Netlify keeps `node_modules` between builds, so pnpm installs nothing and skips the `postinstall` script that generates the Prisma client. | The build command starts with `pnpm db:generate` (in `netlify.toml`); keep it there.                                  |
 
+If an upload ends with "تعذّر الوصول إلى التخزين" (The storage couldn't be reached) for a large photo, the request may be over the 6 MB a Netlify function takes: the panel accepts up to 4 MB, so try a smaller copy of the photo. A message with a code, such as 404 or 403, means the bucket's name or the secret key is wrong (`/api/health/` shows which).
+
 If the deploy passes but orders fail and the function logs show `self-signed certificate in certificate chain`, the string has `sslmode=require` without `uselibpqcompat=true`: use the full ending from section 1.
 
 ## Alternative: your own Node.js server
@@ -94,7 +103,7 @@ pnpm build
 pnpm start
 ```
 
-Set the three variables in the server's environment before these commands. `pnpm start` listens on port 3000 (or the `PORT` variable). Restart it after every new build.
+Set the variables in the server's environment before these commands. `pnpm start` listens on port 3000 (or the `PORT` variable). Restart it after every new build.
 
 ## After deploying: checklist
 
@@ -109,7 +118,7 @@ Set the three variables in the server's environment before these commands. `pnpm
 
 ## Day-to-day workflow after launch
 
-1. The live products and categories are in the database, which the site reads through a cache: a change there shows after the cache is refreshed (a day at most, or at once once the admin panel of phase 13 revalidates it). `src/data/products.ts` only fills a new, empty database; its images go in `assets/images/products/` (see the README).
+1. The live products and categories are in the database, and the store owner changes them, and uploads their photos, from the admin panel (`/admin/`), which refreshes the site's cache within seconds. `src/data/products.ts` only fills a new, empty database; its images go in `assets/images/products/` (see the README).
 2. To change the database's tables: edit `prisma/schema.prisma`, run `pnpm db:migrate` locally (it writes a migration in `prisma/migrations`), then `pnpm db:generate`, and commit the migration with the code.
 3. Run `pnpm verify` locally (all the checks plus the unit tests).
 4. Run `git commit`, then `git push`. GitHub Actions checks the change, and Netlify applies the migrations and deploys it within minutes.

@@ -1,5 +1,6 @@
 // The store's database: the orders placed at checkout (src/lib/checkout/actions.ts), and the catalog
-// (categories, products, their photos and variants), filled from src/data by pnpm db:seed (prisma/seed.ts).
+// (categories, products, their photos and variants), filled from src/data by pnpm db:seed (prisma/seed.ts),
+// and the photos uploaded in the admin panel.
 // Amounts are in halalas (1 riyal = 100 halalas), as everywhere in the code.
 // After changing this file: pnpm db:migrate, which writes a migration in prisma/migrations.
 
@@ -117,7 +118,8 @@ model ProductImage {
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   /// The order in the gallery, from 0; the first is the product's main photo
   position  Int
-  /// The path without a size, such as /images/products/shirt-1 (the loader adds -400.webp and so on)
+  /// The path without a size, such as /images/products/shirt-1 or an uploaded photo's address in
+  /// Supabase Storage (the loader adds -400.webp and so on)
   src       String
   /// The description for screen readers; null builds it from the product's name and the photo's color
   alt       String?
@@ -131,6 +133,20 @@ model ProductImage {
 
   @@unique([productId, position])
   @@map("product_images")
+}
+
+/// A photo the store owner uploaded in the admin panel (src/lib/admin/uploads.ts), with the look sharp
+/// measured in it, so the product it is added to takes its tone and cut-out when it is saved
+model UploadedImage {
+  id         Int      @id @default(autoincrement())
+  /// The public address of its copies in Supabase Storage, without the size (as ProductImage.src)
+  src        String   @unique
+  /// The photo's main color, such as #c2410c, or null when it has none
+  tone       String?
+  cutout     Boolean  @default(false)
+  uploadedAt DateTime @default(now())
+
+  @@map("uploaded_images")
 }
 
 model Variant {

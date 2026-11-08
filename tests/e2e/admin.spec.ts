@@ -5,8 +5,11 @@ import {
   type Page,
 } from "@playwright/test"
 
+import sharp from "sharp"
+
 import { productApiPath } from "../../src/lib/routes"
 import { ADMIN_TEST_PASSWORD } from "./admin-password"
+import { FAKE_STORAGE_URL } from "./fake-storage-address"
 
 /**
  * The admin panel: signing in, adding a product with a photo the store already has, changing its price
@@ -94,12 +97,91 @@ test("The store owner adds a product, changes its price and hides it, and the st
 
   // Hiding: the product leaves the store, but stays in the panel
   await page.getByRole("button", { name: `إخفاء ${name} من المتجر` }).click()
+  // Hiding writes the product and refreshes the list: slower while the other tests run
   await expect(
     page.getByRole("button", { name: `إظهار ${name} في المتجر` })
-  ).toBeVisible()
+  ).toBeVisible({ timeout: 15_000 })
   await expect
     .poll(() => storeProduct(request, slug), { timeout: 20_000 })
     .toBeNull()
+})
+
+/** The first photo of a product as the store's API shows it, or null while the product isn't there. */
+async function storePhoto(request: APIRequestContext, slug: string) {
+  const response = await request.get(productApiPath(slug))
+  if (!response.ok()) return null
+  const body: unknown = await response.json()
+  if (typeof body !== "object" || body === null || !("images" in body)) {
+    return null
+  }
+  const [first]: unknown[] = Array.isArray(body.images) ? body.images : []
+  if (typeof first !== "object" || first === null) return null
+  return {
+    src: "src" in first ? first.src : null,
+    cutout: "cutout" in first ? first.cutout : null,
+  }
+}
+
+/** A cut-out photo for the upload: an orange disc on a transparent background, as PNG */
+function cutoutPhoto() {
+  const svg =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900">' +
+    '<circle cx="450" cy="450" r="360" fill="#c2410c"/></svg>'
+  return sharp(Buffer.from(svg)).png().toBuffer()
+}
+
+test("The store owner uploads a photo, and the product shows it from the storage", async ({
+  page,
+  request,
+}) => {
+  const stamp = Date.now()
+  const slug = `e2e-photo-${stamp}`
+  const name = `منتج بصورة ${stamp}`
+  await signIn(page)
+  await page.getByRole("link", { name: "إضافة منتج" }).click()
+  await page.getByLabel("الاسم", { exact: true }).fill(name)
+  await page.getByLabel("الرابط", { exact: true }).fill(slug)
+  await page.getByLabel("الفئة", { exact: true }).selectOption({ index: 1 })
+  await page.getByLabel("الرمز", { exact: true }).fill(`E2E-P-${stamp}`)
+  await page.getByLabel(/^السعر/).fill("120")
+  await page.getByLabel("المخزون", { exact: true }).fill("3")
+
+  // Uploading: the server prepares the copies, keeps them in the (fake) storage and fills the path
+  const chooser = page.waitForEvent("filechooser")
+  await page.getByRole("button", { name: "رفع الصورة 1" }).click()
+  await (
+    await chooser
+  ).setFiles({
+    name: "photo.png",
+    mimeType: "image/png",
+    buffer: await cutoutPhoto(),
+  })
+  const path = page.getByLabel("مسار الصورة 1", { exact: true })
+  await expect(path).toHaveValue(
+    new RegExp(
+      `^${FAKE_STORAGE_URL}/storage/v1/object/public/product-images/products/[0-9a-f-]{36}$`
+    ),
+    { timeout: 15_000 }
+  )
+  const src = await path.inputValue()
+
+  await page.getByRole("button", { name: "حفظ المنتج" }).click()
+  await expect(page).toHaveURL(/\/admin\/$/, { timeout: 15_000 })
+
+  // The store shows the uploaded photo, as a cut-out (the look measured on upload), and its copies exist
+  await expect
+    .poll(() => storePhoto(request, slug), { timeout: 20_000 })
+    .toEqual({ src, cutout: true })
+  const copy = await request.get(`${src}-400.webp`)
+  expect(copy.ok()).toBe(true)
+  expect(copy.headers()["content-type"]).toBe("image/webp")
+
+  // Hidden again, so the products of repeated local runs don't fill the store
+  await page.getByRole("button", { name: `إخفاء ${name} من المتجر` }).click()
+  // Hiding writes the product and refreshes the list: slower while the other tests run
+  await expect(
+    page.getByRole("button", { name: `إظهار ${name} في المتجر` })
+  ).toBeVisible({ timeout: 15_000 })
 })
 
 test("A product with a wrong field is not saved, and the panel says why", async ({

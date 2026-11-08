@@ -6,7 +6,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "images": "node scripts/images.mjs",
+    "images": "tsx scripts/images.ts",
     "images:photos": "node scripts/fetch-demo-photos.mjs",
     "fonts": "node scripts/fonts.mjs",
     "db:start": "node scripts/db-local.mjs start",

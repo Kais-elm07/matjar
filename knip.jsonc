@@ -5,6 +5,8 @@
   "entry": [
     // The Prisma CLI reads this file by name (Prisma 7 looks for prisma7.config.ts)
     "prisma7.config.ts",
+    // playwright.config.ts starts it as a server, by its path in a command
+    "tests/e2e/fake-storage.ts",
   ],
   "ignore": [
     // vitest.config.mts maps "server-only" to this empty file in the unit tests

@@ -29,13 +29,20 @@ interface ProductFormProps {
   initial: ProductFormValues
   /** The categories to choose from, each with its full path as its label */
   categories: { slug: string; label: string }[]
+  /** Whether photos can be uploaded (Supabase Storage is set up) */
+  uploadEnabled: boolean
 }
 
 /**
  * Adding or editing a product in the admin panel. The server checks everything again with the same
  * rules as the data files and answers with the problems to fix, or saves and returns to the list.
  */
-export function ProductForm({ id, initial, categories }: ProductFormProps) {
+export function ProductForm({
+  id,
+  initial,
+  categories,
+  uploadEnabled,
+}: ProductFormProps) {
   const router = useRouter()
   const form = useForm<ProductFormValues>({ defaultValues: initial })
   const { register } = form
@@ -127,7 +134,7 @@ export function ProductForm({ id, initial, categories }: ProductFormProps) {
           </div>
         </section>
 
-        <ProductImagesFields />
+        <ProductImagesFields uploadEnabled={uploadEnabled} />
         <ProductVariantsFields />
 
         <section aria-labelledby="dates-heading" className={ADMIN_CARD}>
