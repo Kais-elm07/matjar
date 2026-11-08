@@ -1,8 +1,8 @@
 # Online Store Plan
 
-**Version:** 3.4
-**Date:** November 7, 2026
-**Status:** Approved up to phase 9. Phases 1 to 7 are complete except the items that need the owner (a review on a real phone and testing with real people). The phase 8 files are ready, and the owner postponed the deployment itself. A full review of code quality, performance and load capacity has been carried out. The project is on GitHub and the GitHub Actions checks pass. Phase 10, a design-only evolution to the "Spotlight" identity, was proposed, prototyped and built on November 6, 2026, on the Git branch `phase-10-spotlight`; the owner's look on a real phone remains. Phase 11, Najm the 3D mascot, was prototyped on November 6 and built on November 7, 2026, on the branch `phase-11-mascot`, which starts from phase 10. Phase 12, built on November 7, 2026 on the branch `server-mode`, runs the store on a Next.js server, with a products API and the orders saved in PostgreSQL; the deployment on Netlify is the owner's next step.
+**Version:** 3.5
+**Date:** November 8, 2026
+**Status:** Approved up to phase 9. Phases 1 to 7 are complete except the items that need the owner (a review on a real phone and testing with real people). Phase 8, the deployment, was done with phase 12 on Netlify. A full review of code quality, performance and load capacity has been carried out. The project is on GitHub and the GitHub Actions checks pass. Phase 10, a design-only evolution to the "Spotlight" identity, was proposed, prototyped and built on November 6, 2026, on the Git branch `phase-10-spotlight`; the owner's look on a real phone remains. Phase 11, Najm the 3D mascot, was prototyped on November 6 and built on November 7, 2026, on the branch `phase-11-mascot`, which starts from phase 10. Phases 10 and 11 were merged into `main` on November 7, 2026. Phase 12, built on November 7, 2026, runs the store on a Next.js server, with a products API and the orders saved in PostgreSQL; it was deployed the same day on Netlify (`https://matjrii.netlify.app`) with a Supabase database. Phase 13, built on November 7 and 8, 2026, moved the products into the database, with an admin panel at `/admin/`, stock lowered by every order, and photos uploaded to Supabase Storage; it is live since November 8, 2026, and its health check reports the database, the photo tools and the storage all working.
 
 ---
 
@@ -10,6 +10,7 @@
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 3.5 | November 8, 2026 | Phase 13 was completed and deployed: the catalog read from the database through a cached function, stock lowered by orders, the admin panel, photo uploads to Supabase Storage, and share images that fall back to the site's image for products added after a deploy. The first deploy of the uploads reported the storage as off because `SUPABASE_URL` was missing in Netlify; once it was added, the live health check reported the database, the photo tools and the storage all up, and the content security policy allows the Supabase photos. |
 | 3.4 | November 7, 2026 | Phase 12 was deployed on Netlify with a Supabase database. Phase 13 was planned at the owner's request (the products in the database, refreshed on demand, an admin panel, stock lowered by orders) and its first step built: the catalog tables and the seed. |
 | 3.3 | November 7, 2026 | Phase 12 was built at the owner's request on the branch `server-mode`: the store runs on a Next.js server instead of a static export, with the security headers in `next.config.ts`, a products API (`/api/products/`), PostgreSQL through Prisma for the orders, a Server Action that checks and saves each order, a page for every order, and coupons that stay on the server. Decision 7 is answered for the host: Netlify. |
 | 3.2 | November 7, 2026 | Phase 11 was built on the branch `phase-11-mascot`: Najm, a 3D blue dog drawn with three.js from simple shapes, stands in the corner of every page with no background, and behaves differently on the home page, the shopping pages, the cart, checkout and the order confirmation. He catches every product added to the cart, takes out deleted ones, celebrates an order, and suggests similar products from a new static file, `similar-products.json`. While he is on screen he replaces the cart panel as the add confirmation; a footer button hides him. His code loads only after the visitor's first move. `DESIGN.md`, the README, unit tests and two browser tests were added for him. |
@@ -784,7 +785,7 @@ Each step is one commit that passes `pnpm verify`, and the site is reviewed at 3
 | A visitor's browser sends changed prices | The server ignores them: it prices the order from the catalog and refuses a total other than the one the visitor saw. |
 | A deal ends while the server runs | The catalog is built when the server starts, as the pages are built at build time; as before, the site is rebuilt after a deal ends. |
 
-### Phase 13: The products in the database (in progress since November 7, 2026)
+### Phase 13: The products in the database ✅ (built November 7 and 8, 2026, live November 8)
 
 **Status:** asked for by the owner on November 7, 2026: keep the products the way large stores do. The plan was written in a separate session and reviewed before the work started.
 
@@ -812,13 +813,14 @@ Each step is merged into `main` and deployed on its own, once the checks and the
 - [x] **The admin panel:** `/admin/` behind one password (`pnpm admin:password` prints `ADMIN_PASSWORD_HASH` and `ADMIN_SESSION_SECRET`; a signed `httpOnly` cookie for seven days; the session checked in every page and Server Action), the products list with quick stock edits and hiding, the product form (photos and variants as rows, checked with the data files' rules), and the categories. Every save revalidates the catalog's tag; a browser test adds a product, changes its price and hides it, and follows each change in the store.
 - [x] **Uploading photos** to Supabase Storage: "رفع" (Upload) next to each photo in the product form sends a PNG, WebP or JPEG of up to 4 MB to a Server Action (`bodySizeLimit` 5 MB), which checks the session and the file, makes the five WebP copies and measures the tone with `src/lib/images/prepare.ts` (moved out of the images script, which is now `scripts/images.ts` through `tsx`, with byte-identical output), saves the copies under a new name in the public bucket `product-images` with the secret key in the `apikey` header, and keeps the measured look in a new `uploaded_images` table for the product's save. The image loader treats an address without an extension, local or uploaded, as prepared in five sizes; `SUPABASE_URL` joins the CSP's `img-src` at build time; `/api/health/` reports whether sharp works in the server and whether the bucket is public, so the risk below is checked on the next deploy. Unit tests with a mocked Supabase; a database test (`tests/db/uploaded-images.test.ts`) that a saved product's photo takes the look measured on upload; and a browser test that uploads to a fake storage (`tests/e2e/fake-storage.ts`) and saves a hidden product with the photo's address. Its product stays hidden because the test server is built without `SUPABASE_URL`, so the store's pages, which other tests open at the same time, would block the fake storage's photo. Deployed together with the next step, at the owner's request (November 8, 2026), to save Netlify credits.
 - [x] **The prepared files and the documentation:** `cart-catalog.json`, `similar-products.json` and the sitemap were already computed on every request (step 13.3). The share images stay drawn by `next build` only: their routes take `dynamicParams = true`, and a product or category added after the deploy gets a redirect to the site's image until the next deploy draws its own, checked by the admin panel's browser test; an uploaded photo is downloaded from Supabase Storage for its share image, with the logo if it can't be. The README, `DEPLOYMENT.md` (the two Supabase variables, the bucket, the health check) and `.env.example` cover the uploads. Deployed with step 13.5.
+- [x] **Live check (November 8, 2026):** the first deploy answered `"storage":"off"` and its content security policy had no Supabase address, because `SUPABASE_URL` was missing from Netlify's variables (Netlify had flagged it as sensitive, and a variable that isn't secret must keep all scopes on the free plan; the lesson is in `DEPLOYMENT.md`). After it was added and the site deployed again, `/api/health/` answered `database`, `photos` and `storage` all `up`, the policy's `img-src` names the Supabase project, `/admin/` leads to its sign-in page, and a share image for an unknown product redirects to the site's image. Uploading a real photo from the live admin panel is the owner's to try, with their password.
 
 #### 13.3 Risks
 
 | Risk | How it is avoided |
 | --- | --- |
 | On-demand refresh by tag doesn't reach the pages on Netlify | Checked on the live site right after the catalog step, before anything builds on it; the fallback is a build hook called by the admin actions. |
-| sharp or the share-image fonts don't work inside a Netlify function | `/api/health/` reports whether sharp makes a WebP copy in the server, checked on the deploy that carries the uploads; the fallbacks are resizing in the browser before upload, and the site's share image for new products. |
+| sharp or the share-image fonts don't work inside a Netlify function | `/api/health/` reports whether sharp makes a WebP copy in the server: it answered `"photos":"up"` on the live site (November 8, 2026). The share images are drawn only by `next build`, and products added later take the site's share image. |
 | Supabase's connections run out | A pool of one or two connections per function; the transaction pooler is the next step. |
 | Deploy previews share the production database | Their builds run the migrations too, so migrations only add, and previews are not used to test writes. |
 
@@ -905,7 +907,7 @@ The steps for each host are in `DEPLOYMENT.md`.
 
 1. Each feature goes in its own Git branch, then a pull request that GitHub Actions checks and builds.
 2. Merging into the main branch means an automatic deployment.
-3. Updating products means editing the data files and the images and pushing them; the site is then rebuilt and redeployed automatically.
+3. Since phase 13, the store owner updates products, prices, stock and photos from the admin panel (`/admin/`), and the change shows on the site within seconds, with no deploy. The data files in `src/data` only fill an empty database.
 
 ---
 
@@ -918,9 +920,11 @@ The steps for each host are in `DEPLOYMENT.md`.
 | 4 | 3 ✅ | Cart and wishlist |
 | 5 | 4 + 5 ✅ | Checkout and content |
 | 6 | 6 + 7 | Improvements and testing |
-| 7 | 8 | Deployment |
+| 7 | 8 ✅ | Deployment (on Netlify, with phase 12) |
 | 8 | 10 ✅ | The "Spotlight" design evolution |
 | 8 | 11 ✅ | Najm, the 3D mascot |
+| 8 | 12 ✅ | Running on a Next.js server, with stored orders |
+| 8 | 13 ✅ | The products in the database and the admin panel |
 
 **Total: about 7 weeks**, instead of 12 in the previous plan, because the server and the admin dashboard were removed, plus phases 10 and 11, which were built in a day each.
 
@@ -972,7 +976,7 @@ Ordered by expected impact:
 2. **Sending orders over WhatsApp**, if it was not enabled in phase 4.
 3. **English for the store**, with an easy language switch.
 4. **An installable web app (PWA)** that works offline for pages already visited.
-5. **Building on the server (phase 12):** the server, the database and stored orders are done. Next could come online payment, accounts, an admin dashboard for the orders, and stock that goes down with every order.
+5. **Building on the server (phases 12 and 13):** the server, stored orders, the products in the database, the admin panel and stock that goes down with every order are done. Next could come the orders in the admin panel, online payment and accounts.
 
 ---
 
@@ -997,4 +1001,4 @@ Ordered by expected impact:
 
 ## Next step
 
-Review the site on your phone, and test it with 3 to 5 people following `USER-TESTING.md`. Then deploy on Netlify (phase 12, decision 7): create the database, connect the repository and set the variables, following `DEPLOYMENT.md`; the domain is still to choose. At any time: send the real contact details to replace the placeholders, answer decision 4 (keep or remove the "demo version" notice on the About us and Terms pages), and answer decisions 1 and 2 so the demo data can be replaced. For the new design (phase 10): look at it on your phone, then push the branch `phase-10-spotlight` and merge it into `main` once you approve it. For Najm (phase 11): try him on your phone too; his branch `phase-11-mascot` starts from phase 10, so it merges after it.
+The store is live at `https://matjrii.netlify.app` with phases 10 to 13. Sign in to the admin panel (`/admin/`) and upload a real photo to a product, then check it on the product's page. Review the site on your phone, including Najm and the new design, and test it with 3 to 5 people following `USER-TESTING.md`. At any time: choose the domain (decision 7), send the real contact details to replace the placeholders, answer decision 4 (keep or remove the "demo version" notice on the About us and Terms pages), and answer decisions 1 and 2 so the demo data can be replaced, now from the admin panel.
