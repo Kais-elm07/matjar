@@ -25,7 +25,8 @@ async function signIn(page: Page) {
   await page.goto("/admin/login/")
   await page.getByLabel("كلمة المرور").fill(ADMIN_TEST_PASSWORD)
   await page.getByRole("button", { name: "دخول" }).click()
-  await expect(page).toHaveURL(/\/admin\/$/)
+  // Signing in opens the products list, read from the database: slower while the other tests run
+  await expect(page).toHaveURL(/\/admin\/$/, { timeout: 15_000 })
 }
 
 /** The product as the store's API shows it; it changes once the catalog is drawn again. */
@@ -84,6 +85,12 @@ test("The store owner adds a product, changes its price and hides it, and the st
     .toEqual({ price: 9900 })
   await page.goto(`/product/${slug}/`)
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(name)
+  // Its share image is drawn by the next deploy; until then it points to the site's image
+  const share = await request.get(`/og/product/${slug}.jpg`, {
+    maxRedirects: 0,
+  })
+  expect(share.status()).toBe(307)
+  expect(share.headers().location).toBe("/og/site.jpg")
 
   // Changing the price
   await page.goto("/admin/")
@@ -106,22 +113,6 @@ test("The store owner adds a product, changes its price and hides it, and the st
     .toBeNull()
 })
 
-/** The first photo of a product as the store's API shows it, or null while the product isn't there. */
-async function storePhoto(request: APIRequestContext, slug: string) {
-  const response = await request.get(productApiPath(slug))
-  if (!response.ok()) return null
-  const body: unknown = await response.json()
-  if (typeof body !== "object" || body === null || !("images" in body)) {
-    return null
-  }
-  const [first]: unknown[] = Array.isArray(body.images) ? body.images : []
-  if (typeof first !== "object" || first === null) return null
-  return {
-    src: "src" in first ? first.src : null,
-    cutout: "cutout" in first ? first.cutout : null,
-  }
-}
-
 /** A cut-out photo for the upload: an orange disc on a transparent background, as PNG */
 function cutoutPhoto() {
   const svg =
@@ -130,7 +121,12 @@ function cutoutPhoto() {
   return sharp(Buffer.from(svg)).png().toBuffer()
 }
 
-test("The store owner uploads a photo, and the product shows it from the storage", async ({
+/**
+ * The product stays hidden: the server is built without SUPABASE_URL, so the store's pages, which
+ * other tests open at the same time, would block its photo from the fake storage (the CSP). The look
+ * the product's photo takes is tested against the database in tests/db/uploaded-images.test.ts.
+ */
+test("The store owner uploads a photo, and the product keeps its address in the storage", async ({
   page,
   request,
 }) => {
@@ -145,6 +141,7 @@ test("The store owner uploads a photo, and the product shows it from the storage
   await page.getByLabel("الرمز", { exact: true }).fill(`E2E-P-${stamp}`)
   await page.getByLabel(/^السعر/).fill("120")
   await page.getByLabel("المخزون", { exact: true }).fill("3")
+  await page.getByRole("checkbox", { name: "إخفاء المنتج من المتجر" }).check()
 
   // Uploading: the server prepares the copies, keeps them in the (fake) storage and fills the path
   const chooser = page.waitForEvent("filechooser")
@@ -164,24 +161,21 @@ test("The store owner uploads a photo, and the product shows it from the storage
     { timeout: 15_000 }
   )
   const src = await path.inputValue()
-
-  await page.getByRole("button", { name: "حفظ المنتج" }).click()
-  await expect(page).toHaveURL(/\/admin\/$/, { timeout: 15_000 })
-
-  // The store shows the uploaded photo, as a cut-out (the look measured on upload), and its copies exist
-  await expect
-    .poll(() => storePhoto(request, slug), { timeout: 20_000 })
-    .toEqual({ src, cutout: true })
   const copy = await request.get(`${src}-400.webp`)
   expect(copy.ok()).toBe(true)
   expect(copy.headers()["content-type"]).toBe("image/webp")
 
-  // Hidden again, so the products of repeated local runs don't fill the store
-  await page.getByRole("button", { name: `إخفاء ${name} من المتجر` }).click()
-  // Hiding writes the product and refreshes the list: slower while the other tests run
+  // Saved hidden, with the uploaded photo's address
+  await page.getByRole("button", { name: "حفظ المنتج" }).click()
+  await expect(page).toHaveURL(/\/admin\/$/, { timeout: 15_000 })
   await expect(
     page.getByRole("button", { name: `إظهار ${name} في المتجر` })
-  ).toBeVisible({ timeout: 15_000 })
+  ).toBeVisible()
+  await page.getByRole("link", { name }).click()
+  await expect(page.getByLabel("مسار الصورة 1", { exact: true })).toHaveValue(
+    src
+  )
+  expect((await request.get(productApiPath(slug))).status()).toBe(404)
 })
 
 test("A product with a wrong field is not saved, and the panel says why", async ({

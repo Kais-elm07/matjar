@@ -1,11 +1,11 @@
 import { getBuildCatalog } from "@/lib/catalog/load"
-import { jpegResponse } from "@/lib/og/render"
+import { jpegResponse, shareImageOutsideBuild } from "@/lib/og/render"
 import { categoryShareImage } from "@/lib/og/share-images"
 
 // A share image for each category, drawn at build time and kept until the next deploy (see
-// getBuildCatalog): /og/category/<slug>.jpg
+// getBuildCatalog): /og/category/<slug>.jpg. A category added later gets the site's image until then.
 export const dynamic = "force-static"
-export const dynamicParams = false
+export const dynamicParams = true
 
 export async function generateStaticParams() {
   return (await getBuildCatalog()).categories.map((category) => ({
@@ -17,6 +17,8 @@ export async function GET(
   _request: Request,
   { params }: RouteContext<"/og/category/[file]">
 ) {
+  const outsideBuild = shareImageOutsideBuild()
+  if (outsideBuild) return outsideBuild
   const { file } = await params
   const catalog = await getBuildCatalog()
   const category = catalog.categoryBySlug.get(file.replace(/\.jpg$/, ""))

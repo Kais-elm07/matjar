@@ -13,10 +13,12 @@ import {
 import os from "node:os"
 import path from "node:path"
 
+import { PHASE_PRODUCTION_BUILD } from "next/constants"
 import sharp, { type OverlayOptions, type Sharp } from "sharp"
 
 import type { PhotoLook } from "@/lib/catalog/types"
 import { IMAGE_WIDTHS, imageFile } from "@/lib/image-loader"
+import { shareImages } from "@/lib/seo"
 import { toneColor, TONE_LIGHTNESS, type Tone } from "@/lib/tone"
 
 /**
@@ -222,12 +224,44 @@ export async function pill(
   return { input, width, height }
 }
 
-/** The image file on disk for a path from the data files, such as /images/products/x-1, or null. */
-export function localImage(src: string) {
-  if (/^https?:\/\//.test(src)) return null
-  const largest = IMAGE_WIDTHS[IMAGE_WIDTHS.length - 1]
-  const file = path.join(ROOT, "public", imageFile(src, largest))
+const PHOTO_TIMEOUT_MS = 20_000
+
+/**
+ * The largest copy of a product photo, for a share image: the file in public/images for a photo of the
+ * data files, or the copy downloaded from Supabase Storage for one uploaded in the admin panel. Null
+ * when it is missing or can't be downloaded, which shows the logo instead.
+ */
+export async function sharePhoto(src: string): Promise<string | Buffer | null> {
+  const largest = imageFile(src, IMAGE_WIDTHS[IMAGE_WIDTHS.length - 1])
+  if (/^https?:\/\//.test(largest)) {
+    try {
+      const response = await fetch(largest, {
+        signal: AbortSignal.timeout(PHOTO_TIMEOUT_MS),
+      })
+      return response.ok ? Buffer.from(await response.arrayBuffer()) : null
+    } catch {
+      return null
+    }
+  }
+  const file = path.join(ROOT, "public", largest)
   return existsSync(file) ? file : null
+}
+
+/**
+ * The share images are drawn only by next build: the photos in public/images are not in the server's
+ * functions (see getBuildCatalog). A share image asked for while the store runs belongs to a product
+ * or category added after the deploy, so it answers with the site's image until the next deploy draws
+ * its own. Kept for an hour, like the share images.
+ */
+export function shareImageOutsideBuild() {
+  if (process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) return null
+  return new Response(null, {
+    status: 307,
+    headers: {
+      Location: shareImages.site,
+      "Cache-Control": "public, max-age=3600",
+    },
+  })
 }
 
 /**
@@ -256,7 +290,7 @@ function stageSvg(size: number, tone: Tone) {
 }
 
 /** A cut-out standing on its platform, in the light of its tone, in a square. */
-async function stagedCutout(file: string, tone: Tone, size: number) {
+async function stagedCutout(file: string | Buffer, tone: Tone, size: number) {
   const product = await toPng(
     sharp(file).resize(Math.round(size * 0.76), Math.round(size * 0.74), {
       fit: "inside",
@@ -281,7 +315,7 @@ async function stagedCutout(file: string, tone: Tone, size: number) {
  * in the surface color.
  */
 export async function photoSquare(
-  file: string | null,
+  file: string | Buffer | null,
   look: PhotoLook | null,
   size: number,
   radius: number

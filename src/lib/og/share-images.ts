@@ -11,11 +11,11 @@ import { getCheckoutConfig } from "@/lib/checkout/config"
 import { discountPercent, formatPrice } from "@/lib/money"
 import {
   type Layer,
-  localImage,
   logoMark,
   OG_COLORS,
   OG_SIZE,
   photoSquare,
+  sharePhoto,
   pill,
   type PillOptions,
   renderShareImage,
@@ -120,9 +120,9 @@ export async function siteShareImage(catalog: Catalog) {
   const gap = 16
   const cell = (IMAGE_SIZE - gap) / 2
   const photos = await Promise.all(
-    products.map((product) =>
+    products.map(async (product) =>
       photoSquare(
-        product.image ? localImage(product.image.src) : null,
+        product.image ? await sharePhoto(product.image.src) : null,
         product.image,
         cell,
         RADIUS - 4
@@ -168,7 +168,7 @@ export async function productShareImage(product: Product) {
   const discount = discountPercent(product.price, product.compareAtPrice)
   const [photo, brand] = await Promise.all([
     photoSquare(
-      image ? localImage(image.src) : null,
+      image ? await sharePhoto(image.src) : null,
       image ?? null,
       IMAGE_SIZE,
       RADIUS
@@ -264,7 +264,7 @@ export async function productShareImage(product: Product) {
 export async function categoryShareImage(category: Category) {
   const [photo, brand, facts] = await Promise.all([
     photoSquare(
-      category.image ? localImage(category.image.src) : null,
+      category.image ? await sharePhoto(category.image.src) : null,
       category.image,
       IMAGE_SIZE,
       RADIUS

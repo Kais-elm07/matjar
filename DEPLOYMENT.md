@@ -112,7 +112,7 @@ Set the variables in the server's environment before these commands. `pnpm start
 3. **The products API:** open `https://your-domain/api/products/` and `https://your-domain/api/products` (without the slash), which must redirect to the first.
 4. **404 page:** open a wrong link such as `https://your-domain/abc/` and make sure the Arabic page appears with the status 404.
 5. **Headers:** check the domain on [securityheaders.com](https://securityheaders.com), or from the terminal with `curl -I https://your-domain/`. Both `content-security-policy` and `strict-transport-security` must appear.
-6. **Share links:** paste a product link into WhatsApp and make sure its image, name and price appear. If `localhost` appears, `NEXT_PUBLIC_SITE_URL` was not set before the build.
+6. **Share links:** paste a product link into WhatsApp and make sure its image, name and price appear. If `localhost` appears, `NEXT_PUBLIC_SITE_URL` was not set before the build. A product added in the admin panel after the deploy shows the store's general image until the next deploy draws its own.
 7. **Search engines:** in [Google Search Console](https://search.google.com/search-console), add the domain (verifying through DNS is the easiest), then go to **Sitemaps** and submit `https://your-domain/sitemap.xml`.
 8. **Performance:** test the real URL in [PageSpeed Insights](https://pagespeed.web.dev) on mobile.
 
