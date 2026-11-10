@@ -1,3 +1,6 @@
+import { readdirSync, readFileSync } from "node:fs"
+import path from "node:path"
+
 import { expect, test, type Page } from "@playwright/test"
 
 import { coupons } from "../../src/data/coupons"
@@ -112,6 +115,31 @@ test("Placing a demo order with a mobile number in Arabic-Indic digits and a dis
   await expect
     .poll(() => shownStock(request, sku), { timeout: 15_000 })
     .toBeLessThan(startingStock)
+})
+
+/** The built file with the cart panel's code: the only one that holds its title, "سلة التسوق" (Shopping cart). */
+function cartPanelFile() {
+  const folder = ".next/static/chunks"
+  const file = readdirSync(folder).find(
+    (name) =>
+      name.endsWith(".js") &&
+      readFileSync(path.join(folder, name), "utf8").includes("سلة التسوق")
+  )
+  if (!file) throw new Error("No built file holds the cart panel's title")
+  return file
+}
+
+test("When the cart panel can't be downloaded, the cart button opens the cart page", async ({
+  page,
+}) => {
+  await page.route(`**/_next/static/chunks/${cartPanelFile()}`, (route) =>
+    route.abort()
+  )
+
+  await open(page, "/")
+  await page.getByRole("button", { name: "السلة", exact: true }).first().click()
+  await expect(page).toHaveURL(/\/cart\/$/)
+  await expect(page.getByRole("heading", { name: "سلة التسوق" })).toBeVisible()
 })
 
 test("An order address that doesn't exist shows the 404 page", async ({

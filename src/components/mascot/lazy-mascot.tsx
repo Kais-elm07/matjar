@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic"
 
+import { Optional } from "@/components/shared/optional"
 import { useFirstInteraction } from "@/hooks/use-first-interaction"
 import { supportsWebGL2 } from "@/lib/mascot/support"
 import { useMascotRestored } from "@/lib/state/hydration"
@@ -22,6 +23,8 @@ export function LazyMascot() {
   const hidden = useMascotPreferences((state) => state.hidden)
   const interacted = useFirstInteraction()
   return restored && !hidden && interacted && supportsWebGL2() ? (
-    <Mascot />
+    <Optional>
+      <Mascot />
+    </Optional>
   ) : null
 }

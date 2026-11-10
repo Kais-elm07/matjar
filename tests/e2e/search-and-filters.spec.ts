@@ -32,6 +32,30 @@ test("Search finds the product even when taa marbuta (ة) is typed as ه", async
   ).toBeVisible()
 })
 
+test("When the search suggestions can't be downloaded, only they are missing from the page", async ({
+  page,
+}) => {
+  await open(page, "/")
+  // From here on none of the site's code arrives, as on a connection that dropped
+  await page.route("**/_next/static/chunks/**", (route) => route.abort())
+  const failed = page.waitForEvent("requestfailed")
+  if (isPhone(page)) {
+    await page.getByRole("button", { name: "البحث", exact: true }).click()
+  }
+  const box = page.getByRole("combobox", { name: "ابحث في المتجر" })
+  await box.fill("ساعة")
+  await failed
+  // The browser asks for the code a second time, within a second, before it gives up
+  await page.waitForTimeout(1_500)
+  // The header and the field are still there, and no error page took the page's place
+  await expect(page.getByRole("banner")).toBeVisible()
+  await expect(box).toHaveValue("ساعة")
+  await expect(page.getByRole("option")).toHaveCount(0)
+  await expect(
+    page.getByRole("main").getByRole("heading").first()
+  ).toBeVisible()
+})
+
 test("A search with no results shows a clear message", async ({ page }) => {
   await open(page, `/search/?q=${encodeURIComponent("زرافة")}`)
   await expect(page.getByText(/لم نجد نتائج/)).toBeVisible()

@@ -57,6 +57,11 @@ const eslintConfig = defineConfig([
     files: ["src/components/ui/**"],
     rules: { "react/no-multi-comp": "off" },
   },
+  {
+    // The last-resort error page has no router: its link home loads the page from the server on purpose
+    files: ["src/app/global-error.tsx"],
+    rules: { "@next/next/no-html-link-for-pages": "off" },
+  },
   // Turns off the formatting rules in ESLint, because Prettier handles them
   prettier,
   globalIgnores([

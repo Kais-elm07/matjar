@@ -5,6 +5,7 @@ import dynamic from "next/dynamic"
 import { useRouter } from "next/navigation"
 import { SearchIcon } from "lucide-react"
 
+import { Optional } from "@/components/shared/optional"
 import { productPath, searchPath } from "@/lib/routes"
 import { searchCards } from "@/lib/search/search-cards"
 import { useSearchIndex } from "@/lib/search/use-search-index"
@@ -156,24 +157,27 @@ export function SearchBox({
       </div>
 
       {showPanel && (
-        <div
-          // Prevent losing focus when a suggestion is clicked
-          onMouseDown={(event) => event.preventDefault()}
-          className={cn(
-            "absolute top-full z-50 mt-2 overflow-hidden rounded-2xl border bg-popover text-popover-foreground shadow-lg",
-            header ? "inset-x-0 min-w-80" : "inset-x-0"
-          )}
-        >
-          <SearchSuggestions
-            query={trimmed}
-            results={results}
-            status={error ? "error" : searchIndex ? "ready" : "loading"}
-            listId={listId}
-            optionId={optionId}
-            activeIndex={activeIndex}
-            onNavigate={finish}
-          />
-        </div>
+        // Without the suggestions, Enter still opens the results page
+        <Optional>
+          <div
+            // Prevent losing focus when a suggestion is clicked
+            onMouseDown={(event) => event.preventDefault()}
+            className={cn(
+              "absolute top-full z-50 mt-2 overflow-hidden rounded-2xl border bg-popover text-popover-foreground shadow-lg",
+              header ? "inset-x-0 min-w-80" : "inset-x-0"
+            )}
+          >
+            <SearchSuggestions
+              query={trimmed}
+              results={results}
+              status={error ? "error" : searchIndex ? "ready" : "loading"}
+              listId={listId}
+              optionId={optionId}
+              activeIndex={activeIndex}
+              onNavigate={finish}
+            />
+          </div>
+        </Optional>
       )}
     </form>
   )

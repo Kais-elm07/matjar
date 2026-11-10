@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react"
 import dynamic from "next/dynamic"
 
+import { Optional } from "@/components/shared/optional"
 import { useIdle } from "@/hooks/use-idle"
 import { markToasterMounted, toasterRequest } from "@/lib/toast"
 
@@ -22,5 +23,9 @@ export function LazyToaster() {
     toasterRequest.get,
     () => false
   )
-  return idle || requested ? <Toaster onMount={markToasterMounted} /> : null
+  return idle || requested ? (
+    <Optional>
+      <Toaster onMount={markToasterMounted} />
+    </Optional>
+  ) : null
 }

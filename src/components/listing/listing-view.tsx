@@ -13,6 +13,7 @@ import {
   LISTING_LAYOUT,
 } from "@/components/listing/listing-skeleton"
 import { ProductGrid } from "@/components/product/product-grid"
+import { Optional } from "@/components/shared/optional"
 import { Button } from "@/components/ui/button"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { siteConfig } from "@/config/site"
@@ -163,7 +164,9 @@ export function ListingView(props: ListingViewProps) {
   return (
     <div id="listing" className={cn("scroll-mt-40", LISTING_LAYOUT)}>
       <aside aria-label="تصفية النتائج" className="hidden lg:block">
-        <div className="sticky top-32">{isDesktop && filterPanel(true)}</div>
+        <div className="sticky top-32">
+          {isDesktop && <Optional>{filterPanel(true)}</Optional>}
+        </div>
       </aside>
 
       <div className="min-w-0">
@@ -188,16 +191,20 @@ export function ListingView(props: ListingViewProps) {
               )}
             </Button>
             {!isDesktop && (filtersOpen || idle) && (
-              <FilterSheet
-                open={filtersOpen}
-                onOpenChange={setFiltersOpen}
-                total={result.total}
-                onClear={
-                  activeCount > 0 ? () => navigate(CLEARED_FILTERS) : undefined
-                }
-              >
-                {filterPanel(false)}
-              </FilterSheet>
+              <Optional>
+                <FilterSheet
+                  open={filtersOpen}
+                  onOpenChange={setFiltersOpen}
+                  total={result.total}
+                  onClear={
+                    activeCount > 0
+                      ? () => navigate(CLEARED_FILTERS)
+                      : undefined
+                  }
+                >
+                  {filterPanel(false)}
+                </FilterSheet>
+              </Optional>
             )}
 
             <label htmlFor={sortId} className="sr-only">

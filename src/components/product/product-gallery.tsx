@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import dynamic from "next/dynamic"
 import { ChevronLeftIcon, ChevronRightIcon, ZoomInIcon } from "lucide-react"
 
+import { Optional } from "@/components/shared/optional"
 import { PhotoBox } from "@/components/shared/photo-box"
 import { StageBackdrop } from "@/components/shared/stage-backdrop"
 import { StageVisual } from "@/components/shared/stage-visual"
@@ -218,13 +219,15 @@ export function ProductGallery({
       )}
 
       {(zoomOpen || idle) && (
-        <ProductZoom
-          images={images}
-          activeIndex={activeIndex}
-          onActiveIndexChange={onActiveIndexChange}
-          open={zoomOpen}
-          onOpenChange={setZoomOpen}
-        />
+        <Optional>
+          <ProductZoom
+            images={images}
+            activeIndex={activeIndex}
+            onActiveIndexChange={onActiveIndexChange}
+            open={zoomOpen}
+            onOpenChange={setZoomOpen}
+          />
+        </Optional>
       )}
     </div>
   )

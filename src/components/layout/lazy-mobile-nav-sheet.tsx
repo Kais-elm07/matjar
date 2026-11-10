@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic"
 
+import { Optional } from "@/components/shared/optional"
 import { useIdle } from "@/hooks/use-idle"
 import type { NavCategory } from "@/lib/catalog/types"
 import { useUiStore } from "@/lib/state/ui"
@@ -22,5 +23,9 @@ interface LazyMobileNavSheetProps {
 export function LazyMobileNavSheet({ categories }: LazyMobileNavSheetProps) {
   const open = useUiStore((state) => state.menuOpen)
   const idle = useIdle()
-  return open || idle ? <MobileNavSheet categories={categories} /> : null
+  return open || idle ? (
+    <Optional>
+      <MobileNavSheet categories={categories} />
+    </Optional>
+  ) : null
 }
