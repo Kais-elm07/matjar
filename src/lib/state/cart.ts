@@ -37,6 +37,19 @@ export type CartNotice = {
   kind: "removed" | "sold-out" | "reduced" | "price-up" | "price-down"
 }
 
+const NOTICE_TEXT: Record<CartNotice["kind"], (name: string) => string> = {
+  removed: (name) => `«${name}» لم يعد في المتجر، فحذفناه من السلة.`,
+  "sold-out": (name) => `«${name}» نفد من المخزون، فحذفناه من السلة.`,
+  reduced: (name) => `قلّت كمية «${name}» لتناسب المخزون المتوفر.`,
+  "price-up": (name) => `ارتفع سعر «${name}» منذ أضفته.`,
+  "price-down": (name) => `انخفض سعر «${name}» منذ أضفته.`,
+}
+
+/** The sentence that tells the visitor about a change: in the cart's notice, and when the checkout refuses an order. */
+export function cartNoticeText({ kind, name }: CartNotice) {
+  return NOTICE_TEXT[kind](name)
+}
+
 type CartState = {
   lines: CartLine[]
   /** Adds the quantity without exceeding the stock, and returns the number of pieces actually added. */

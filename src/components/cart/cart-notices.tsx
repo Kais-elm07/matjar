@@ -2,16 +2,8 @@
 
 import { InfoIcon } from "lucide-react"
 
-import type { CartNotice } from "@/lib/state/cart"
+import { cartNoticeText, type CartNotice } from "@/lib/state/cart"
 import { cn } from "@/lib/utils"
-
-const MESSAGES: Record<CartNotice["kind"], (name: string) => string> = {
-  removed: (name) => `«${name}» لم يعد في المتجر، فحذفناه من السلة.`,
-  "sold-out": (name) => `«${name}» نفد من المخزون، فحذفناه من السلة.`,
-  reduced: (name) => `قلّت كمية «${name}» لتناسب المخزون المتوفر.`,
-  "price-up": (name) => `ارتفع سعر «${name}» منذ أضفته.`,
-  "price-down": (name) => `انخفض سعر «${name}» منذ أضفته.`,
-}
 
 interface CartNoticesProps {
   notices: CartNotice[]
@@ -40,7 +32,7 @@ export function CartNotices({
         <ul className="space-y-0.5 text-muted-foreground">
           {notices.map((notice) => (
             <li key={`${notice.sku}-${notice.kind}`}>
-              {MESSAGES[notice.kind](notice.name)}
+              {cartNoticeText(notice)}
             </li>
           ))}
         </ul>

@@ -40,6 +40,7 @@ export function checkoutSchema(cities: ShippingCity[]) {
       email: z
         .string()
         .trim()
+        .max(254, "البريد الإلكتروني طويل جداً")
         .refine(
           (value) => value === "" || isEmail(value),
           "البريد الإلكتروني غير صحيح"
@@ -50,8 +51,16 @@ export function checkoutSchema(cities: ShippingCity[]) {
           (value) => cities.some((city) => city.name === value),
           "اختر مدينتك"
         ),
-      district: z.string().trim().min(2, "اكتب اسم الحي"),
-      street: z.string().trim().min(5, "اكتب اسم الشارع ورقم المبنى"),
+      district: z
+        .string()
+        .trim()
+        .min(2, "اكتب اسم الحي")
+        .max(80, "اسم الحي طويل جداً"),
+      street: z
+        .string()
+        .trim()
+        .min(5, "اكتب اسم الشارع ورقم المبنى")
+        .max(160, "العنوان طويل جداً"),
       notes: z.string().trim().max(300, "الملاحظات طويلة جداً"),
       shippingMethod: z.enum(["standard", "express"]),
     })

@@ -239,6 +239,25 @@ describe("checkoutSchema", () => {
     })
   })
 
+  it("refuses text longer than an address or a note needs", () => {
+    expect(
+      errorsFor({
+        ...valid,
+        fullName: "أ".repeat(81),
+        email: `${"a".repeat(250)}@example.com`,
+        district: "ح".repeat(81),
+        street: "ش".repeat(161),
+        notes: "م".repeat(301),
+      })
+    ).toEqual({
+      fullName: "الاسم طويل جداً",
+      email: "البريد الإلكتروني طويل جداً",
+      district: "اسم الحي طويل جداً",
+      street: "العنوان طويل جداً",
+      notes: "الملاحظات طويلة جداً",
+    })
+  })
+
   it("rejects express delivery in a city that doesn't offer it", () => {
     expect(errorsFor({ ...valid, city: "أبها" })).toEqual({
       shippingMethod: "التوصيل السريع غير متاح في هذه المدينة",

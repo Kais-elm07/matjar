@@ -14,6 +14,7 @@ import { OrderSummary } from "@/components/checkout/order-summary"
 import { PaymentStep } from "@/components/checkout/payment-step"
 import { ShippingStep } from "@/components/checkout/shipping-step"
 import { useCheckoutForm } from "@/components/checkout/use-checkout-form"
+import { useOrderRequestId } from "@/components/checkout/use-order-request-id"
 import { EmptyState } from "@/components/shared/empty-state"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { placeOrder, type PlaceOrderResult } from "@/lib/checkout/actions"
@@ -26,7 +27,7 @@ import type {
 } from "@/lib/checkout/types"
 import { formatPrice } from "@/lib/money"
 import { orderPath } from "@/lib/routes"
-import { useCartStore } from "@/lib/state/cart"
+import { cartNoticeText, useCartStore } from "@/lib/state/cart"
 import { useCartSync } from "@/lib/state/cart-sync"
 import { useCartRestored } from "@/lib/state/hydration"
 
@@ -37,7 +38,9 @@ interface CheckoutViewProps {
 /**
  * The checkout page: a single page with four steps, instant validation with Arabic messages,
  * and a summary with the total. On confirmation the server checks and saves the order (placeOrder),
- * the cart is emptied, and the visitor goes to the order's page.
+ * the cart is emptied, and the visitor goes to the order's page. When the server refuses the order
+ * because a product sold out or its price changed, the cart is updated on the spot and the message
+ * names the product.
  * Each step is a component of its own (ContactStep, AddressStep, ShippingStep and PaymentStep) that
  * reads the form through FormProvider.
  */
@@ -46,11 +49,13 @@ export function CheckoutView({ config }: CheckoutViewProps) {
   const restored = useCartRestored()
   const lines = useCartStore((state) => state.lines)
   const clearCart = useCartStore((state) => state.clear)
+  const syncCart = useCartStore((state) => state.sync)
   const { notices, dismiss } = useCartSync()
   const [coupon, setCoupon] = useState<Coupon | null>(null)
   const [orderError, setOrderError] = useState<string | null>(null)
   // Set once the order is saved, until the order's page opens: the cart is already empty by then
   const [placed, setPlaced] = useState(false)
+  const requestIdFor = useOrderRequestId()
 
   const form = useCheckoutForm(config.cities)
 
@@ -73,10 +78,21 @@ export function CheckoutView({ config }: CheckoutViewProps) {
 
   if (!restored) return <CheckoutSkeleton />
 
+  const refusal = orderError && (
+    <p
+      role="alert"
+      className="rounded-2xl border border-destructive/40 p-3 text-sm font-medium text-destructive"
+    >
+      {orderError}
+    </p>
+  )
+
   if (lines.length === 0) {
     return (
-      <>
-        <CartNotices notices={notices} onDismiss={dismiss} className="mb-4" />
+      <div className="space-y-4">
+        <CartNotices notices={notices} onDismiss={dismiss} />
+        {/* The last product sold out while the visitor was confirming the order */}
+        {refusal}
         <EmptyState
           icon={ShoppingCartIcon}
           title="سلتك فارغة"
@@ -89,17 +105,19 @@ export function CheckoutView({ config }: CheckoutViewProps) {
             تصفّح المنتجات
           </Link>
         </EmptyState>
-      </>
+      </div>
     )
   }
 
   async function confirmOrder(values: CheckoutValues) {
     setOrderError(null)
+    const requested = lines.map(({ sku, quantity }) => ({ sku, quantity }))
     let result: PlaceOrderResult
     try {
       result = await placeOrder({
+        requestId: requestIdFor(requested),
         values,
-        lines: lines.map(({ sku, quantity }) => ({ sku, quantity })),
+        lines: requested,
         couponCode: coupon?.code ?? null,
         expectedTotal: totals.total,
       })
@@ -110,7 +128,14 @@ export function CheckoutView({ config }: CheckoutViewProps) {
       }
     }
     if (!result.ok) {
-      setOrderError(result.message)
+      // The cart was behind the store: it takes the prices and stock the server just read, and the
+      // message names what changed, so the visitor sees it without loading the page again
+      const changes = result.cart ? syncCart(result.cart) : []
+      setOrderError(
+        changes.length > 0
+          ? changes.map(cartNoticeText).join(" ")
+          : result.message
+      )
       return
     }
     setPlaced(true)
@@ -157,14 +182,7 @@ export function CheckoutView({ config }: CheckoutViewProps) {
               هذا متجر تجريبي للعرض: يُحفظ طلبك لدى المتجر لتراه في صفحة
               التأكيد، لكنه لن يُشحن ولن يُطلب منك أي دفع.
             </p>
-            {orderError && (
-              <p
-                role="alert"
-                className="rounded-2xl border border-destructive/40 p-3 text-sm font-medium text-destructive"
-              >
-                {orderError}
-              </p>
-            )}
+            {refusal}
             <Button
               type="submit"
               variant="cta"

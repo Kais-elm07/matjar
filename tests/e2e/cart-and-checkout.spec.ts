@@ -5,7 +5,15 @@ import { expect, test, type Page } from "@playwright/test"
 
 import { coupons } from "../../src/data/coupons"
 import { fileRows } from "../../src/lib/catalog/file-rows"
-import { isPhone, open, shownStock, simpleProduct } from "./helpers"
+import { optionsKey } from "../../src/lib/catalog/variant-key"
+import { MAX_LINE_QUANTITY } from "../../src/lib/checkout/quantity"
+import {
+  isPhone,
+  loadProducts,
+  open,
+  shownStock,
+  simpleProduct,
+} from "./helpers"
 
 /** The first percentage coupon in the store data, so the test isn't tied to a specific code. */
 const percentCoupon = coupons.find((coupon) => coupon.type === "percent")
@@ -16,6 +24,17 @@ const addToCart = (page: Page) =>
     .getByRole("main")
     .getByRole("button", { name: "أضف للسلة", exact: true })
     .first()
+
+/** Fills the checkout's required fields, with the mobile number in Arabic-Indic digits. */
+async function fillAddress(page: Page) {
+  await page.getByLabel("الاسم الكامل", { exact: true }).fill("أحمد محمد")
+  await page.getByLabel("رقم الجوال", { exact: true }).fill("٠٥٠١٢٣٤٥٦٧")
+  await page.getByLabel("المدينة", { exact: true }).selectOption({ index: 1 })
+  await page.getByLabel("الحي", { exact: true }).fill("النرجس")
+  await page
+    .getByLabel("الشارع ورقم المبنى", { exact: true })
+    .fill("شارع الملك فهد 12")
+}
 
 test("Adding to the cart, changing the quantity and removing, with the cart kept after a reload", async ({
   page,
@@ -69,13 +88,7 @@ test("Placing a demo order with a mobile number in Arabic-Indic digits and a dis
     page.getByText("رقم الجوال يبدأ بـ 05 ويتكون من 10 أرقام")
   ).toBeVisible()
 
-  await page.getByLabel("الاسم الكامل", { exact: true }).fill("أحمد محمد")
-  await page.getByLabel("رقم الجوال", { exact: true }).fill("٠٥٠١٢٣٤٥٦٧")
-  await page.getByLabel("المدينة", { exact: true }).selectOption({ index: 1 })
-  await page.getByLabel("الحي", { exact: true }).fill("النرجس")
-  await page
-    .getByLabel("الشارع ورقم المبنى", { exact: true })
-    .fill("شارع الملك فهد 12")
+  await fillAddress(page)
 
   // On phones the order summary is collapsed, and it holds the coupon field
   if (isPhone(page)) {
@@ -115,6 +128,64 @@ test("Placing a demo order with a mobile number in Arabic-Indic digits and a dis
   await expect
     .poll(() => shownStock(request, sku), { timeout: 15_000 })
     .toBeLessThan(startingStock)
+})
+
+test("An order for more pieces than are left is answered on the spot, and the cart is corrected", async ({
+  page,
+  request,
+}) => {
+  const product = (await loadProducts(request)).find(
+    (card) =>
+      card.quickAdd !== null &&
+      card.quickAdd.stock > 0 &&
+      card.quickAdd.stock < MAX_LINE_QUANTITY
+  )
+  if (!product?.quickAdd) {
+    throw new Error("No single-variant product with fewer than 10 pieces left")
+  }
+  const { sku, stock } = product.quickAdd
+  // A cart that is behind the store: it asks for one piece more than is left, and the copy of the
+  // prices and stock the browser checks it against still says there are plenty
+  const behind = {
+    price: product.price,
+    compareAtPrice: product.compareAtPrice,
+    stock: 99,
+  }
+  await page.addInitScript(
+    (lines) => {
+      localStorage.setItem(
+        "matjar-cart",
+        JSON.stringify({ state: { lines }, version: 1 })
+      )
+    },
+    [
+      {
+        ...behind,
+        sku,
+        slug: product.slug,
+        name: product.name,
+        image: null,
+        options: {},
+        quantity: stock + 1,
+      },
+    ]
+  )
+  await page.route("**/cart-catalog.json", (route) =>
+    route.fulfill({ json: { [sku]: { ...behind, options: optionsKey({}) } } })
+  )
+
+  await open(page, "/checkout/")
+  await fillAddress(page)
+  await page.getByRole("button", { name: /تأكيد الطلب/ }).click()
+
+  // The server refuses the order and sends the stock as it is now; nothing is loaded again
+  await expect(
+    page.getByRole("alert").filter({ hasText: product.name })
+  ).toHaveText(`قلّت كمية «${product.name}» لتناسب المخزون المتوفر.`)
+  await expect(page).toHaveURL(/\/checkout\/$/)
+  await expect
+    .poll(() => page.evaluate(() => localStorage.getItem("matjar-cart")))
+    .toContain(`"quantity":${stock}`)
 })
 
 /** The built file with the cart panel's code: the only one that holds its title, "سلة التسوق" (Shopping cart). */

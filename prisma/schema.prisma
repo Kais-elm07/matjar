@@ -23,6 +23,12 @@ model Order {
   id             String         @id @default(cuid())
   /// Short, for the customer to quote, such as 261107-4827
   number         String         @unique
+  /// The random id the checkout gave this order, sent again with every retry, so an order whose answer
+  /// was lost on the way is not saved twice; null for the orders saved before this field
+  requestId      String?        @unique
+  /// The visitor's network address when the host reports it, to count the orders one sender saves in
+  /// an hour (reachedOrderLimit in src/lib/checkout/orders.ts)
+  clientIp       String?
   placedAt       DateTime       @default(now())
   customerName   String
   phone          String
@@ -41,6 +47,7 @@ model Order {
   total          Int
   lines          OrderLine[]
 
+  @@index([clientIp, placedAt])
   @@map("orders")
 }
 

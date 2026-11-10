@@ -110,7 +110,11 @@ export async function getRelatedProducts(product: Product, limit = 8) {
  * The options key catches a variant whose options changed while its SKU stayed the same (after reordering sizes, for example).
  */
 export async function getCartCatalog(): Promise<CartCatalog> {
-  const { products } = await getCatalog()
+  return cartCatalogOf((await getCatalog()).products)
+}
+
+/** The same prices and stock for the given products only, such as the ones an order names. */
+export function cartCatalogOf(products: Product[]): CartCatalog {
   return Object.fromEntries(
     products.flatMap((product) =>
       product.variants.map((variant) => [

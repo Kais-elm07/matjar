@@ -3,6 +3,7 @@ import "server-only"
 import { randomInt } from "node:crypto"
 
 import { Prisma } from "@/generated/prisma/client"
+import { cartCatalogOf } from "@/lib/catalog/catalog"
 import { isVariantOptions } from "@/lib/catalog/guards"
 import { readLiveProducts } from "@/lib/catalog/load"
 import type { Product, Variant } from "@/lib/catalog/types"
@@ -18,8 +19,9 @@ import { getDb } from "@/lib/db"
 
 /**
  * Orders in the database: building the lines from the products as they are now, saving an order
- * while lowering the stock, and reading an order back. Server only; the checkout reaches it through
- * the actions in actions.ts.
+ * while lowering the stock, recognizing a request that was already saved or a sender with too many
+ * orders, and reading an order back. Server only; the checkout reaches it through the actions in
+ * actions.ts.
  */
 
 /** What the visitor's cart asks for. Names, photos and prices come from the database, never from the browser. */
@@ -65,6 +67,44 @@ export async function orderLines(requested: RequestedLine[]) {
   return linesFromProducts(requested, products)
 }
 
+/**
+ * The prices and stock of the products these lines name, read from the database now, in the shape the
+ * cart in the browser syncs with. It goes back with a refused order, so the cart catches up at once.
+ */
+export async function liveCartCatalog(requested: RequestedLine[]) {
+  return cartCatalogOf(
+    await readLiveProducts(requested.map((line) => line.sku))
+  )
+}
+
+/** Who sent an order: the checkout's id for it, and the visitor's network address when the host reports one. */
+export type OrderSender = { requestId: string; clientIp: string | null }
+
+/** The long id of the order already saved for this request id, or null when the request is new. */
+export async function findOrderByRequest(requestId: string) {
+  const order = await getDb().order.findUnique({
+    where: { requestId },
+    select: { id: true },
+  })
+  return order?.id ?? null
+}
+
+/**
+ * How many orders one address may save in an hour: far more than a customer places, and few enough to
+ * keep a script from emptying the stock or filling the database.
+ */
+export const ORDERS_PER_HOUR = 10
+
+const HOUR = 3_600_000
+
+/** Whether this address has already saved as many orders in the last hour as one sender may. */
+export async function reachedOrderLimit(clientIp: string, now = new Date()) {
+  const saved = await getDb().order.count({
+    where: { clientIp, placedAt: { gt: new Date(now.getTime() - HOUR) } },
+  })
+  return saved >= ORDERS_PER_HOUR
+}
+
 /** Another order took the last pieces between reading the stock and saving: nothing was saved. */
 export class OutOfStockError extends Error {
   constructor(readonly sku: string) {
@@ -75,8 +115,8 @@ export class OutOfStockError extends Error {
 /** How many numbers to try when the one drawn is taken (10,000 numbers per day). */
 const NUMBER_ATTEMPTS = 5
 
-/** The database refused the order because its short number is already taken (a unique field, P2002). */
-function isTakenNumber(error: unknown) {
+/** The database refused the order because one of its unique values is already taken (P2002): its short number, or its request id. */
+function isTakenValue(error: unknown) {
   return (
     error instanceof Prisma.PrismaClientKnownRequestError &&
     error.code === "P2002"
@@ -88,12 +128,36 @@ function isTakenNumber(error: unknown) {
  * new short number, and returns the order's long id. A variant's stock goes down only while it still
  * covers the quantity, so two visitors can't both buy the last piece: the second one gets an
  * OutOfStockError and nothing of that order is saved.
+ *
+ * The order's row is written first, under the sender's request id, which the database keeps unique.
+ * When the same request arrives twice at once (a retry while the first try is still being saved), the
+ * second one waits for the first, saves nothing, and returns the first one's id.
  */
-export async function saveOrder(draft: OrderDraft, now = new Date()) {
+export async function saveOrder(
+  draft: OrderDraft,
+  sender: OrderSender,
+  now = new Date()
+) {
   const { lines, ...order } = draft
   for (let attempt = 1; ; attempt++) {
     try {
       return await getDb().$transaction(async (tx) => {
+        const saved = await tx.order.create({
+          data: {
+            ...order,
+            ...sender,
+            number: orderNumber(now, randomInt(10_000)),
+            placedAt: now,
+            lines: {
+              create: lines.map(({ image, ...line }) => ({
+                ...line,
+                imageSrc: image?.src ?? null,
+                imageAlt: image?.alt ?? null,
+              })),
+            },
+          },
+          select: { id: true },
+        })
         // Always in the same order of SKUs, so two orders that share variants can't wait on each
         // other's locks
         const bySku = [...lines].sort((a, b) => a.sku.localeCompare(b.sku))
@@ -108,26 +172,14 @@ export async function saveOrder(draft: OrderDraft, now = new Date()) {
           })
           if (count === 0) throw new OutOfStockError(line.sku)
         }
-        const saved = await tx.order.create({
-          data: {
-            ...order,
-            number: orderNumber(now, randomInt(10_000)),
-            placedAt: now,
-            lines: {
-              create: lines.map(({ image, ...line }) => ({
-                ...line,
-                imageSrc: image?.src ?? null,
-                imageAlt: image?.alt ?? null,
-              })),
-            },
-          },
-          select: { id: true },
-        })
         return saved.id
       })
     } catch (error) {
-      if (attempt < NUMBER_ATTEMPTS && isTakenNumber(error)) continue
-      throw error
+      if (!isTakenValue(error)) throw error
+      const saved = await findOrderByRequest(sender.requestId)
+      if (saved) return saved
+      // The short number is the one that is taken: draw another
+      if (attempt === NUMBER_ATTEMPTS) throw error
     }
   }
 }
@@ -136,7 +188,7 @@ export async function saveOrder(draft: OrderDraft, now = new Date()) {
 export async function getOrder(id: string): Promise<PlacedOrder | null> {
   const order = await getDb().order.findUnique({
     where: { id },
-    omit: { placedAt: true },
+    omit: { placedAt: true, requestId: true, clientIp: true },
     include: { lines: { orderBy: { id: "asc" } } },
   })
   if (!order) return null
