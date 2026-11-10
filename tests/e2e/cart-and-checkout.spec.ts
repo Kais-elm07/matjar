@@ -242,3 +242,32 @@ test("A product saved to the wishlist appears on the wishlist page and can be re
   await saved.getByRole("button", { name: `حفظ ${name} في المفضلة` }).click()
   await expect(page.getByText("لا توجد منتجات في المفضلة")).toBeVisible()
 })
+
+test("A saved product that is no longer in the store is dropped from the wishlist", async ({
+  page,
+  request,
+}) => {
+  const [product] = await loadProducts(request)
+  if (!product) throw new Error("The store has no products")
+  await page.addInitScript(
+    (slugs) => {
+      localStorage.setItem(
+        "matjar-wishlist",
+        JSON.stringify({ state: { slugs }, version: 1 })
+      )
+    },
+    [product.slug, "no-such-product"]
+  )
+
+  await open(page, "/wishlist/")
+  await expect(
+    page.getByRole("article").filter({ hasText: product.name })
+  ).toBeVisible()
+  await expect(
+    page.getByText("بعض ما حفظته لم يعد في المتجر، فحذفناه من المفضلة.")
+  ).toBeVisible()
+  // The counter no longer counts the product that left
+  await expect(
+    page.getByRole("link", { name: "المفضلة (1)" }).first()
+  ).toBeVisible()
+})

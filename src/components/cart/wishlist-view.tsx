@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import Link from "next/link"
 import { HeartIcon, WifiOffIcon } from "lucide-react"
 
@@ -12,15 +13,28 @@ import type { SearchCardData } from "@/lib/catalog/types"
 import { useSearchIndex } from "@/lib/search/use-search-index"
 import { useWishlistRestored } from "@/lib/state/hydration"
 import { useWishlistStore } from "@/lib/state/wishlist"
+import { toast } from "@/lib/toast"
 
 /**
  * The wishlist page: cards for the products saved in the browser.
- * The card data comes from the published search index, so it shows the latest price and stock.
+ * The card data comes from the published search index, so it shows the latest price and stock, and a
+ * saved product that is no longer in the index is dropped from the wishlist.
  */
 export function WishlistView() {
   const restored = useWishlistRestored()
   const slugs = useWishlistStore((state) => state.slugs)
+  const prune = useWishlistStore((state) => state.prune)
   const { data, error, retry } = useSearchIndex(restored && slugs.length > 0)
+
+  // A product that left the store after it was saved leaves the wishlist too, so the counter in the
+  // header matches the cards on this page
+  useEffect(() => {
+    if (!data) return
+    const dropped = prune(new Set(data.map((product) => product.slug)))
+    if (dropped > 0) {
+      toast("بعض ما حفظته لم يعد في المتجر، فحذفناه من المفضلة.")
+    }
+  }, [data, prune])
 
   if (!restored || (slugs.length > 0 && !data && !error)) {
     return <ProductGridSkeleton count={4} />
@@ -58,7 +72,7 @@ export function WishlistView() {
   }
 
   const bySlug = new Map(data.map((product) => [product.slug, product]))
-  // A product removed from the store after it was saved is not shown
+  // Until the effect above has dropped them, saved products that left the store are skipped
   const products = slugs
     .map((slug) => bySlug.get(slug))
     .filter((product): product is SearchCardData => Boolean(product))

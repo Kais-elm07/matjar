@@ -12,6 +12,8 @@ type WishlistState = {
   /** Adds or removes the product, and returns true if it is now in the wishlist. */
   toggle: (slug: string) => boolean
   remove: (slug: string) => void
+  /** Drops the saved products that are no longer in the store, and returns how many were dropped. */
+  prune: (inStore: ReadonlySet<string>) => number
 }
 
 export const useWishlistStore = create<WishlistState>()(
@@ -33,6 +35,14 @@ export const useWishlistStore = create<WishlistState>()(
         set((state) => ({
           slugs: state.slugs.filter((item) => item !== slug),
         }))
+      },
+
+      prune(inStore) {
+        const { slugs } = get()
+        const kept = slugs.filter((slug) => inStore.has(slug))
+        // No storage write and no re-render if every saved product is still in the store
+        if (kept.length < slugs.length) set({ slugs: kept })
+        return slugs.length - kept.length
       },
     }),
     {
