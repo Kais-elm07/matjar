@@ -105,6 +105,8 @@ pnpm start
 
 Set the variables in the server's environment before these commands. `pnpm start` listens on port 3000 (or the `PORT` variable). Restart it after every new build.
 
+The limit of 10 orders an hour from one address reads the visitor's address from the header Netlify writes itself, `x-nf-client-connection-ip` (`CLIENT_IP_HEADER` in `src/lib/checkout/actions.ts`). Where that header is absent, as on your own server, orders are not counted: set the constant to the header your web server or host writes, and make sure a visitor can't send that header themselves.
+
 ## After deploying: checklist
 
 1. **Features on the real URL:** the home page, a product page, search, filters and the cart, also from a real phone. The browser's console must stay free of errors; a React error #418 there means the page was drawn twice (see `src/lib/render-later.ts`).

@@ -844,7 +844,7 @@ Each step is merged into `main` and deployed on its own, once the checks and the
 
 - No secret keys in the code. The database address lives only in the host's environment variables, and variables starting with `NEXT_PUBLIC_` (which reach the browser) never hold a secret.
 - Since phase 12 the order form data is sent to the server and stored with the order; the privacy page says so. An order's page opens only with its long, unguessable id.
-- The Server Actions check every argument again, and price the order from the server's own data.
+- The Server Actions check every argument again, and price the order from the server's own data. Placing an order is bounded: 10 orders an hour from one address, 50 products an order, a maximum length for every text field, and one saved order for a request that is sent twice.
 - localStorage holds only the cart and the wishlist, with no sensitive data.
 - HTTPS is enforced in the hosting settings.
 - Security headers (such as CSP) are set in `next.config.ts` (`headers()`).
