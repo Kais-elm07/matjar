@@ -7,10 +7,13 @@ import {
   filterCards,
   paginate,
   sortCards,
-} from "@/lib/listing/filter"
-import { parseListingParams, type ListingParams } from "@/lib/listing/params"
-import { normalizeForSearch } from "@/lib/search/normalize"
-import { searchCards } from "@/lib/search/search-cards"
+} from "@/modules/listing/filter"
+import {
+  parseListingParams,
+  type ListingParams,
+} from "@/modules/listing/params"
+import { normalizeForSearch } from "@/modules/search/normalize"
+import { searchCards } from "@/modules/search/match"
 
 function card(
   fields: Partial<SearchCardData> & Pick<SearchCardData, "slug" | "name">

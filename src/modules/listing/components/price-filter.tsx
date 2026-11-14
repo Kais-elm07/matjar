@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 
-import { FilterSection } from "@/components/listing/filter-section"
-import type { FilterChange } from "@/components/listing/filter-types"
+import { FilterSection } from "@/modules/listing/components/filter-section"
+import type { FilterChange } from "@/modules/listing/components/filter-types"
 import { Slider, type SliderRange } from "@/components/ui/slider"
 import { formatPrice, toMinorUnits } from "@/lib/money"
 

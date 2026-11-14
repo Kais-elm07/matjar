@@ -4,7 +4,7 @@ import {
   sortOptionValues,
 } from "@/modules/catalog/options"
 import type { ProductCardData } from "@/modules/catalog/types"
-import type { ListingParams, SortValue } from "@/lib/listing/params"
+import type { ListingParams, SortValue } from "@/modules/listing/params"
 import { toMajorUnits, toMinorUnits } from "@/lib/money"
 
 /**

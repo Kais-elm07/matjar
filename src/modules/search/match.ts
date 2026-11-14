@@ -1,5 +1,5 @@
 import type { SearchCardData } from "@/modules/catalog/types"
-import { normalizeForSearch, toSearchTerms } from "@/lib/search/normalize"
+import { normalizeForSearch, toSearchTerms } from "@/modules/search/normalize"
 
 /**
  * Search results sorted by relevance: matches in the name first, then best sellers.

@@ -4,14 +4,14 @@ import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { WifiOffIcon } from "lucide-react"
 
-import { ListingSkeleton } from "@/components/listing/listing-skeleton"
-import { ListingView } from "@/components/listing/listing-view"
-import { SearchBox } from "@/components/search/search-box"
+import { ListingSkeleton } from "@/modules/listing/components/listing-skeleton"
+import { ListingView } from "@/modules/listing/components/listing-view"
+import { SearchBox } from "@/modules/search/components/search-box"
 import { EmptyState } from "@/components/shared/empty-state"
 import { Button } from "@/components/ui/button"
 import type { CategoryOption } from "@/modules/catalog/types"
 import { categoryPath } from "@/lib/routes"
-import { useSearchIndex } from "@/lib/search/use-search-index"
+import { useSearchIndex } from "@/modules/search/use-search-index"
 
 interface SearchViewProps {
   categories: CategoryOption[]

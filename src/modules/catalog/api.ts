@@ -6,7 +6,7 @@ import {
   getSearchIndex,
 } from "@/modules/catalog/queries"
 import type { ProductsResponse } from "@/modules/catalog/types"
-import { searchCards } from "@/lib/search/search-cards"
+import { searchCards } from "@/modules/search/match"
 
 /**
  * The answers of the products API (src/app/api/products). The catalog comes from the server's cache

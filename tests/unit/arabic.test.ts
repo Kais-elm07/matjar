@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 
 import { toWesternDigits } from "@/lib/arabic-digits"
 import { PIECE_FORMS, PRODUCT_FORMS, pluralize } from "@/lib/arabic-plural"
-import { normalizeForSearch, toSearchTerms } from "@/lib/search/normalize"
+import { normalizeForSearch, toSearchTerms } from "@/modules/search/normalize"
 
 describe("normalizeForSearch", () => {
   it("removes diacritics and tatweel", () => {

@@ -8,7 +8,7 @@ import {
   sortOptionsFor,
   toSearchParams,
   type ListingParams,
-} from "@/lib/listing/params"
+} from "@/modules/listing/params"
 
 const defaults = parseListingParams({})
 const withParams = (changes: Partial<ListingParams>): ListingParams => ({

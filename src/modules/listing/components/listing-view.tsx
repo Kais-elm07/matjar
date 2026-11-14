@@ -5,13 +5,13 @@ import dynamic from "next/dynamic"
 import { usePathname } from "next/navigation"
 import { SlidersHorizontalIcon } from "lucide-react"
 
-import { ActiveFilters } from "@/components/listing/active-filters"
-import { ListingEmpty } from "@/components/listing/listing-empty"
-import { ListingPagination } from "@/components/listing/listing-pagination"
+import { ActiveFilters } from "@/modules/listing/components/active-filters"
+import { ListingEmpty } from "@/modules/listing/components/listing-empty"
+import { ListingPagination } from "@/modules/listing/components/listing-pagination"
 import {
   LISTING_GRID,
   LISTING_LAYOUT,
-} from "@/components/listing/listing-skeleton"
+} from "@/modules/listing/components/listing-skeleton"
 import { ProductGrid } from "@/modules/catalog/components/product-grid"
 import { Optional } from "@/components/shared/optional"
 import { Button } from "@/components/ui/button"
@@ -30,7 +30,7 @@ import {
   filterCards,
   paginate,
   sortCards,
-} from "@/lib/listing/filter"
+} from "@/modules/listing/filter"
 import {
   CLEARED_FILTERS,
   countActiveFilters,
@@ -40,22 +40,26 @@ import {
   parseListingParams,
   sortOptionsFor,
   type ListingParams,
-} from "@/lib/listing/params"
-import { updateListingUrl, useListingQuery } from "@/lib/listing/url-query"
+} from "@/modules/listing/params"
+import { updateListingUrl, useListingQuery } from "@/modules/listing/url-query"
 import { scrollBehavior } from "@/lib/motion"
-import { searchCards } from "@/lib/search/search-cards"
+import { searchCards } from "@/modules/search/match"
 import { cn } from "@/lib/utils"
 
 // The filter panel renders in the sidebar on desktop only, and on mobile inside the
 // "تصفية" (Filter) sheet, so on mobile its code loads only after the page appears
 const loadFilterPanel = () =>
-  import("@/components/listing/filter-panel").then((mod) => mod.FilterPanel)
+  import("@/modules/listing/components/filter-panel").then(
+    (mod) => mod.FilterPanel
+  )
 const FilterPanel = dynamic(loadFilterPanel, { ssr: false })
 
 // The mobile-only filter sheet: its code loads after the page appears, or on the first tap on "تصفية"
 const FilterSheet = dynamic(
   () =>
-    import("@/components/listing/filter-sheet").then((mod) => mod.FilterSheet),
+    import("@/modules/listing/components/filter-sheet").then(
+      (mod) => mod.FilterSheet
+    ),
   { ssr: false }
 )
 

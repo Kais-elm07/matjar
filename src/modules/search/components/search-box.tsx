@@ -7,15 +7,15 @@ import { SearchIcon } from "lucide-react"
 
 import { Optional } from "@/components/shared/optional"
 import { productPath, searchPath } from "@/lib/routes"
-import { searchCards } from "@/lib/search/search-cards"
-import { useSearchIndex } from "@/lib/search/use-search-index"
+import { searchCards } from "@/modules/search/match"
+import { useSearchIndex } from "@/modules/search/use-search-index"
 import { cn } from "@/lib/utils"
 
 const MAX_SUGGESTIONS = 6
 
 // The suggestions list's code loads when the field gets focus, before the first letter, not with every page
 const loadSuggestions = () =>
-  import("@/components/search/search-suggestions").then(
+  import("@/modules/search/components/search-suggestions").then(
     (mod) => mod.SearchSuggestions
   )
 const SearchSuggestions = dynamic(loadSuggestions, { ssr: false })

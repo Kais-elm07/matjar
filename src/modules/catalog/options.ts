@@ -1,4 +1,4 @@
-import { normalizeForSearch } from "@/lib/search/normalize"
+import { normalizeForSearch } from "@/modules/search/normalize"
 
 /** A variant's option values: { "المقاس": "L", "اللون": "أزرق" } (size L, color blue) */
 export type VariantOptions = Record<string, string>

@@ -1,7 +1,10 @@
 "use client"
 
-import { fromURLSearchParams, parseListingParams } from "@/lib/listing/params"
-import { useListingQuery } from "@/lib/listing/url-query"
+import {
+  fromURLSearchParams,
+  parseListingParams,
+} from "@/modules/listing/params"
+import { useListingQuery } from "@/modules/listing/url-query"
 
 /**
  * The products page title, based on the URL: "العروض" (Offers), "وصل حديثاً" (New arrivals)

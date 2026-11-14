@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 
 import { StoreShell } from "@/components/layout/store-shell"
-import { SearchBox } from "@/components/search/search-box"
+import { SearchBox } from "@/modules/search/components/search-box"
 import { buttonVariants } from "@/components/ui/button"
 
 export const metadata: Metadata = {

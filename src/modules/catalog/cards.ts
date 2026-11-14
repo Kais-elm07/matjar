@@ -3,7 +3,7 @@ import type {
   ProductCardData,
   SearchCardData,
 } from "@/modules/catalog/types"
-import { normalizeForSearch } from "@/lib/search/normalize"
+import { normalizeForSearch } from "@/modules/search/normalize"
 
 /**
  * Card data that reaches the browser: the least that is enough for display and filtering,

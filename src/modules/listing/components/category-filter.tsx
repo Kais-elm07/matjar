@@ -1,7 +1,7 @@
 "use client"
 
-import { CategoryFilterButton } from "@/components/listing/category-filter-button"
-import { FilterSection } from "@/components/listing/filter-section"
+import { CategoryFilterButton } from "@/modules/listing/components/category-filter-button"
+import { FilterSection } from "@/modules/listing/components/filter-section"
 import type { CategoryOption } from "@/modules/catalog/types"
 
 interface CategoryFilterProps {

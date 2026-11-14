@@ -1,18 +1,18 @@
 "use client"
 
-import { CategoryFilter } from "@/components/listing/category-filter"
-import { CheckRow } from "@/components/listing/check-row"
-import { FilterSection } from "@/components/listing/filter-section"
-import type { FilterChange } from "@/components/listing/filter-types"
-import { OptionFilter } from "@/components/listing/option-filter"
-import { PriceFilter } from "@/components/listing/price-filter"
+import { CategoryFilter } from "@/modules/listing/components/category-filter"
+import { CheckRow } from "@/modules/listing/components/check-row"
+import { FilterSection } from "@/modules/listing/components/filter-section"
+import type { FilterChange } from "@/modules/listing/components/filter-types"
+import { OptionFilter } from "@/modules/listing/components/option-filter"
+import { PriceFilter } from "@/modules/listing/components/price-filter"
 import type { CategoryOption } from "@/modules/catalog/types"
-import type { Facets } from "@/lib/listing/filter"
+import type { Facets } from "@/modules/listing/filter"
 import {
   CLEARED_FILTERS,
   countActiveFilters,
   type ListingParams,
-} from "@/lib/listing/params"
+} from "@/modules/listing/params"
 
 interface FilterPanelProps {
   params: ListingParams

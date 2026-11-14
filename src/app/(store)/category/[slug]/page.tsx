@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
-import { ListingView } from "@/components/listing/listing-view"
-import { SubcategoryNav } from "@/components/listing/subcategory-nav"
+import { ListingView } from "@/modules/listing/components/listing-view"
+import { SubcategoryNav } from "@/modules/listing/components/subcategory-nav"
 import { Breadcrumbs } from "@/components/shared/breadcrumbs"
 import { JsonLd } from "@/components/shared/json-ld"
 import { siteConfig } from "@/config/site"

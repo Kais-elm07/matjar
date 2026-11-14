@@ -1,6 +1,6 @@
 "use client"
 
-import { SearchBox } from "@/components/search/search-box"
+import { SearchBox } from "@/modules/search/components/search-box"
 import { useUiStore } from "@/lib/state/ui"
 
 /** The search row under the header on mobile, shown when the search button is pressed. */

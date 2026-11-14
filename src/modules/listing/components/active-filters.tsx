@@ -3,7 +3,7 @@
 import { XIcon } from "lucide-react"
 
 import type { CategoryOption } from "@/modules/catalog/types"
-import { CLEARED_FILTERS, type ListingParams } from "@/lib/listing/params"
+import { CLEARED_FILTERS, type ListingParams } from "@/modules/listing/params"
 import { formatPrice, toMinorUnits } from "@/lib/money"
 
 function priceLabel(min: number | null, max: number | null) {

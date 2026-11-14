@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
-import { ListingView } from "@/components/listing/listing-view"
-import { ProductsHeading } from "@/components/listing/products-heading"
+import { ListingView } from "@/modules/listing/components/listing-view"
+import { ProductsHeading } from "@/modules/listing/components/products-heading"
 import { Breadcrumbs } from "@/components/shared/breadcrumbs"
 import { siteConfig } from "@/config/site"
 import { getCategoryOptions, getProductCards } from "@/modules/catalog/queries"

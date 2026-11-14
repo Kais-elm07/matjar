@@ -5,7 +5,10 @@ import { SearchXIcon } from "lucide-react"
 
 import { EmptyState } from "@/components/shared/empty-state"
 import { Button, buttonVariants } from "@/components/ui/button"
-import { countActiveFilters, type ListingParams } from "@/lib/listing/params"
+import {
+  countActiveFilters,
+  type ListingParams,
+} from "@/modules/listing/params"
 
 interface ListingEmptyProps {
   params: ListingParams

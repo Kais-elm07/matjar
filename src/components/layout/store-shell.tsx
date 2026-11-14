@@ -2,7 +2,7 @@ import { Suspense } from "react"
 
 import { LazyCartSheet } from "@/components/cart/lazy-cart-sheet"
 import { CartWishlistRestorer } from "@/components/global/cart-wishlist-restorer"
-import { ListingUrlListener } from "@/components/global/listing-url-listener"
+import { ListingUrlListener } from "@/modules/listing/components/listing-url-listener"
 import { AnnouncementBar } from "@/components/layout/announcement-bar"
 import { LazyMobileNavSheet } from "@/components/layout/lazy-mobile-nav-sheet"
 import { MobileTabBar } from "@/components/layout/mobile-tab-bar"

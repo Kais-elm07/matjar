@@ -9,7 +9,7 @@ import { useSyncExternalStore } from "react"
  * Why not use useSearchParams directly? On a page prepared at build time, useSearchParams makes the list
  * render only in the browser, so the products are missing from the HTML file and the images load late.
  * Here the list is prepared at build time without filters, then the URL filters apply as soon as the page loads.
- * ListingUrlListener (src/components/global/listing-url-listener.tsx) reports every URL change here.
+ * ListingUrlListener (src/modules/listing/components/listing-url-listener.tsx) reports every URL change here.
  */
 
 let current = typeof window === "undefined" ? "" : window.location.search
