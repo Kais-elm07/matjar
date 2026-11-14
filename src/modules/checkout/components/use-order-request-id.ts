@@ -2,7 +2,7 @@
 
 import { useCallback, useRef } from "react"
 
-import type { RequestedLine } from "@/lib/checkout/orders"
+import type { RequestedLine } from "@/modules/checkout/orders-db"
 
 /**
  * The id the checkout sends with an order (placeOrder's requestId). It stays the same for as long as

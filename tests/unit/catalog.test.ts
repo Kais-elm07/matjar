@@ -18,7 +18,7 @@ import {
 import { isSimilarProducts } from "@/modules/catalog/guards"
 import { getHomeContent, getHomeSections } from "@/modules/home/sections"
 import { optionsKey } from "@/modules/catalog/variant-key"
-import { getCheckoutConfig } from "@/lib/checkout/config"
+import { getCheckoutConfig } from "@/modules/checkout/config"
 import { storeToday } from "@/lib/dates"
 import { discountPercent, toMinorUnits } from "@/lib/money"
 import { productPath } from "@/lib/routes"

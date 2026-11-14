@@ -1,4 +1,4 @@
-import type { ShippingInput } from "@/lib/checkout/types"
+import type { ShippingInput } from "@/modules/checkout/types"
 
 /**
  * Shipping settings: the cities, delivery price and time, and the free shipping threshold. Amounts are in riyals.

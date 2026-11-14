@@ -1,7 +1,7 @@
 import "server-only"
 
 import { siteConfig } from "@/config/site"
-import { getCheckoutConfig } from "@/lib/checkout/config"
+import { getCheckoutConfig } from "@/modules/checkout/config"
 import { formatPrice } from "@/lib/money"
 
 /** The analytics sentence on the privacy page, based on what is enabled in src/config/site.ts. */

@@ -7,9 +7,9 @@ import { headers } from "next/headers"
 
 import { CATALOG_TAG } from "@/modules/catalog/load"
 import type { CartCatalog } from "@/modules/catalog/types"
-import { getCheckoutConfig } from "@/lib/checkout/config"
-import { checkoutSchema, type CheckoutInput } from "@/lib/checkout/form-schema"
-import { buildOrder } from "@/lib/checkout/order"
+import { getCheckoutConfig } from "@/modules/checkout/config"
+import { checkoutSchema, type CheckoutInput } from "@/modules/checkout/schema"
+import { buildOrder } from "@/modules/checkout/order"
 import {
   findOrderByRequest,
   liveCartCatalog,
@@ -18,13 +18,13 @@ import {
   reachedOrderLimit,
   saveOrder,
   type RequestedLine,
-} from "@/lib/checkout/orders"
+} from "@/modules/checkout/orders-db"
 import {
   couponMinimumMessage,
   couponProblem,
   findCoupon,
-} from "@/lib/checkout/totals"
-import type { Coupon } from "@/lib/checkout/types"
+} from "@/modules/checkout/totals"
+import type { Coupon } from "@/modules/checkout/types"
 import { z } from "@/lib/zod"
 
 /**

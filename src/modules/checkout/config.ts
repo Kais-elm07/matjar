@@ -2,7 +2,7 @@ import "server-only"
 
 import { coupons as couponData } from "@/data/coupons"
 import { shipping as shippingData } from "@/data/shipping"
-import type { CheckoutConfig, ShippingConfig } from "@/lib/checkout/types"
+import type { CheckoutConfig, ShippingConfig } from "@/modules/checkout/types"
 import { toMinorUnits } from "@/lib/money"
 import { z } from "@/lib/zod"
 

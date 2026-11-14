@@ -2,7 +2,7 @@
 
 import { useFormContext, useFormState, type FieldPath } from "react-hook-form"
 
-import type { CheckoutInput } from "@/lib/checkout/form-schema"
+import type { CheckoutInput } from "@/modules/checkout/schema"
 
 type FieldName = FieldPath<CheckoutInput>
 

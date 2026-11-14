@@ -2,11 +2,11 @@ import Image from "next/image"
 import Link from "next/link"
 import { CircleCheckIcon, InfoIcon } from "lucide-react"
 
-import { OrderDetailRow } from "@/components/checkout/order-detail-row"
+import { OrderDetailRow } from "@/modules/checkout/components/order-detail-row"
 import { buttonVariants } from "@/components/ui/button"
 import { PIECE_FORMS, pluralize } from "@/lib/arabic-plural"
 import { formatOptions } from "@/modules/catalog/options"
-import { shippingLabel, type PlacedOrder } from "@/lib/checkout/order"
+import { shippingLabel, type PlacedOrder } from "@/modules/checkout/order"
 import { formatPrice, formatShipping } from "@/lib/money"
 
 interface OrderConfirmationProps {

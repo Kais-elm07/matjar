@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 
-import { CheckoutView } from "@/components/checkout/checkout-view"
+import { CheckoutView } from "@/modules/checkout/components/checkout-view"
 import { Breadcrumbs } from "@/components/shared/breadcrumbs"
-import { getShippingConfig } from "@/lib/checkout/config"
+import { getShippingConfig } from "@/modules/checkout/config"
 
 export const metadata: Metadata = {
   title: "إتمام الطلب",

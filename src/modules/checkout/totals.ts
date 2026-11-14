@@ -5,7 +5,7 @@ import type {
   ShippingCity,
   ShippingConfig,
   ShippingMethod,
-} from "@/lib/checkout/types"
+} from "@/modules/checkout/types"
 import { formatPrice } from "@/lib/money"
 
 /** Sum of the lines' prices in the smallest unit. */

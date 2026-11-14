@@ -1,24 +1,28 @@
 import { describe, expect, it } from "vitest"
 
-import { deliveryTime } from "@/lib/checkout/delivery"
+import { deliveryTime } from "@/modules/checkout/delivery"
 import {
   checkoutSchema,
   normalizePhone,
   type CheckoutValues,
-} from "@/lib/checkout/form-schema"
-import { buildOrder, orderNumber, type OrderLine } from "@/lib/checkout/order"
+} from "@/modules/checkout/schema"
+import {
+  buildOrder,
+  orderNumber,
+  type OrderLine,
+} from "@/modules/checkout/order"
 import {
   calculateTotals,
   couponProblem,
   findCoupon,
   shippingFee,
-} from "@/lib/checkout/totals"
+} from "@/modules/checkout/totals"
 import type {
   CheckoutConfig,
   Coupon,
   ShippingCity,
   ShippingMethod,
-} from "@/lib/checkout/types"
+} from "@/modules/checkout/types"
 
 // Amounts here are in halalas, as the functions compute them: 30000 means 300 SAR
 const riyadh: ShippingCity = {

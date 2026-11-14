@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
-import { OrderConfirmation } from "@/components/checkout/order-confirmation"
-import { getOrder } from "@/lib/checkout/orders"
+import { OrderConfirmation } from "@/modules/checkout/components/order-confirmation"
+import { getOrder } from "@/modules/checkout/orders-db"
 
 export const metadata: Metadata = {
   title: "تم تأكيد طلبك",

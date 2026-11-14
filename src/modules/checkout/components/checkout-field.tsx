@@ -2,9 +2,12 @@
 
 import { useFormState, type FieldPath } from "react-hook-form"
 
-import { errorId, hintId } from "@/components/checkout/use-checkout-field"
+import {
+  errorId,
+  hintId,
+} from "@/modules/checkout/components/use-checkout-field"
 import { Label } from "@/components/ui/label"
-import type { CheckoutInput } from "@/lib/checkout/form-schema"
+import type { CheckoutInput } from "@/modules/checkout/schema"
 import { cn } from "@/lib/utils"
 
 interface CheckoutFieldProps {

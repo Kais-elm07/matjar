@@ -1,8 +1,8 @@
 "use client"
 
-import { CheckoutField } from "@/components/checkout/checkout-field"
-import { CheckoutSection } from "@/components/checkout/checkout-section"
-import { useCheckoutField } from "@/components/checkout/use-checkout-field"
+import { CheckoutField } from "@/modules/checkout/components/checkout-field"
+import { CheckoutSection } from "@/modules/checkout/components/checkout-section"
+import { useCheckoutField } from "@/modules/checkout/components/use-checkout-field"
 import { Input } from "@/components/ui/input"
 
 /** Step 1 of the checkout: the name, the mobile number and an optional email. */

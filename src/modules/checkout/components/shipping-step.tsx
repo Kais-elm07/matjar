@@ -3,16 +3,16 @@
 import { TruckIcon, ZapIcon } from "lucide-react"
 import { useFormContext, useFormState } from "react-hook-form"
 
-import { CheckoutSection } from "@/components/checkout/checkout-section"
-import { ShippingOption } from "@/components/checkout/shipping-option"
-import { errorId } from "@/components/checkout/use-checkout-field"
-import { deliveryTime } from "@/lib/checkout/delivery"
-import type { CheckoutInput } from "@/lib/checkout/form-schema"
+import { CheckoutSection } from "@/modules/checkout/components/checkout-section"
+import { ShippingOption } from "@/modules/checkout/components/shipping-option"
+import { errorId } from "@/modules/checkout/components/use-checkout-field"
+import { deliveryTime } from "@/modules/checkout/delivery"
+import type { CheckoutInput } from "@/modules/checkout/schema"
 import type {
   ShippingCity,
   ShippingConfig,
   ShippingMethod,
-} from "@/lib/checkout/types"
+} from "@/modules/checkout/types"
 
 interface ShippingStepProps {
   /** The chosen city, or undefined before one is chosen */

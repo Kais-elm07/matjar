@@ -1,5 +1,5 @@
 import { toWesternDigits } from "@/lib/arabic-digits"
-import type { ShippingCity } from "@/lib/checkout/types"
+import type { ShippingCity } from "@/modules/checkout/types"
 import { z } from "@/lib/zod"
 
 /**

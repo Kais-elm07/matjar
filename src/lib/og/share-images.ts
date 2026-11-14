@@ -7,7 +7,7 @@ import { PRODUCT_FORMS, pluralize } from "@/lib/arabic-plural"
 import type { Catalog } from "@/modules/catalog/build"
 import { homeSections } from "@/modules/home/sections"
 import type { Category, Product } from "@/modules/catalog/types"
-import { getCheckoutConfig } from "@/lib/checkout/config"
+import { getCheckoutConfig } from "@/modules/checkout/config"
 import { discountPercent, formatPrice } from "@/lib/money"
 import {
   type Layer,

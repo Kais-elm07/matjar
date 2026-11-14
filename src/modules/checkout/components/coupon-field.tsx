@@ -5,9 +5,9 @@ import { TagIcon, XIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { lookupCoupon } from "@/lib/checkout/actions"
-import { couponMinimumMessage, couponProblem } from "@/lib/checkout/totals"
-import type { Coupon } from "@/lib/checkout/types"
+import { lookupCoupon } from "@/modules/checkout/actions"
+import { couponMinimumMessage, couponProblem } from "@/modules/checkout/totals"
+import type { Coupon } from "@/modules/checkout/types"
 import { cn } from "@/lib/utils"
 
 interface CouponFieldProps {

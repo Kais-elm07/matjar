@@ -1,6 +1,6 @@
 import { BanknoteIcon } from "lucide-react"
 
-import { CheckoutSection } from "@/components/checkout/checkout-section"
+import { CheckoutSection } from "@/modules/checkout/components/checkout-section"
 
 /** Step 4 of the checkout: cash on delivery, the demo store's only payment method. */
 export function PaymentStep() {

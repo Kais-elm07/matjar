@@ -15,7 +15,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { formatPrice } from "@/lib/money"
-import { cartSubtotal } from "@/lib/checkout/totals"
+import { cartSubtotal } from "@/modules/checkout/totals"
 import { useCartCount, useCartStore } from "@/modules/cart/store"
 import { useCartSync } from "@/modules/cart/sync"
 import { useUiStore } from "@/lib/state/ui"

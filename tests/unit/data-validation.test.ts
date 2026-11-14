@@ -230,7 +230,7 @@ describe("shipping and coupon files", () => {
     }))
     vi.doMock("@/data/coupons", () => ({ coupons: [] }))
 
-    const message = await errorOf(import("@/lib/checkout/config"))
+    const message = await errorOf(import("@/modules/checkout/config"))
     expect(message).toContain('المدينة "الرياض" مكررة.')
   })
 
@@ -242,7 +242,7 @@ describe("shipping and coupon files", () => {
       ],
     }))
 
-    const message = await errorOf(import("@/lib/checkout/config"))
+    const message = await errorOf(import("@/modules/checkout/config"))
     expect(message).toContain("الملف src/data/coupons.ts فيه أخطاء")
     expect(message).toContain("رمز الكوبون بأحرف إنجليزية كبيرة وأرقام فقط")
     expect(message).toContain("النسبة لا تتجاوز 100")
@@ -269,7 +269,7 @@ describe("shipping and coupon files", () => {
       ],
     }))
 
-    const message = await errorOf(import("@/lib/checkout/config"))
+    const message = await errorOf(import("@/modules/checkout/config"))
     expect(message).toContain("أقصى خصم (maxDiscount) للكوبونات النسبية فقط")
     expect(message).toContain("كوبون الشحن المجاني لا يحتاج قيمة (value)")
     expect(message).toContain("أقصى خصم يجب أن يكون أكبر من صفر")

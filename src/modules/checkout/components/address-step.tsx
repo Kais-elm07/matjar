@@ -2,14 +2,14 @@
 
 import { useFormContext } from "react-hook-form"
 
-import { CheckoutField } from "@/components/checkout/checkout-field"
-import { CheckoutSection } from "@/components/checkout/checkout-section"
-import { useCheckoutField } from "@/components/checkout/use-checkout-field"
+import { CheckoutField } from "@/modules/checkout/components/checkout-field"
+import { CheckoutSection } from "@/modules/checkout/components/checkout-section"
+import { useCheckoutField } from "@/modules/checkout/components/use-checkout-field"
 import { Input } from "@/components/ui/input"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { Textarea } from "@/components/ui/textarea"
-import type { CheckoutInput } from "@/lib/checkout/form-schema"
-import type { ShippingCity } from "@/lib/checkout/types"
+import type { CheckoutInput } from "@/modules/checkout/schema"
+import type { ShippingCity } from "@/modules/checkout/types"
 
 interface AddressStepProps {
   cities: ShippingCity[]

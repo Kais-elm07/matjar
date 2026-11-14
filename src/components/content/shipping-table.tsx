@@ -1,6 +1,6 @@
-import { getCheckoutConfig } from "@/lib/checkout/config"
-import { deliveryTime } from "@/lib/checkout/delivery"
-import { shippingFee } from "@/lib/checkout/totals"
+import { getCheckoutConfig } from "@/modules/checkout/config"
+import { deliveryTime } from "@/modules/checkout/delivery"
+import { shippingFee } from "@/modules/checkout/totals"
 import { formatPrice } from "@/lib/money"
 
 /** Table of cities with delivery prices and times, from src/data/shipping.ts so it matches the checkout page. */

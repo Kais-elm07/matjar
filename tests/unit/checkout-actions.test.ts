@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { getProducts } from "@/modules/catalog/queries"
-import { lookupCoupon, placeOrder } from "@/lib/checkout/actions"
-import { getCheckoutConfig } from "@/lib/checkout/config"
-import type { CheckoutInput } from "@/lib/checkout/form-schema"
+import { lookupCoupon, placeOrder } from "@/modules/checkout/actions"
+import { getCheckoutConfig } from "@/modules/checkout/config"
+import type { CheckoutInput } from "@/modules/checkout/schema"
 import {
   findOrderByRequest,
   linesFromProducts,
@@ -11,8 +11,8 @@ import {
   OutOfStockError,
   reachedOrderLimit,
   saveOrder,
-} from "@/lib/checkout/orders"
-import { calculateTotals } from "@/lib/checkout/totals"
+} from "@/modules/checkout/orders-db"
+import { calculateTotals } from "@/modules/checkout/totals"
 
 /**
  * What the server checks before it saves anything. The unit tests read the products from src/data
@@ -30,7 +30,7 @@ vi.mock("next/cache", () => ({ revalidateTag }))
 vi.mock("next/headers", () => ({
   headers: async () => new Headers({ "x-nf-client-connection-ip": SENDER }),
 }))
-vi.mock(import("@/lib/checkout/orders"), async (importOriginal) => ({
+vi.mock(import("@/modules/checkout/orders-db"), async (importOriginal) => ({
   ...(await importOriginal()),
   findOrderByRequest: vi.fn(async () => null),
   reachedOrderLimit: vi.fn(async () => false),

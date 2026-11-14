@@ -8,8 +8,8 @@ import {
   checkoutSchema,
   type CheckoutInput,
   type CheckoutValues,
-} from "@/lib/checkout/form-schema"
-import type { ShippingCity } from "@/lib/checkout/types"
+} from "@/modules/checkout/schema"
+import type { ShippingCity } from "@/modules/checkout/types"
 
 /**
  * The checkout form: its rules with Arabic messages, its empty values, and errors that show once a

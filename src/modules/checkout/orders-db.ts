@@ -13,7 +13,7 @@ import {
   type OrderDraft,
   type OrderLine,
   type PlacedOrder,
-} from "@/lib/checkout/order"
+} from "@/modules/checkout/order"
 import { lineLimit } from "@/modules/cart/quantity"
 import { getDb } from "@/lib/db"
 

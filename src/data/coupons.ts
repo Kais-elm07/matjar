@@ -1,9 +1,9 @@
-import type { CouponInput } from "@/lib/checkout/types"
+import type { CouponInput } from "@/modules/checkout/types"
 
 /**
  * Demo discount coupons. Amounts are in riyals.
  * The codes stay on the server: the checkout asks the server about a code (lookupCoupon in
- * src/lib/checkout/actions.ts), so visitors can't read the list in the page's code.
+ * src/modules/checkout/actions.ts), so visitors can't read the list in the page's code.
  */
 export const coupons: CouponInput[] = [
   {

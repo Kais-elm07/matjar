@@ -1,17 +1,17 @@
 import type { VariantOptions } from "@/modules/catalog/options"
 import type { CardImage } from "@/modules/catalog/types"
-import { deliveryTime } from "@/lib/checkout/delivery"
-import type { CheckoutValues } from "@/lib/checkout/form-schema"
+import { deliveryTime } from "@/modules/checkout/delivery"
+import type { CheckoutValues } from "@/modules/checkout/schema"
 import {
   calculateTotals,
   cartSubtotal,
   couponProblem,
-} from "@/lib/checkout/totals"
+} from "@/modules/checkout/totals"
 import type {
   Coupon,
   ShippingConfig,
   ShippingMethod,
-} from "@/lib/checkout/types"
+} from "@/modules/checkout/types"
 import { storeToday } from "@/lib/dates"
 
 /** One product of an order, with the catalog's name, photo and price when it was ordered. */

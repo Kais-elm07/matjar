@@ -36,7 +36,7 @@ function photoLook(image: Pick<ProductImageRow, "tone" | "cutout">): PhotoLook {
 
 /**
  * One product as the pages show it on the given day. The orders build their products the same way
- * from the database (src/lib/checkout/orders.ts), so a deal that has ended is priced alike everywhere.
+ * from the database (src/modules/checkout/orders-db.ts), so a deal that has ended is priced alike everywhere.
  */
 export function productFromRow(
   row: ProductRow,

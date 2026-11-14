@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto"
 
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
 
-import type { OrderDraft } from "@/lib/checkout/order"
+import type { OrderDraft } from "@/modules/checkout/order"
 import {
   findOrderByRequest,
   ORDERS_PER_HOUR,
@@ -10,7 +10,7 @@ import {
   reachedOrderLimit,
   saveOrder,
   type OrderSender,
-} from "@/lib/checkout/orders"
+} from "@/modules/checkout/orders-db"
 import { getDb } from "@/lib/db"
 
 /**
