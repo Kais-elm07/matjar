@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 import Link from "next/link"
-import { HeartIcon, WifiOffIcon } from "lucide-react"
+import { HeartIcon, PackageOpenIcon, WifiOffIcon } from "lucide-react"
 
 import { ProductGrid } from "@/modules/catalog/components/product-grid"
 import { ProductGridSkeleton } from "@/modules/catalog/components/product-grid-skeleton"
@@ -26,9 +26,10 @@ export function WishlistView() {
   const { data, error, retry } = useSearchIndex(restored && slugs.length > 0)
 
   // A product that left the store after it was saved leaves the wishlist too, so the counter in the
-  // header matches the cards on this page
+  // header matches the cards on this page. A store with no products at all (the demo switch ?empty=1,
+  // or a broken answer) drops nothing: the saved products come back with the store.
   useEffect(() => {
-    if (!data) return
+    if (!data || data.length === 0) return
     const dropped = prune(new Set(data.map((product) => product.slug)))
     if (dropped > 0) {
       toast("بعض ما حفظته لم يعد في المتجر، فحذفناه من المفضلة.")
@@ -67,6 +68,16 @@ export function WishlistView() {
           إعادة المحاولة
         </Button>
       </EmptyState>
+    )
+  }
+
+  if (data.length === 0) {
+    return (
+      <EmptyState
+        icon={PackageOpenIcon}
+        title="لا توجد منتجات في المتجر الآن"
+        description="ما حفظته باقٍ في المفضلة، ويظهر هنا حين تعود المنتجات."
+      />
     )
   }
 

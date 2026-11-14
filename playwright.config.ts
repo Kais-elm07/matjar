@@ -63,12 +63,14 @@ export default defineConfig({
       port: PORT,
       reuseExistingServer: !isCI,
       // The admin panel's variables for this run only, made from the tests' own password, so no real
-      // password or hash is written anywhere in the project; and the uploads go to the fake storage
+      // password or hash is written anywhere in the project; the uploads go to the fake storage; and
+      // the demo switches (?delay=, ?fail=, ?empty=1) work, as they do outside production
       env: {
         ADMIN_PASSWORD_HASH: hashPassword(ADMIN_TEST_PASSWORD),
         ADMIN_SESSION_SECRET: newSessionSecret(),
         SUPABASE_URL: FAKE_STORAGE_URL,
         SUPABASE_SECRET_KEY: FAKE_STORAGE_KEY,
+        DEMO_SWITCHES: "1",
       },
     },
     {

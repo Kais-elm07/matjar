@@ -25,14 +25,18 @@ function apiError(status: number, message: string) {
  * GET /api/products/: every product card with its search text, or only the ones that match.
  * - q: words to search for, matched the same way as the store's search box
  * - category: a category slug; its subcategories are included
+ * `empty` answers with no products, for the demo switch ?empty=1 (src/lib/demo-switches.ts).
  */
-export async function productsResponse(params: URLSearchParams) {
+export async function productsResponse(
+  params: URLSearchParams,
+  { empty = false }: { empty?: boolean } = {}
+) {
   const category = params.get("category")
   if (category !== null && !(await getCategory(category))) {
     return apiError(404, "الفئة غير موجودة")
   }
 
-  let items = await getSearchIndex()
+  let items = empty ? [] : await getSearchIndex()
   if (category !== null) {
     items = items.filter((card) => card.categorySlugs.includes(category))
   }

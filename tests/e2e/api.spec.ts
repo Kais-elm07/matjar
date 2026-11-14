@@ -46,3 +46,27 @@ test("The products API answers 404 for an unknown product, and redirects an addr
   expect(withoutSlash.status()).toBe(308)
   expect(withoutSlash.headers().location).toBe(productsApiPath)
 })
+
+test("The demo switches make the API slow, failing or empty", async ({
+  request,
+}) => {
+  const start = Date.now()
+  const slow = await request.get(`${productsApiPath}?delay=1500`)
+  expect(slow.ok()).toBe(true)
+  expect(Date.now() - start).toBeGreaterThanOrEqual(1500)
+
+  for (const address of [
+    `${productsApiPath}?fail=500`,
+    "/cart-catalog.json?fail=503",
+    "/similar-products.json?fail=500",
+  ]) {
+    const failed = await request.get(address)
+    expect(failed.status()).toBeGreaterThanOrEqual(500)
+    expect(await failed.json()).toHaveProperty("error")
+  }
+
+  const empty = await request.get(`${productsApiPath}?empty=1`)
+  expect(await empty.json()).toEqual({ items: [], total: 0 })
+  const noSuggestions = await request.get("/similar-products.json?empty=1")
+  expect(await noSuggestions.json()).toEqual({})
+})
