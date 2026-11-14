@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 
-import { LazyCartSheet } from "@/components/cart/lazy-cart-sheet"
+import { LazyCartSheet } from "@/modules/cart/components/lazy-cart-sheet"
 import { CartWishlistRestorer } from "@/components/global/cart-wishlist-restorer"
 import { ListingUrlListener } from "@/modules/listing/components/listing-url-listener"
 import { AnnouncementBar } from "@/components/layout/announcement-bar"

@@ -11,7 +11,7 @@ import type {
 } from "@/modules/catalog/types"
 import { isCardImage, isVariantOptions } from "@/modules/catalog/guards"
 import { optionsKey } from "@/modules/catalog/variant-key"
-import { lineLimit } from "@/lib/checkout/quantity"
+import { lineLimit } from "@/modules/cart/quantity"
 import { isFiniteNumber, isNullOr, isRecord, isString } from "@/lib/guards"
 import { safeStorage } from "@/lib/state/storage"
 

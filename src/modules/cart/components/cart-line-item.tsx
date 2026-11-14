@@ -4,13 +4,13 @@ import Image from "next/image"
 import Link from "next/link"
 import { ImageOffIcon, Trash2Icon } from "lucide-react"
 
-import { QuantityStepper } from "@/components/cart/quantity-stepper"
+import { QuantityStepper } from "@/modules/cart/components/quantity-stepper"
 import { Button } from "@/components/ui/button"
 import { formatOptions } from "@/modules/catalog/options"
 import { formatPrice } from "@/lib/money"
 import { productPath } from "@/lib/routes"
-import { lineLimit } from "@/lib/checkout/quantity"
-import { useCartStore, type CartLine } from "@/lib/state/cart"
+import { lineLimit } from "@/modules/cart/quantity"
+import { useCartStore, type CartLine } from "@/modules/cart/store"
 import { cn } from "@/lib/utils"
 
 interface CartLineItemProps {

@@ -3,8 +3,8 @@
 import Link from "next/link"
 import { ShoppingCartIcon } from "lucide-react"
 
-import { CartLineItem } from "@/components/cart/cart-line-item"
-import { CartNotices } from "@/components/cart/cart-notices"
+import { CartLineItem } from "@/modules/cart/components/cart-line-item"
+import { CartNotices } from "@/modules/cart/components/cart-notices"
 import { buttonVariants } from "@/components/ui/button"
 import {
   Sheet,
@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/sheet"
 import { formatPrice } from "@/lib/money"
 import { cartSubtotal } from "@/lib/checkout/totals"
-import { useCartCount, useCartStore } from "@/lib/state/cart"
-import { useCartSync } from "@/lib/state/cart-sync"
+import { useCartCount, useCartStore } from "@/modules/cart/store"
+import { useCartSync } from "@/modules/cart/sync"
 import { useUiStore } from "@/lib/state/ui"
 
 /** The side cart panel: slides in from the end side when an item is added or the cart icon is pressed. */

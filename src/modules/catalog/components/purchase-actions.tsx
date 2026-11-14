@@ -1,8 +1,8 @@
 import { ShoppingCartIcon, ZapIcon } from "lucide-react"
 
-import { QuantityStepper } from "@/components/cart/quantity-stepper"
+import { QuantityStepper } from "@/modules/cart/components/quantity-stepper"
 import { ShareButton } from "@/modules/catalog/components/share-button"
-import { WishlistButton } from "@/components/product/wishlist-button"
+import { WishlistButton } from "@/modules/wishlist/components/wishlist-button"
 import { Button } from "@/components/ui/button"
 
 interface PurchaseActionsProps {

@@ -5,9 +5,9 @@ import { HeartIcon, ShoppingBagIcon } from "lucide-react"
 
 import { CountBadge } from "@/components/layout/count-badge"
 import { HEADER_ICON_BUTTON } from "@/components/layout/header-styles"
-import { useCartCount } from "@/lib/state/cart"
+import { useCartCount } from "@/modules/cart/store"
 import { useUiStore } from "@/lib/state/ui"
-import { useWishlistCount } from "@/lib/state/wishlist"
+import { useWishlistCount } from "@/modules/wishlist/store"
 import { cn } from "@/lib/utils"
 
 interface HeaderActionsProps {

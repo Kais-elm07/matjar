@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest"
 
-import { useWishlistStore } from "@/lib/state/wishlist"
+import { useWishlistStore } from "@/modules/wishlist/store"
 
 const wishlist = () => useWishlistStore.getState()
 

@@ -12,7 +12,7 @@ import { PRODUCT_FORMS, pluralize } from "@/lib/arabic-plural"
 import type { SearchCardData } from "@/modules/catalog/types"
 import { useSearchIndex } from "@/modules/search/use-search-index"
 import { useWishlistRestored } from "@/lib/state/hydration"
-import { useWishlistStore } from "@/lib/state/wishlist"
+import { useWishlistStore } from "@/modules/wishlist/store"
 import { toast } from "@/lib/toast"
 
 /**

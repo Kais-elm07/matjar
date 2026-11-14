@@ -8,7 +8,7 @@ import { listenForAddedProducts } from "@/lib/mascot/events"
 import type { MessageContent } from "@/lib/mascot/messages"
 import type { MascotScene } from "@/lib/mascot/scene/mascot-scene"
 import { loadSimilarProducts, pickSuggestions } from "@/lib/mascot/suggestions"
-import { useCartStore } from "@/lib/state/cart"
+import { useCartStore } from "@/modules/cart/store"
 
 /**
  * While Najm is on screen, he confirms every product added to the cart instead of the cart panel: he catches

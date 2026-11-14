@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { InfoIcon, ShoppingCartIcon } from "lucide-react"
 import { FormProvider, useWatch } from "react-hook-form"
 
-import { CartNotices } from "@/components/cart/cart-notices"
+import { CartNotices } from "@/modules/cart/components/cart-notices"
 import { AddressStep } from "@/components/checkout/address-step"
 import { CheckoutSkeleton } from "@/components/checkout/checkout-skeleton"
 import { ContactStep } from "@/components/checkout/contact-step"
@@ -27,8 +27,8 @@ import type {
 } from "@/lib/checkout/types"
 import { formatPrice } from "@/lib/money"
 import { orderPath } from "@/lib/routes"
-import { cartNoticeText, useCartStore } from "@/lib/state/cart"
-import { useCartSync } from "@/lib/state/cart-sync"
+import { cartNoticeText, useCartStore } from "@/modules/cart/store"
+import { useCartSync } from "@/modules/cart/sync"
 import { useCartRestored } from "@/lib/state/hydration"
 
 interface CheckoutViewProps {

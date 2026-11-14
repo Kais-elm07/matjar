@@ -8,7 +8,7 @@ import { mascotPhrases, type MessageContent } from "@/lib/mascot/messages"
 import { personaFor, showsCart } from "@/lib/mascot/persona"
 import type { MascotScene } from "@/lib/mascot/scene/mascot-scene"
 import { firstTimeThisVisit } from "@/lib/mascot/visit"
-import { useCartStore } from "@/lib/state/cart"
+import { useCartStore } from "@/modules/cart/store"
 
 /**
  * Najm's behavior on each page (personaFor): on every page change he shows or hides his cart and fills its

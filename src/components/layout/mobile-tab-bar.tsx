@@ -12,9 +12,9 @@ import {
 import { CountBadge } from "@/components/layout/count-badge"
 import { TabBarLink } from "@/components/layout/tab-bar-link"
 import { TAB_BAR_ITEM } from "@/components/layout/tab-bar-styles"
-import { useCartCount } from "@/lib/state/cart"
+import { useCartCount } from "@/modules/cart/store"
 import { useUiStore } from "@/lib/state/ui"
-import { useWishlistCount } from "@/lib/state/wishlist"
+import { useWishlistCount } from "@/modules/wishlist/store"
 import { cn } from "@/lib/utils"
 
 /** The fixed navigation bar at the bottom of the phone screen: Home, Categories, Search, Wishlist and Cart. */

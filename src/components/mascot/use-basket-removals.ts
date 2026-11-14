@@ -5,7 +5,7 @@ import { useEffect, type RefObject } from "react"
 import { mascotPhrases, type MessageContent } from "@/lib/mascot/messages"
 import { personaFor } from "@/lib/mascot/persona"
 import type { MascotScene } from "@/lib/mascot/scene/mascot-scene"
-import { useCartStore } from "@/lib/state/cart"
+import { useCartStore } from "@/modules/cart/store"
 
 /**
  * When a product leaves the cart (its delete button, or the cart sync after it sold out), Najm takes it out

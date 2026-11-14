@@ -14,7 +14,7 @@ import {
   type OrderLine,
   type PlacedOrder,
 } from "@/lib/checkout/order"
-import { lineLimit } from "@/lib/checkout/quantity"
+import { lineLimit } from "@/modules/cart/quantity"
 import { getDb } from "@/lib/db"
 
 /**

@@ -2,7 +2,7 @@
 
 import { InfoIcon } from "lucide-react"
 
-import { cartNoticeText, type CartNotice } from "@/lib/state/cart"
+import { cartNoticeText, type CartNotice } from "@/modules/cart/store"
 import { cn } from "@/lib/utils"
 
 interface CartNoticesProps {

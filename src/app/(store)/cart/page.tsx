@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 
-import { CartView } from "@/components/cart/cart-view"
+import { CartView } from "@/modules/cart/components/cart-view"
 import { Breadcrumbs } from "@/components/shared/breadcrumbs"
 
 export const metadata: Metadata = {

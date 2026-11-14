@@ -10,7 +10,7 @@ import { PIECE_FORMS, pluralize } from "@/lib/arabic-plural"
 import { formatOptions } from "@/modules/catalog/options"
 import type { Coupon, OrderTotals } from "@/lib/checkout/types"
 import { formatPrice, formatShipping } from "@/lib/money"
-import type { CartLine } from "@/lib/state/cart"
+import type { CartLine } from "@/modules/cart/store"
 import { cn } from "@/lib/utils"
 
 interface OrderSummaryProps {

@@ -1,13 +1,13 @@
 import Image from "next/image"
 import Link from "next/link"
 
-import { useAddToCart } from "@/components/cart/use-add-to-cart"
+import { useAddToCart } from "@/modules/cart/components/use-add-to-cart"
 import { SMALL_TARGET } from "@/components/mascot/mascot-styles"
 import { Price } from "@/modules/catalog/components/price"
 import { Button, buttonVariants } from "@/components/ui/button"
 import type { SimilarProduct } from "@/modules/catalog/types"
 import { productPath } from "@/lib/routes"
-import { quickAddLine } from "@/lib/state/cart"
+import { quickAddLine } from "@/modules/cart/store"
 import { cn } from "@/lib/utils"
 
 interface MascotSuggestionProps {

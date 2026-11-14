@@ -2,13 +2,14 @@
 
 import dynamic from "next/dynamic"
 
-import { CartSheetFallback } from "@/components/cart/cart-sheet-fallback"
+import { CartSheetFallback } from "@/modules/cart/components/cart-sheet-fallback"
 import { Optional } from "@/components/shared/optional"
 import { useIdle } from "@/hooks/use-idle"
 import { useUiStore } from "@/lib/state/ui"
 
 const CartSheet = dynamic(
-  () => import("@/components/cart/cart-sheet").then((mod) => mod.CartSheet),
+  () =>
+    import("@/modules/cart/components/cart-sheet").then((mod) => mod.CartSheet),
   { ssr: false }
 )
 

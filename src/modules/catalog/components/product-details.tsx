@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation"
 import { BanknoteIcon, RotateCcwIcon, TruckIcon } from "lucide-react"
 
-import { useAddToCart } from "@/components/cart/use-add-to-cart"
+import { useAddToCart } from "@/modules/cart/components/use-add-to-cart"
 import { DiscountBadge } from "@/modules/catalog/components/discount-badge"
 import { Price } from "@/modules/catalog/components/price"
 import { ProductGallery } from "@/modules/catalog/components/product-gallery"

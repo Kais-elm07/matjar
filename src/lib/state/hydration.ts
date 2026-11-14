@@ -2,9 +2,9 @@
 
 import { useEffect, useSyncExternalStore } from "react"
 
-import { useCartStore } from "@/lib/state/cart"
+import { useCartStore } from "@/modules/cart/store"
 import { useMascotPreferences } from "@/lib/state/mascot"
-import { useWishlistStore } from "@/lib/state/wishlist"
+import { useWishlistStore } from "@/modules/wishlist/store"
 
 const stores = [useCartStore, useWishlistStore, useMascotPreferences]
 
