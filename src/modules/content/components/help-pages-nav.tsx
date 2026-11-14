@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-import { getContentPages } from "@/lib/content/pages"
+import { getContentPages } from "@/modules/content/pages"
 import { contentPagePath } from "@/lib/routes"
 import { cn } from "@/lib/utils"
 

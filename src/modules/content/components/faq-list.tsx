@@ -1,7 +1,7 @@
 import { ChevronDownIcon } from "lucide-react"
 
-import { RichText } from "@/components/content/rich-text"
-import type { FaqGroup } from "@/lib/content/text-format"
+import { RichText } from "@/components/shared/rich-text"
+import type { FaqGroup } from "@/lib/text-format"
 
 interface FaqListProps {
   groups: FaqGroup[]

@@ -4,7 +4,7 @@ import { readdirSync, readFileSync } from "node:fs"
 import path from "node:path"
 
 import { siteConfig } from "@/config/site"
-import { fillPlaceholders } from "@/lib/content/placeholders"
+import { fillPlaceholders } from "@/modules/content/placeholders"
 import { z } from "@/lib/zod"
 
 /**

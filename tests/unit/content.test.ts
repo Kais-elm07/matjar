@@ -2,13 +2,13 @@ import { describe, expect, it } from "vitest"
 
 import { siteConfig } from "@/config/site"
 import { getProduct } from "@/modules/catalog/queries"
-import { getContentPage, getContentPages } from "@/lib/content/pages"
+import { getContentPage, getContentPages } from "@/modules/content/pages"
 import {
   parseBlocks,
   parseFaq,
   parseInline,
   toPlainText,
-} from "@/lib/content/text-format"
+} from "@/lib/text-format"
 import { toSchemaPrice } from "@/lib/money"
 import {
   absoluteImageUrl,

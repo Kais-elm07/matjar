@@ -1,5 +1,5 @@
-import { InlineText } from "@/components/content/inline-text"
-import { parseBlocks } from "@/lib/content/text-format"
+import { InlineText } from "@/components/shared/inline-text"
+import { parseBlocks } from "@/lib/text-format"
 import { cn } from "@/lib/utils"
 
 interface RichTextProps {
@@ -7,7 +7,7 @@ interface RichTextProps {
   className?: string
 }
 
-/** Formatted text for product descriptions and static pages, in the format of src/lib/content/text-format.ts. */
+/** Formatted text for product descriptions and static pages, in the format of src/lib/text-format.ts. */
 export function RichText({ text, className }: RichTextProps) {
   return (
     <div className={cn("space-y-3 leading-8 text-foreground/90", className)}>

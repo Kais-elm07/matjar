@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next"
 
 import { getCategories, getProducts } from "@/modules/catalog/queries"
-import { getContentPages } from "@/lib/content/pages"
+import { getContentPages } from "@/modules/content/pages"
 import { categoryPath, contentPagePath, productPath } from "@/lib/routes"
 import { absoluteImageUrl, absoluteUrl } from "@/lib/seo"
 

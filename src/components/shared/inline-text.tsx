@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-import { parseInline } from "@/lib/content/text-format"
+import { parseInline } from "@/lib/text-format"
 
 const LINK_CLASS =
   "rounded-sm font-medium text-primary underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
@@ -9,7 +9,7 @@ interface InlineTextProps {
   text: string
 }
 
-/** Inline formatting: **bold text** and [link text](/pages/contact), parsed in src/lib/content/text-format.ts. */
+/** Inline formatting: **bold text** and [link text](/pages/contact), parsed in src/lib/text-format.ts. */
 export function InlineText({ text }: InlineTextProps) {
   return parseInline(text).map((part) => {
     if (part.type === "bold") {

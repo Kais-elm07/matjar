@@ -1,4 +1,4 @@
-import { ContactCards } from "@/components/content/contact-cards"
+import { ContactCards } from "@/modules/content/components/contact-cards"
 
 /** "تواصل معنا" (Contact us) at the end of the home page: a centered heading and the contact channel cards. */
 export function ContactSection() {

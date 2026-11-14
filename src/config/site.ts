@@ -91,7 +91,7 @@ export const siteConfig: SiteConfig = {
   /**
    * The announcement bar at the top of every page, or null to hide it.
    * It can use the same values as the static pages, such as {freeShipping} for the free shipping
-   * threshold from src/data/shipping.ts (src/lib/content/placeholders.ts).
+   * threshold from src/data/shipping.ts (src/modules/content/placeholders.ts).
    */
   announcement: {
     text: "شحن مجاني للطلبات من {freeShipping}، والدفع عند الاستلام",

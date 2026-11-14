@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 
 import { siteConfig } from "@/config/site"
 import type { Product } from "@/modules/catalog/types"
-import { toPlainText, type FaqGroup } from "@/lib/content/text-format"
+import { toPlainText, type FaqGroup } from "@/lib/text-format"
 import { IMAGE_WIDTHS, imageFile } from "@/lib/image-loader"
 import { toSchemaPrice } from "@/lib/money"
 import { productPath } from "@/lib/routes"
