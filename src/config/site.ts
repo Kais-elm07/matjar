@@ -62,7 +62,7 @@ export const siteConfig: SiteConfig = {
   ),
 
   /**
-   * Currency: the Saudi riyal for now, until the country is decided (decision 1 in the plan).
+   * Currency: the Saudi riyal for now, until the store moves to another country (EDITING.md: "Changing the country").
    * Prices are written in riyals in the data files, and computed internally in the smallest unit (halala).
    */
   currency: {
@@ -108,7 +108,7 @@ export const siteConfig: SiteConfig = {
 
   /**
    * The store's offset from UTC: sales end at the last second of their day in this time zone.
-   * Saudi time for now, until the country is decided (decision 1 in the plan).
+   * Saudi time for now, until the store moves to another country (EDITING.md: "Changing the country").
    */
   utcOffset: "+03:00",
 

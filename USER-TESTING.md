@@ -1,6 +1,6 @@
 # Testing the store with real people
 
-Automated tests make sure the buttons work, but they cannot tell where a person gets confused. This test reveals that in about an hour, and it is the last item of phase 7 in the plan.
+Automated tests make sure the buttons work, but they cannot tell where a person gets confused. This test reveals that in about an hour.
 
 The testers use the Arabic store, so the tasks and questions you read to them are kept in Arabic below, each with an English translation.
 

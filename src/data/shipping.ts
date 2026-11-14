@@ -3,7 +3,7 @@ import type { ShippingInput } from "@/modules/checkout/types"
 /**
  * Shipping settings: the cities, delivery price and time, and the free shipping threshold. Amounts are in riyals.
  * "مدينة أخرى" (another city) appears at the end of the list for any city not listed.
- * Saudi cities for now, until the country is decided (decision 1 in the plan).
+ * Saudi cities for now, until the store moves to another country (EDITING.md: "Changing the country").
  */
 export const shipping: ShippingInput = {
   freeShippingFrom: 300,

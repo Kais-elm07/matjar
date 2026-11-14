@@ -5,7 +5,7 @@ import { z } from "@/lib/zod"
 /**
  * Mobile number in the form 05xxxxxxxx: accepts +966, 00966, Arabic digits and spaces,
  * and people who type the zero after the country code (+966 05...).
- * The Saudi format for now, until the country is decided (decision 1 in the plan).
+ * The Saudi format for now, until the store moves to another country (EDITING.md: "Changing the country").
  */
 export function normalizePhone(value: string) {
   const digits = toWesternDigits(value).replace(/[\s()-]/g, "")
