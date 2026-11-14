@@ -7,7 +7,7 @@ import type { NextConfig } from "next"
 // add the tool's domain to script-src and connect-src, such as https://plausible.io
 // No upgrade-insecure-requests: every file is the site's own or on https, HSTS below keeps visitors on https, and
 // Safari applies it to http://localhost too, so the production server could not be tested locally.
-// The photos uploaded in the admin panel are served by Supabase Storage (src/lib/admin/uploads.ts), so
+// The photos uploaded in the admin panel are served by Supabase Storage (src/modules/admin/uploads.ts), so
 // its address joins img-src; SUPABASE_URL is read when the site is built.
 function originOf(address: string | undefined) {
   try {
@@ -86,7 +86,7 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
       // A photo uploaded in the admin panel goes to a Server Action: up to 4 MB (MAX_UPLOAD_BYTES in
-      // src/lib/admin/upload-rules.ts), plus the bytes the form adds around it
+      // src/modules/admin/upload-rules.ts), plus the bytes the form adds around it
       bodySizeLimit: "5mb",
     },
   },

@@ -1,15 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import type { SimilarProduct, SimilarProducts } from "@/modules/catalog/types"
-import { basketItems } from "@/lib/mascot/basket"
+import { basketItems } from "@/modules/mascot/basket"
 import {
   announceAddedProduct,
   listenForAddedProducts,
-} from "@/lib/mascot/events"
-import { mascotPhrases } from "@/lib/mascot/messages"
-import { personaFor, showsCart } from "@/lib/mascot/persona"
-import { pickSuggestions } from "@/lib/mascot/suggestions"
-import { useMascotPreferences } from "@/lib/state/mascot"
+} from "@/modules/mascot/events"
+import { mascotPhrases } from "@/modules/mascot/messages"
+import { personaFor, showsCart } from "@/modules/mascot/persona"
+import { pickSuggestions } from "@/modules/mascot/suggestions"
+import { useMascotPreferences } from "@/modules/mascot/store"
 
 const product = (slug: string): SimilarProduct => ({
   slug,

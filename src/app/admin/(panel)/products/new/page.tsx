@@ -1,11 +1,11 @@
 import type { Metadata } from "next"
 
-import { ProductForm } from "@/components/admin/product-form"
-import { adminCategories } from "@/lib/admin/catalog"
-import { categoryOptions } from "@/lib/admin/category-options"
-import { emptyProductForm } from "@/lib/admin/product-form"
-import { verifyAdmin } from "@/lib/admin/session"
-import { isUploadEnabled } from "@/lib/admin/uploads"
+import { ProductForm } from "@/modules/admin/components/product-form"
+import { adminCategories } from "@/modules/admin/catalog"
+import { categoryOptions } from "@/modules/admin/category-options"
+import { emptyProductForm } from "@/modules/admin/product-form"
+import { verifyAdmin } from "@/modules/admin/session"
+import { isUploadEnabled } from "@/modules/admin/uploads"
 import { storeToday } from "@/lib/dates"
 
 export const metadata: Metadata = { title: "إضافة منتج" }

@@ -1,6 +1,9 @@
 import { getBuildCatalog } from "@/modules/catalog/load"
-import { jpegResponse, shareImageOutsideBuild } from "@/lib/og/render"
-import { categoryShareImage } from "@/lib/og/share-images"
+import {
+  jpegResponse,
+  shareImageOutsideBuild,
+} from "@/modules/share-images/render"
+import { categoryShareImage } from "@/modules/share-images/layouts"
 
 // A share image for each category, drawn at build time and kept until the next deploy (see
 // getBuildCatalog): /og/category/<slug>.jpg. A category added later gets the site's image until then.

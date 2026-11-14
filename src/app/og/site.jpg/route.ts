@@ -1,6 +1,6 @@
 import { getBuildCatalog } from "@/modules/catalog/load"
-import { jpegResponse } from "@/lib/og/render"
-import { siteShareImage } from "@/lib/og/share-images"
+import { jpegResponse } from "@/modules/share-images/render"
+import { siteShareImage } from "@/modules/share-images/layouts"
 
 // Drawn once at build time and served as a file until the next deploy (see getBuildCatalog)
 export const dynamic = "force-static"

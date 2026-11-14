@@ -1,10 +1,10 @@
 import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 
-import { ADMIN_CARD } from "@/components/admin/admin-styles"
-import { LoginForm } from "@/components/admin/login-form"
+import { ADMIN_CARD } from "@/modules/admin/components/admin-styles"
+import { LoginForm } from "@/modules/admin/components/login-form"
 import { siteConfig } from "@/config/site"
-import { isAdmin } from "@/lib/admin/session"
+import { isAdmin } from "@/modules/admin/session"
 import { adminPaths } from "@/lib/routes"
 
 export const metadata: Metadata = { title: "تسجيل الدخول" }

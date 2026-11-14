@@ -111,7 +111,7 @@ const kilobytes = (bytes) => `${(bytes / 1024).toFixed(1)}KB`
 // The tool that draws text in the share images (Pango inside sharp) can't read WOFF2, so a TTF copy with the same characters is saved.
 // The Arabic and Latin files originally carry the same family name, so the tool chooses between them
 // by the order they were loaded in, and may draw the digits in another font. So each subset's file gets its own family name
-// (such as "IBM Plex Sans Arabic Latin"), and src/lib/og/render.ts asks for the two families in order.
+// (such as "IBM Plex Sans Arabic Latin"), and src/modules/share-images/render.ts asks for the two families in order.
 // The weight is also written in name IDs 16 and 17, so that weight 500 is chosen by its name.
 
 const FAMILY_SUFFIX = { arabic: "", latin: " Latin" }

@@ -77,7 +77,7 @@ PostgreSQL, through [Prisma](https://www.prisma.io) 7. It keeps the orders, and 
 
 - The tables are described in `prisma/schema.prisma`, and every change to them is a migration in `prisma/migrations`, kept in Git. After editing the schema, run `pnpm db:migrate`, which writes the migration and applies it locally, then `pnpm db:generate` (Prisma 7 no longer regenerates the client during a migration).
 - The client is generated into `src/generated/prisma` (not in Git), and the code reaches it only through `getDb()` in `src/lib/db.ts`, on the server, with at most two connections per server process.
-- The pages don't ask the database on every visit. `src/modules/catalog/load.ts` reads the whole catalog in one go and keeps the rows in Next.js's data cache under the tag `catalog`; the pages built from it are kept too. They are prepared by `pnpm build`, refreshed after a day (so ended deals reprice) or when the tag is revalidated (after every order, since it lowers the stock), and a product or category added later is drawn on its first visit. `/cart-catalog.json`, `/similar-products.json`, the sitemap and the products API are computed on every request from the cached rows instead, which takes milliseconds: on Netlify, a route handler prepared at build time is not refreshed by the tag (checked with a real order on November 7, 2026). The share images are the exception: they are drawn by `pnpm build` from the photos in `public/images`, which the server's functions don't carry, so they read the database outside the cache (`getBuildCatalog`) and stay as built until the next deploy. An uploaded photo is downloaded from Supabase Storage for its share image. A product or category added after the deploy has no share image yet, so `/og/product/<slug>.jpg` answers with a redirect to the site's image (`/og/site.jpg`) until the next deploy draws its own (`shareImageOutsideBuild` in `src/lib/og/render.ts`). While the database is down, the saved pages and the products API keep answering; only placing an order and `/api/health/` need it.
+- The pages don't ask the database on every visit. `src/modules/catalog/load.ts` reads the whole catalog in one go and keeps the rows in Next.js's data cache under the tag `catalog`; the pages built from it are kept too. They are prepared by `pnpm build`, refreshed after a day (so ended deals reprice) or when the tag is revalidated (after every order, since it lowers the stock), and a product or category added later is drawn on its first visit. `/cart-catalog.json`, `/similar-products.json`, the sitemap and the products API are computed on every request from the cached rows instead, which takes milliseconds: on Netlify, a route handler prepared at build time is not refreshed by the tag (checked with a real order on November 7, 2026). The share images are the exception: they are drawn by `pnpm build` from the photos in `public/images`, which the server's functions don't carry, so they read the database outside the cache (`getBuildCatalog`) and stay as built until the next deploy. An uploaded photo is downloaded from Supabase Storage for its share image. A product or category added after the deploy has no share image yet, so `/og/product/<slug>.jpg` answers with a redirect to the site's image (`/og/site.jpg`) until the next deploy draws its own (`shareImageOutsideBuild` in `src/modules/share-images/render.ts`). While the database is down, the saved pages and the products API keep answering; only placing an order and `/api/health/` need it.
 - `GET /api/health/` answers `{ "status": "ok", "database": "up", "photos": "up", "storage": "up" }`: whether the server reaches the database, whether sharp can prepare an uploaded photo in it, and whether the photos' bucket exists and is public (`"off"` while the Supabase variables aren't set, which leaves uploading off). Anything else is a 503 with `"status": "error"`.
 - The Prisma CLI reads `prisma7.config.ts` (the name Prisma 7 looks for), which loads `DATABASE_URL` from `.env`.
 
@@ -93,8 +93,8 @@ The store owner's pages, at `/admin/` (`src/app/admin`), where products and cate
 - **Adding or editing a product:** its name, address, category, description and specifications; its photos in order, each with its color option; and its variants, one row per size and color combination with its options written as `المقاس: M، اللون: أبيض`, its price in riyals, its price before the discount and its stock. The server checks the form with the same rules as `src/data` and answers with the problems to fix, in Arabic.
 - **Categories:** adding one, and changing a category's name, address, parent, description and cover photo.
 - **When a change shows:** every save marks the catalog stale (`revalidateTag("catalog", "max")`), so the store shows it within seconds: the first visitor after a change may still get the saved page while the new one is drawn. A new product's page is drawn on its first visit; its own share image appears with the next deploy, and until then a shared link shows the store's image.
-- **Signing in:** one password for the store owner. `pnpm admin:password` asks for it and prints two variables for `.env` and the host: `ADMIN_PASSWORD_HASH`, its scrypt hash (the password itself is stored nowhere), and `ADMIN_SESSION_SECRET`, which signs the sign-in cookie (seven days, `httpOnly`, only for `/admin`). Without them the panel stays off. Every admin page and every admin Server Action checks the session itself (`src/lib/admin/session.ts`), and the panel is out of the search engines (`noindex` and robots.txt).
-- **Photos:** "رفع" (Upload) next to each photo sends a PNG, WebP or JPEG of up to 4 MB, at least 600 pixels wide, from the owner's device. The server checks it again, makes the same five WebP copies as `pnpm images` with `src/lib/images/prepare.ts`, measures its tone and whether it is a cut-out, and keeps the copies in a public bucket of Supabase Storage (`src/lib/admin/uploads.ts`), under a new name each time, so they are cached for a year. The form then holds the photo's address without a size, such as `https://<project>.supabase.co/storage/v1/object/public/product-images/products/<id>`, and the image loader picks its sizes like a local photo's; the measured look waits in the `uploaded_images` table until the product is saved. A photo can still be written as a path in `public/images`, such as `/images/products/classic-cotton-shirt-1`, which keeps the tone measured for it when another product uses it. Uploading needs `SUPABASE_URL` and `SUPABASE_SECRET_KEY` (DEPLOYMENT.md); without them the button doesn't show. The secret key stays on the server, and `SUPABASE_URL` is also added to the content security policy's `img-src` when the site is built.
+- **Signing in:** one password for the store owner. `pnpm admin:password` asks for it and prints two variables for `.env` and the host: `ADMIN_PASSWORD_HASH`, its scrypt hash (the password itself is stored nowhere), and `ADMIN_SESSION_SECRET`, which signs the sign-in cookie (seven days, `httpOnly`, only for `/admin`). Without them the panel stays off. Every admin page and every admin Server Action checks the session itself (`src/modules/admin/session.ts`), and the panel is out of the search engines (`noindex` and robots.txt).
+- **Photos:** "رفع" (Upload) next to each photo sends a PNG, WebP or JPEG of up to 4 MB, at least 600 pixels wide, from the owner's device. The server checks it again, makes the same five WebP copies as `pnpm images` with `src/lib/images/prepare.ts`, measures its tone and whether it is a cut-out, and keeps the copies in a public bucket of Supabase Storage (`src/modules/admin/uploads.ts`), under a new name each time, so they are cached for a year. The form then holds the photo's address without a size, such as `https://<project>.supabase.co/storage/v1/object/public/product-images/products/<id>`, and the image loader picks its sizes like a local photo's; the measured look waits in the `uploaded_images` table until the product is saved. A photo can still be written as a path in `public/images`, such as `/images/products/classic-cotton-shirt-1`, which keeps the tone measured for it when another product uses it. Uploading needs `SUPABASE_URL` and `SUPABASE_SECRET_KEY` (DEPLOYMENT.md); without them the button doesn't show. The secret key stays on the server, and `SUPABASE_URL` is also added to the content security policy's `img-src` when the site is built.
 
 - **Categories:** `src/data/categories.ts`. A subcategory names its parent's slug in `parent`. A category's cover on its tile is a product photo: set it in `image`, such as `/images/products/portable-speaker-2`, or leave it out to show the first photo of the category's most popular product.
 - **Products:** `src/data/products.ts`. Prices are in riyals, and `optionMatrix` generates every size and color combination automatically, with optional price or stock overrides for a single value or a full combination.
@@ -128,7 +128,7 @@ Najm (نجم, "star") is a small glossy blue dog in 3D, drawn with [three.js](ht
 - **Hiding him:** "Hide Najm" in his greeting, and a button in the footer that hides him or brings him back. The choice is saved in the browser.
 - **Speed:** his code (about 150 KB compressed, mostly three.js) downloads only after the page has loaded and the visitor first moves, touches or scrolls, and only if the browser can draw WebGL 2. Drawing stops a few seconds after the visitor stops moving, and while the tab is hidden.
 - **Reduced motion:** he stands still, doesn't follow the pointer, and products appear in his basket at once; his bubbles still speak.
-- **Renaming him or changing what he says:** `mascotName` in `src/config/site.ts`, and his sentences in `src/lib/mascot/messages.ts`.
+- **Renaming him or changing what he says:** `mascotName` in `src/config/site.ts`, and his sentences in `src/modules/mascot/messages.ts`.
 
 ## Products API
 
@@ -175,7 +175,7 @@ Each page is a text file in `src/content/pages`, and the file name is its URL: `
 When a link is shared on WhatsApp or social networks, a 1200×630 image appears: each product has an image with its photo, name, price and discount badge, each category has one with its name and product count, and the rest of the site uses a general store image. A cut-out stands on its platform in the light of its tone, as on the site's stage.
 
 - JPEG files are drawn at build time by the routes in `src/app/og` and served at `/og/...`, so they always follow the prices and names of the deployed build.
-- The layout is in `src/lib/og/share-images.ts` and the drawing helpers are in `src/lib/og/render.ts`. Colors and font come from `DESIGN.md`.
+- The layout is in `src/modules/share-images/layouts.ts` and the drawing helpers are in `src/modules/share-images/render.ts`. Colors and font come from `DESIGN.md`.
 - Text is drawn with TTF copies of the store font, generated by `pnpm fonts`.
 - **Important when deploying:** set the real site URL in `NEXT_PUBLIC_SITE_URL` before building, because image links must be absolute. Without it they point to `localhost` and do not show up when shared.
 
@@ -216,27 +216,27 @@ The whole visual identity is described in [DESIGN.md](DESIGN.md), in [Google's D
 
 - It is the reference Claude reads before any interface work, through the project skill `.claude/skills/design-system`.
 - `pnpm design:lint` validates the file and its color contrast, and runs automatically in GitHub Actions and before each commit that changes it.
-- To change the identity: edit `DESIGN.md` first and lint it, then copy the colors into `src/app/globals.css`, `OG_COLORS` in `src/lib/og/render.ts` (share images), `BRAND_HEX` in `src/lib/tone.ts` (the light behind photos without a clear color), `themeColor` in `src/app/layout.tsx` and `src/app/icon.svg`. The full checklist is at the end of `.claude/skills/design-system/SKILL.md`.
+- To change the identity: edit `DESIGN.md` first and lint it, then copy the colors into `src/app/globals.css`, `OG_COLORS` in `src/modules/share-images/render.ts` (share images), `BRAND_HEX` in `src/lib/tone.ts` (the light behind photos without a clear color), `themeColor` in `src/app/layout.tsx` and `src/app/icon.svg`. The full checklist is at the end of `.claude/skills/design-system/SKILL.md`.
 
 ## Where to change...
 
-| What you want to change                  | File                                                              |
-| ---------------------------------------- | ----------------------------------------------------------------- |
-| Store name, description, currency, links | `src/config/site.ts`                                              |
-| Home slides and promo cards              | `src/data/home.ts`                                                |
-| Shipping cities, prices, free shipping   | `src/data/shipping.ts`                                            |
-| Discount coupons                         | `src/data/coupons.ts`                                             |
-| Static page text                         | `src/content/pages`                                               |
-| Contact details and announcement bar     | `src/config/site.ts` (`contact` and `announcement`)               |
-| Analytics                                | `src/config/site.ts` (`analytics`)                                |
-| Share image layout                       | `src/lib/og/share-images.ts`                                      |
-| Brand colors and corner radii            | `DESIGN.md`, then the files listed under "Design system"          |
-| Option swatch colors (red, blue...)      | `src/modules/catalog/options.ts`                                  |
-| Arabic font                              | `assets/fonts`, then `pnpm fonts`, and `src/app/fonts.ts`         |
-| Site icon                                | `src/app/icon.svg`                                                |
-| A category's cover photo                 | `image` in `src/data/categories.ts`                               |
-| The light behind one product photo       | `tone` on the image in `src/data/products.ts`                     |
-| Najm's name and what he says             | `src/config/site.ts` (`mascotName`), `src/lib/mascot/messages.ts` |
+| What you want to change                  | File                                                                  |
+| ---------------------------------------- | --------------------------------------------------------------------- |
+| Store name, description, currency, links | `src/config/site.ts`                                                  |
+| Home slides and promo cards              | `src/data/home.ts`                                                    |
+| Shipping cities, prices, free shipping   | `src/data/shipping.ts`                                                |
+| Discount coupons                         | `src/data/coupons.ts`                                                 |
+| Static page text                         | `src/content/pages`                                                   |
+| Contact details and announcement bar     | `src/config/site.ts` (`contact` and `announcement`)                   |
+| Analytics                                | `src/config/site.ts` (`analytics`)                                    |
+| Share image layout                       | `src/modules/share-images/layouts.ts`                                 |
+| Brand colors and corner radii            | `DESIGN.md`, then the files listed under "Design system"              |
+| Option swatch colors (red, blue...)      | `src/modules/catalog/options.ts`                                      |
+| Arabic font                              | `assets/fonts`, then `pnpm fonts`, and `src/app/fonts.ts`             |
+| Site icon                                | `src/app/icon.svg`                                                    |
+| A category's cover photo                 | `image` in `src/data/categories.ts`                                   |
+| The light behind one product photo       | `tone` on the image in `src/data/products.ts`                         |
+| Najm's name and what he says             | `src/config/site.ts` (`mascotName`), `src/modules/mascot/messages.ts` |
 
 ## Changing the country
 
@@ -385,7 +385,7 @@ Most pages are prepared once by `pnpm build`. The server then sends them as they
 - Panels that open on a tap (the cart, the mobile menu, image zoom, the filter sheet and toast messages) load their code once the page has loaded (`src/hooks/use-idle.ts`). Each of them, like Najm and the search suggestions, sits inside `Optional` (`src/components/shared/optional.tsx`): if its code doesn't arrive, on a weak connection or after a new deploy, that part alone is left out and the page keeps working. A cart panel that can't load sends the visitor to the cart page instead.
 - An error in a page shows an Arabic message inside the store's frame, with "حاول مرة أخرى" (Try again) (`src/app/(store)/error.tsx`); an error in the frame itself falls back to a page of its own (`src/app/global-error.tsx`).
 - The hero and the product gallery are stages: during a swipe, `useStageMotion` writes each photo's 3D turn and the blend of the light straight to CSS variables on every frame, without rendering React again (`src/hooks/use-stage-motion.ts`, with the arithmetic in `src/lib/slider.ts`).
-- Najm is loaded by `LazyMascot` in the store shell. `MascotScene` (`src/lib/mascot/scene`) draws him with three.js and queues his moves; React only holds his speech bubble. The add-to-cart buttons tell him about a new product through `announceAddedProduct` (`src/lib/mascot/events.ts`), which doesn't import three.js, and open the cart panel when he isn't listening. He watches the cart store for removals, and the page address for his behavior on each page (`src/lib/mascot/persona.ts`).
+- Najm is loaded by `LazyMascot` in the store shell. `MascotScene` (`src/lib/mascot/scene`) draws him with three.js and queues his moves; React only holds his speech bubble. The add-to-cart buttons tell him about a new product through `announceAddedProduct` (`src/modules/mascot/events.ts`), which doesn't import three.js, and open the cart panel when he isn't listening. He watches the cart store for removals, and the page address for his behavior on each page (`src/modules/mascot/persona.ts`).
 
 ## Tests
 

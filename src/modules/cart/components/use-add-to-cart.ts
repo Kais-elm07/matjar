@@ -2,7 +2,7 @@
 
 import { useCallback } from "react"
 
-import { announceAddedProduct } from "@/lib/mascot/events"
+import { announceAddedProduct } from "@/modules/mascot/events"
 import { useCartStore, type CartLine } from "@/modules/cart/store"
 import { useUiStore } from "@/lib/state/ui"
 import { toast } from "@/lib/toast"

@@ -1,11 +1,14 @@
 import { PHASE_PRODUCTION_BUILD } from "next/constants"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-import { shareImageOutsideBuild, sharePhoto } from "@/lib/og/render"
+import {
+  shareImageOutsideBuild,
+  sharePhoto,
+} from "@/modules/share-images/render"
 import { shareImages } from "@/lib/seo"
 
 /**
- * The photos of the share images (src/lib/og/render.ts), drawn by next build: a local photo from
+ * The photos of the share images (src/modules/share-images/render.ts), drawn by next build: a local photo from
  * public/images, an uploaded one downloaded from Supabase Storage, and the site's image for a product
  * added after the deploy.
  */

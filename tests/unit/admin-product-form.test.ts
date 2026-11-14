@@ -6,7 +6,7 @@ import {
   productFormFrom,
   toProductInput,
   type ProductFormValues,
-} from "@/lib/admin/product-form"
+} from "@/modules/admin/product-form"
 import { productSchema } from "@/modules/catalog/schema"
 import { productProblems } from "@/modules/catalog/validate"
 

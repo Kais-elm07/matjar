@@ -10,7 +10,7 @@
  */
 import { createInterface } from "node:readline/promises"
 
-import { hashPassword, newSessionSecret } from "@/lib/admin/password"
+import { hashPassword, newSessionSecret } from "@/modules/admin/password"
 
 const MIN_LENGTH = 12
 

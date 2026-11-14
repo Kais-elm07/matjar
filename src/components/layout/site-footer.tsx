@@ -2,7 +2,7 @@ import Link from "next/link"
 import { BanknoteIcon } from "lucide-react"
 
 import { Logo } from "@/components/layout/logo"
-import { MascotToggle } from "@/components/mascot/mascot-toggle"
+import { MascotToggle } from "@/modules/mascot/components/mascot-toggle"
 import { buttonVariants } from "@/components/ui/button"
 import { siteConfig } from "@/config/site"
 

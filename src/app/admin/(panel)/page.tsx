@@ -1,10 +1,10 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 
-import { AdminProductItem } from "@/components/admin/admin-product-item"
+import { AdminProductItem } from "@/modules/admin/components/admin-product-item"
 import { buttonVariants } from "@/components/ui/button"
-import { adminProducts } from "@/lib/admin/catalog"
-import { verifyAdmin } from "@/lib/admin/session"
+import { adminProducts } from "@/modules/admin/catalog"
+import { verifyAdmin } from "@/modules/admin/session"
 import { PRODUCT_FORMS, pluralize } from "@/lib/arabic-plural"
 import { adminPaths } from "@/lib/routes"
 

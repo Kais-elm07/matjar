@@ -1,11 +1,11 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
-import { ProductForm } from "@/components/admin/product-form"
-import { adminCategories, adminProductForm } from "@/lib/admin/catalog"
-import { categoryOptions } from "@/lib/admin/category-options"
-import { verifyAdmin } from "@/lib/admin/session"
-import { isUploadEnabled } from "@/lib/admin/uploads"
+import { ProductForm } from "@/modules/admin/components/product-form"
+import { adminCategories, adminProductForm } from "@/modules/admin/catalog"
+import { categoryOptions } from "@/modules/admin/category-options"
+import { verifyAdmin } from "@/modules/admin/session"
+import { isUploadEnabled } from "@/modules/admin/uploads"
 
 export const metadata: Metadata = { title: "تعديل منتج" }
 

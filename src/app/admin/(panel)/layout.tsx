@@ -1,5 +1,5 @@
-import { AdminHeader } from "@/components/admin/admin-header"
-import { verifyAdmin } from "@/lib/admin/session"
+import { AdminHeader } from "@/modules/admin/components/admin-header"
+import { verifyAdmin } from "@/modules/admin/session"
 
 /** The panel's pages: signed in only, under the panel's header. Each page checks the session too. */
 export default async function AdminPanelLayout({

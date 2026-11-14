@@ -6,9 +6,9 @@ import {
   isValidSession,
   newSessionSecret,
   signSession,
-} from "@/lib/admin/password"
+} from "@/modules/admin/password"
 
-/** The admin panel's password hash and signed session cookie (src/lib/admin/password.ts). */
+/** The admin panel's password hash and signed session cookie (src/modules/admin/password.ts). */
 
 describe("the admin password", () => {
   const stored = hashPassword("كلمة سر طويلة 2026")

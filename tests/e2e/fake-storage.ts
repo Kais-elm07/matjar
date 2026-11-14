@@ -5,7 +5,7 @@ import { FAKE_STORAGE_KEY, FAKE_STORAGE_PORT } from "./fake-storage-address"
 /**
  * A stand-in for Supabase Storage in the browser tests, started by playwright.config.ts next to the
  * store, so uploading a photo in the admin panel is tested without the real project. It answers the
- * three requests src/lib/admin/uploads.ts makes, with the same addresses: saving a copy (which needs
+ * three requests src/modules/admin/uploads.ts makes, with the same addresses: saving a copy (which needs
  * the key, and refuses a name already taken), reading a public copy, and reading the bucket. The copies
  * stay in memory until the tests end.
  */

@@ -1,19 +1,19 @@
 import sharp from "sharp"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { uploadProductPhoto } from "@/lib/admin/actions"
-import { MAX_UPLOAD_BYTES, UPLOAD_MESSAGES } from "@/lib/admin/upload-rules"
+import { uploadProductPhoto } from "@/modules/admin/actions"
+import { MAX_UPLOAD_BYTES, UPLOAD_MESSAGES } from "@/modules/admin/upload-rules"
 import {
   photoToolsStatus,
   storageStatus,
   uploadPhoto,
-} from "@/lib/admin/uploads"
+} from "@/modules/admin/uploads"
 import { IMAGE_WIDTHS, imageFile } from "@/lib/image-loader"
 
 import { discPhoto } from "./support/photos"
 
 /**
- * Uploading a product photo from the admin panel (src/lib/admin/uploads.ts and the Server Action in
+ * Uploading a product photo from the admin panel (src/modules/admin/uploads.ts and the Server Action in
  * actions.ts), with Supabase Storage and the database replaced: what is sent where, with which key,
  * and what the owner reads when something is wrong. The browser test uploads through a fake storage.
  */
@@ -32,7 +32,7 @@ vi.mock("@/lib/db", () => ({
 }))
 
 let signedIn = true
-vi.mock("@/lib/admin/session", () => ({
+vi.mock("@/modules/admin/session", () => ({
   isAdmin: async () => signedIn,
   isAdminEnabled: () => true,
   startSession: async () => false,

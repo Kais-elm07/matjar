@@ -118,7 +118,7 @@ The values are applied in `src/app/globals.css` as shadcn variables with the sam
 1. Edit `DESIGN.md`: the values in the front matter, and the explanation in the Overview and Colors sections.
 2. Run `pnpm design:lint` until it reports no errors and no warnings.
 3. Copy the colors, with the same values, into `src/app/globals.css` in the `:root` block (the variables `--primary`, `--ring`, `--card` and the others), and the corner radius into `--radius` (the value of `rounded.lg`).
-4. Copy the same colors into `OG_COLORS` in `src/lib/og/render.ts` for the share images, and the brand color into `BRAND_HEX` in `src/lib/tone.ts` (the light behind photos without a clear color), then build the site more than once to make sure the share images render consistently.
+4. Copy the same colors into `OG_COLORS` in `src/modules/share-images/render.ts` for the share images, and the brand color into `BRAND_HEX` in `src/lib/tone.ts` (the light behind photos without a clear color), then build the site more than once to make sure the share images render consistently.
 5. Update `themeColor` in `src/app/layout.tsx`, the color in `src/app/icon.svg`, and the store name in `src/config/site.ts`.
 6. To change the font: put the original woff2 files from Fontsource, with their license, in `assets/fonts/<font-name>`, and run `pnpm fonts` to generate the subset copies in `src/fonts/<font-name>`, then update `localFont` in `src/app/fonts.ts`. There is one file for the Arabic letters and another for Latin, and one file per weight unless the font has a variable weight. Delete the old font's folder from both places.
 7. To see the full file format: `pnpm exec designmd spec`.

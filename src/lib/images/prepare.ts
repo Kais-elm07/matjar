@@ -5,7 +5,7 @@ import { IMAGE_WIDTHS } from "@/lib/image-loader"
 
 /**
  * Preparing a product photo for the store, the same way for the photos in assets/images (pnpm images,
- * scripts/images.ts) and the ones the store owner uploads in the admin panel (src/lib/admin/uploads.ts):
+ * scripts/images.ts) and the ones the store owner uploads in the admin panel (src/modules/admin/uploads.ts):
  * five WebP copies, one per width the image loader picks from, and the photo's look, which the site
  * turns into the light behind it (DESIGN.md: the product's tone). It runs outside Next.js too, so it
  * imports nothing that needs the server.

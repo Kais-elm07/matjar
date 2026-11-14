@@ -1,6 +1,6 @@
 import { connection } from "next/server"
 
-import { photoToolsStatus, storageStatus } from "@/lib/admin/uploads"
+import { photoToolsStatus, storageStatus } from "@/modules/admin/uploads"
 import { getDb } from "@/lib/db"
 
 async function databaseStatus() {

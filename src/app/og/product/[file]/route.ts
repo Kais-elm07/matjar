@@ -1,6 +1,9 @@
 import { getBuildCatalog } from "@/modules/catalog/load"
-import { jpegResponse, shareImageOutsideBuild } from "@/lib/og/render"
-import { productShareImage } from "@/lib/og/share-images"
+import {
+  jpegResponse,
+  shareImageOutsideBuild,
+} from "@/modules/share-images/render"
+import { productShareImage } from "@/modules/share-images/layouts"
 
 // A share image for each product, drawn at build time and kept until the next deploy (see
 // getBuildCatalog): /og/product/<slug>.jpg. A product added later gets the site's image until then.

@@ -1,6 +1,6 @@
 import { afterAll, describe, expect, it } from "vitest"
 
-import { writeProduct } from "@/lib/admin/catalog"
+import { writeProduct } from "@/modules/admin/catalog"
 import { productSchema } from "@/modules/catalog/schema"
 import { getDb } from "@/lib/db"
 

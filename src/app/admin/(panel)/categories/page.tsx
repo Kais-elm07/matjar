@@ -1,10 +1,10 @@
 import type { Metadata } from "next"
 
-import { CategoryForm } from "@/components/admin/category-form"
-import { adminCategories } from "@/lib/admin/catalog"
-import { emptyCategoryForm } from "@/lib/admin/category-form"
-import { categoryOptions } from "@/lib/admin/category-options"
-import { verifyAdmin } from "@/lib/admin/session"
+import { CategoryForm } from "@/modules/admin/components/category-form"
+import { adminCategories } from "@/modules/admin/catalog"
+import { emptyCategoryForm } from "@/modules/admin/category-form"
+import { categoryOptions } from "@/modules/admin/category-options"
+import { verifyAdmin } from "@/modules/admin/session"
 import { PRODUCT_FORMS, pluralize } from "@/lib/arabic-plural"
 
 export const metadata: Metadata = { title: "الفئات" }

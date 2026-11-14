@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test"
 
-import { hashPassword, newSessionSecret } from "./src/lib/admin/password"
+import { hashPassword, newSessionSecret } from "./src/modules/admin/password"
 import { ADMIN_TEST_PASSWORD } from "./tests/e2e/admin-password"
 import {
   FAKE_STORAGE_KEY,

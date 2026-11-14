@@ -9,7 +9,7 @@ import { MobileTabBar } from "@/components/layout/mobile-tab-bar"
 import { SiteFooter } from "@/components/layout/site-footer"
 import { SiteHeader } from "@/components/layout/site-header"
 import { WhatsAppButton } from "@/components/layout/whatsapp-button"
-import { LazyMascot } from "@/components/mascot/lazy-mascot"
+import { LazyMascot } from "@/modules/mascot/components/lazy-mascot"
 import { getNavCategories } from "@/modules/catalog/queries"
 import { cn } from "@/lib/utils"
 
