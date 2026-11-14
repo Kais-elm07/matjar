@@ -52,7 +52,7 @@ To see the whole store in one state, put a switch in `.env` and restart `pnpm de
 | `"fail=500"`                | Search and wishlist errors with "إعادة المحاولة" (Try again); the cart keeps its saved lines       |
 | `"empty=1"`                 | Search finds nothing, Najm suggests nothing, and the wishlist says the store has no products       |
 
-`?empty=1` doesn't empty `/cart-catalog.json`, which would take every line out of the visitor's cart, and an empty answer never empties the wishlist. The order's page reads the database instead: it shows its skeleton while the database answers, and its error page when it can't be reached.
+`?empty=1` doesn't empty `/cart-catalog.json`, which would take every line out of the visitor's cart, and an empty answer never empties the wishlist. The order's page reads the database instead, and shows its error page when the database can't be reached.
 
 ## Commands
 
@@ -282,7 +282,7 @@ Most pages are prepared once by `pnpm build`. The server then sends them as they
 - The cart and the wishlist are Zustand stores saved in localStorage. When the cart or the checkout opens, the cart is checked against `/cart-catalog.json`, so its prices and stock are current.
 - Checkout checks the form (`src/modules/checkout/schema.ts`) and computes the totals (`totals.ts`) from the shipping settings the page received. Coupons and orders go through Server Actions (`actions.ts`): the server checks everything again, prices the order from the database and saves it (`orders-db.ts`), and the order's page reads it back.
 - Panels that open on a tap (the cart, the mobile menu, image zoom, the filter sheet and toast messages) load their code once the page has loaded (`src/hooks/use-idle.ts`). Each of them, like Najm and the search suggestions, sits inside `Optional` (`src/components/shared/optional.tsx`): if its code doesn't arrive, that part alone is left out and the page keeps working.
-- A page that fails shows an Arabic message inside the store's frame, with "حاول مرة أخرى" (Try again), through `ErrorMessage` (`src/components/shared/error-message.tsx`), which also writes the error to the console; an error in the frame itself falls back to `src/app/global-error.tsx`. The order's page and the admin panel, which read the database on every request, show a skeleton meanwhile (`loading.tsx`).
+- A page that fails shows an Arabic message inside the store's frame, with "حاول مرة أخرى" (Try again), through `ErrorMessage` (`src/components/shared/error-message.tsx`), which also writes the error to the console; an error in the frame itself falls back to `src/app/global-error.tsx`. The admin panel, which reads the database on every request, shows a skeleton meanwhile (`loading.tsx`). The store's pages that call `notFound()` have none, because a streamed skeleton would turn their 404 into a 200.
 - The hero and the product gallery are stages: during a swipe, `useStageMotion` writes each photo's 3D turn and the blend of the light straight to CSS variables on every frame, without rendering React again (`src/hooks/use-stage-motion.ts`, with the arithmetic in `src/lib/slider.ts`).
 - Najm is loaded by `LazyMascot` in the store shell. `MascotScene` (`src/modules/mascot/scene`) draws him with three.js and queues his moves; React only holds his speech bubble. The add-to-cart buttons tell him about a new product through `announceAddedProduct` (`src/modules/mascot/events.ts`), which doesn't import three.js.
 

@@ -10,6 +10,7 @@ The project's rules are in `AGENTS.md`, above. Each rule below comes from a mist
 - **One script that didn't download replaced the whole page** with Next's English "This page couldn't load", on a weak connection or in a tab left open across a deploy. Every part loaded with `next/dynamic` is rendered inside `Optional`.
 - **The wishlist kept counting products that had been hidden**, so the header disagreed with the page. Lists saved in the browser are checked against the current store (`prune`), and an empty answer never empties them.
 - **A refused order made the visitor reload the page** to see what had changed. The refusal carries the cart's current prices and stock (`cartIsBehind`), and the checkout applies them at once.
+- **An unknown order's address answered 200 instead of 404** once the order page had a `loading.tsx`: the skeleton streams first, and streaming fixes the status before `notFound()` runs. A store page that calls `notFound()` has no `loading.tsx`; only the private admin panel has one.
 
 ## Data, cache and orders
 
