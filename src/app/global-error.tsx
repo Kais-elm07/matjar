@@ -1,5 +1,7 @@
 "use client"
 
+import { useEffect } from "react"
+import type { ErrorInfo } from "next/error"
 import { TriangleAlertIcon } from "lucide-react"
 
 import { EmptyState } from "@/components/shared/empty-state"
@@ -14,9 +16,14 @@ import "./globals.css"
  * page outside the store group, so no error page closer to it can show. It takes the place of the whole
  * document: it writes its own <html> with the store's font and styles, and has no header or router to
  * lean on. Both actions load a page from the server again, because that is what clears a part of the
- * site that failed to download; so the way home is a plain link, not next/link.
+ * site that failed to download; so the way home is a plain link, not next/link. Like the store's error
+ * pages (ErrorMessage), it writes the error to the browser's console.
  */
-export default function GlobalError() {
+export default function GlobalError({ error }: ErrorInfo) {
+  useEffect(() => {
+    console.error(error)
+  }, [error])
+
   return (
     <html lang="ar" dir="rtl" className={HTML_CLASSES}>
       <body className="flex min-h-full flex-col">
