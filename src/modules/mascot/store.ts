@@ -4,7 +4,8 @@ import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
 import { isRecord } from "@/lib/guards"
-import { safeStorage } from "@/lib/state/storage"
+import { useRestored } from "@/lib/saved-stores"
+import { safeStorage } from "@/lib/storage"
 
 type MascotPreferences = {
   /** The visitor hid Najm, the store's mascot, with the button in the footer or in his greeting */
@@ -34,3 +35,8 @@ export const useMascotPreferences = create<MascotPreferences>()(
     }
   )
 )
+
+/** Whether the visitor's choice to show or hide Najm has been restored from the browser. */
+export function useMascotRestored() {
+  return useRestored(useMascotPreferences)
+}

@@ -4,7 +4,7 @@ import { useCallback } from "react"
 
 import { announceAddedProduct } from "@/modules/mascot/events"
 import { useCartStore, type CartLine } from "@/modules/cart/store"
-import { useUiStore } from "@/lib/state/ui"
+import { useUiStore } from "@/lib/ui-store"
 import { toast } from "@/lib/toast"
 
 type AddOptions = {

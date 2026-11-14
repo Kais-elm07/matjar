@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { useCartStore, type CartLine } from "@/modules/cart/store"
-import { resetStorageProbe, safeStorage } from "@/lib/state/storage"
+import { resetStorageProbe, safeStorage } from "@/lib/storage"
 import { useWishlistStore } from "@/modules/wishlist/store"
 
 /**

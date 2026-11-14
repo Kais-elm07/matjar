@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 
-import { useUiStore } from "@/lib/state/ui"
+import { useUiStore } from "@/lib/ui-store"
 
 /**
  * Stands in for the cart panel when its code can't be loaded (the fallback of Optional in LazyCartSheet):

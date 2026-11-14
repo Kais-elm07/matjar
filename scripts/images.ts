@@ -6,7 +6,7 @@
  *                      and skips the images that haven't changed since the last run.
  *                      It also writes public/images/image-meta.json: each photo's main color and whether it is a cut-out,
  *                      which the site turns into the light behind the photo (DESIGN.md: the product's tone).
- *                      The copies and the colors are made by src/lib/images/prepare.ts, as for the photos uploaded
+ *                      The copies and the colors are made by src/lib/image-prepare.ts, as for the photos uploaded
  *                      in the admin panel.
  *   pnpm images:photos downloads the Pexels photos listed in assets/images/sources.json (scripts/fetch-demo-photos.mjs).
  *
@@ -26,7 +26,7 @@ import path from "node:path"
 import { isImageMeta } from "@/modules/catalog/guards"
 import type { ImageMeta } from "@/modules/catalog/types"
 import { IMAGE_WIDTHS } from "@/lib/image-loader"
-import { measurePhoto, webpCopies } from "@/lib/images/prepare"
+import { measurePhoto, webpCopies } from "@/lib/image-prepare"
 
 const ROOT = process.cwd()
 const SOURCE_DIR = path.join(ROOT, "assets", "images")

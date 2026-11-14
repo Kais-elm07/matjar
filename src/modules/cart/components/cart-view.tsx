@@ -11,9 +11,12 @@ import { buttonVariants } from "@/components/ui/button"
 import { PIECE_FORMS, pluralize } from "@/lib/arabic-plural"
 import { formatPrice } from "@/lib/money"
 import { cartSubtotal } from "@/modules/checkout/totals"
-import { useCartCount, useCartStore } from "@/modules/cart/store"
+import {
+  useCartCount,
+  useCartRestored,
+  useCartStore,
+} from "@/modules/cart/store"
 import { useCartSync } from "@/modules/cart/sync"
-import { useCartRestored } from "@/lib/state/hydration"
 import { cn } from "@/lib/utils"
 
 /** The cart page: the products with quantity and removal, a summary of the amounts, and an empty state. */

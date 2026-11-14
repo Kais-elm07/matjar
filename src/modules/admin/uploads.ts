@@ -11,11 +11,11 @@ import {
 } from "@/modules/admin/upload-rules"
 import { getDb } from "@/lib/db"
 import { isRecord } from "@/lib/guards"
-import { measurePhoto, webpCopies } from "@/lib/images/prepare"
+import { measurePhoto, webpCopies } from "@/lib/image-prepare"
 
 /**
  * Photos uploaded in the admin panel, kept in Supabase Storage (decided by the owner): sharp makes the
- * same five WebP copies as pnpm images (src/lib/images/prepare.ts) and measures the photo's look, the
+ * same five WebP copies as pnpm images (src/lib/image-prepare.ts) and measures the photo's look, the
  * copies go to a public bucket, and the look is kept in the database (UploadedImage) until a product
  * that uses the photo is saved. The store then shows the copies straight from Supabase, through the
  * image loader, like the photos in public/images.

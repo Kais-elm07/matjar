@@ -3,8 +3,7 @@
 import { DogIcon } from "lucide-react"
 
 import { siteConfig } from "@/config/site"
-import { useMascotRestored } from "@/lib/state/hydration"
-import { useMascotPreferences } from "@/modules/mascot/store"
+import { useMascotPreferences, useMascotRestored } from "@/modules/mascot/store"
 
 /** The footer button that hides Najm, or brings him back; the choice is saved in the browser. */
 export function MascotToggle() {

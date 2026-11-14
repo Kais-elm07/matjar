@@ -3,7 +3,7 @@
 import { MenuIcon } from "lucide-react"
 
 import { HEADER_ICON_BUTTON } from "@/components/layout/header-styles"
-import { useUiStore } from "@/lib/state/ui"
+import { useUiStore } from "@/lib/ui-store"
 import { cn } from "@/lib/utils"
 
 /**

@@ -18,7 +18,7 @@ import { formatPrice } from "@/lib/money"
 import { cartSubtotal } from "@/modules/checkout/totals"
 import { useCartCount, useCartStore } from "@/modules/cart/store"
 import { useCartSync } from "@/modules/cart/sync"
-import { useUiStore } from "@/lib/state/ui"
+import { useUiStore } from "@/lib/ui-store"
 
 /** The side cart panel: slides in from the end side when an item is added or the cart icon is pressed. */
 export function CartSheet() {

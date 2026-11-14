@@ -13,7 +13,7 @@ import { CountBadge } from "@/components/layout/count-badge"
 import { TabBarLink } from "@/components/layout/tab-bar-link"
 import { TAB_BAR_ITEM } from "@/components/layout/tab-bar-styles"
 import { useCartCount } from "@/modules/cart/store"
-import { useUiStore } from "@/lib/state/ui"
+import { useUiStore } from "@/lib/ui-store"
 import { useWishlistCount } from "@/modules/wishlist/store"
 import { cn } from "@/lib/utils"
 

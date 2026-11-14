@@ -3,8 +3,11 @@
 import { useEffect, useState } from "react"
 
 import { isCartCatalog } from "@/modules/catalog/guards"
-import { useCartStore, type CartNotice } from "@/modules/cart/store"
-import { useCartRestored } from "@/lib/state/hydration"
+import {
+  useCartRestored,
+  useCartStore,
+  type CartNotice,
+} from "@/modules/cart/store"
 import { jsonLoader } from "@/lib/json-loader"
 
 /**

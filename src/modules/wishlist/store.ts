@@ -4,7 +4,8 @@ import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
 import { isRecord, isString } from "@/lib/guards"
-import { safeStorage } from "@/lib/state/storage"
+import { useRestored } from "@/lib/saved-stores"
+import { safeStorage } from "@/lib/storage"
 
 type WishlistState = {
   /** Slugs of the saved products, newest first */
@@ -64,6 +65,11 @@ export const useWishlistStore = create<WishlistState>()(
     }
   )
 )
+
+/** Whether the wishlist has been restored from the browser. */
+export function useWishlistRestored() {
+  return useRestored(useWishlistStore)
+}
 
 export function useWishlistCount() {
   return useWishlistStore((state) => state.slugs.length)

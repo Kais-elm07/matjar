@@ -27,9 +27,12 @@ import type {
 } from "@/modules/checkout/types"
 import { formatPrice } from "@/lib/money"
 import { orderPath } from "@/lib/routes"
-import { cartNoticeText, useCartStore } from "@/modules/cart/store"
+import {
+  cartNoticeText,
+  useCartRestored,
+  useCartStore,
+} from "@/modules/cart/store"
 import { useCartSync } from "@/modules/cart/sync"
-import { useCartRestored } from "@/lib/state/hydration"
 
 interface CheckoutViewProps {
   config: ShippingConfig

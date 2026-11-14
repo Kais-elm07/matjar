@@ -7,7 +7,7 @@
  *   https://….supabase.co/storage/v1/object/public/product-images/products/<id>
  *                              (uploaded in the admin panel)       becomes  …/products/<id>-800.webp
  * Addresses that have an extension, such as /images/logo.png, are used as they are.
- * The sizes are made by src/lib/images/prepare.ts, and next.config.ts (deviceSizes) lists the same ones.
+ * The sizes are made by src/lib/image-prepare.ts, and next.config.ts (deviceSizes) lists the same ones.
  */
 export const IMAGE_WIDTHS: readonly [200, 400, 600, 800, 1200] = [
   200, 400, 600, 800, 1200,

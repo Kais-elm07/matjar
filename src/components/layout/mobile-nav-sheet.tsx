@@ -13,7 +13,7 @@ import {
 import { siteConfig } from "@/config/site"
 import type { NavCategory } from "@/modules/catalog/types"
 import { categoryPath } from "@/lib/routes"
-import { useUiStore } from "@/lib/state/ui"
+import { useUiStore } from "@/lib/ui-store"
 
 interface MobileNavSheetProps {
   categories: NavCategory[]

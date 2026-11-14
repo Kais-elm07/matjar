@@ -13,7 +13,8 @@ import { isCardImage, isVariantOptions } from "@/modules/catalog/guards"
 import { optionsKey } from "@/modules/catalog/variant-key"
 import { lineLimit } from "@/modules/cart/quantity"
 import { isFiniteNumber, isNullOr, isRecord, isString } from "@/lib/guards"
-import { safeStorage } from "@/lib/state/storage"
+import { useRestored } from "@/lib/saved-stores"
+import { safeStorage } from "@/lib/storage"
 
 /** A cart line: the chosen variant with a copy of its data when added, to show it at once without loading. */
 export type CartLine = {
@@ -223,6 +224,14 @@ export const useCartStore = create<CartState>()(
     }
   )
 )
+
+/**
+ * Whether the cart has been restored from the browser.
+ * Until then, loading skeletons show instead of "السلة فارغة" (the cart is empty).
+ */
+export function useCartRestored() {
+  return useRestored(useCartStore)
+}
 
 /** Number of pieces in the cart. */
 export function useCartCount() {

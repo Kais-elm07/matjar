@@ -9,7 +9,7 @@ import { productsApiPath } from "../../src/lib/routes"
 
 /**
  * Opens the page and waits until it is interactive and the cart and wishlist are restored,
- * so the test never clicks a button before it works (the marker is in src/lib/state/hydration.ts).
+ * so the test never clicks a button before it works (the marker is in src/lib/saved-stores.ts).
  */
 export async function open(page: Page, path: string) {
   await page.goto(path)

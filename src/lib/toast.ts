@@ -4,7 +4,7 @@ import type { ExternalToast } from "sonner"
 
 /**
  * Short notification messages (toasts) without loading their library (sonner) with the page.
- * The first message asks LazyToaster (src/components/global/lazy-toaster.tsx) to load the toast list, and waits for it to mount,
+ * The first message asks LazyToaster (src/components/layout/lazy-toaster.tsx) to load the toast list, and waits for it to mount,
  * because sonner does not show messages sent before its component mounted.
  */
 

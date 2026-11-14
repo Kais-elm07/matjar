@@ -5,8 +5,7 @@ import dynamic from "next/dynamic"
 import { Optional } from "@/components/shared/optional"
 import { useFirstInteraction } from "@/hooks/use-first-interaction"
 import { supportsWebGL2 } from "@/modules/mascot/support"
-import { useMascotRestored } from "@/lib/state/hydration"
-import { useMascotPreferences } from "@/modules/mascot/store"
+import { useMascotPreferences, useMascotRestored } from "@/modules/mascot/store"
 
 const Mascot = dynamic(
   () => import("@/modules/mascot/components/mascot").then((mod) => mod.Mascot),

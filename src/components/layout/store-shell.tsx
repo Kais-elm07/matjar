@@ -1,7 +1,7 @@
 import { Suspense } from "react"
 
 import { LazyCartSheet } from "@/modules/cart/components/lazy-cart-sheet"
-import { CartWishlistRestorer } from "@/components/global/cart-wishlist-restorer"
+import { SavedStoresRestorer } from "@/components/layout/saved-stores-restorer"
 import { ListingUrlListener } from "@/modules/listing/components/listing-url-listener"
 import { AnnouncementBar } from "@/components/layout/announcement-bar"
 import { LazyMobileNavSheet } from "@/components/layout/lazy-mobile-nav-sheet"
@@ -52,7 +52,7 @@ export async function StoreShell({ children, mainClassName }: StoreShellProps) {
       <LazyMascot />
       <LazyCartSheet />
       <LazyMobileNavSheet categories={categories} />
-      <CartWishlistRestorer />
+      <SavedStoresRestorer />
       {/* Tells listing pages when the URL changes (filters and sorting) */}
       <Suspense fallback={null}>
         <ListingUrlListener />

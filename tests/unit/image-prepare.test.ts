@@ -2,12 +2,12 @@ import sharp from "sharp"
 import { describe, expect, it } from "vitest"
 
 import { IMAGE_WIDTHS } from "@/lib/image-loader"
-import { lookFromPixels, measurePhoto, webpCopies } from "@/lib/images/prepare"
+import { lookFromPixels, measurePhoto, webpCopies } from "@/lib/image-prepare"
 
 import { discPhoto } from "./support/photos"
 
 /**
- * Preparing a photo (src/lib/images/prepare.ts), shared by pnpm images and the uploads in the admin
+ * Preparing a photo (src/lib/image-prepare.ts), shared by pnpm images and the uploads in the admin
  * panel: the five WebP copies, and the look the light behind the photo takes.
  */
 

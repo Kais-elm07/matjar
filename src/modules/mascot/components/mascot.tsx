@@ -12,7 +12,7 @@ import { useMascotPersona } from "@/modules/mascot/components/use-mascot-persona
 import { useMascotScene } from "@/modules/mascot/components/use-mascot-scene"
 import { siteConfig } from "@/config/site"
 import { useMascotPreferences } from "@/modules/mascot/store"
-import { useUiStore } from "@/lib/state/ui"
+import { useUiStore } from "@/lib/ui-store"
 
 /**
  * Najm, the store's 3D mascot (DESIGN.md: Mascot), fixed in the corner of the screen on the start side, above the

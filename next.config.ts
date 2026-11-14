@@ -53,7 +53,7 @@ const nextConfig: NextConfig = {
   images: {
     // Images are prepared in advance in five sizes (pnpm images), and the loader picks the right size for the screen,
     // so the server never resizes them. The same sizes are in IMAGE_WIDTHS (src/lib/image-loader.ts), which
-    // src/lib/images/prepare.ts makes for pnpm images and for the photos uploaded in the admin panel.
+    // src/lib/image-prepare.ts makes for pnpm images and for the photos uploaded in the admin panel.
     loader: "custom",
     loaderFile: "./src/lib/image-loader.ts",
     // 600 fits a photo on a stage on most phones, between the card size (400) and the full width (800)
