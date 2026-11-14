@@ -358,3 +358,4 @@ On these three pages the largest element is a photo; a page whose largest elemen
 - [DEPLOYMENT.md](DEPLOYMENT.md): putting the store online on Netlify with Supabase, and the errors met on the first deploy.
 - [DESIGN.md](DESIGN.md): the visual identity, and [USER-TESTING.md](USER-TESTING.md): testing with real people.
 - [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md): the rules for the code, and the rules from the store's mistakes.
+- [COMPARISON.md](COMPARISON.md): this store compared with the course's reference project, [shopboard-reference](https://github.com/yaman3bd/shopboard-reference).
