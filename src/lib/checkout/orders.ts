@@ -3,11 +3,11 @@ import "server-only"
 import { randomInt } from "node:crypto"
 
 import { Prisma } from "@/generated/prisma/client"
-import { cartCatalogOf } from "@/lib/catalog/catalog"
-import { isVariantOptions } from "@/lib/catalog/guards"
-import { readLiveProducts } from "@/lib/catalog/load"
-import type { Product, Variant } from "@/lib/catalog/types"
-import { imageIndexForOptions } from "@/lib/catalog/variant-selection"
+import { cartCatalogOf } from "@/modules/catalog/queries"
+import { isVariantOptions } from "@/modules/catalog/guards"
+import { readLiveProducts } from "@/modules/catalog/load"
+import type { Product, Variant } from "@/modules/catalog/types"
+import { imageIndexForOptions } from "@/modules/catalog/variant-selection"
 import {
   orderNumber,
   type OrderDraft,

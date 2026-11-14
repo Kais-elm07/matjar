@@ -9,7 +9,7 @@ const shared: typeof globalThis & { matjarDb?: PrismaClient } = globalThis
 
 /**
  * The database client (PostgreSQL through Prisma), created on first use. The catalog reads it through
- * Next.js's cache (src/lib/catalog/load.ts), and the orders directly.
+ * Next.js's cache (src/modules/catalog/load.ts), and the orders directly.
  */
 export function getDb() {
   if (shared.matjarDb) return shared.matjarDb

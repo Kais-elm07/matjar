@@ -1,7 +1,7 @@
 import Link from "next/link"
 
 import { PhotoBox } from "@/components/shared/photo-box"
-import type { Category } from "@/lib/catalog/types"
+import type { Category } from "@/modules/catalog/types"
 import { categoryPath } from "@/lib/routes"
 
 interface SubcategoryNavProps {

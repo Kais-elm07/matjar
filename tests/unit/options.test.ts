@@ -5,7 +5,7 @@ import {
   getColorHex,
   isColorOption,
   sortOptionValues,
-} from "@/lib/catalog/options"
+} from "@/modules/catalog/options"
 
 describe("variant options", () => {
   it("recognizes the color option in its different spellings", () => {

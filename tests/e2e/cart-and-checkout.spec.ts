@@ -4,8 +4,8 @@ import path from "node:path"
 import { expect, test, type Page } from "@playwright/test"
 
 import { coupons } from "../../src/data/coupons"
-import { fileRows } from "../../src/lib/catalog/file-rows"
-import { optionsKey } from "../../src/lib/catalog/variant-key"
+import { fileRows } from "../../src/modules/catalog/file-rows"
+import { optionsKey } from "../../src/modules/catalog/variant-key"
 import { MAX_LINE_QUANTITY } from "../../src/lib/checkout/quantity"
 import {
   isPhone,

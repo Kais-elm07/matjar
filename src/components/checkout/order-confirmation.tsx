@@ -5,7 +5,7 @@ import { CircleCheckIcon, InfoIcon } from "lucide-react"
 import { OrderDetailRow } from "@/components/checkout/order-detail-row"
 import { buttonVariants } from "@/components/ui/button"
 import { PIECE_FORMS, pluralize } from "@/lib/arabic-plural"
-import { formatOptions } from "@/lib/catalog/options"
+import { formatOptions } from "@/modules/catalog/options"
 import { shippingLabel, type PlacedOrder } from "@/lib/checkout/order"
 import { formatPrice, formatShipping } from "@/lib/money"
 

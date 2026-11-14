@@ -1,4 +1,4 @@
-import type { CategoryInput } from "@/lib/catalog/types"
+import type { CategoryInput } from "@/modules/catalog/types"
 
 /**
  * The store's categories. Their order here is the order they appear on the site.

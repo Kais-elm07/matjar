@@ -1,9 +1,9 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
-import { ProductDetails } from "@/components/product/product-details"
-import { ProductRail } from "@/components/product/product-rail"
-import { ProductTabs } from "@/components/product/product-tabs"
+import { ProductDetails } from "@/modules/catalog/components/product-details"
+import { ProductRail } from "@/modules/catalog/components/product-rail"
+import { ProductTabs } from "@/modules/catalog/components/product-tabs"
 import { Breadcrumbs } from "@/components/shared/breadcrumbs"
 import { JsonLd } from "@/components/shared/json-ld"
 import { SectionHeading } from "@/components/shared/section-heading"
@@ -11,7 +11,7 @@ import {
   getProduct,
   getProducts,
   getRelatedProducts,
-} from "@/lib/catalog/catalog"
+} from "@/modules/catalog/queries"
 import { categoryTrail, productPath } from "@/lib/routes"
 import {
   breadcrumbJsonLd,

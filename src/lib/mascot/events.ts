@@ -1,4 +1,4 @@
-import type { CardImage } from "@/lib/catalog/types"
+import type { CardImage } from "@/modules/catalog/types"
 
 /** A product that was just added to the cart, and where on the screen the visitor pressed to add it. */
 type AddedProduct = {

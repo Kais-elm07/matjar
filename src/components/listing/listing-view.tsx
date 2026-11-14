@@ -12,7 +12,7 @@ import {
   LISTING_GRID,
   LISTING_LAYOUT,
 } from "@/components/listing/listing-skeleton"
-import { ProductGrid } from "@/components/product/product-grid"
+import { ProductGrid } from "@/modules/catalog/components/product-grid"
 import { Optional } from "@/components/shared/optional"
 import { Button } from "@/components/ui/button"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
@@ -24,7 +24,7 @@ import type {
   CategoryOption,
   ProductCardData,
   SearchCardData,
-} from "@/lib/catalog/types"
+} from "@/modules/catalog/types"
 import {
   computeFacets,
   filterCards,

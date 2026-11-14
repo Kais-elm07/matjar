@@ -2,8 +2,8 @@ import {
   getColorHex,
   isColorOption,
   sortOptionValues,
-} from "@/lib/catalog/options"
-import type { ProductCardData } from "@/lib/catalog/types"
+} from "@/modules/catalog/options"
+import type { ProductCardData } from "@/modules/catalog/types"
 import type { ListingParams, SortValue } from "@/lib/listing/params"
 import { toMajorUnits, toMinorUnits } from "@/lib/money"
 

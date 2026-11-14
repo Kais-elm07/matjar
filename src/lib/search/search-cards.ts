@@ -1,4 +1,4 @@
-import type { SearchCardData } from "@/lib/catalog/types"
+import type { SearchCardData } from "@/modules/catalog/types"
 import { normalizeForSearch, toSearchTerms } from "@/lib/search/normalize"
 
 /**

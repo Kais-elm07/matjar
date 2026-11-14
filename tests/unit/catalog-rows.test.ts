@@ -2,12 +2,12 @@ import { describe, expect, it } from "vitest"
 
 import { categories } from "@/data/categories"
 import { products } from "@/data/products"
-import { categoryRows, productRows } from "@/lib/catalog/rows"
-import { categorySchema, productSchema } from "@/lib/catalog/schema"
-import { validateCatalogData } from "@/lib/catalog/validate"
+import { categoryRows, productRows } from "@/modules/catalog/rows"
+import { categorySchema, productSchema } from "@/modules/catalog/schema"
+import { validateCatalogData } from "@/modules/catalog/validate"
 
 /**
- * The rows pnpm db:seed writes to the database (src/lib/catalog/rows.ts): prices in halalas, each photo's
+ * The rows pnpm db:seed writes to the database (src/modules/catalog/rows.ts): prices in halalas, each photo's
  * tone and cut-out from the data or from image-meta.json, and the order the files are written in.
  */
 

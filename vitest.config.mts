@@ -28,7 +28,7 @@ export default defineConfig({
           alias: [
             // The catalog comes from the database through Next.js's cache; the unit tests build it from src/data
             {
-              find: /^@\/lib\/catalog\/load$/,
+              find: /^@\/modules\/catalog\/load$/,
               replacement: fromRoot("./tests/unit/support/catalog-load.ts"),
             },
             { find: /^@\//, replacement: fromRoot("./src/") },

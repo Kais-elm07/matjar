@@ -6,7 +6,7 @@
  *   pnpm db:seed --force   writes the src/data products over the ones with the same slug (for the
  *                          local database and the tests); products that are not in src/data stay
  *
- * The data is validated first with the same rules as the build (src/lib/catalog/validate.ts), and each
+ * The data is validated first with the same rules as the build (src/modules/catalog/validate.ts), and each
  * photo takes its measured color from public/images/image-meta.json, which pnpm images writes (the
  * db:seed script runs it first). Everything is written in one transaction: all or nothing.
  * The messages are in Arabic, for the store owner.
@@ -17,8 +17,8 @@ import { PrismaPg } from "@prisma/adapter-pg"
 
 import { PrismaClient } from "@/generated/prisma/client"
 import { pluralize, PRODUCT_FORMS, type PluralForms } from "@/lib/arabic-plural"
-import { fileRows } from "@/lib/catalog/file-rows"
-import { readImageMeta } from "@/lib/catalog/image-meta"
+import { fileRows } from "@/modules/catalog/file-rows"
+import { readImageMeta } from "@/modules/catalog/image-meta"
 
 /** A date column (@db.Date) from 2026-10-30 */
 const day = (value: string) => new Date(`${value}T00:00:00Z`)

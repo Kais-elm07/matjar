@@ -31,9 +31,9 @@ import {
   UPLOAD_TYPES,
 } from "@/lib/admin/upload-rules"
 import { uploadPhoto, type UploadResult } from "@/lib/admin/uploads"
-import { CATALOG_TAG } from "@/lib/catalog/load"
-import { categorySchema, productSchema } from "@/lib/catalog/schema"
-import { categoryProblems, productProblems } from "@/lib/catalog/validate"
+import { CATALOG_TAG } from "@/modules/catalog/load"
+import { categorySchema, productSchema } from "@/modules/catalog/schema"
+import { categoryProblems, productProblems } from "@/modules/catalog/validate"
 import { adminPaths } from "@/lib/routes"
 import { z } from "@/lib/zod"
 

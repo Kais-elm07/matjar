@@ -1,4 +1,4 @@
-import type { TestimonialInput } from "@/lib/catalog/types"
+import type { TestimonialInput } from "@/modules/catalog/types"
 
 /**
  * Customer reviews on the home page.

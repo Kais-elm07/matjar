@@ -1,4 +1,4 @@
-import type { HomeContentInput } from "@/lib/catalog/types"
+import type { HomeContentInput } from "@/modules/catalog/types"
 
 /**
  * Home page content: the slides and the promo cards.

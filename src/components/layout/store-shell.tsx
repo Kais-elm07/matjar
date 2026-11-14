@@ -10,7 +10,7 @@ import { SiteFooter } from "@/components/layout/site-footer"
 import { SiteHeader } from "@/components/layout/site-header"
 import { WhatsAppButton } from "@/components/layout/whatsapp-button"
 import { LazyMascot } from "@/components/mascot/lazy-mascot"
-import { getNavCategories } from "@/lib/catalog/catalog"
+import { getNavCategories } from "@/modules/catalog/queries"
 import { cn } from "@/lib/utils"
 
 interface StoreShellProps {

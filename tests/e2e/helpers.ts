@@ -1,7 +1,10 @@
 import { expect, type APIRequestContext, type Page } from "@playwright/test"
 
-import { isCartCatalog, isProductsResponse } from "../../src/lib/catalog/guards"
-import type { SearchCardData } from "../../src/lib/catalog/types"
+import {
+  isCartCatalog,
+  isProductsResponse,
+} from "../../src/modules/catalog/guards"
+import type { SearchCardData } from "../../src/modules/catalog/types"
 import { productsApiPath } from "../../src/lib/routes"
 
 /**

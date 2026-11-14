@@ -7,8 +7,8 @@ import {
   toProductInput,
   type ProductFormValues,
 } from "@/lib/admin/product-form"
-import { productSchema } from "@/lib/catalog/schema"
-import { productProblems } from "@/lib/catalog/validate"
+import { productSchema } from "@/modules/catalog/schema"
+import { productProblems } from "@/modules/catalog/validate"
 
 /** The admin panel's product form: from the owner's text to the shape of src/data, and back. */
 

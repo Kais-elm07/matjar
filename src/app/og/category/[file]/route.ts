@@ -1,4 +1,4 @@
-import { getBuildCatalog } from "@/lib/catalog/load"
+import { getBuildCatalog } from "@/modules/catalog/load"
 import { jpegResponse, shareImageOutsideBuild } from "@/lib/og/render"
 import { categoryShareImage } from "@/lib/og/share-images"
 

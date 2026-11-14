@@ -6,7 +6,7 @@ import { FilterSection } from "@/components/listing/filter-section"
 import type { FilterChange } from "@/components/listing/filter-types"
 import { OptionFilter } from "@/components/listing/option-filter"
 import { PriceFilter } from "@/components/listing/price-filter"
-import type { CategoryOption } from "@/lib/catalog/types"
+import type { CategoryOption } from "@/modules/catalog/types"
 import type { Facets } from "@/lib/listing/filter"
 import {
   CLEARED_FILTERS,

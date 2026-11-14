@@ -1,6 +1,6 @@
 import { siteConfig } from "@/config/site"
 import { PIECE_FORMS, pluralize } from "@/lib/arabic-plural"
-import type { SimilarProduct } from "@/lib/catalog/types"
+import type { SimilarProduct } from "@/modules/catalog/types"
 
 /** What Najm says in his speech bubble. */
 export type MessageContent =

@@ -11,7 +11,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { siteConfig } from "@/config/site"
-import type { NavCategory } from "@/lib/catalog/types"
+import type { NavCategory } from "@/modules/catalog/types"
 import { categoryPath } from "@/lib/routes"
 import { useUiStore } from "@/lib/state/ui"
 

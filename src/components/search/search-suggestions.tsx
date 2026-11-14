@@ -5,7 +5,7 @@ import { ArrowRightIcon } from "lucide-react"
 
 import { PhotoBox } from "@/components/shared/photo-box"
 import { Skeleton } from "@/components/ui/skeleton"
-import type { SearchCardData } from "@/lib/catalog/types"
+import type { SearchCardData } from "@/modules/catalog/types"
 import { formatPrice } from "@/lib/money"
 import { placeholderIds } from "@/lib/placeholders"
 import { productPath, searchPath } from "@/lib/routes"

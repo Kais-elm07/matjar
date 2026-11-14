@@ -16,7 +16,7 @@ import path from "node:path"
 import { PHASE_PRODUCTION_BUILD } from "next/constants"
 import sharp, { type OverlayOptions, type Sharp } from "sharp"
 
-import type { PhotoLook } from "@/lib/catalog/types"
+import type { PhotoLook } from "@/modules/catalog/types"
 import { IMAGE_WIDTHS, imageFile } from "@/lib/image-loader"
 import { shareImages } from "@/lib/seo"
 import { toneColor, TONE_LIGHTNESS, type Tone } from "@/lib/tone"

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest"
 
-import { productResponse, productsResponse } from "@/lib/api/products"
-import { getCategories, getProducts } from "@/lib/catalog/catalog"
-import { isProductsResponse } from "@/lib/catalog/guards"
+import { productResponse, productsResponse } from "@/modules/catalog/api"
+import { getCategories, getProducts } from "@/modules/catalog/queries"
+import { isProductsResponse } from "@/modules/catalog/guards"
 
 async function listFor(query: string) {
   const response = await productsResponse(new URLSearchParams(query))

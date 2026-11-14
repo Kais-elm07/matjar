@@ -2,7 +2,7 @@
 
 import { useEffect, type RefObject } from "react"
 
-import type { SimilarProducts } from "@/lib/catalog/types"
+import type { SimilarProducts } from "@/modules/catalog/types"
 import { basketItem } from "@/lib/mascot/basket"
 import { listenForAddedProducts } from "@/lib/mascot/events"
 import type { MessageContent } from "@/lib/mascot/messages"

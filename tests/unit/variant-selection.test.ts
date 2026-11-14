@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
-import type { VariantOptions } from "@/lib/catalog/options"
-import type { Variant } from "@/lib/catalog/types"
+import type { VariantOptions } from "@/modules/catalog/options"
+import type { Variant } from "@/modules/catalog/types"
 import {
   defaultVariant,
   findVariant,
@@ -9,7 +9,7 @@ import {
   optionState,
   selectOption,
   type PurchasableProduct,
-} from "@/lib/catalog/variant-selection"
+} from "@/modules/catalog/variant-selection"
 import { BRAND_TONE } from "@/lib/tone"
 
 /** The look of a cut-out photo, which these rules don't depend on */

@@ -12,7 +12,7 @@ import {
   getCategory,
   getChildCategories,
   getProductCards,
-} from "@/lib/catalog/catalog"
+} from "@/modules/catalog/queries"
 import { categoryPath, categoryTrail } from "@/lib/routes"
 import { breadcrumbJsonLd, openGraph, shareImages } from "@/lib/seo"
 

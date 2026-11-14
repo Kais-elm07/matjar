@@ -1,4 +1,4 @@
-import { productResponse } from "@/lib/api/products"
+import { productResponse } from "@/modules/catalog/api"
 
 /** One product by its slug: /api/products/classic-cotton-shirt/, or 404 with { error }. */
 export async function GET(

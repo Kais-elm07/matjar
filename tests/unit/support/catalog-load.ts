@@ -1,10 +1,10 @@
-import { buildCatalog, type Catalog } from "@/lib/catalog/build"
-import { fileRows } from "@/lib/catalog/file-rows"
-import type { Product } from "@/lib/catalog/types"
+import { buildCatalog, type Catalog } from "@/modules/catalog/build"
+import { fileRows } from "@/modules/catalog/file-rows"
+import type { Product } from "@/modules/catalog/types"
 import { storeToday } from "@/lib/dates"
 
 /**
- * Takes the place of src/lib/catalog/load.ts in the unit tests (vitest.config.mts): the catalog is
+ * Takes the place of src/modules/catalog/load.ts in the unit tests (vitest.config.mts): the catalog is
  * built from the src/data files instead of the database, with no photo colors (the stage's blue).
  * The files are read on the first call, so a test that mocks @/data/... sees its own data; the
  * validation errors in that data are thrown from the first catalog function the test awaits.

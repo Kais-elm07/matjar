@@ -1,6 +1,6 @@
 import sharp from "sharp"
 
-import type { ImageMeta } from "@/lib/catalog/types"
+import type { ImageMeta } from "@/modules/catalog/types"
 import { IMAGE_WIDTHS } from "@/lib/image-loader"
 
 /**

@@ -6,7 +6,7 @@ import { ImageOffIcon, Trash2Icon } from "lucide-react"
 
 import { QuantityStepper } from "@/components/cart/quantity-stepper"
 import { Button } from "@/components/ui/button"
-import { formatOptions } from "@/lib/catalog/options"
+import { formatOptions } from "@/modules/catalog/options"
 import { formatPrice } from "@/lib/money"
 import { productPath } from "@/lib/routes"
 import { lineLimit } from "@/lib/checkout/quantity"

@@ -4,7 +4,7 @@ import dynamic from "next/dynamic"
 
 import { Optional } from "@/components/shared/optional"
 import { useIdle } from "@/hooks/use-idle"
-import type { NavCategory } from "@/lib/catalog/types"
+import type { NavCategory } from "@/modules/catalog/types"
 import { useUiStore } from "@/lib/state/ui"
 
 const MobileNavSheet = dynamic(

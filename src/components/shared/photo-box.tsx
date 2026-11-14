@@ -1,6 +1,6 @@
 import Image from "next/image"
 
-import type { PhotoLook } from "@/lib/catalog/types"
+import type { PhotoLook } from "@/modules/catalog/types"
 import { toneStyle } from "@/lib/tone"
 import { cn } from "@/lib/utils"
 

@@ -1,4 +1,4 @@
-import type { CategoryLink } from "@/lib/catalog/types"
+import type { CategoryLink } from "@/modules/catalog/types"
 
 /**
  * The addresses of the store's product, category and static pages, in one place. They end with a

@@ -4,7 +4,7 @@ import Link from "next/link"
 import { ShoppingBagIcon } from "lucide-react"
 
 import { useAddToCart } from "@/components/cart/use-add-to-cart"
-import type { ProductCardData } from "@/lib/catalog/types"
+import type { ProductCardData } from "@/modules/catalog/types"
 import { productPath } from "@/lib/routes"
 import { quickAddLine, type QuickAddSource } from "@/lib/state/cart"
 import { cn } from "@/lib/utils"

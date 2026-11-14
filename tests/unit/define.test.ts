@@ -4,7 +4,7 @@ import {
   optionMatrix,
   productImages,
   singleVariant,
-} from "@/lib/catalog/define"
+} from "@/modules/catalog/define"
 
 /** The helpers for writing products in src/data/products.ts, as the store owner uses them. */
 describe("optionMatrix", () => {

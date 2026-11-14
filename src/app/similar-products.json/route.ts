@@ -1,7 +1,7 @@
-import { API_HEADERS } from "@/lib/api/products"
-import { getSimilarProducts } from "@/lib/catalog/catalog"
+import { API_HEADERS } from "@/modules/catalog/api"
+import { getSimilarProducts } from "@/modules/catalog/queries"
 
-// Computed on every request from the cached catalog (src/lib/catalog/load.ts), which is cheap: a file
+// Computed on every request from the cached catalog (src/modules/catalog/load.ts), which is cheap: a file
 // prepared at build time is not refreshed by the catalog's tag on Netlify, and the stock changes with
 // every order
 export const dynamic = "force-dynamic"

@@ -2,7 +2,7 @@
 
 import { CategoryFilterButton } from "@/components/listing/category-filter-button"
 import { FilterSection } from "@/components/listing/filter-section"
-import type { CategoryOption } from "@/lib/catalog/types"
+import type { CategoryOption } from "@/modules/catalog/types"
 
 interface CategoryFilterProps {
   categories: CategoryOption[]

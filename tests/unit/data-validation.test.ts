@@ -57,7 +57,9 @@ describe("product and category files", () => {
     }))
 
     const message = await errorOf(
-      import("@/lib/catalog/catalog").then((catalog) => catalog.getProducts())
+      import("@/modules/catalog/queries").then((catalog) =>
+        catalog.getProducts()
+      )
     )
     expect(message).toContain("ملفات بيانات المتجر فيها")
     expect(message).toContain('رابط المنتج "test-shirt" مكرر.')
@@ -82,7 +84,9 @@ describe("product and category files", () => {
     vi.doMock("@/data/products", () => ({ products: [validProduct] }))
 
     const message = await errorOf(
-      import("@/lib/catalog/catalog").then((catalog) => catalog.getProducts())
+      import("@/modules/catalog/queries").then((catalog) =>
+        catalog.getProducts()
+      )
     )
     expect(message).toContain('الفئة "kids": الفئة الأم "family" غير موجودة.')
     expect(message).toContain('الفئة "a": تسلسل الفئات الأم دائري.')
@@ -124,7 +128,9 @@ describe("product and category files", () => {
     }))
 
     const message = await errorOf(
-      import("@/lib/catalog/catalog").then((catalog) => catalog.getProducts())
+      import("@/modules/catalog/queries").then((catalog) =>
+        catalog.getProducts()
+      )
     )
     expect(message).toContain("الحقل createdAt: التاريخ غير موجود في التقويم")
     expect(message).toContain("الحقل variants[1].price")
@@ -158,7 +164,7 @@ describe("product and category files", () => {
       ],
     }))
 
-    const catalog = await import("@/lib/catalog/catalog")
+    const catalog = await import("@/modules/catalog/queries")
     const { toneFromHex } = await import("@/lib/tone")
     const sneakers = await catalog.getProduct("red-sneakers")
     expect(sneakers?.images[0].tone).toEqual(toneFromHex("#dc2626"))
@@ -190,7 +196,7 @@ describe("product and category files", () => {
       ],
     }))
 
-    const catalog = await import("@/lib/catalog/catalog")
+    const catalog = await import("@/modules/catalog/queries")
     const [product] = await catalog.getProducts()
     expect(product.price).toBe(10000)
     expect(product.compareAtPrice).toBeNull()
@@ -203,7 +209,7 @@ describe("product and category files", () => {
     }))
     vi.doMock("@/data/products", () => ({ products: [validProduct] }))
 
-    const catalog = await import("@/lib/catalog/catalog")
+    const catalog = await import("@/modules/catalog/queries")
     expect(
       (await catalog.getProducts()).map((product) => product.slug)
     ).toEqual(["test-shirt"])

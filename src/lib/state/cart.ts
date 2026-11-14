@@ -3,14 +3,14 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
-import type { VariantOptions } from "@/lib/catalog/options"
+import type { VariantOptions } from "@/modules/catalog/options"
 import type {
   CardImage,
   CartCatalog,
   ProductCardData,
-} from "@/lib/catalog/types"
-import { isCardImage, isVariantOptions } from "@/lib/catalog/guards"
-import { optionsKey } from "@/lib/catalog/variant-key"
+} from "@/modules/catalog/types"
+import { isCardImage, isVariantOptions } from "@/modules/catalog/guards"
+import { optionsKey } from "@/modules/catalog/variant-key"
 import { lineLimit } from "@/lib/checkout/quantity"
 import { isFiniteNumber, isNullOr, isRecord, isString } from "@/lib/guards"
 import { safeStorage } from "@/lib/state/storage"

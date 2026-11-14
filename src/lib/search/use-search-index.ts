@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react"
 
-import { isProductsResponse } from "@/lib/catalog/guards"
-import type { SearchCardData } from "@/lib/catalog/types"
+import { isProductsResponse } from "@/modules/catalog/guards"
+import type { SearchCardData } from "@/modules/catalog/types"
 import { jsonLoader } from "@/lib/json-loader"
 import { productsApiPath } from "@/lib/routes"
 

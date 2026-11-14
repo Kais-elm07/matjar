@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test"
 
-import { isProductsResponse } from "../../src/lib/catalog/guards"
+import { isProductsResponse } from "../../src/modules/catalog/guards"
 import { productApiPath, productsApiPath } from "../../src/lib/routes"
 import { loadProducts } from "./helpers"
 

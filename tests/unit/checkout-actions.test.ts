@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-import { getProducts } from "@/lib/catalog/catalog"
+import { getProducts } from "@/modules/catalog/queries"
 import { lookupCoupon, placeOrder } from "@/lib/checkout/actions"
 import { getCheckoutConfig } from "@/lib/checkout/config"
 import type { CheckoutInput } from "@/lib/checkout/form-schema"

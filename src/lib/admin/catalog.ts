@@ -1,9 +1,9 @@
 import "server-only"
 
 import { productFormFrom } from "@/lib/admin/product-form"
-import { isSpecs, isVariantOptions } from "@/lib/catalog/guards"
-import type { ParsedCategory, ParsedProduct } from "@/lib/catalog/schema"
-import { optionsKey } from "@/lib/catalog/variant-key"
+import { isSpecs, isVariantOptions } from "@/modules/catalog/guards"
+import type { ParsedCategory, ParsedProduct } from "@/modules/catalog/schema"
+import { optionsKey } from "@/modules/catalog/variant-key"
 import { getDb } from "@/lib/db"
 import { toMinorUnits } from "@/lib/money"
 

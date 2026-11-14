@@ -1,4 +1,4 @@
-import { ProductGridSkeleton } from "@/components/product/product-grid-skeleton"
+import { ProductGridSkeleton } from "@/modules/catalog/components/product-grid-skeleton"
 
 /** Listing page layout: the filter bar on the start side on desktop, and the results beside it. */
 export const LISTING_LAYOUT =

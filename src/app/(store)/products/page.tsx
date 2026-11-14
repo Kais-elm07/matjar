@@ -4,7 +4,7 @@ import { ListingView } from "@/components/listing/listing-view"
 import { ProductsHeading } from "@/components/listing/products-heading"
 import { Breadcrumbs } from "@/components/shared/breadcrumbs"
 import { siteConfig } from "@/config/site"
-import { getCategoryOptions, getProductCards } from "@/lib/catalog/catalog"
+import { getCategoryOptions, getProductCards } from "@/modules/catalog/queries"
 import { openGraph } from "@/lib/seo"
 
 const title = "كل المنتجات"

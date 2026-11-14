@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 
-import { isCartCatalog } from "@/lib/catalog/guards"
+import { isCartCatalog } from "@/modules/catalog/guards"
 import { useCartStore, type CartNotice } from "@/lib/state/cart"
 import { useCartRestored } from "@/lib/state/hydration"
 import { jsonLoader } from "@/lib/json-loader"

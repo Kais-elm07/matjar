@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
-import { getSearchIndex } from "@/lib/catalog/catalog"
-import type { SearchCardData } from "@/lib/catalog/types"
+import { getSearchIndex } from "@/modules/catalog/queries"
+import type { SearchCardData } from "@/modules/catalog/types"
 import {
   computeFacets,
   filterCards,

@@ -2,7 +2,7 @@
 
 import { XIcon } from "lucide-react"
 
-import type { CategoryOption } from "@/lib/catalog/types"
+import type { CategoryOption } from "@/modules/catalog/types"
 import { CLEARED_FILTERS, type ListingParams } from "@/lib/listing/params"
 import { formatPrice, toMinorUnits } from "@/lib/money"
 

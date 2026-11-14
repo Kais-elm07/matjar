@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest"
 
-import { buildCatalog } from "@/lib/catalog/build"
-import { isImageMeta } from "@/lib/catalog/guards"
-import { parseImageMeta } from "@/lib/catalog/image-meta"
-import { productRows } from "@/lib/catalog/rows"
-import { productSchema } from "@/lib/catalog/schema"
+import { buildCatalog } from "@/modules/catalog/build"
+import { isImageMeta } from "@/modules/catalog/guards"
+import { parseImageMeta } from "@/modules/catalog/image-meta"
+import { productRows } from "@/modules/catalog/rows"
+import { productSchema } from "@/modules/catalog/schema"
 import { slidePosition, slideTurn, toneBlend } from "@/lib/slider"
 import {
   BRAND_TONE,

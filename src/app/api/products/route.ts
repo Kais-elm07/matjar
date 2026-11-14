@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server"
 
-import { productsResponse } from "@/lib/api/products"
+import { productsResponse } from "@/modules/catalog/api"
 
 /**
  * The product list: /api/products/, /api/products/?q=قميص and /api/products/?category=men.

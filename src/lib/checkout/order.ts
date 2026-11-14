@@ -1,5 +1,5 @@
-import type { VariantOptions } from "@/lib/catalog/options"
-import type { CardImage } from "@/lib/catalog/types"
+import type { VariantOptions } from "@/modules/catalog/options"
+import type { CardImage } from "@/modules/catalog/types"
 import { deliveryTime } from "@/lib/checkout/delivery"
 import type { CheckoutValues } from "@/lib/checkout/form-schema"
 import {

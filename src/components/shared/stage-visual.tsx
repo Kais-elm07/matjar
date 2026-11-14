@@ -1,6 +1,6 @@
 import Image from "next/image"
 
-import type { PhotoLook } from "@/lib/catalog/types"
+import type { PhotoLook } from "@/modules/catalog/types"
 import { cn } from "@/lib/utils"
 
 /** A photo on a stage: its path and its look. */

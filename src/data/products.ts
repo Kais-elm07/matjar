@@ -2,8 +2,8 @@ import {
   optionMatrix,
   productImages,
   singleVariant,
-} from "@/lib/catalog/define"
-import type { ProductInput } from "@/lib/catalog/types"
+} from "@/modules/catalog/define"
+import type { ProductInput } from "@/modules/catalog/types"
 
 /**
  * The store's products.

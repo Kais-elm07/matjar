@@ -4,7 +4,7 @@ import { toMajorUnits } from "@/lib/money"
 /**
  * The admin panel's product form: every field is text as the store owner types it, and the server
  * turns it into the same shape as a product in src/data/products.ts (prices in riyals), so the same
- * rules check it (productSchema in src/lib/catalog/schema.ts). Shared by the form in the browser and
+ * rules check it (productSchema in src/modules/catalog/schema.ts). Shared by the form in the browser and
  * the Server Action, so it holds no server code.
  */
 

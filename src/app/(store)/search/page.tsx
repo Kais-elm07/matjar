@@ -4,7 +4,7 @@ import type { Metadata } from "next"
 import { ListingSkeleton } from "@/components/listing/listing-skeleton"
 import { SearchView } from "@/components/search/search-view"
 import { Skeleton } from "@/components/ui/skeleton"
-import { getCategoryOptions } from "@/lib/catalog/catalog"
+import { getCategoryOptions } from "@/modules/catalog/queries"
 
 export const metadata: Metadata = {
   title: "البحث",

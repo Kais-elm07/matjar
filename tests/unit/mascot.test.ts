@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-import type { SimilarProduct, SimilarProducts } from "@/lib/catalog/types"
+import type { SimilarProduct, SimilarProducts } from "@/modules/catalog/types"
 import { basketItems } from "@/lib/mascot/basket"
 import {
   announceAddedProduct,

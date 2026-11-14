@@ -1,4 +1,4 @@
-import type { CardImage } from "@/lib/catalog/types"
+import type { CardImage } from "@/modules/catalog/types"
 import { imageFile } from "@/lib/image-loader"
 
 /** A product in Najm's basket: its SKU and the address of its small photo. */

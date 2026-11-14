@@ -1,5 +1,5 @@
-import { isSimilarProducts } from "@/lib/catalog/guards"
-import type { SimilarProduct, SimilarProducts } from "@/lib/catalog/types"
+import { isSimilarProducts } from "@/modules/catalog/guards"
+import type { SimilarProduct, SimilarProducts } from "@/modules/catalog/types"
 import { jsonLoader } from "@/lib/json-loader"
 
 /** The similar products of every product, loaded once per visit when Najm first appears. */

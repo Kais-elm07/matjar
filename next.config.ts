@@ -63,7 +63,7 @@ const nextConfig: NextConfig = {
     imageSizes: [200],
   },
   // The server builds the catalog in memory and reads only public/images/image-meta.json from that folder
-  // (src/lib/catalog/image-meta.ts). The photos are served as files, so they stay out of the server's code.
+  // (src/modules/catalog/image-meta.ts). The photos are served as files, so they stay out of the server's code.
   outputFileTracingExcludes: { "/*": ["./public/images/**/*.webp"] },
   async headers() {
     return [

@@ -14,10 +14,10 @@ import {
   getRelatedProducts,
   getSearchIndex,
   getSimilarProducts,
-} from "@/lib/catalog/catalog"
-import { isSimilarProducts } from "@/lib/catalog/guards"
-import { getHomeContent, getHomeSections } from "@/lib/catalog/home"
-import { optionsKey } from "@/lib/catalog/variant-key"
+} from "@/modules/catalog/queries"
+import { isSimilarProducts } from "@/modules/catalog/guards"
+import { getHomeContent, getHomeSections } from "@/modules/home/sections"
+import { optionsKey } from "@/modules/catalog/variant-key"
 import { getCheckoutConfig } from "@/lib/checkout/config"
 import { storeToday } from "@/lib/dates"
 import { discountPercent, toMinorUnits } from "@/lib/money"

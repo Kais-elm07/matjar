@@ -23,15 +23,15 @@ import { existsSync } from "node:fs"
 import { mkdir, readdir, readFile, rm, stat, writeFile } from "node:fs/promises"
 import path from "node:path"
 
-import { isImageMeta } from "@/lib/catalog/guards"
-import type { ImageMeta } from "@/lib/catalog/types"
+import { isImageMeta } from "@/modules/catalog/guards"
+import type { ImageMeta } from "@/modules/catalog/types"
 import { IMAGE_WIDTHS } from "@/lib/image-loader"
 import { measurePhoto, webpCopies } from "@/lib/images/prepare"
 
 const ROOT = process.cwd()
 const SOURCE_DIR = path.join(ROOT, "assets", "images")
 const OUTPUT_DIR = path.join(ROOT, "public", "images")
-// Read by src/lib/catalog/image-meta.ts when the database is seeded
+// Read by src/modules/catalog/image-meta.ts when the database is seeded
 const META_FILE = path.join(OUTPUT_DIR, "image-meta.json")
 const SOURCE_EXTENSIONS = new Set([
   ".jpg",

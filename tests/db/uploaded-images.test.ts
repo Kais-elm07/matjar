@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, it } from "vitest"
 
 import { writeProduct } from "@/lib/admin/catalog"
-import { productSchema } from "@/lib/catalog/schema"
+import { productSchema } from "@/modules/catalog/schema"
 import { getDb } from "@/lib/db"
 
 /**

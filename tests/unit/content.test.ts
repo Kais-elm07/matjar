@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import { siteConfig } from "@/config/site"
-import { getProduct } from "@/lib/catalog/catalog"
+import { getProduct } from "@/modules/catalog/queries"
 import { getContentPage, getContentPages } from "@/lib/content/pages"
 import {
   parseBlocks,

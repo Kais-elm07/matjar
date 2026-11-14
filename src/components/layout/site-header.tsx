@@ -10,7 +10,7 @@ import { MobileSearchRow } from "@/components/layout/mobile-search-row"
 import { SearchBox } from "@/components/search/search-box"
 import { buttonVariants } from "@/components/ui/button"
 import { siteConfig } from "@/config/site"
-import type { NavCategory } from "@/lib/catalog/types"
+import type { NavCategory } from "@/modules/catalog/types"
 import { cn } from "@/lib/utils"
 
 /** Links in the desktop navigation row: light text that turns blue on hover (DESIGN.md: header-link-hover). */

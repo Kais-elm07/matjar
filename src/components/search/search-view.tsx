@@ -9,7 +9,7 @@ import { ListingView } from "@/components/listing/listing-view"
 import { SearchBox } from "@/components/search/search-box"
 import { EmptyState } from "@/components/shared/empty-state"
 import { Button } from "@/components/ui/button"
-import type { CategoryOption } from "@/lib/catalog/types"
+import type { CategoryOption } from "@/modules/catalog/types"
 import { categoryPath } from "@/lib/routes"
 import { useSearchIndex } from "@/lib/search/use-search-index"
 
