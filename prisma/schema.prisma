@@ -27,7 +27,7 @@ model Order {
   /// was lost on the way is not saved twice; null for the orders saved before this field
   requestId      String?        @unique
   /// The visitor's network address when the host reports it, to count the orders one sender saves in
-  /// an hour (reachedOrderLimit in src/modules/checkout/orders-db.ts)
+  /// an hour (takeAddressTurn in src/modules/checkout/orders-db.ts)
   clientIp       String?
   placedAt       DateTime       @default(now())
   customerName   String

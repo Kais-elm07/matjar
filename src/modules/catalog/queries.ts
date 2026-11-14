@@ -113,6 +113,24 @@ export async function getCartCatalog(): Promise<CartCatalog> {
   return cartCatalogOf((await getCatalog()).products)
 }
 
+/**
+ * Whether the cached catalog shows any of these SKUs with other prices or stock than `live`, read from
+ * the database now. A SKU missing on one side only counts as a difference.
+ */
+export async function cacheDiffersFrom(live: CartCatalog, skus: string[]) {
+  const cached = await getCartCatalog()
+  return skus.some((sku) => {
+    const saved = cached[sku]
+    const now = live[sku]
+    return (
+      saved?.price !== now?.price ||
+      saved?.compareAtPrice !== now?.compareAtPrice ||
+      saved?.stock !== now?.stock ||
+      saved?.options !== now?.options
+    )
+  })
+}
+
 /** The same prices and stock for the given products only, such as the ones an order names. */
 export function cartCatalogOf(products: Product[]): CartCatalog {
   return Object.fromEntries(

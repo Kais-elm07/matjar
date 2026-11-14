@@ -1,6 +1,5 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 
@@ -34,7 +33,6 @@ export function CategoryForm({
   parents,
   title,
 }: CategoryFormProps) {
-  const router = useRouter()
   const { register, handleSubmit, reset } = useForm<CategoryFormValues>({
     defaultValues: initial,
   })
@@ -52,7 +50,6 @@ export function CategoryForm({
       setProblems([])
       toast(original === null ? "أُضيفت الفئة." : "حُفظت الفئة.")
       if (original === null) reset()
-      router.refresh()
     })
   }
 

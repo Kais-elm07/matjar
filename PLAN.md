@@ -795,7 +795,7 @@ Each step is one commit that passes `pnpm verify`, and the site is reviewed at 3
 
 #### 13.1 Decisions
 
-- **Where the catalog lives:** PostgreSQL (the same Supabase database), read through one cached function tagged `catalog` (`unstable_cache`, revalidated daily so ended deals reprice). The pages stay prepared at build time and are refreshed on demand (`revalidateTag("catalog", "max")` after every change and every order); the product and category pages switch to `dynamicParams = true`, so a new product renders on its first visit. Rebuilding the whole site on each change (a Netlify build hook) is the fallback if on-demand refresh fails on Netlify.
+- **Where the catalog lives:** PostgreSQL (the same Supabase database), read through one cached function tagged `catalog` (`unstable_cache`, revalidated daily so ended deals reprice). The pages stay prepared at build time and are refreshed on demand (`revalidateTag("catalog", "max")` after every change and every order, replaced on November 10, 2026 by `updateTag("catalog")`, which expires the copies at once: with the first form a page reached by a link kept its old copy); the product and category pages switch to `dynamicParams = true`, so a new product renders on its first visit. Rebuilding the whole site on each change (a Netlify build hook) is the fallback if on-demand refresh fails on Netlify.
 - **The cache holds the rows, not the built catalog:** `unstable_cache` stores its result as JSON, and the built catalog has `Map`s (`categoryBySlug`, `productBySlug`) that JSON drops. The cached value is the plain rows of `src/lib/catalog/rows.ts`; the catalog is built from them after reading.
 - **Stock:** lowered inside the order's transaction (`updateMany` where the stock is still enough), so the last piece can't be sold twice. The order is priced from the database rows with the same rule for ended deals as the catalog.
 - **Admin panel:** under `/admin/`, behind one password (a scrypt hash and a signed cookie in environment variables), decided by the owner. The session is checked in every admin page and every admin Server Action (Next.js recommends checks next to the data over `proxy.ts`).
@@ -907,7 +907,7 @@ The steps for each host are in `DEPLOYMENT.md`.
 
 1. Each feature goes in its own Git branch, then a pull request that GitHub Actions checks and builds.
 2. Merging into the main branch means an automatic deployment.
-3. Since phase 13, the store owner updates products, prices, stock and photos from the admin panel (`/admin/`), and the change shows on the site within seconds, with no deploy. The data files in `src/data` only fill an empty database.
+3. Since phase 13, the store owner updates products, prices, stock and photos from the admin panel (`/admin/`), and the change shows on the site from the next request on, with no deploy. The data files in `src/data` only fill an empty database.
 
 ---
 

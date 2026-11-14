@@ -120,7 +120,7 @@ The limit of 10 orders an hour from one address reads the visitor's address from
 
 ## Day-to-day workflow after launch
 
-1. The live products and categories are in the database, and the store owner changes them, and uploads their photos, from the admin panel (`/admin/`), which refreshes the site's cache within seconds. `src/data/products.ts` only fills a new, empty database; its images go in `assets/images/products/` (see the README).
+1. The live products and categories are in the database, and the store owner changes them, and uploads their photos, from the admin panel (`/admin/`); every save shows on the site from the next request on. `src/data/products.ts` only fills a new, empty database; its images go in `assets/images/products/` (see the README).
 2. To change the database's tables: edit `prisma/schema.prisma`, run `pnpm db:migrate` locally (it writes a migration in `prisma/migrations`), then `pnpm db:generate`, and commit the migration with the code.
 3. Run `pnpm verify` locally (all the checks plus the unit tests).
 4. Run `git commit`, then `git push`. GitHub Actions checks the change, and Netlify applies the migrations and deploys it within minutes. A push that changes only the documentation doesn't need a deploy, which costs 15 of the free plan's 300 monthly credits: put `[skip netlify]` in the message of the push's last commit, and Netlify skips it while GitHub Actions still checks it.

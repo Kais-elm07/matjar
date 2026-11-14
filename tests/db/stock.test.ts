@@ -5,9 +5,9 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import type { OrderDraft } from "@/modules/checkout/order"
 import {
   findOrderByRequest,
+  OrderLimitError,
   ORDERS_PER_HOUR,
   OutOfStockError,
-  reachedOrderLimit,
   saveOrder,
   type OrderSender,
 } from "@/modules/checkout/orders-db"
@@ -17,8 +17,9 @@ import { getDb } from "@/lib/db"
  * Saving an order against the real database (pnpm test:db, after pnpm db:start, db:deploy and db:seed):
  * the stock goes down in the same transaction, the last piece is sold once even when two orders
  * arrive together, an order with one line out of stock saves nothing, a request that arrives twice is
- * saved once, and an address is stopped at its hourly number of orders. The test puts every stock and
- * order it touches back as it was.
+ * saved once, and an address is stopped at its hourly number of orders, even when it sends them all at
+ * once. The test puts every stock and order it touches back as it was. The addresses are reserved for
+ * documentation (203.0.113.0/24), so they are never a real visitor's.
  */
 
 const db = getDb()
@@ -141,17 +142,50 @@ describe("saving an order", () => {
   })
 
   it("stops an address at its hourly number of orders, until the hour has passed", async () => {
-    await setStock(first.sku, ORDERS_PER_HOUR)
-    // An address reserved for documentation, so it is never a real visitor's
+    await setStock(first.sku, 100)
     const clientIp = "203.0.113.7"
     const order = draft([{ sku: first.sku, quantity: 1 }])
     for (let saved = 0; saved < ORDERS_PER_HOUR; saved++) {
-      expect(await reachedOrderLimit(clientIp)).toBe(false)
       await saveOrder(order, { requestId: randomUUID(), clientIp })
     }
-    expect(await reachedOrderLimit(clientIp)).toBe(true)
-    expect(await reachedOrderLimit("203.0.113.8")).toBe(false)
+    await expect(
+      saveOrder(order, { requestId: randomUUID(), clientIp })
+    ).rejects.toBeInstanceOf(OrderLimitError)
+    expect(await stockOf(first.sku)).toBe(100 - ORDERS_PER_HOUR)
+    // Another address may order, and so may this one an hour later
+    await saveOrder(order, { requestId: randomUUID(), clientIp: "203.0.113.8" })
     const anHourLater = new Date(Date.now() + 3_600_000)
-    expect(await reachedOrderLimit(clientIp, anHourLater)).toBe(false)
+    await saveOrder(order, { requestId: randomUUID(), clientIp }, anHourLater)
+  })
+
+  it("counts the orders an address sends all at once one at a time", async () => {
+    await setStock(first.sku, 100)
+    const clientIp = "203.0.113.9"
+    const order = draft([{ sku: first.sku, quantity: 1 }])
+    const results = await Promise.allSettled(
+      Array.from({ length: ORDERS_PER_HOUR * 3 }, () =>
+        saveOrder(order, { requestId: randomUUID(), clientIp })
+      )
+    )
+    const refused = results.filter(
+      (result): result is PromiseRejectedResult => result.status === "rejected"
+    )
+    expect(results.length - refused.length).toBe(ORDERS_PER_HOUR)
+    expect(
+      refused.every((result) => result.reason instanceof OrderLimitError)
+    ).toBe(true)
+    expect(await stockOf(first.sku)).toBe(100 - ORDERS_PER_HOUR)
+  })
+
+  it("saves a request from an address once, when it arrives again while the first is saved", async () => {
+    await setStock(first.sku, 5)
+    const order = draft([{ sku: first.sku, quantity: 1 }])
+    const request = { requestId: randomUUID(), clientIp: "203.0.113.10" }
+    const [id, sameMoment] = await Promise.all([
+      saveOrder(order, request),
+      saveOrder(order, request),
+    ])
+    expect(sameMoment).toBe(id)
+    expect(await stockOf(first.sku)).toBe(4)
   })
 })

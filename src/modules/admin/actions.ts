@@ -2,7 +2,7 @@
 
 import "server-only"
 
-import { revalidateTag } from "next/cache"
+import { updateTag } from "next/cache"
 import { redirect } from "next/navigation"
 
 import {
@@ -40,7 +40,9 @@ import { z } from "@/lib/zod"
 /**
  * The admin panel's Server Actions. Anyone can send them a POST request, so each one checks the
  * session itself before anything else, then every value, with the same rules as the data files.
- * Every change to the catalog ends by marking it stale, so the store shows it within seconds.
+ * Every change to the catalog ends by expiring it (updateTag): the store shows the change from the
+ * next request on, and the panel page the owner is on comes back drawn again in the same answer, so the
+ * forms need no refresh of their own.
  */
 
 type SignInState = { message: string | null }
@@ -137,7 +139,7 @@ export async function saveProduct(
   if (problems.length > 0) return { ok: false, problems }
 
   const saved = await writeProduct(productId.data, parsed.data)
-  revalidateTag(CATALOG_TAG, "max")
+  updateTag(CATALOG_TAG)
   return { ok: true, id: saved }
 }
 
@@ -191,7 +193,7 @@ export async function saveStocks(
     }
   }
   await writeStocks(request.data)
-  revalidateTag(CATALOG_TAG, "max")
+  updateTag(CATALOG_TAG)
   return { ok: true, message: "حُفظ المخزون." }
 }
 
@@ -203,7 +205,7 @@ export async function setHidden(id: number, hidden: boolean) {
     .safeParse({ id, hidden })
   if (!request.success) return { ok: false, message: "طلب غير صالح." }
   await writeHidden(request.data.id, request.data.hidden)
-  revalidateTag(CATALOG_TAG, "max")
+  updateTag(CATALOG_TAG)
   return {
     ok: true,
     message: hidden ? "أُخفي المنتج من المتجر." : "عاد المنتج إلى المتجر.",
@@ -253,6 +255,6 @@ export async function saveCategory(
   if (problems.length > 0) return { ok: false, problems }
 
   await writeCategory(originalSlug.data, parsed.data)
-  revalidateTag(CATALOG_TAG, "max")
+  updateTag(CATALOG_TAG)
   return { ok: true }
 }

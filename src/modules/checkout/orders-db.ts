@@ -97,12 +97,40 @@ export const ORDERS_PER_HOUR = 10
 
 const HOUR = 3_600_000
 
-/** Whether this address has already saved as many orders in the last hour as one sender may. */
-export async function reachedOrderLimit(clientIp: string, now = new Date()) {
-  const saved = await getDb().order.count({
+/** The first key of the address locks (pg_advisory_xact_lock with two keys), so they never meet other locks. */
+const ADDRESS_LOCKS = 4101
+
+/** The address already saved ORDERS_PER_HOUR orders in the last hour: nothing was saved. */
+export class OrderLimitError extends Error {
+  constructor() {
+    super(`More than ${ORDERS_PER_HOUR} orders an hour from one address`)
+  }
+}
+
+/**
+ * Gives the sender's address its turn: the address stays locked until the transaction ends, so the
+ * orders it sends all at once are counted and saved one at a time, and can't pass the hourly limit
+ * together. Returns the id of the order this request already saved, when its first try got there while
+ * this one waited, and throws OrderLimitError when the address has saved ORDERS_PER_HOUR orders in the
+ * last hour. A sender without an address (outside Netlify) passes at once.
+ */
+async function takeAddressTurn(
+  tx: Prisma.TransactionClient,
+  { requestId, clientIp }: OrderSender,
+  now: Date
+) {
+  if (!clientIp) return null
+  await tx.$executeRaw`SELECT pg_advisory_xact_lock(${ADDRESS_LOCKS}::int4, hashtext(${clientIp}::text))`
+  const earlier = await tx.order.findUnique({
+    where: { requestId },
+    select: { id: true },
+  })
+  if (earlier) return earlier.id
+  const recent = await tx.order.count({
     where: { clientIp, placedAt: { gt: new Date(now.getTime() - HOUR) } },
   })
-  return saved >= ORDERS_PER_HOUR
+  if (recent >= ORDERS_PER_HOUR) throw new OrderLimitError()
+  return null
 }
 
 /** Another order took the last pieces between reading the stock and saving: nothing was saved. */
@@ -129,9 +157,10 @@ function isTakenValue(error: unknown) {
  * covers the quantity, so two visitors can't both buy the last piece: the second one gets an
  * OutOfStockError and nothing of that order is saved.
  *
- * The order's row is written first, under the sender's request id, which the database keeps unique.
- * When the same request arrives twice at once (a retry while the first try is still being saved), the
- * second one waits for the first, saves nothing, and returns the first one's id.
+ * An address the host reports first waits for its turn and is held to ORDERS_PER_HOUR orders an hour
+ * (takeAddressTurn). The order's row is then written under the sender's request id, which the database
+ * keeps unique: when the same request arrives twice at once (a retry while the first try is still being
+ * saved), the second one saves nothing and returns the first one's id.
  */
 export async function saveOrder(
   draft: OrderDraft,
@@ -142,6 +171,8 @@ export async function saveOrder(
   for (let attempt = 1; ; attempt++) {
     try {
       return await getDb().$transaction(async (tx) => {
+        const earlier = await takeAddressTurn(tx, sender, now)
+        if (earlier) return earlier
         const saved = await tx.order.create({
           data: {
             ...order,

@@ -25,9 +25,11 @@ import { IMAGE_WIDTHS, imageFile } from "@/lib/image-loader"
  *
  * The rows are read in one go and kept in Next.js's data cache under the tag "catalog". A page built
  * from them is kept too, with the same tag: visitors get the saved page, and the database is asked
- * again only after revalidateTag("catalog", "max") (a change from the admin panel, an order that lowers
- * the stock) or after a day, so deals that end reprice by themselves. If the database is down when a
- * page is refreshed, the last saved page keeps being served.
+ * again only after a change or after a day. A change (the admin panel, an order that lowers the stock)
+ * expires every copy at once with updateTag("catalog") in its Server Action, so the next request waits
+ * for fresh rows and pages, even for a page reached by a link. After a day the saved page keeps being
+ * served while a fresh one is drawn behind it, so deals that end reprice by themselves, and a database
+ * that is down at that moment leaves the last saved page in place.
  *
  * The cache keeps JSON, so it holds the plain rows; the catalog, with its Maps, is built after reading
  * them, once per cached copy and day.

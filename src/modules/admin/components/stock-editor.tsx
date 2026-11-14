@@ -1,6 +1,5 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -17,7 +16,6 @@ interface StockEditorProps {
 
 /** The stock of every variant of a product, edited from the products list without opening the product. */
 export function StockEditor({ variants }: StockEditorProps) {
-  const router = useRouter()
   const [pending, startTransition] = useTransition()
   const [values, setValues] = useState(() =>
     Object.fromEntries(variants.map((v) => [v.sku, String(v.stock)]))
@@ -37,7 +35,6 @@ export function StockEditor({ variants }: StockEditorProps) {
         return
       }
       toast(result.message)
-      router.refresh()
     })
   }
 

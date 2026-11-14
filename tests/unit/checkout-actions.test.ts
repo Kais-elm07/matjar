@@ -1,41 +1,46 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { getProducts } from "@/modules/catalog/queries"
+import { readLiveProducts } from "@/modules/catalog/load"
 import { lookupCoupon, placeOrder } from "@/modules/checkout/actions"
 import { getCheckoutConfig } from "@/modules/checkout/config"
 import type { CheckoutInput } from "@/modules/checkout/schema"
 import {
   findOrderByRequest,
   linesFromProducts,
+  OrderLimitError,
   orderLines,
   OutOfStockError,
-  reachedOrderLimit,
   saveOrder,
 } from "@/modules/checkout/orders-db"
 import { calculateTotals } from "@/modules/checkout/totals"
 
 /**
  * What the server checks before it saves anything. The unit tests read the products from src/data
- * instead of the database (tests/unit/support/catalog-load.ts), and the orders table is answered for
- * here: no order saved for the request, a sender under the limit, and a save that succeeds, unless a
- * test says otherwise. Saving and lowering the stock are covered by the database tests (tests/db) and
- * the browser tests.
+ * instead of the database (tests/unit/support/catalog-load.ts), so the cached catalog and the live rows
+ * agree unless a test says otherwise, and the orders table is answered for here: no order saved for the
+ * request, and a save that succeeds. Saving, lowering the stock and the hourly limit are covered by the
+ * database tests (tests/db) and the browser tests.
  */
 
 const SENDER = "203.0.113.7"
 
-// Outside Next there is no cache to mark stale and no request to read the sender's address from
-const revalidateTag = vi.hoisted(() => vi.fn())
-vi.mock("next/cache", () => ({ revalidateTag }))
+// Outside Next there is no cache to expire and no request to read the sender's address from
+const updateTag = vi.hoisted(() => vi.fn())
+vi.mock("next/cache", () => ({ updateTag }))
 vi.mock("next/headers", () => ({
   headers: async () => new Headers({ "x-nf-client-connection-ip": SENDER }),
 }))
 vi.mock(import("@/modules/checkout/orders-db"), async (importOriginal) => ({
   ...(await importOriginal()),
   findOrderByRequest: vi.fn(async () => null),
-  reachedOrderLimit: vi.fn(async () => false),
   saveOrder: vi.fn(async () => "new-order"),
 }))
+// The rows the orders read from the database; a test can make them differ from the cached catalog
+vi.mock(import("@/modules/catalog/load"), async (importOriginal) => {
+  const original = await importOriginal()
+  return { ...original, readLiveProducts: vi.fn(original.readLiveProducts) }
+})
 
 const config = getCheckoutConfig()
 const city = config.cities[0]
@@ -138,7 +143,7 @@ describe("placeOrder", () => {
       expect.objectContaining({ total: order.expectedTotal }),
       { requestId: order.requestId, clientIp: SENDER }
     )
-    expect(revalidateTag).toHaveBeenCalledWith("catalog", "max")
+    expect(updateTag).toHaveBeenCalledWith("catalog")
   })
 
   it("answers a request that was already saved with its order, and saves nothing", async () => {
@@ -149,13 +154,12 @@ describe("placeOrder", () => {
   })
 
   it("refuses a sender that saved too many orders in an hour", async () => {
-    vi.mocked(reachedOrderLimit).mockResolvedValueOnce(true)
+    vi.mocked(saveOrder).mockRejectedValueOnce(new OrderLimitError())
     expect(await placeOrder(order)).toEqual({
       ok: false,
       message: expect.stringContaining("طلبات كثيرة"),
     })
-    expect(reachedOrderLimit).toHaveBeenCalledWith(SENDER)
-    expect(saveOrder).not.toHaveBeenCalled()
+    expect(updateTag).not.toHaveBeenCalled()
   })
 
   it("answers a cart that asks for more than the stock with the stock as it is now", async () => {
@@ -174,9 +178,30 @@ describe("placeOrder", () => {
         }),
       }),
     })
-    // The saved pages may be behind too
-    expect(revalidateTag).toHaveBeenCalledWith("catalog", "max")
+    // The cached catalog agrees with the database, so it is left alone
+    expect(updateTag).not.toHaveBeenCalled()
     expect(saveOrder).not.toHaveBeenCalled()
+  })
+
+  it("expires the cached catalog when the database has moved on", async () => {
+    const [product] = await readLiveProducts([variant.sku])
+    if (!product) throw new Error("The variant has no product")
+    const soldOut = {
+      ...product,
+      variants: product.variants.map((item) =>
+        item.sku === variant.sku ? { ...item, stock: 0 } : item
+      ),
+    }
+    // Read twice: to price the order, then for the refusal's answer
+    vi.mocked(readLiveProducts)
+      .mockResolvedValueOnce([soldOut])
+      .mockResolvedValueOnce([soldOut])
+    expect(await placeOrder(order)).toMatchObject({
+      ok: false,
+      message: STOCK_CHANGED,
+      cart: { [variant.sku]: { stock: 0 } },
+    })
+    expect(updateTag).toHaveBeenCalledWith("catalog")
   })
 
   it("answers the same way when another order takes the last pieces during the save", async () => {

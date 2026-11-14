@@ -2,9 +2,10 @@
 
 import "server-only"
 
-import { revalidateTag } from "next/cache"
+import { updateTag } from "next/cache"
 import { headers } from "next/headers"
 
+import { cacheDiffersFrom } from "@/modules/catalog/queries"
 import { CATALOG_TAG } from "@/modules/catalog/load"
 import type { CartCatalog } from "@/modules/catalog/types"
 import { getCheckoutConfig } from "@/modules/checkout/config"
@@ -13,9 +14,9 @@ import { buildOrder } from "@/modules/checkout/order"
 import {
   findOrderByRequest,
   liveCartCatalog,
+  OrderLimitError,
   orderLines,
   OutOfStockError,
-  reachedOrderLimit,
   saveOrder,
   type RequestedLine,
 } from "@/modules/checkout/orders-db"
@@ -88,25 +89,30 @@ const STOCK_CHANGED =
 /**
  * The answer when the cart in the browser is behind the store: a product sold out, fewer pieces are
  * left than the cart asks for, or a price changed. The checkout applies `cart` and tells the visitor
- * what changed, without a reload; `message` is for a change it can't name. The saved catalog may be
- * behind too, so it is marked stale.
+ * what changed, without a reload; `message` is for a change it can't name.
+ *
+ * The cached catalog the pages are drawn from may be behind too: then it is expired at once. A cart
+ * that was only old in the browser leaves the cache alone, so refused requests can't keep emptying it.
  */
 async function cartIsBehind(
   requested: RequestedLine[],
   message: string
 ): Promise<PlaceOrderResult> {
-  revalidateTag(CATALOG_TAG, "max")
-  return { ok: false, message, cart: await liveCartCatalog(requested) }
+  const cart = await liveCartCatalog(requested)
+  const skus = requested.map((line) => line.sku)
+  if (await cacheDiffersFrom(cart, skus)) updateTag(CATALOG_TAG)
+  return { ok: false, message, cart }
 }
 
 /**
  * Checks the order again, prices it from the database, and saves it with its lines while lowering the
- * stock. The pages show the stock from a cache, so after an order the catalog is marked stale: the
- * next visitors still get the saved pages while fresh ones are drawn behind them.
+ * stock. The pages show the stock from a cache, so after an order the catalog is expired at once
+ * (updateTag): the next visitor of any page, even one who reaches it by a link, waits for a copy drawn
+ * with the new stock rather than getting the old one.
  *
  * A request that was already saved (the visitor tried again because the answer never arrived) gets the
  * saved order back instead of a second one, and an address that saved too many orders in an hour is
- * refused before the stock is touched.
+ * refused without touching the stock.
  */
 export async function placeOrder(
   input: PlaceOrderInput
@@ -137,14 +143,6 @@ export async function placeOrder(
     const saved = await findOrderByRequest(requestId)
     if (saved) return { ok: true, id: saved }
 
-    const clientIp = (await headers()).get(CLIENT_IP_HEADER)
-    if (clientIp && (await reachedOrderLimit(clientIp))) {
-      return {
-        ok: false,
-        message: "أرسلت طلبات كثيرة خلال ساعة واحدة. حاول مرة أخرى لاحقاً.",
-      }
-    }
-
     const lines = await orderLines(requested)
     if (!lines) return await cartIsBehind(requested, STOCK_CHANGED)
 
@@ -171,15 +169,24 @@ export async function placeOrder(
       )
     }
 
-    const id = await saveOrder(order, { requestId, clientIp }).catch(
-      (error: unknown) => {
-        // Another order took the last pieces between reading the stock and saving
-        if (error instanceof OutOfStockError) return null
-        throw error
+    const clientIp = (await headers()).get(CLIENT_IP_HEADER)
+    let id: string
+    try {
+      id = await saveOrder(order, { requestId, clientIp })
+    } catch (error) {
+      if (error instanceof OrderLimitError) {
+        return {
+          ok: false,
+          message: "أرسلت طلبات كثيرة خلال ساعة واحدة. حاول مرة أخرى لاحقاً.",
+        }
       }
-    )
-    if (!id) return await cartIsBehind(requested, STOCK_CHANGED)
-    revalidateTag(CATALOG_TAG, "max")
+      // Another order took the last pieces between reading the stock and saving
+      if (error instanceof OutOfStockError) {
+        return await cartIsBehind(requested, STOCK_CHANGED)
+      }
+      throw error
+    }
+    updateTag(CATALOG_TAG)
     return { ok: true, id }
   } catch (error) {
     console.error("Placing an order failed", error)

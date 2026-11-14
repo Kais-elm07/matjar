@@ -60,7 +60,6 @@ export function ProductForm({
       setProblems([])
       toast(id === null ? "أُضيف المنتج إلى المتجر." : "حُفظ المنتج.")
       router.push(adminPaths.products)
-      router.refresh()
     })
   }
 

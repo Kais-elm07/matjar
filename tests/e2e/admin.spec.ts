@@ -7,6 +7,7 @@ import {
 
 import sharp from "sharp"
 
+import { formatPrice } from "../../src/lib/money"
 import { productApiPath } from "../../src/lib/routes"
 import { ADMIN_TEST_PASSWORD } from "./admin-password"
 import { FAKE_STORAGE_URL } from "./fake-storage-address"
@@ -102,7 +103,20 @@ test("The store owner adds a product, changes its price and hides it, and the st
     .poll(() => storeProduct(request, slug), { timeout: 20_000 })
     .toEqual({ price: 7900 })
 
+  // A visitor who reaches the product by a link gets the new price at once, although its page was
+  // saved before the change: a link's prefetch never draws a stale copy again
+  await page
+    .getByRole("listitem")
+    .filter({ has: page.getByRole("link", { name, exact: true }) })
+    .getByRole("link", { name: "عرض", exact: true })
+    .click()
+  await expect(page).toHaveURL(new RegExp(`/product/${slug}/$`))
+  await expect(
+    page.getByRole("main").getByText(formatPrice(7900), { exact: true }).first()
+  ).toBeVisible()
+
   // Hiding: the product leaves the store, but stays in the panel
+  await page.goto("/admin/")
   await page.getByRole("button", { name: `إخفاء ${name} من المتجر` }).click()
   // Hiding writes the product and refreshes the list: slower while the other tests run
   await expect(

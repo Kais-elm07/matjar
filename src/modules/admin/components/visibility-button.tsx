@@ -1,6 +1,5 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import { useTransition } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -15,7 +14,6 @@ interface VisibilityButtonProps {
 
 /** Hides a product from the store or shows it again; a product is never deleted, because orders name it. */
 export function VisibilityButton({ id, name, hidden }: VisibilityButtonProps) {
-  const router = useRouter()
   const [pending, startTransition] = useTransition()
 
   return (
@@ -34,7 +32,6 @@ export function VisibilityButton({ id, name, hidden }: VisibilityButtonProps) {
             return
           }
           toast(result.message)
-          router.refresh()
         })
       }
     >
