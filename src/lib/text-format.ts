@@ -2,7 +2,8 @@
  * The store's small text format, for product descriptions and the static pages in src/content/pages:
  * "## " heading, "### " subheading, "- " bullet, "1. " numbered step, a blank line between paragraphs,
  * **bold text** and [link text](/pages/contact). There is no HTML, so no code can be injected.
- * The components in src/components/content only render what these functions return.
+ * The components that draw it (RichText and InlineText in src/components/shared, and FaqList in
+ * src/modules/content/components) only render what these functions return.
  */
 
 /** `line` is where the block or item starts in the source text (from 1), and is its React key. */

@@ -151,7 +151,7 @@ A single page with four steps: contact details, address, shipping method, and ca
 - **Placing an order:** confirming calls the Server Action `placeOrder` (`src/modules/checkout/actions.ts`). The server checks the form again with the same rules, rebuilds the lines from the database by SKU, read at that moment rather than from the cache (its own names, prices and stock, never the browser's), applies the coupon, and refuses the order if the total differs from the one the visitor saw. It then saves the order and its lines with a short number such as `261107-4827` and lowers each variant's stock, all in one transaction: the stock goes down only while it still covers the quantity, so the last piece can't be sold twice, and an order with a line that ran out saves nothing. The catalog's tag is then revalidated, so the pages and `/cart-catalog.json` show the new stock (the next visitor may still get the saved copy while the new one is drawn). The cart is emptied, and the visitor goes to the order's page.
 - **A cart that is behind the store:** when a product sold out, fewer pieces are left than the cart asks for, or a price changed while the visitor was filling in the form, the refusal carries the current prices and stock of the cart's products. The checkout applies them to the cart at once and its message names the product, such as "«...» نفد من المخزون، فحذفناه من السلة" (... is out of stock, so we removed it from the cart); nothing is loaded again, and the visitor can confirm what is left.
 - **One order per confirmation:** the checkout sends a random id with the order and keeps it for as long as the cart stays the same (`useOrderRequestId`). The database keeps the id unique, so when the answer is lost on the way and the visitor confirms again, the server answers with the order it already saved instead of saving a second one and lowering the stock twice.
-- **Limits:** one address may save 10 orders an hour (`reachedOrderLimit` in `orders.ts`; the address comes from the host, see [DEPLOYMENT.md](DEPLOYMENT.md)), an order holds at most 50 different products, and every text field of the form has a maximum length.
+- **Limits:** one address may save 10 orders an hour (`reachedOrderLimit` in `orders-db.ts`; the address comes from the host, see [DEPLOYMENT.md](DEPLOYMENT.md)), an order holds at most 50 different products, and every text field of the form has a maximum length.
 - **The order's page:** `/orders/<id>/`, read from the database on every request. The id is long and can't be guessed, so only whoever has the link sees the order; an unknown id gets the 404 page, and a database that can't be reached shows a message with "حاول مرة أخرى" (Try again). Najm celebrates once per order there.
 - **Still a demo:** nothing is shipped and nobody pays, and the visitor is told so before and after confirming. The orders are in the database, where `pnpm db:studio` shows them.
 - **Shipping:** `src/data/shipping.ts`: cities, delivery price and time in working days, the free shipping threshold, and the cities with express delivery.
@@ -250,75 +250,132 @@ The store is set up for Saudi Arabia for now (decision 1 in the plan). Another c
 
 ## Project structure
 
-The code is grouped by feature. Each part of the store has a folder in `src/components` for what the visitor sees and, when it has logic of its own, a folder with the same name in `src/lib` (listing, search, checkout, content).
+Each feature of the store has one folder in `src/modules`, holding its logic and, in `components/`, what the visitor sees of it. To explain or change a feature, open its folder.
+
+| Feature                 | Folder                     | What it holds                                                                                                            |
+| ----------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Products and categories | `src/modules/catalog`      | Reading the catalog from the database, the data rules, the products API's answers, the product card, grid and page       |
+| Product lists           | `src/modules/listing`      | Filters, sorting and pages, kept in the URL, and the list pages                                                          |
+| Search                  | `src/modules/search`       | Arabic search: normalizing text, matching cards, the search index, the search box and the results page                   |
+| Cart                    | `src/modules/cart`         | The cart's store, its sync with the current prices, the quantity limit, the cart panel and page, the add-to-cart buttons |
+| Wishlist                | `src/modules/wishlist`     | Its store, its page and its heart button                                                                                 |
+| Checkout and orders     | `src/modules/checkout`     | The form and its steps, shipping, coupons, totals, `placeOrder`, saving and reading orders, and the order's page         |
+| Home page               | `src/modules/home`         | The home page's sections                                                                                                 |
+| Help pages              | `src/modules/content`      | Reading the pages in `src/content/pages`, the contact cards, the FAQ and the shipping table                              |
+| Najm, the mascot        | `src/modules/mascot`       | His behavior on each page, his sentences and suggestions, his 3D scene, his store and his components                     |
+| Admin panel             | `src/modules/admin`        | Signing in, reading and writing the catalog, uploading photos, and the panel's forms                                     |
+| Share images            | `src/modules/share-images` | The images drawn for shared links: their layouts and the drawing helpers                                                 |
+
+Inside a feature, files are named for their job, not for the feature: `store.ts` (its Zustand store), `schema.ts` (its form rules), `types.ts`, `guards.ts`, `actions.ts` (its Server Actions) and `api.ts` (the answers of its API routes), and its components in `components/`, one per file. The orders are part of checkout, because saving the order is checkout's last step.
+
+### Layers
 
 ```
-src/app/                       the pages (Next.js App Router)
+src/app                 the routes: each page reads its data and renders a feature's components
+src/components/layout   the page frame: StoreShell, the header, menus, footer and bottom bar, and what the shell mounts once
+src/modules             the features, which may use each other
+src/components/shared   pieces many features use: breadcrumbs, swiped rows, the stage, empty states, rich text
+src/components/ui       base components from shadcn/ui, adapted to the store
+src/lib, src/hooks      general tools and React hooks that know no feature
+```
+
+Each layer imports only from the layers under it, and `src/lib`, `src/hooks` and `src/components/shared` may import a feature's types (`import type`), never its code. ESLint fails on an import that goes up (`eslint.config.mjs`).
+
+### Pages
+
+| Address                                        | Page                                                                   | Feature          |
+| ---------------------------------------------- | ---------------------------------------------------------------------- | ---------------- |
+| `/`                                            | Home                                                                   | `home`           |
+| `/products/`                                   | All products                                                           | `listing`        |
+| `/category/<slug>/`                            | A category and its subcategories                                       | `listing`        |
+| `/product/<slug>/`                             | A product                                                              | `catalog`        |
+| `/search/`                                     | Search results                                                         | `search`         |
+| `/cart/`                                       | The cart                                                               | `cart`           |
+| `/wishlist/`                                   | The wishlist                                                           | `wishlist`       |
+| `/checkout/`                                   | Checkout                                                               | `checkout`       |
+| `/orders/<id>/`                                | A placed order                                                         | `checkout`       |
+| `/pages/<slug>/`                               | A help page: about us, contact, shipping, returns, privacy, terms, FAQ | `content`        |
+| `/admin/`                                      | The admin panel: products, `/admin/categories/`, `/admin/login/`       | `admin`          |
+| `/api/products/`, `/api/products/<slug>/`      | The products API                                                       | `catalog`        |
+| `/api/health/`                                 | Whether the database, the photo tools and the storage work             | (its route only) |
+| `/cart-catalog.json`, `/similar-products.json` | Data the browser loads: current prices and stock, Najm's suggestions   | `cart`, `mascot` |
+| `/og/...`                                      | Share images                                                           | `share-images`   |
+
+### Who owns which state
+
+| State                       | Owner                                                                      | Why there                                                                                 |
+| --------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Products, categories, stock | The database, read through Next.js's cache (`getCatalog()`)                | One copy for every page; every order and every save in the admin panel expires the cache  |
+| Cart lines                  | `useCartStore` (`src/modules/cart/store.ts`), saved in the browser         | The header, the panel and three pages need it, and it survives a refresh                  |
+| Wishlist                    | `useWishlistStore` (`src/modules/wishlist/store.ts`), saved in the browser | The header, every product card and its page need it                                       |
+| Najm shown or hidden        | `useMascotPreferences` (`src/modules/mascot/store.ts`), saved              | The visitor's choice lasts between visits                                                 |
+| Which pop-up is open        | `useUiStore` (`src/lib/ui-store.ts`)                                       | The header, the bottom bar and the add-to-cart buttons open the same panels               |
+| Filters, sort and page      | The URL (`src/modules/listing/params.ts`, read with `useListingQuery()`)   | A filtered list can be shared, and back and forward work                                  |
+| Checkout fields             | `CheckoutView`, through `useCheckoutForm()` (react-hook-form)              | Only the form needs them                                                                  |
+| Order totals                | Computed (`src/modules/checkout/totals.ts`), never stored                  | The browser shows a preview; the server computes them again and refuses a different total |
+| Placed orders               | The database (`src/modules/checkout/orders-db.ts`)                         | The order's page reads them back                                                          |
+
+A cart line keeps a copy of its product's name, photo, price and stock, so the cart panel opens at once on any page; `/cart-catalog.json` refreshes the copy when the cart or the checkout opens, and the server prices every order from the database.
+
+### The page frame and the pages
+
+```
+RootLayout (src/app/layout.tsx)                  Analytics, LazyToaster, RenderAllAfterNavigation
+└─ StoreLayout ((store)/layout.tsx)
+   └─ StoreShell (components/layout)
+      ├─ AnnouncementBar, SiteHeader             SearchBox, CategoryMenu, cart and wishlist counts
+      ├─ <page>
+      │  ├─ /                 HeroSlider, TrustStrip, PromoGrid, BestSellers, ... (modules/home)
+      │  ├─ /products/, /category/<slug>/        ListingView (modules/listing) → ProductGrid → ProductCard
+      │  ├─ /product/<slug>/  ProductDetails, ProductTabs, ProductRail (modules/catalog)
+      │  ├─ /search/          SearchView (modules/search) → ListingView
+      │  ├─ /cart/            CartView (modules/cart)
+      │  ├─ /wishlist/        WishlistView (modules/wishlist)
+      │  ├─ /checkout/        CheckoutView (modules/checkout): ContactStep, AddressStep, ShippingStep, PaymentStep, OrderSummary
+      │  ├─ /orders/<id>/     OrderConfirmation (modules/checkout)
+      │  └─ /pages/<slug>/    RichText, HelpPagesNav, ContactCards, FaqList, ShippingTable
+      ├─ SiteFooter, MobileTabBar, WhatsAppButton
+      ├─ LazyMascot (modules/mascot), LazyCartSheet (modules/cart), LazyMobileNavSheet
+      └─ SavedStoresRestorer, ListingUrlListener
+```
+
+### The other folders
+
+```
+src/app/                       the routes (Next.js App Router)
   layout.tsx, globals.css      the root layout (metadata) and the Tailwind theme and utilities
   fonts.ts                     the store's font, for the root layout and the last-resort error page
-  (store)/                     store pages: home, category, product, all products, search, cart, wishlist,
-                               checkout, static pages; error.tsx is the error page inside the store shell
+  (store)/                     the store's pages; error.tsx is the error page inside the store shell
+  admin/                       the admin panel's pages
   not-found.tsx                the 404 page, inside the store shell
   global-error.tsx             the last-resort error page, when the store shell itself fails
   sitemap.ts, robots.ts        the sitemap and robots file
-  api/products/                the products API: the product list and one product by its slug
-  api/health/                  whether the server reaches the database
+  api/products/, api/health/   the products API, and whether the server reaches its services
   cart-catalog.json/           the current price and stock of every variant, as JSON
   similar-products.json/       the similar products Najm suggests, as JSON
-  og/                          share images for every product, category and the site (JPEG, written at build time)
+  og/                          share images for every product, category and the site (JPEG, drawn at build time)
 
-src/components/
-  ui/                          base components from shadcn/ui, adapted to the store (button, dialog, sheet, tabs)
-  layout/                      the page frame: StoreShell, header, category menu, mobile menu, footer, bottom tab bar
-  global/                      mounted once for the whole site: analytics, toast messages, restoring the saved
-                               cart and wishlist, listening to URL changes, rendering every section after a move
-  shared/                      small pieces many pages use: breadcrumbs, swiped rows, the stage (the light behind
-                               a product and the photo on its platform), photo boxes, empty states, section
-                               headings, structured data (JSON-LD)
-  home/                        the home page sections, one file per section
-  product/                     product card, grid and row, and the product page: gallery, option picker,
-                               purchase buttons, tabs
-  listing/                     product lists: filters, sorting, pagination, active filters
-  search/                      the search box with its suggestions, and the search results page
-  cart/                        cart panel, cart and wishlist pages, quantity stepper
-  checkout/                    checkout form (one component per step), order summary, an order's confirmation
-  content/                     static pages: their text, contact cards, shipping table, FAQ
-  mascot/                      Najm: his lazy loader, his canvas and speech bubble, his suggestions, the footer
-                               button that hides him, and the hooks that tie him to the cart and the pages
-
-src/lib/
-  catalog/                     products and categories (see the table below)
-  listing/                     filtering, sorting and pages in the browser, and the listing pages' URL
-  search/                      Arabic search: normalizing text, matching products, loading the search index
-  state/                       what the browser remembers: the cart, the wishlist, open panels and whether Najm
-                               is hidden (Zustand stores)
-  mascot/                      Najm's logic: his behavior on each page, his sentences, the suggestions, and
-                               scene/, his 3D drawing with three.js (his body, his cart, his poses and moves)
-  checkout/                    shipping, coupons, totals, the checkout form rules, the Server Actions, and
-                               building, saving and reading orders
-  content/                     the static pages: reading and checking them, their text format, and the values
-                               such as {store} that fill them
-  og/                          share image layout and drawing
-  admin/                       the admin panel: its password and session, its reads and writes, its Server
-                               Actions, its forms, and the photo uploads to Supabase Storage
-  images/                      preparing a photo: the five WebP copies and its measured tone, for pnpm images
-                               and the uploads
-  routes.ts                    the addresses of the product, category and static pages
+src/lib/                       general tools
   db.ts                        the database client (Prisma), on the server only
   zod.ts                       Zod, set up once (Arabic messages, no eval): import z from here
+  guards.ts                    type guards for data read at runtime (JSON files, browser storage)
   json-loader.ts               loads JSON from the site once per visit, and checks its shape
-  api/                         the answers of the API routes in src/app/api
+  storage.ts                   browser storage that keeps working, in memory, when the browser blocks it
+  saved-stores.ts              restores the stores saved in the browser after the first render
+  ui-store.ts                  which pop-up is open: the cart panel, the mobile menu, the mobile search
+  routes.ts                    the addresses of the product, category and static pages
+  seo.ts                       share metadata and structured data for search engines
   money.ts                     prices in halalas, and formatting them
   dates.ts                     today's date and deal end times in the store's time zone
   arabic-plural.ts             Arabic plural forms for counts
   arabic-digits.ts             Arabic and Persian digits to 0-9
-  seo.ts                       share metadata and structured data for search engines
+  text-format.ts               the small text format of product descriptions and help pages
   image-loader.ts              picks the right prepared image size for the screen, local or uploaded
-  guards.ts                    type guards for data read at runtime (JSON files, browser storage)
+  image-prepare.ts             a photo's five WebP copies and its measured tone, for pnpm images and the uploads
+  tone.ts                      the product's tone: a photo's color as the light behind it (OKLCH), and its CSS variables
+  slider.ts                    the slide in view, scrolling to a slide, and the stage's 3D turn and light during a swipe
   toast.ts                     toast messages, whose library loads with the first message
   render-later.ts              the script that renders every section at once after a reload or "back"
-  slider.ts                    the slide in view, scrolling to a slide, and the stage's 3D turn and light during a swipe
-  tone.ts                      the product's tone: a photo's color as the light behind it (OKLCH), and its CSS variables
   contact.ts                   phone, WhatsApp and map links
   motion.ts                    smooth scrolling that respects the "reduce motion" setting
   placeholders.ts              keys for loading placeholders
@@ -337,33 +394,36 @@ assets/                        original images and fonts, before processing
 scripts/                       image and font processing, demo photo download, the local database
 prisma/                        the database tables (schema.prisma) and their migrations
 src/generated/prisma/          the Prisma client, generated (not in Git)
-tests/unit/, tests/e2e/        unit tests (Vitest) and browser tests (Playwright)
+tests/unit/, tests/db/, tests/e2e/  unit tests and database tests (Vitest), browser tests (Playwright)
 next.config.ts                 Next.js settings: image sizes, security and caching headers
 netlify.toml                   Netlify build settings
 .github/workflows/ci.yml       automated checks in GitHub Actions
 .claude/skills/                skills for Claude: the design system, and Vercel's React guides
 ```
 
-`src/lib/catalog` holds everything about products and categories. Files that run only on the server (while pages are built, and in the running server) import `server-only`, so importing them from browser code fails the build:
+### The catalog's files
 
-| File                   | Job                                                                                                         | Runs                   |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------- |
-| `types.ts`             | The types of the data files and of the built catalog                                                        | Both                   |
-| `define.ts`            | Helpers for writing the products file (`productImages`, `optionMatrix`)                                     | Server                 |
-| `schema.ts`            | Rules for every field in the category and product files, with Arabic messages                               | Server                 |
-| `validate.ts`          | Checks the two files together (duplicate slugs, missing categories, duplicate variants)                     | Server                 |
-| `rows.ts`              | The catalog as the database keeps it, and the conversion from the files (prices in halalas, photo tones)    | Both                   |
-| `file-rows.ts`         | The rows from `src/data`, validated: what `pnpm db:seed` writes and the unit tests read                     | Server                 |
-| `image-meta.ts`        | Reads the photo colors `pnpm images` measured, for the seed                                                 | Seed (Node)            |
-| `load.ts`              | Reads the catalog from the database once, through Next.js's data cache (tag `catalog`)                      | Server (`server-only`) |
-| `build.ts`             | Builds the catalog from the rows: category paths and covers, sorted lists, expired deals, photo looks       | Server                 |
-| `catalog.ts`           | The read functions the pages and the products API use                                                       | Server (`server-only`) |
-| `home.ts`              | Home page sections and promo cards                                                                          | Server (`server-only`) |
-| `cards.ts`             | The card data that reaches the browser, with as few fields as possible                                      | Server                 |
-| `options.ts`           | Option names and color swatches                                                                             | Both                   |
-| `variant-key.ts`       | The key that ties a cart line to its options                                                                | Both                   |
-| `guards.ts`            | Checks the JSON the browser downloads (the products API and two data files), and the photo colors file      | Both                   |
-| `variant-selection.ts` | Choosing a variant on the product page: the matching variant, which values can be chosen, the color's photo | Browser                |
+`src/modules/catalog` holds everything about products and categories. Files that run only on the server (while pages are built, and in the running server) import `server-only`, so importing them from browser code fails the build:
+
+| File                   | Job                                                                                                                   | Runs                   |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| `types.ts`             | The types of the data files and of the built catalog                                                                  | Both                   |
+| `define.ts`            | Helpers for writing the products file (`productImages`, `optionMatrix`)                                               | Server                 |
+| `schema.ts`            | Rules for every field in the category and product files, with Arabic messages                                         | Server                 |
+| `validate.ts`          | Checks the two files together (duplicate slugs, missing categories, duplicate variants)                               | Server                 |
+| `rows.ts`              | The catalog as the database keeps it, and the conversion from the files (prices in halalas, photo tones)              | Both                   |
+| `file-rows.ts`         | The rows from `src/data`, validated: what `pnpm db:seed` writes and the unit tests read                               | Server                 |
+| `image-meta.ts`        | Reads the photo colors `pnpm images` measured, for the seed                                                           | Seed (Node)            |
+| `load.ts`              | Reads the catalog from the database once, through Next.js's data cache (tag `catalog`)                                | Server (`server-only`) |
+| `build.ts`             | Builds the catalog from the rows: category paths and covers, sorted lists, expired deals, photo looks                 | Server                 |
+| `queries.ts`           | The read functions the pages and the products API use                                                                 | Server (`server-only`) |
+| `api.ts`               | The answers of the products API (`src/app/api/products`)                                                              | Server (`server-only`) |
+| `cards.ts`             | The card data that reaches the browser, with as few fields as possible                                                | Server                 |
+| `options.ts`           | Option names and color swatches                                                                                       | Both                   |
+| `variant-key.ts`       | The key that ties a cart line to its options                                                                          | Both                   |
+| `guards.ts`            | Checks the JSON the browser downloads (the products API and two data files), and the photo colors file                | Both                   |
+| `variant-selection.ts` | Choosing a variant on the product page: the matching variant, which values can be chosen, the color's photo           | Browser                |
+| `components/`          | The product card, grid, row and mini card, and the product page: gallery, zoom, option picker, purchase buttons, tabs | Browser and server     |
 
 ## How the code fits together
 
@@ -373,19 +433,19 @@ Most pages are prepared once by `pnpm build`. The server then sends them as they
 
 1. The database holds the categories and products, with prices in halalas; `pnpm db:seed` fills it from `src/data` after checking the files (`schema.ts`, `validate.ts`), so any mistake there stops with an Arabic message. `src/data` also holds the home page, shipping and coupons, which the code reads directly; the shipping and coupon files go through the same kind of check in `src/modules/checkout/config.ts`.
 2. `src/modules/catalog/load.ts` reads the catalog's rows through Next.js's data cache, and `build.ts` builds the catalog from them: category paths and covers, expired deals back to their old price, every photo's look, and, during `next build`, a check that every image exists.
-3. The pages in `src/app/(store)` read the catalog through `src/modules/catalog/queries.ts` and `home.ts`, and pass client components only the fields they need (`cards.ts`).
+3. The pages in `src/app/(store)` read the catalog through `src/modules/catalog/queries.ts` and `src/modules/home/sections.ts`, and pass client components only the fields they need (`cards.ts`).
 4. The products API (`src/app/api/products`) answers from the same cached catalog on every request. So do two JSON routes: `/cart-catalog.json` (the current price and stock of every variant) and `/similar-products.json` (Najm's suggestions). The share images in `src/app/og` are drawn at build time only, and kept until the next deploy.
 
 **In the browser** (client components, marked `"use client"`):
 
-- Listing pages arrive with every product of the category in the HTML. Filters, sorting and pages then run in the browser (`src/lib/listing`), reading the URL through `useListingQuery()`.
-- Search downloads every product card from the products API (`/api/products/`) the first time it is needed, and matches products in Arabic in the browser (`src/lib/search`). The API runs on the server, on the same catalog the pages were built from.
-- The cart and wishlist are Zustand stores saved in localStorage (`src/lib/state`). When the cart or checkout opens, the cart is checked against `/cart-catalog.json`, so prices and stock are current.
-- Checkout checks the form (`src/modules/checkout/schema.ts`) and calculates the totals (`totals.ts`) from the shipping settings the page received. Coupons and orders go through Server Actions (`actions.ts`): the server checks everything again, prices the order from the catalog and saves it (`orders.ts`), and the order's page reads it back.
+- Listing pages arrive with every product of the category in the HTML. Filters, sorting and pages then run in the browser (`src/modules/listing`), reading the URL through `useListingQuery()`.
+- Search downloads every product card from the products API (`/api/products/`) the first time it is needed, and matches products in Arabic in the browser (`src/modules/search`). The API runs on the server, on the same catalog the pages were built from.
+- The cart and wishlist are Zustand stores saved in localStorage (`src/modules/cart/store.ts`, `src/modules/wishlist/store.ts`). When the cart or checkout opens, the cart is checked against `/cart-catalog.json`, so prices and stock are current.
+- Checkout checks the form (`src/modules/checkout/schema.ts`) and calculates the totals (`totals.ts`) from the shipping settings the page received. Coupons and orders go through Server Actions (`actions.ts`): the server checks everything again, prices the order from the catalog and saves it (`orders-db.ts`), and the order's page reads it back.
 - Panels that open on a tap (the cart, the mobile menu, image zoom, the filter sheet and toast messages) load their code once the page has loaded (`src/hooks/use-idle.ts`). Each of them, like Najm and the search suggestions, sits inside `Optional` (`src/components/shared/optional.tsx`): if its code doesn't arrive, on a weak connection or after a new deploy, that part alone is left out and the page keeps working. A cart panel that can't load sends the visitor to the cart page instead.
 - An error in a page shows an Arabic message inside the store's frame, with "حاول مرة أخرى" (Try again) (`src/app/(store)/error.tsx`); an error in the frame itself falls back to a page of its own (`src/app/global-error.tsx`).
 - The hero and the product gallery are stages: during a swipe, `useStageMotion` writes each photo's 3D turn and the blend of the light straight to CSS variables on every frame, without rendering React again (`src/hooks/use-stage-motion.ts`, with the arithmetic in `src/lib/slider.ts`).
-- Najm is loaded by `LazyMascot` in the store shell. `MascotScene` (`src/lib/mascot/scene`) draws him with three.js and queues his moves; React only holds his speech bubble. The add-to-cart buttons tell him about a new product through `announceAddedProduct` (`src/modules/mascot/events.ts`), which doesn't import three.js, and open the cart panel when he isn't listening. He watches the cart store for removals, and the page address for his behavior on each page (`src/modules/mascot/persona.ts`).
+- Najm is loaded by `LazyMascot` in the store shell. `MascotScene` (`src/modules/mascot/scene`) draws him with three.js and queues his moves; React only holds his speech bubble. The add-to-cart buttons tell him about a new product through `announceAddedProduct` (`src/modules/mascot/events.ts`), which doesn't import three.js, and open the cart panel when he isn't listening. He watches the cart store for removals, and the page address for his behavior on each page (`src/modules/mascot/persona.ts`).
 
 ## Tests
 
@@ -460,7 +520,7 @@ The same day, the last static version (phase 11) measured 90, 72-86 and 80-85 on
 - **Images:** a custom loader (`src/lib/image-loader.ts`) picks from the copies `pnpm images` prepares, or the ones made when a photo is uploaded in the admin panel, so the server never resizes images and no request waits for one to be drawn.
 - **Drawers load after the page:** the cart drawer, the mobile menu, the image zoom, the filter sheet and the toast messages load their code after the content appears (`src/hooks/use-idle.ts`), or immediately if requested earlier. This is what lifted mobile performance above 90. Tabs are a light component without a library (`src/components/ui/tabs.tsx`).
 - **What the server carries:** server code reads files only by a literal path (`public/images/image-meta.json`), and the product photos are left out of the server's files (`outputFileTracingExcludes`), so a deployed function holds only the code it runs. The image check runs only during `next build`.
-- **Server and browser code:** a `"use client"` module can't hand functions to server code, so what both sides need (totals, the quantity limit) lives in plain modules in `src/lib/checkout`.
+- **Server and browser code:** a `"use client"` module can't hand functions to server code, so what both sides need (totals, the quantity limit) lives in plain modules: `src/modules/checkout/totals.ts` and `src/modules/cart/quantity.ts`.
 - **Drawing share images:** runs on a single thread and a single queue per build, because the font library inside sharp sometimes crashed on Windows when drawing in parallel.
 - **Long Windows command lines:** the project folder has a long Arabic name, so the pre-commit hook passes files to lint-staged in batches (`--max-arg-length` in `.husky/pre-commit`).
 - **Documentation for this exact Next.js version** is in `node_modules/next/dist/docs`.

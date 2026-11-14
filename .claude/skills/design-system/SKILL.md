@@ -93,17 +93,17 @@ The values are applied in `src/app/globals.css` as shadcn variables with the sam
 
 ## Ready-made components to check before creating a new one
 
-- `ProductCard`, `ProductGrid` and `ProductRail` in `src/components/product`: the dark product card with the round cart button, its grid and its horizontal row. Their data has the type `ProductCardData`, and the search index uses `SearchCardData` (the card plus the search text).
+- `ProductCard`, `ProductGrid` and `ProductRail` in `src/modules/catalog/components`: the dark product card with the round cart button, its grid and its horizontal row. Their data has the type `ProductCardData`, and the search index uses `SearchCardData` (the card plus the search text).
 - `PhotoBox`, `StageVisual` and `StageBackdrop` in `src/components/shared`: a photo box washed with the photo's tone, the photo on its platform, and the two layers of light behind a stage. `useStageMotion` in `src/hooks` moves a stage.
-- The home page sections in `src/components/home`, each one a separate component: `TrustStrip`, `PromoGrid`, `BestSellers`, `SpotlightGrid`, `NewArrivals`, `TrendingTabs`, `DealsRail`, `CategoryRail`, `Testimonials` and `ContactSection`. The page itself only puts them in order.
+- The home page sections in `src/modules/home/components`, each one a separate component: `TrustStrip`, `PromoGrid`, `BestSellers`, `SpotlightGrid`, `NewArrivals`, `TrendingTabs`, `DealsRail`, `CategoryRail`, `Testimonials` and `ContactSection`. The page itself only puts them in order.
 - `Carousel` and `SectionHeading` in `src/components/shared`: a swiped row with round scroll buttons, and a section heading with an optional blue "View all" link.
-- `PromoTile`, `DiscountCard`, `SpotlightCard`, `ToneBanner` and `WideBanner` in `src/components/home`, one file each: the product tiles of the promo grid, the discount card, the category spotlight cards, the wide stage behind "New arrivals" and the wide banner. Their shared dark gradient over photos is `IMAGE_SHADE` in `banner-styles.ts`.
-- `HeroSlider` and `HeroSlide` in `src/components/home`: the full-width stage of the hero and one of its slides.
-- `ContactCards` in `src/components/content`: the contact cards with blue icons, for the home page and the "Contact us" page.
-- `useAddToCart` and `QuantityStepper` in `src/components/cart`: adding to the cart while opening its panel, and the quantity selector.
+- `PromoTile`, `DiscountCard`, `SpotlightCard`, `ToneBanner` and `WideBanner` in `src/modules/home/components`, one file each: the product tiles of the promo grid, the discount card, the category spotlight cards, the wide stage behind "New arrivals" and the wide banner. Their shared dark gradient over photos is `IMAGE_SHADE` in `banner-styles.ts`.
+- `HeroSlider` and `HeroSlide` in `src/modules/home/components`: the full-width stage of the hero and one of its slides.
+- `ContactCards` in `src/modules/content/components`: the contact cards with blue icons, for the home page and the "Contact us" page.
+- `useAddToCart` and `QuantityStepper` in `src/modules/cart/components`: adding to the cart while opening its panel, and the quantity selector.
 - `Tabs` in `src/components/ui/tabs.tsx`: lightweight tabs with the shadcn API but without Base UI, with every panel in the HTML. Their default look is a pill with a gray border, blue when active, so don't repeat their classes.
 - `StoreShell` in `src/components/layout`: the whole store shell (the header, the footer, the cart and the bottom bar).
-- `SearchBox variant="header"` in `src/components/search`: the wide search field in the middle of the header.
+- `SearchBox variant="header"` in `src/modules/search/components`: the wide search field in the middle of the header.
 - `toast` in `src/lib/toast.ts`: short notifications, whose library loads with the first message. Don't import from `sonner` directly.
 - `openGraph` and `shareImages` in `src/lib/seo.ts`: the share data, with its image, for any new page.
 

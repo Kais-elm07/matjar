@@ -1,4 +1,4 @@
-// The store's database: the orders placed at checkout (src/lib/checkout/actions.ts), and the catalog
+// The store's database: the orders placed at checkout (src/modules/checkout/actions.ts), and the catalog
 // (categories, products, their photos and variants), filled from src/data by pnpm db:seed (prisma/seed.ts),
 // and the photos uploaded in the admin panel.
 // Amounts are in halalas (1 riyal = 100 halalas), as everywhere in the code.
@@ -27,7 +27,7 @@ model Order {
   /// was lost on the way is not saved twice; null for the orders saved before this field
   requestId      String?        @unique
   /// The visitor's network address when the host reports it, to count the orders one sender saves in
-  /// an hour (reachedOrderLimit in src/lib/checkout/orders.ts)
+  /// an hour (reachedOrderLimit in src/modules/checkout/orders-db.ts)
   clientIp       String?
   placedAt       DateTime       @default(now())
   customerName   String
@@ -142,7 +142,7 @@ model ProductImage {
   @@map("product_images")
 }
 
-/// A photo the store owner uploaded in the admin panel (src/lib/admin/uploads.ts), with the look sharp
+/// A photo the store owner uploaded in the admin panel (src/modules/admin/uploads.ts), with the look sharp
 /// measured in it, so the product it is added to takes its tone and cut-out when it is saved
 model UploadedImage {
   id         Int      @id @default(autoincrement())

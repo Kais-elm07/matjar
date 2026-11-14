@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 
 /**
  * The home page in the order of DESIGN.md: the hero and the trust strip at full screen width,
- * then the sections inside the page container. Each section is its own component in src/components/home.
+ * then the sections inside the page container. Each section is its own component in src/modules/home/components.
  */
 export default async function HomePage() {
   const [sections, content, categories] = await Promise.all([

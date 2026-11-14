@@ -16,7 +16,7 @@ import { optionsKey } from "@/modules/catalog/variant-key"
 /**
  * The site's only data layer: every page and the products API read categories and products from here.
  * The catalog comes from the database through a cache (load.ts), so these functions are async.
- * The home page content is in home.ts.
+ * The home page sections are in src/modules/home/sections.ts.
  */
 
 export async function getCategories() {

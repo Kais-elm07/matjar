@@ -9,7 +9,7 @@ import { toMajorUnits, toMinorUnits } from "@/lib/money"
 
 /**
  * Filtering, sorting and pages for the product lists, in the browser.
- * Simple stateless functions that work on product cards only. Text search is in src/lib/search.
+ * Simple stateless functions that work on product cards only. Text search is in src/modules/search.
  */
 
 function matchesOptions(
